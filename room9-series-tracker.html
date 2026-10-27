@@ -61,7 +61,8 @@ function stat(){const d=Object.entries(S).filter(([k,x])=>+k<=CL.length&&x.done)
  st.textContent=`· ${d}/${CL.length} clips · ${Math.floor(d*10/60)}m${d*10%60}s done · `+(online?"☁ synced":"⚠ local only (cloud unreachable)");}
 
 // ---------- STORY BIBLE ----------
-const STYLE="STYLE LOCK: Cinematic suspense thriller, 35mm anamorphic film look, handheld camera, teal-and-amber color grade, heavy rain, deep shadows, film grain, 24fps. Highly expressive faces and body language. Dialogue and voice-over are delivered fast, breathless and tense.";
+const STYLE="STYLE LOCK: Cinematic suspense thriller, 35mm anamorphic film look, handheld camera, teal-and-amber color grade, heavy rain, deep shadows, film grain, 24fps. Highly expressive faces and body language. Deliver dialogue and voice-over fast, breathless and tense, but keep them distinct: dialogue is spoken by its named on-screen character; voice-over is off-screen narration and is never spoken or lip-synced by a visible character.";
+const AUDIO_RULE="AUDIO DIRECTION: Keep any VOICE-OVER explicitly off-screen and non-diegetic (narration over the scene, not spoken in it). The visible characters stay silent with mouths closed and do not lip-sync during voice-over. Perform scene dialogue only as spoken by the character it is attributed to; never perform narration as dialogue.";
 const CH={
 M:"MIRA VOSS: woman, 29, South-Asian, short black chin-length bob with wet strands, a thin pale scar through her LEFT eyebrow, large dark expressive eyes with dark circles, wearing a mustard-yellow rain jacket over a grey motel-uniform shirt, silver crescent-moon necklace, name tag reading “MIRA”.",
 C:"MR. CRANE: very tall gaunt man, 50s, deathly pale skin, thin wire round glasses, slicked grey hair, long soaked charcoal trench coat that drips constantly, black leather gloves, unnaturally calm half-smile, never blinks."};
@@ -74,24 +75,24 @@ const AN={R:"Establishing",D:"Lobby",H:"Corridor",N:"Room 9"};
 const ACTS={1:"Act 1 · The Guest",11:"Act 2 · The Ledger",19:"Act 3 · Room 9"};
 // [scene, chars, shot]
 const CL=[
-["R","M","Mira stands at the lobby door in the pouring rain, key trembling in her hand; she glances over her shoulder: far down the dark sidewalk a tall silhouette in a long coat walks slowly toward her out of the rain. Fast whispered VO: “Hollow Pine Motel. Two forty-seven a.m. Nothing happens here. Nothing. Until him.” She turns and pushes the door open."],
-["D","M","Continuous: Mira bursts through the door into the lobby, slams it and turns the lock, presses her back against it breathing hard, then looks out the rain-streaked window: the sidewalk is empty. She forces herself to the desk. Quick VO: “Calm down, Mira. Nobody’s there.”"],
+["R","M","Mira stands at the lobby door in the pouring rain, key trembling in her hand; she glances over her shoulder: far down the dark sidewalk a tall silhouette in a long coat walks slowly toward her out of the rain. She turns and pushes the door open. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “Hollow Pine Motel. Two forty-seven a.m. Nothing happens here. Nothing. Until him.” Mira stays silent; her lips do not move."],
+["D","M","Continuous: Mira bursts through the door into the lobby, slams it and turns the lock, presses her back against it breathing hard, then looks out the rain-streaked window: the sidewalk is empty. She forces herself to the desk. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “Calm down, Mira. Nobody’s there.” Mira stays silent; her lips do not move."],
 ["D","MC","The brass bell on the desk DINGS by itself; Mira freezes, then the lobby door slowly swings open: Crane stands in the doorway, rain pouring off his coat, no footsteps heard. Mira forces a smile, fast: “Rough night?” Crane tilts his head, silent."],
 ["D","C","Extreme close-up of Crane’s pale face, wet glasses, slow unsettling smile. He says softly: “Room nine, please.”"],
 ["D","M","Close-up on Mira, her smile collapsing, eyes snapping to the key rack where key 9 sways by itself. She whispers fast: “Nine’s been closed. Eleven years.”"],
 ["D","MC","Crane lays three old gold coins on the desk; they steam in the cold air. Mira stares, shaking. Crane: “Pay in advance. I insist.” Camera push-in on the coins."],
-["D","MC","Crane leans over the desk, inches from her face. “You remember me, Mira.” She recoils, hand covering her name tag. Whisper VO: “I never told him my name.”"],
-["D","M","Mira’s trembling hand lifts key 9 off the hook; she hands it over without looking up, jaw clenched, eyes wet with fear. VO, rapid: “Just give him the key. Just let him go.”"],
+["D","MC","Crane leans over the desk, inches from her face. Crane says, softly: “You remember me, Mira.” She recoils, hand covering her name tag. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “I never told him my name.” Mira stays silent during the narration; her lips do not move."],
+["D","M","Mira’s trembling hand lifts key 9 off the hook; she hands it over without looking up, jaw clenched, eyes wet with fear. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD, RAPID: “Just give him the key. Just let him go.” Mira stays silent; her lips do not move."],
 ["H","C","Smooth tracking shot behind Crane walking down the corridor; the ceiling bulbs die one by one behind him, darkness chasing him. He never looks back."],
 ["H","MC","From the lobby window, Mira watches Crane reach door 9 – it creaks open before he touches it. He steps in; the door shuts. Every light on the strip goes out. She gasps: “No. No, no, no.”"],
-["D","M","Mira flips open a dusty guest ledger, fingers racing down pages; she stops, mouth open: an entry from eleven years ago, room 9, signed “A. Crane”, dated TONIGHT. VO: “That’s impossible.”"],
+["D","M","Mira flips open a dusty guest ledger, fingers racing down pages; she stops at an entry from eleven years ago, room 9, signed “A. Crane”, dated TONIGHT. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “That’s impossible.” Mira remains silent; her lips do not move."],
 ["D","M","Mira stares at the CCTV monitor: camera 9 shows an empty room, TV static hissing. She leans closer; for one frame a pale face fills the screen then vanishes. She jerks back."],
 ["D","M","Mira grabs the desk phone, dials the owner, listens: a robotic voice says “number disconnected”. She slams it down. Instantly the phone rings, caller ID glowing: ROOM 9."],
 ["D","M","Mira answers with shaking hand. A distorted whisper: “Don’t look at the window.” Her eyes slowly slide toward the window against her will, tears rolling. Quick breath: “Please…”"],
 ["D","M","Reflection shot: through the rain-streaked window Crane stands outside, motionless in the downpour, staring straight at Mira. Lightning flashes; he is gone, leaving wet footprints."],
 ["D","M","The wet footprints lead from the window to the front door; the door handle turns slowly; the lock bolt clicks open by itself. Mira backs into the wall, whispering: “Stay out. Stay out.”"],
-["D","M","The door swings wide on empty rain. Nothing there. Mira panics, grabs a flashlight and the master key, and stares at the dark lot. VO: “If I don’t look, it’s real. So I look.”"],
-["D","M","Close-up of Mira’s determined, terrified face, scar visible, she zips her yellow jacket, jaw tight, and pushes through the door into the storm. Fast VO: “Eleven years. Time to find out why.”"],
+["D","M","The door swings wide on empty rain. Nothing there. Mira panics, grabs a flashlight and the master key, and stares at the dark lot. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “If I don’t look, it’s real. So I look.” Mira stays silent; her lips do not move."],
+["D","M","Close-up of Mira’s determined, terrified face, scar visible; she zips her yellow jacket, jaw tight, and pushes through the door into the storm. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD, FAST: “Eleven years. Time to find out why.” Mira stays silent; her lips do not move."],
 ["R","M","Wide tracking shot: Mira marches across the rain-flooded lot, flashlight beam slicing the dark; both cars have fogged windows covered in small handprints. She flinches, keeps going."],
 ["H","M","Mira at door 9, ear against the wood. Inside: a ticking clock and a child’s lullaby hummed by a man. Her eyes widen; she mouths, “I know that song.” Hand on the knob, trembling."],
 ["N","M","She opens the door: a perfectly preserved 2015 room, thick dust, but the bed holds a fresh wet man-shaped dent. Flashlight sweeps; she whispers fast: “He was just here.”"],
@@ -111,10 +112,13 @@ const isCut=n=>n>1&&CUTS.has(n);
 const OPEN="Mira stands outside the motel lobby door in the rain, wet and frightened, wearing her mustard-yellow raincoat, looking toward the camera.";
 function startNote(n){return n==1?`<b style="color:#ff4d4d">OPEN:</b> Flow → Video → Frames. Start frame = your Mira-at-the-door image (yellow jacket). Never start Clip 1 from text only.`:isCut(n)?`<b style="color:#ff4d4d">CUT:</b> do NOT use the last frame of Clip ${n-1}. Use Flow’s Ingredients mode: type @Mira / @Crane and add the location image.`:`<b style="color:#3ddc97">CHAIN:</b> start frame = last frame of Clip ${n-1} (or K${n-1}).`;}
 function build(i){const[sc,ch,t]=CL[i],n=i+1;let p=[];
+ const voiceAt=t.indexOf("OFF-SCREEN VOICE-OVER"),action=voiceAt<0?t:t.slice(0,voiceAt).trim(),voice=voiceAt<0?"":t.slice(voiceAt).trim();
  if(inc.checked){p.push(STYLE);for(const c of ch)p.push(CH[c]);p.push(EV[sc]);}
  if(n==1)p.push("START STATE (this is exactly what the provided start frame shows; begin here): "+OPEN);
  else if(!isCut(n))p.push("START STATE (this is exactly what the provided start frame shows; begin here, do not change location, wardrobe or hairstyle): "+KF[i-1][2]);
- p.push("ACTION (ONE continuous shot, no cuts, no teleporting to another place; keep each character’s face, wardrobe and hairstyle exactly as in the start frame and the character references): "+t);
+ p.push("ACTION (ONE continuous shot, no cuts, no teleporting to another place; keep each character’s face, wardrobe and hairstyle exactly as in the start frame and the character references): "+action);
+ if(voice)p.push("AUDIO — SEPARATE OFF-SCREEN VOICE-OVER: "+voice);
+ p.push(AUDIO_RULE);
  p.push("END STATE (finish on this): "+KF[i][2]);
  return p.join("\n\n");}
 function nextIdx(){return CL.findIndex((_,i)=>!(S[i+1]&&S[i+1].done));}
@@ -167,9 +171,11 @@ guide.innerHTML=`<div class="card"><h2>How Flow works (from Google’s Flow help
 <li>Locations: save the four location images in Storyboard and add the right one in Ingredients mode.</li>
 <li>Generate in story order. Use the end-frame keyframes (K images) to keep important moments on target.</li>
 <li>When editing: trim 0.2 to 0.4 s from the start of each clip to hide seams; add continuous rain and music under everything.</li></ul></div>
-<div class="card"><h2>5. Voices</h2><ul>
-<li>Choose a voice for Mira and a different one for Crane when you create the characters. The prompts already say fast and breathless; keep the quoted lines.</li>
-<li>If a voice still changes between clips, re-record or replace it in your editor on the final cut.</li></ul></div>
+<div class="card"><h2>5. Voices and voice-over (researched prompting practice)</h2><ul>
+<li>Google’s <a href="https://deepmind.google/models/veo/prompt-guide/" target="_blank" rel="noopener">Veo prompt guide</a> recommends describing the character, voice, action and dialogue specifically, and explicitly describing desired sound. This tracker labels narration separately as <b>OFF-SCREEN VOICE-OVER</b>; keep that label and its “not spoken aloud” direction intact when copying prompts.</li>
+<li>Voice-over is narration heard over the scene, not dialogue from the person visible on screen. The generated clip prompt repeats that distinction and directs visible characters to stay silent with closed mouths during VO. Use explicit character names for any on-screen dialogue.</li>
+<li>Flow supports generating clips from text prompts, ingredients, frames and other videos; see <a href="https://support.google.com/flow/answer/16353334" target="_blank" rel="noopener">Google Flow’s video creation guide</a>. Prompt wording helps, but does not guarantee reliable voice-over separation. If a visible character still mouths narration, generate the picture/action without that spoken line and add Mira’s recorded narration as a separate audio track in your video editor. This is the reliable way to keep VO off-screen.</li>
+<li>Choose a voice for Mira and a different one for Crane when creating the characters. Keep dialogue and narration short, and keep the quoted text and speaker labels unchanged.</li></ul></div>
 <div class="card"><h2>6. Database</h2>Progress is stored in table <code>clip_progress</code> and images in <code>assets</code>. If the cloud is unreachable the page falls back to local storage. “Reset all” in the top bar clears progress (and optionally images). This file contains your database token: keep it private.</div>`;
 document.addEventListener("click",e=>{if(e.target.dataset.k)copy(STYLE,e.target)});
 inc.addEventListener("change",()=>{});
