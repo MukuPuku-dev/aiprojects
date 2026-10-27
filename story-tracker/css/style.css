@@ -1,0 +1,54 @@
+:root{--bg:#12141a;--p:#1b1e27;--p2:#242836;--t:#e8eaf0;--m:#8b90a3;--a:#7c9cff;--g:#4ade80;--o:#fbbf24;--r:#f87171}
+*{box-sizing:border-box}
+body{margin:0;font:14px system-ui,sans-serif;background:var(--bg);color:var(--t);display:flex;height:100vh}
+
+/* layout */
+#side{width:250px;background:var(--p);padding:12px;overflow:auto;flex-shrink:0}
+#main{flex:1;overflow:auto;padding:18px}
+#status{position:fixed;right:12px;bottom:10px;font-size:12px;color:var(--m)}
+h1{font-size:16px;margin:0 0 10px}
+h2{font-size:18px;margin:0 0 8px}
+h3{font-size:14px;margin:12px 0 6px}
+
+/* form controls */
+button{background:var(--p2);color:var(--t);border:1px solid #333a50;padding:6px 11px;border-radius:6px;cursor:pointer}
+button:hover{border-color:var(--a)}
+button.pri{background:var(--a);color:#000;border:0;font-weight:600}
+button.sm{padding:2px 7px;font-size:12px}
+button:disabled{opacity:.5}
+input,select,textarea{width:100%;background:var(--p2);color:var(--t);border:1px solid #333a50;border-radius:6px;padding:7px;font:inherit}
+textarea{min-height:90px;resize:vertical}
+label{display:block;color:var(--m);font-size:12px;margin:8px 0 3px}
+
+/* sidebar */
+.proj{padding:8px;border-radius:6px;cursor:pointer;margin-bottom:4px}
+.proj:hover,.proj.on{background:var(--p2)}
+.proj small{color:var(--m);display:block}
+
+/* tabs, cards, rows */
+.tabs{display:flex;gap:6px;margin:10px 0;flex-wrap:wrap}
+.tabs button.on{background:var(--a);color:#000}
+.card{background:var(--p);border-radius:8px;padding:12px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center}
+.row>*{flex:1}
+.row>button{flex:none}
+.bar{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}
+
+.welcome{max-width:560px;margin:12vh auto;text-align:center}
+.welcome p{color:var(--m);line-height:1.6}
+.project-head{display:flex;align-items:baseline;gap:12px}
+.project-head h2{margin-bottom:4px}
+.date-heading{margin-top:18px;border-bottom:1px solid #333a50;padding-bottom:5px}
+.prompt-record textarea{min-height:130px;white-space:pre-wrap}
+.record-meta{justify-content:space-between;align-items:center}
+.guidance summary{cursor:pointer;font-weight:600}
+.guidance p{line-height:1.5}
+.danger{color:var(--r)}
+
+.muted{color:var(--m)}
+
+@media(max-width:700px){
+  body{height:auto;min-height:100vh;display:block}
+  #side{width:100%;position:static}
+  #main{padding:12px}
+}

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Project Tracker</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="side">
+  <h1>Prompt tracker</h1>
+  <button class="pri" style="width:100%" onclick="newProject()">+ New project</button>
+  <div id="plist" style="margin-top:10px"></div>
+  <hr style="border-color:#333a50">
+  <button class="sm" onclick="exportAll()">Export backup</button>
+  <button class="sm" onclick="document.getElementById('imp').click()">Import</button>
+  <input type="file" id="imp" hidden accept=".json" onchange="importAll(this)">
+  <button class="sm" style="margin-top:6px" onclick="syncNow()">Sync now</button>
+</div>
+<div id="main"></div>
+<div id="status"></div>
+
+<!-- Order matters: each file may use the ones above it -->
+<script src="js/config.js"></script>
+<script src="js/utils.js"></script>
+<script src="js/db.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/data.js"></script>
+<script src="js/views/project.js"></script>
+<script src="js/generate.js"></script>
+<script src="js/views/episodes.js"></script>
+<script src="js/backup.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
