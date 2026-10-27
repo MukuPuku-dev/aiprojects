@@ -138,6 +138,7 @@ function render(){let h="";CL.forEach((c,i)=>{const n=i+1,s=S[n]||{};const m=i*1
  <span style="flex:1"></span><button data-c="${n}" class="p">Copy prompt</button></div>
  <div class="shot">${c[2]}</div>
  <div class="sub">${startNote(n)} End frame: K${n}. ${n>1&&!isCut(n)&&AS["kf:"+(n-1)]?`<button data-ci="kf:${n-1}">Copy start img</button>`:""} ${AS["kf:"+n]?`<button data-ci="kf:${n}">Copy end img</button>`:""}</div>
+ <div class="shot" style="border-top:1px solid var(--line);padding-top:9px"><div class="top"><b>🎬 End frame K${n}</b><span class="sub">Target image for the final moment of Clip ${n}</span><span style="flex:1"></span><button data-ip="${REFS.length+i}">Copy end-frame image prompt</button><input type="file" accept="image/*" data-up="kf:${n}" style="max-width:170px"></div><div class="sub" style="margin-top:5px">Generate this still image, then upload it here. For Flow, use it as the optional end frame. ${AS["kf:"+n]?"Saved end frame ✓":"No end-frame image uploaded yet."}</div>${AS["kf:"+n]?`<img src="${AS["kf:"+n]}" style="max-width:260px;max-height:180px;object-fit:contain;border-radius:8px;margin-top:6px">`:""}</div>
  <input type="text" data-n="${n}" placeholder="notes (e.g. seed, what to fix, file name)" value=""></div>`;});
  clips.innerHTML=h;CL.forEach((_,i)=>{const e=document.querySelector(`[data-n="${i+1}"]`);if(e)e.value=(S[i+1]||{}).note||""});
  stat();}
