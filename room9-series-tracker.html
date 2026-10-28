@@ -10,7 +10,7 @@ h1{margin:0;font-size:18px}.sub{color:var(--mut);font-size:12px}
 nav{display:flex;gap:8px;flex-wrap:wrap}button{background:#222934;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
 button.p{background:var(--acc);border-color:var(--acc);font-weight:600}button.on{border-color:var(--acc)}
 main{max-width:860px;margin:0 auto;padding:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}.card[id^="c"]{scroll-margin-top:160px}
 .card.done{opacity:.55;border-color:var(--ok)}.card.next{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
 .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.n{font-weight:700}.tag{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
  .clip-assets{margin:10px 0;padding:10px;background:#10151c;border:1px solid var(--line);border-radius:9px}.clip-assets>b{display:block;margin-bottom:7px}.asset-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px}.asset-buttons button{font-size:12px;padding:7px 9px}.missing{color:#ffb4a8;border-color:#6d3a36}
@@ -156,6 +156,7 @@ function render(){let h="";CL.forEach((c,i)=>{const n=i+1,s=S[n]||{};const m=i*1
  stat();}
 function getCurrentClip(){let n=0;try{n=+(localStorage.getItem("r9-current-clip")||0)}catch(_){}if(n>=1&&n<=CL.length)return n;const i=nextIdx();return i>=0?i+1:CL.length;}
 function setCurrentClip(n,scroll=false){n=Math.max(1,Math.min(CL.length,+n||1));try{localStorage.setItem("r9-current-clip",String(n))}catch(_){}if(scroll){const el=document.getElementById("c"+n);if(el)el.scrollIntoView({behavior:"auto",block:"start"});}}
+window.addEventListener("scroll",()=>{if(document.getElementById("clips").classList.contains("hide"))return;const cards=document.querySelectorAll("#clips .card[id^='c']");let current=null;for(const el of cards){const r=el.getBoundingClientRect();if(r.top<=180&&r.bottom>180){current=el;break;}}if(current)setCurrentClip(current.id.slice(1),false);},{passive:true});
 function copy(txt,btn){txt=txt.replace(/16:9 landscape/g,ar.value=="9:16"?"9:16 vertical portrait":"16:9 landscape").replace(/16:9/g,ar.value);navigator.clipboard.writeText(txt).then(()=>{if(btn){const o=btn.textContent;btn.textContent="Copied ✓";setTimeout(()=>btn.textContent=o,1200)}})}
 document.addEventListener("click",e=>{const b=e.target;
  const clipCard=b.closest&&b.closest("#clips .card[id^='c']");if(clipCard)setCurrentClip(clipCard.id.slice(1),false);
