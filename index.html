@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <title>Story Studio — Projects</title>
+  <link rel="stylesheet" href="platform/platform.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="index.html" aria-label="Story Studio home">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span>STORY<span class="brand-light">STUDIO</span></span>
+    </a>
+    <span class="topbar-note">AI-assisted video project workspaces</span>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="welcome-title">
+      <p class="eyebrow">YOUR CREATIVE WORKSPACE</p>
+      <h1 id="welcome-title">Every story,<br><span>one studio.</span></h1>
+      <p class="hero-copy">Keep each production's clips, storyboards, prompts, and progress in its own project workspace.</p>
+      <div class="hero-meta"><span class="live-dot" aria-hidden="true"></span><span id="project-count">Loading projects…</span></div>
+    </section>
+
+    <section class="projects-section" aria-labelledby="projects-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">WORKSPACES</p>
+          <h2 id="projects-title">Your projects</h2>
+        </div>
+        <label class="search">
+          <span class="sr-only">Search projects</span>
+          <span aria-hidden="true">⌕</span>
+          <input id="project-search" type="search" placeholder="Find a project" autocomplete="off">
+        </label>
+      </div>
+      <div id="project-grid" class="project-grid" aria-live="polite"></div>
+      <p id="empty-state" class="empty-state" hidden>No projects match that search.</p>
+    </section>
+
+    <aside class="ai-note">
+      <div class="ai-icon" aria-hidden="true">✦</div>
+      <div>
+        <p class="eyebrow">MADE TO GROW WITH AI</p>
+        <h2>Bring your next idea here.</h2>
+        <p>Tell Copilot what you want to create. It can build a dedicated project workspace—with its clips, storyboard, image prompts, and production guidance—and add it to this studio. You don't need to set up the code yourself.</p>
+      </div>
+    </aside>
+    <footer>Independent project workspaces · Shared studio home</footer>
+  </main>
+
+  <script src="platform/projects.js"></script>
+  <script src="platform/platform.js"></script>
+</body>
+</html>

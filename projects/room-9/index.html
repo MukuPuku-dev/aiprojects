@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Room 9 – Flow Series Tracker</title>
+<style>
+:root{--bg:#0e1116;--card:#171b22;--ink:#e9edf2;--mut:#8b94a3;--acc:#ff4d4d;--ok:#3ddc97;--line:#262c36}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
+header{position:sticky;top:0;background:#0e1116ee;backdrop-filter:blur(6px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
+h1{margin:0;font-size:18px}.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);width:0}
+nav{display:flex;gap:8px;flex-wrap:wrap}button{background:#222934;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+button.p{background:var(--acc);border-color:var(--acc);font-weight:600}button.on{border-color:var(--acc)}
+main{max-width:860px;margin:0 auto;padding:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin:10px 0}.card[id^="c"]{scroll-margin-top:160px}
+.card.done{opacity:.55;border-color:var(--ok)}.card.next{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.n{font-weight:700}.tag{font-size:11px;color:var(--mut);border:1px solid var(--line);border-radius:6px;padding:1px 6px}
+ .clip-assets{margin:10px 0;padding:10px;background:#10151c;border:1px solid var(--line);border-radius:9px}.clip-assets>b{display:block;margin-bottom:7px}.asset-buttons{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:7px}.asset-buttons button{font-size:12px;padding:7px 9px}.missing{color:#ffb4a8;border-color:#6d3a36}
+pre{white-space:pre-wrap;background:#0b0e13;border:1px solid var(--line);border-radius:8px;padding:10px;font:13px/1.45 ui-monospace,monospace;margin:8px 0}
+.shot{margin:8px 0}input[type=text],textarea{width:100%;background:#0b0e13;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px;font:inherit}
+.act{margin:22px 0 0;color:var(--acc);font-weight:700;letter-spacing:.05em;text-transform:uppercase;font-size:13px}
+.hide{display:none}h2{font-size:16px;margin:18px 0 4px}li{margin:4px 0}.st{font-size:12px}
+</style></head><body>
+<header>
+<h1>ROOM 9 · Episode 1 <span class="sub" id="st"></span></h1>
+<div class="bar"><i id="pb"></i></div>
+<nav><button class="p" id="nx">Copy NEXT prompt</button><button id="rs">Reset all</button><button data-t="prep" class="on">Start Here</button><button data-t="clips">Clips</button><button data-t="story">Storyboard</button><button data-t="bible">Story Bible</button><button data-t="guide">Consistency Guide</button><a href="../../index.html" style="color:#ffb52e;padding:7px 4px;font-weight:700">← All projects</a><a href="../clever-monkey/index.html" style="color:#ffb52e;padding:7px 4px;font-weight:700">🐒 The Clever Monkey →</a>
+<label class="sub">shape <select id="ar"><option>9:16</option><option>16:9</option></select></label>
+<label class="sub"><input type="checkbox" id="inc" checked> include style + character blocks</label></nav>
+</header>
+<main>
+<div class="card" id="gr"><div class="top"><b>🎞 Frame grabber</b>
+<label class="sub">video is clip <select id="gn"></select></label>
+<input type="file" id="gf" accept="video/*">
+<label class="sub">step back from end <input type="range" id="go" min="0" max="25" value="0"> <span id="gv">0.04s</span></label></div>
+<canvas id="gc" style="display:none;max-width:100%;max-height:230px;margin-top:8px;border-radius:8px"></canvas>
+<div class="top" style="margin-top:6px"><button class="p" id="gcp">Copy frame to clipboard</button><button id="gdl">Download PNG</button>
+<label class="sub"><input type="checkbox" id="gm" checked> mark clip done on copy</label><span class="sub" id="gs"></span></div></div>
+<section id="prep"></section>
+<section id="clips" class="hide"></section>
+<section id="story" class="hide"></section>
+<section id="bible" class="hide"></section>
+<section id="guide" class="hide"></section>
+</main>
+<script>
+const legacyState = new URLSearchParams(location.search).get("restore");
+if (legacyState) {
+  try {
+    const saved = JSON.parse(legacyState);
+    for (const key of ["r9", "r9-current-clip", "r9ar"]) {
+      if (typeof saved[key] === "string" && localStorage.getItem(key) === null) localStorage.setItem(key, saved[key]);
+    }
+    history.replaceState(null, "", location.pathname);
+  } catch (error) {
+    alert("Could not restore the progress saved at the previous ROOM 9 location: " + error.message);
+  }
+}
+// ---------- DATABASE (Turso) ----------
+const DB={url:"https://database-mukeshpokharel.aws-ap-south-1.turso.io",
+token:"eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJhIjoicnciLCJpYXQiOjE3OTMwNzQyNTgsImlkIjoiMDFhMTdiOGQtNjgwMS03M2JjLTk4NmQtYjc1ZmQ2ZThlMjY0Iiwia2lkIjoiU3Vsa0Q4bWRVX1FSdkFLaFVubDEwM3Z0YUtGNldfT3lJdXdxU3RMeXFlayIsInJpZCI6IjAxMGZmMzYyLWNhZDAtNGFmNC1iMGViLWJjN2QzNmNmNjBjZCJ9._GaxGeLpcmAj006y_16nh-AvjNBsJbD5vZ0PvjmAMLimBBQopepFDi4Y4jW4H0aVN1ouPz7Ab1ksYoClDj6cCA"};
+const EP=1;let online=false;
+async function sql(s,a=[]){const r=await fetch(DB.url+"/v2/pipeline",{method:"POST",headers:{Authorization:"Bearer "+DB.token,"Content-Type":"application/json"},
+body:JSON.stringify({requests:[{type:"execute",stmt:{sql:s,args:a.map(v=>v===null?{type:"null"}:{type:typeof v==="number"?"integer":"text",value:String(v)})}},{type:"close"}]})});
+if(!r.ok)throw new Error(r.status);const j=await r.json();const x=j.results[0];if(x.type==="error")throw new Error(x.error.message);
+return (x.response.result.rows||[]).map(row=>row.map(c=>c.value));}
+let S={};// n -> {done,note}
+async function load(){
+ try{await sql("CREATE TABLE IF NOT EXISTS clip_progress(ep INTEGER,n INTEGER,done INTEGER DEFAULT 0,note TEXT DEFAULT '',PRIMARY KEY(ep,n))");
+  const rows=await sql("SELECT n,done,note FROM clip_progress WHERE ep=?",[EP]);rows.forEach(r=>S[r[0]]={done:+r[1],note:r[2]||""});online=true;
+ }catch(e){try{S=JSON.parse(localStorage.getItem("r9")||"{}")}catch(_){}online=false}
+ render();}
+async function save(n){const s=S[n];try{localStorage.setItem("r9",JSON.stringify(S))}catch(_){}
+ try{await sql("INSERT INTO clip_progress(ep,n,done,note) VALUES(?,?,?,?) ON CONFLICT(ep,n) DO UPDATE SET done=excluded.done,note=excluded.note",[EP,n,s.done?1:0,s.note||""]);online=true}catch(e){online=false}
+ stat();}
+function stat(){const d=Object.entries(S).filter(([k,x])=>+k<=CL.length&&x.done).length;pb.style.width=d/CL.length*100+"%";
+ st.textContent=`· ${d}/${CL.length} clips · ${Math.floor(d*10/60)}m${d*10%60}s done · `+(online?"☁ synced":"⚠ local only (cloud unreachable)");}
+
+// ---------- STORY BIBLE ----------
+const STYLE="STYLE LOCK — PREMIUM PSYCHOLOGICAL HORROR: photoreal live-action feature-film quality, 35mm anamorphic glass, shallow depth of field, subtle lens breathing, tactile wet surfaces, realistic skin pores and wet hair, deep blacks with restrained teal shadows and sickly amber practical lights, heavy rain, drifting ground mist, motivated lightning, fine film grain, 24 fps, natural motion blur. Fear must feel intimate and earned: oppressive negative space, obstructed sightlines, unsettling stillness, tiny impossible movements, slow visual reveals, dread before the scare, then one sharp startling beat. No generic horror montage, no random extra people, no exaggerated monster faces, no gore, no comedy, no glossy video-game CGI. Keep Mira and Crane’s faces, age, proportions, hair, clothing, scar, glasses and screen direction exactly consistent. Make the acting restrained and psychologically believable: shallow involuntary breaths, jaw tension, tiny eye movements, frozen posture, trembling fingers, delayed reactions. Audio must distinguish ON-SCREEN DIALOGUE from OFF-SCREEN NARRATION; never assign narration to a visible character.";
+const AUDIO_RULE="CRITICAL AUDIO / SPEAKER SEPARATION: Any line labeled OFF-SCREEN VOICE-OVER is an external narrator track laid over the picture, NOT dialogue inside the scene. The narrator is an unseen voice outside the room and outside the characters’ world. Do NOT show the narrator. Do NOT make Mira, Crane, or any visible person speak, whisper, mouth, lip-sync, or gesture as if delivering that narration; while VO plays, every visible mouth remains naturally closed and the character only performs silent physical acting. Do not attach the narrator voice to the visible character, even if the narration is written in first person. Only text explicitly marked DIALOGUE and attributed by name may be spoken by an on-screen character, with matching lip movement. If a clip contains VO but no marked dialogue, all visible characters remain completely silent. Keep speech intelligible and separate from the sound design; do not invent extra dialogue or voices.";
+const CH={
+M:"MIRA VOSS: woman, 29, South-Asian, short black chin-length bob with wet strands, a thin pale scar through her LEFT eyebrow, large dark expressive eyes with dark circles, wearing a mustard-yellow rain jacket over a grey motel-uniform shirt, silver crescent-moon necklace, name tag reading “MIRA”.",
+C:"MR. CRANE: very tall gaunt man, 50s, deathly pale skin, thin wire round glasses, slicked grey hair, long soaked charcoal trench coat that drips constantly, black leather gloves, unnaturally calm half-smile, never blinks."};
+const EV={
+R:"LOCATION: Hollow Pine Motel exterior at 3 a.m., a one-storey L-shaped motel in a dark pine forest, torrential rain, red neon sign “VACANCY” with the letters “NO” burnt out and flickering, puddled gravel lot, only two old cars.",
+D:"LOCATION: ONE fixed, rectangular motel lobby with a simple, unchanging floor plan. The FRONT/EXTERIOR wall has exactly ONE entrance: a solid-framed glass-and-wood motel door with a visible handle and lock. Immediately beside that same door is ONE separate large rain-streaked FIXED window facing the parking lot; the window is sealed shut, is NOT a door, has no handle, and nobody can enter or exit through it. No other exterior doors, side entrances, openings, or walk-through gaps anywhere. The long worn wooden front desk faces the entrance from inside, with a brass bell and cereal bowl on it. An old CRT CCTV monitor sits beside the fixed window; a wall-mounted CCTV monitor and wooden key rack with numbered brass keys are on the RIGHT wall. Wood-panelled walls, buzzing fluorescent tube on stained drop ceiling, cream-shaded table lamps, warm amber lamplight. Keep this exact geometry and the same entrance/window positions in every lobby shot.",
+H:"LOCATION: Motel corridor, narrow, peeling green wallpaper, brass door numbers, flickering ceiling bulbs, worn red carpet, door 9 at the far end.",
+N:"LOCATION: Room 9, frozen in 2015: thick dust, faded floral wallpaper, iron bed with a wet man-shaped dent in the sheets, old CRT TV, nightstand with a lamp, a wooden closet, cold blue moonlight through net curtains."};
+const AN={R:"Establishing",D:"Lobby",H:"Corridor",N:"Room 9"};
+function geographyLock(sc,n){
+ if(sc==="D") return "HARD SPATIAL CONTINUITY — LOBBY: The lobby has one and only one exterior entrance door. Beside it is a separate fixed, sealed rain-streaked window; it is glass, not a door, has no handle, and can never be used as an entrance or exit. No extra doors, openings, gaps, portals, or changing walls. The front desk, brass bell and cereal bowl stay in the same position; the CCTV monitor remains beside the window; the key rack and wall monitor remain on the right wall. Keep the same room dimensions, camera axis, door/window relationship, and character positions from the supplied reference frame. Anyone entering from outside must visibly cross the threshold of the one entrance door. Anyone leaving must use that door unless the written action explicitly shows the Room 9 window being smashed in Clip 27.";
+ if(sc==="H") return "HARD SPATIAL CONTINUITY — CORRIDOR: One narrow straight motel corridor with peeling green wallpaper, red carpet, ceiling bulbs, and numbered doors along the same walls. Room 9 stays at the far end. Characters move along the corridor physically; never jump between lobby and corridor without passing through a visible doorway. Do not create extra corridors, side exits, or move door 9 to a different wall.";
+ if(sc==="N") return "HARD SPATIAL CONTINUITY — ROOM 9: Keep one stable room layout: iron bed in the centre, nightstand and lamp on the right, wooden closet on the left, CRT television and faded floral wallpaper, net-curtained window. Keep these objects anchored in place across shots. Characters enter through the room door, not through walls. The window is ordinary glass and remains intact except in Clip 27, where Mira explicitly smashes through it to escape.";
+ return "HARD SPATIAL CONTINUITY — EXTERIOR: The motel remains the same one-storey L-shaped building in the same rain-soaked pine-forest lot, with the same neon sign, gravel, and only two old cars. The lobby entrance is a single identifiable door; the adjacent lobby window is not an entrance. Preserve travel direction and relative distances. No new buildings, doors, vehicles, or people.";
+}
+const ACTS={1:"Act 1 · The Guest",11:"Act 2 · The Ledger",19:"Act 3 · Room 9"};
+// [scene, chars, shot]
+const CL=[
+["R","M","Mira stands at the lobby door in the pouring rain, key trembling in her hand; she glances over her shoulder: far down the dark sidewalk a tall silhouette in a long coat walks slowly toward her out of the rain. She turns and pushes the door open. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “Hollow Pine Motel. Two forty-seven a.m. Nothing happens here. Nothing. Until him.” Mira stays silent; her lips do not move."],
+["D","M","Continuous: Mira bursts through the door into the lobby, slams it and turns the lock, presses her back against it breathing hard, then looks out the rain-streaked window: the sidewalk is empty. She forces herself to the desk. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “Calm down, Mira. Nobody’s there.” Mira stays silent; her lips do not move."],
+["D","MC","CONTINUITY IS CRITICAL: use the exact same lobby floor plan and the exact same single entrance door seen in Clip 2. The large window beside it is fixed glass, NOT a doorway; absolutely nobody enters through a window or a second entrance. Start with Mira already inside behind the front desk, as at the end of Clip 2. The brass bell on the desk DINGS by itself. Mira freezes and looks toward the ONE entrance door. That same door slowly opens inward; Crane is standing OUTSIDE in that exact doorway, framed by the rain. He steps across the threshold into the lobby, leaving the window untouched. Keep Mira and Crane on the same side of the room as established; no teleporting, no new doorways, no changed architecture. Mira forces a nervous smile and says quickly: “Rough night?” Crane tilts his head, silent."],
+["D","C","Extreme close-up of Crane’s pale face, wet glasses, slow unsettling smile. He says softly: “Room nine, please.”"],
+["D","MC","CONTINUITY LOCK: Crane entered the lobby through the ONE front entrance in Clip 3 and has remained INSIDE ever since. Clip 4 showed him speaking inside this lobby. He is STILL INSIDE the lobby on the visitor side of the front desk, facing Mira; he is NOT outside, NOT at the window, NOT in a reflection, and NOT looking in from outdoors. This is a close-up on Mira as her smile collapses and her eyes snap toward the key rack; key 9 sways by itself. Keep Crane physically present in the same lobby, visible softly out of focus behind/near the desk if the framing allows. The adjacent rain-streaked window stays empty. Mira whispers fast: “Nine’s been closed. Eleven years.”"],
+["D","MC","Crane lays three old gold coins on the desk; they steam in the cold air. Mira stares, shaking. Crane: “Pay in advance. I insist.” Camera push-in on the coins."],
+["D","MC","Crane leans over the desk, inches from her face. Crane says, softly: “You remember me, Mira.” She recoils, hand covering her name tag. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “I never told him my name.” Mira stays silent during the narration; her lips do not move."],
+["D","M","Mira’s trembling hand lifts key 9 off the hook; she hands it over without looking up, jaw clenched, eyes wet with fear. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD, RAPID: “Just give him the key. Just let him go.” Mira stays silent; her lips do not move."],
+["H","C","Smooth tracking shot behind Crane walking down the corridor; the ceiling bulbs die one by one behind him, darkness chasing him. He never looks back."],
+["H","MC","From the lobby window, Mira watches Crane reach door 9 – it creaks open before he touches it. He steps in; the door shuts. Every light on the strip goes out. She gasps: “No. No, no, no.”"],
+["D","M","Mira flips open a dusty guest ledger, fingers racing down pages; she stops at an entry from eleven years ago, room 9, signed “A. Crane”, dated TONIGHT. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “That’s impossible.” Mira remains silent; her lips do not move."],
+["D","MC","Mira stares at the CCTV monitor: camera 9 shows an empty room, TV static hissing. She leans closer; for one frame Crane’s pale face, recognizable by his wire glasses and gaunt features, fills the screen then vanishes. She jerks back. Crane appears only on the CCTV feed, not physically in the lobby."],
+["D","M","Mira grabs the desk phone, dials the owner, listens: a robotic voice says “number disconnected”. She slams it down. Instantly the phone rings, caller ID glowing: ROOM 9."],
+["D","M","Mira answers with shaking hand. A distorted whisper: “Don’t look at the window.” Her eyes slowly slide toward the window against her will, tears rolling. Quick breath: “Please…”"],
+["D","MC","Reflection shot: through the rain-streaked window Crane stands outside, motionless in the downpour, staring straight at Mira. Lightning flashes; he is gone, leaving wet footprints. Crane is physically visible outside the window in this specific supernatural shot; preserve the established motel lobby and window geography."],
+["D","M","The wet footprints lead from the window to the front door; the door handle turns slowly; the lock bolt clicks open by itself. Mira backs into the wall, whispering: “Stay out. Stay out.”"],
+["D","M","The door swings wide on empty rain. Nothing there. Mira panics, grabs a flashlight and the master key, and stares at the dark lot. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD: “If I don’t look, it’s real. So I look.” Mira stays silent; her lips do not move."],
+["D","M","Close-up of Mira’s determined, terrified face, scar visible; she zips her yellow jacket, jaw tight, and pushes through the door into the storm. OFF-SCREEN VOICE-OVER — MIRA'S INTERNAL NARRATION, NOT SPOKEN ALOUD, FAST: “Eleven years. Time to find out why.” Mira stays silent; her lips do not move."],
+["R","M","Wide tracking shot: Mira marches across the rain-flooded lot, flashlight beam slicing the dark; both cars have fogged windows covered in small handprints. She flinches, keeps going."],
+["H","M","Mira at door 9, ear against the wood. Inside: a ticking clock and a child’s lullaby hummed by a man. Her eyes widen; she mouths, “I know that song.” Hand on the knob, trembling."],
+["N","M","She opens the door: a perfectly preserved 2015 room, thick dust, but the bed holds a fresh wet man-shaped dent. Flashlight sweeps; she whispers fast: “He was just here.”"],
+["N","M","On the nightstand, a framed photo of a small girl with a scar over her left eyebrow beside a man with his face scratched out. Mira’s hand covers her mouth; flashlight shakes. “That’s… me.”"],
+["N","MC","Rapid flashback montage inside her eyes: lightning, a child in a yellow raincoat, and Crane’s recognizable black leather-gloved hand reaching down from a long charcoal trench-coat sleeve. Mira staggers, clutching her scar, gasping: “He took me. He took me here.” Use Crane’s character reference to keep the glove, sleeve, and implied identity consistent; do not reveal a full new character."],
+["N","M","Behind her the wooden closet door creaks open on its own. She turns the beam: dozens of tiny to adult-size yellow raincoats on hangers, each tag reading “MIRA”, one per year. She whispers: “No.”"],
+["N","M","Mira backs away in horror; the room door SLAMS shut, the flashlight dies, total darkness, her breathing loud and ragged. A hundred whispers overlap: “Welcome home, Mira.”"],
+["N","MC","Flashlight flickers on: Crane stands inches behind her, glasses glinting. Flicker off. On again: closer, smile wider. Off. On: his gloved hand rests on her shoulder. Mira screams."],
+["N","M","Mira spins and drives her shoulder into the window, glass explodes outward, she dives through into the rain, landing hard in the gravel, gasping, bleeding from her palm, then scrambles up and runs."],
+["R","M","Mira sprints toward the lobby; behind her the neon sign flickers and turns fully lit: “NO VACANCY”. Every motel door opens at once; silhouettes in yellow raincoats stand in each. She doesn’t look back."],
+["D","MC","Mira bursts into the lobby, slams and locks the door, slides down it, breathless. On the CCTV monitor, the lobby camera shows her sitting there – and a calm Crane standing right behind her. She stops breathing. CUT TO BLACK. Text: TO BE CONTINUED."]
+];
+
+// ---------- RENDER ----------
+const CUTS=new Set([4,5,6,8,9,10,11,15,16,18,19,20,22,28,29]);
+const isCut=n=>n>1&&CUTS.has(n);
+const OPEN="Mira stands outside the motel lobby door in the rain, wet and frightened, wearing her mustard-yellow raincoat, looking toward the camera.";
+function locationAsset(sc){return sc==="R"?["ref:L1","L1 — Location – exterior lot"]:sc==="D"?["ref:L2","L2 — Location – lobby"]:sc==="H"?["ref:L3","L3 — Location – corridor"]:["ref:L4","L4 — Location – Room 9"];}
+function characterIngredients(ch){return [...ch].map(c=>c==="M"?"@Mira":"@Crane").join(" + ");}
+function clipAssetButtons(n){const [sc,ch]=CL[n-1],loc=locationAsset(sc),parts=[{k:loc[0],label:"Copy location image · "+loc[1].replace(/^L[1-4] — /,""),primary:true}];for(const code of ch){const k=code==="M"?"ref:M1":"ref:C1";parts.push({k,label:"Copy "+(code==="M"?"Mira":"Crane")+" character image"});}return '<div class="clip-assets"><b>📎 Images for this clip — copy here, no need to return to Storyboard</b><div class="asset-buttons">'+parts.map(a=>AS[a.k]?'<button data-ci="'+a.k+'" class="'+(a.primary?'p':'')+'">'+a.label+'</button>':'<span class="tag missing">Missing: '+a.label+'</span>').join("")+'</div><div class="sub">Copy the location image first (most important), then the listed character image(s). In Flow, add these saved images as references/ingredients when the shot needs a fresh setup. For a chained shot, keep the prior clip’s actual final frame as the start frame.</div></div>';}
+
+function startNote(n){const sc=CL[n-1][0],ch=CL[n-1][1],loc=locationAsset(sc),assetSaved=!!AS[loc[0]],locStatus=assetSaved?"saved in Storyboard → Reference sheets":"create/upload it in Storyboard → Reference sheets";const locationLine=`<br><b>EXACT LOCATION IMAGE:</b> ${loc[1]} (asset ID <code>${loc[0]}</code>; ${locStatus}). Use this location image for this clip’s setting — do not guess or use a different location.`;const chars=characterIngredients(ch);if(n===1)return `<b style="color:#ff4d4d">OPEN:</b> Flow → Video → Frames. Start frame = your Mira-at-the-door image (yellow jacket). Never start Clip 1 from text only.${locationLine}<br><b>Characters:</b> ${chars}. Use the Mira character reference; the location image is <b>L1, exterior lot</b>.`;if(isCut(n))return `<b style="color:#ff4d4d">CUT:</b> do NOT use the last frame of Clip ${n-1}. Use Flow’s Ingredients mode. Add character ingredient(s): <b>${chars}</b>. Add this exact location image: <b>${loc[1]}</b> (asset ID <code>${loc[0]}</code>) — not a random location image. Find it in Storyboard → Reference sheets; if it is not saved yet, generate/upload it there first.${locationLine}`;return `<b style="color:#3ddc97">CHAIN:</b> start frame = last frame of Clip ${n-1} (or K${n-1}); preserve that exact frame as the start. Required setting reference for this clip: <b>${loc[1]}</b> (asset ID <code>${loc[0]}</code>). Do not replace the previous-frame start with the location image. If Flow allows a location ingredient alongside the start frame, add this exact image; otherwise use the previous frame as the start and follow the location description in the prompt.${locationLine}<br><b>Characters in this clip:</b> ${chars}.`;}
+function build(i){const[sc,ch,t]=CL[i],n=i+1;let p=[];
+ const voiceAt=t.indexOf("OFF-SCREEN VOICE-OVER"),action=voiceAt<0?t:t.slice(0,voiceAt).trim(),voice=voiceAt<0?"":t.slice(voiceAt).trim();
+ if(inc.checked){p.push(STYLE);for(const c of ch)p.push(CH[c]);p.push(EV[sc]);}
+ p.push(geographyLock(sc,n));
+ p.push("FORMAT AND DURATION: Generate exactly one 10-second cinematic video clip. Aspect ratio is "+(ar.value==="9:16"?"9:16 vertical portrait":"16:9 landscape")+". This is one precise story beat in a continuous feature film, not a trailer or a montage. Use realistic human motion, coherent spatial geography, physically plausible movement, and deliberate pacing. No subtitles, captions, title cards, logos, or generated text unless the shot specifically calls for the motel sign or the final TO BE CONTINUED card.");
+ if(n==1)p.push("START FRAME LOCK: The supplied start frame is the exact first frame. Begin with its composition, pose, wardrobe, lighting and screen direction; do not redesign or jump ahead: "+OPEN);
+ else if(!isCut(n))p.push("START FRAME LOCK: Begin from the supplied previous clip’s final frame. Match its exact composition, character position, facial identity, wardrobe, prop placement, lighting, weather, camera axis and screen direction. Continue naturally from that instant; no reset, no jump cut, no teleportation: "+KF[i-1][2]);
+ else p.push("REFERENCE / CUT LOCK: This is an intentional new shot. Use the attached character and location references to preserve exact identity and geography. Establish the listed shot immediately; do not borrow an incorrect pose from the previous clip.");
+ p.push("DIRECTOR'S SHOT PLAN — STRICT 10-SECOND TIMELINE: 0.0–2.0s: establish the exact opening composition and let the threat or unease register before the main action; use restrained movement and meaningful silence. 2.0–5.0s: perform the action below in clear, readable physical steps; build tension through eye-line, hands, breath, distance, and the environment reacting subtly. 5.0–8.0s: intensify the dread with a controlled camera move or a single carefully timed reveal; do not rush through multiple events. 8.0–10.0s: land on the specified end-state image, hold long enough for the fear to register, and leave a disturbing unresolved beat. Adapt these beats to the described action without inventing new plot events.");
+ p.push("VISIBLE ACTION AND PERFORMANCE: "+action+" Play fear with specific micro-behaviour, not generic wide-eyed acting: breath catches in the throat, fingers hesitate, eyes track something before the head moves, shoulders lock, a swallow fails, or a forced smile breaks. Use only reactions appropriate to this exact beat. The characters must physically perform the action shown; do not merely pose while the camera moves.");
+ p.push("CAMERA AND COMPOSITION: Use one motivated continuous take unless this clip is explicitly an intentional new shot. Choose a precise cinematic movement that supports the emotion—slow creeping push-in for dread, restrained handheld drift for panic, locked-off framing for unnatural stillness, or a deliberate tracking move when movement is essential. Keep faces readable when their reaction matters. Maintain left/right geography, eyelines and screen direction. Use foreground obstruction, deep negative space, selective focus and practical light to conceal/reveal information. Avoid random zooms, frantic camera shake, needless cuts, impossible camera travel, or showing the threat too clearly too soon.");
+ p.push("SUSPENSE AND HORROR INTENSITY: Make this genuinely frightening, not merely rainy or gloomy. Sustain anticipation; let the frame contain something unsettling before the viewer fully understands it. Use subtle environmental wrongness (a light dying, a reflection disagreeing, a door moving without contact, an impossible still figure) only where supported by the described action. Escalate from quiet unease to acute fear, with one precise payoff rather than a constant loud jump scare. No random supernatural effects beyond the scene description, no extra characters, no gore.");
+ p.push("SOUND DESIGN: Generate only location ambience and motivated physical sound effects: rain, fluorescent hum, distant wind, room tone, fabric movement, footsteps, wood creaks, keys, paper, phone or door sounds only when visible action supports them. No narrator track and no speech-like ambience. If this clip contains explicitly attributed ON-SCREEN DIALOGUE, generate only that exact line for the named speaker. Any POST-PRODUCTION VOICE-OVER SCRIPT is NOT to be voiced in this generation; it will be added separately during editing. Do not add extra whispers, unexplained voices, lyrics, grunts that resemble words, or improvised dialogue.");
+ if(voice)p.push("POST-PRODUCTION VOICE-OVER CUE: The clip card contains a narration line for the editor, but that line is intentionally omitted from this generation prompt. Do not generate or imitate any narrator audio. Add the narration separately in the video editor after rendering. The picture must work as a silent performance under later narration.");
+ const hasDialogue=/(?:\b(?:Mira|Crane)\b[^.!?]{0,100}\b(?:says?|whispers?|murmurs?|asks?|answers?|shouts?|calls?|gasps?)\b[^.!?]{0,100}[“"]|\b(?:says?|whispers?|murmurs?|asks?|answers?|shouts?|calls?|gasps?|voice says|distorted whisper|robotic voice says)\b[^.!?]{0,100}[“"])/i.test(action) && !/\b(?:mouths?|silently mouths?)\b/i.test(action);
+ if(hasDialogue)p.push("ON-SCREEN DIALOGUE ONLY: Speak only the exact quoted words attributed to the named character in the action. The named speaker alone moves their lips in natural sync while speaking. Other visible characters stay silent. Do not add, paraphrase, or repeat any line.");
+ else p.push("NO ON-SCREEN SPEECH: Generate no human voice at all: no character dialogue, narration, whisper, vocalization, or speech-like sound. Every visible character remains silent, with a relaxed naturally closed mouth and no speech-like mouth movement. Show emotion through eyes, brows, breathing, shoulders, hands, and posture instead.");
+ p.push("FINAL AUDIO / MOUTH RULE: The generated clip is picture-first. The only permitted human speech is exact ON-SCREEN DIALOGUE explicitly attributed to a visible character. Voice-over script is for post-production only and must not be generated. During silent beats, use closed-mouth silent acting: focused eye movements, tense brow, shallow breathing through the nose, a swallow, still jaw, trembling fingers, or a slow head turn. Avoid repeated jaw cycles, mouthing, lip-sync, muttering, and conversational facial animation.");
+ p.push("END FRAME TARGET: Finish on this exact composition and story state; preserve identity, wardrobe, prop continuity, lighting and screen direction. Do not resolve the mystery or add a new event after this image: "+KF[i][2]);
+ p.push("NEGATIVE CONSTRAINTS: no character redesign, no face morphing, no extra fingers/limbs, no duplicated people, no floating props, no accidental wardrobe or hair changes, no changing motel layout, no random text, no subtitles, no lip-sync, no speech-like mouth movement during silent beats, no sudden location change, no unmotivated jump scare.");
+ return p.join("\n\n");}
+function nextIdx(){return CL.findIndex((_,i)=>!(S[i+1]&&S[i+1].done));}
+function render(){let h="";CL.forEach((c,i)=>{const n=i+1,s=S[n]||{};const m=i*10,tc=`${Math.floor(m/60)}:${String(m%60).padStart(2,"0")}`;
+ if(ACTS[n])h+=`<div class="act">${ACTS[n]}</div>`;
+ h+=`<div class="card ${s.done?"done":""} ${i===nextIdx()?"next":""}" id="c${n}"><div class="top"><label><input type="checkbox" data-d="${n}" ${s.done?"checked":""}></label><span class="n">Clip ${n}</span><span class="tag">${tc}</span><span class="tag">${AN[c[0]]}</span>${[...c[1]].map(x=>`<span class="tag">${x=="M"?"Mira":"Crane"}</span>`).join("")}
+ <span style="flex:1"></span><button data-c="${n}" class="p">Copy prompt</button></div>
+ <div class="shot">${c[2]}</div>
+ <div class="sub">${startNote(n)} End frame: K${n}. ${n>1&&!isCut(n)&&AS["kf:"+(n-1)]?`<button data-ci="kf:${n-1}">Copy start img</button>`:""} ${AS["kf:"+n]?`<button data-ci="kf:${n}">Copy end img</button>`:""}</div>${clipAssetButtons(n)}
+ <div class="shot" style="border-top:1px solid var(--line);padding-top:9px"><div class="top"><b>🎬 End frame K${n}</b><span class="sub">Target image for the final moment of Clip ${n}</span><span style="flex:1"></span><button data-ip="${REFS.length+i}">Copy end-frame image prompt</button><button class="p" data-paste-key="kf:${n}">Paste image</button><input type="file" accept="image/*" data-up="kf:${n}" style="max-width:170px"></div><div class="sub" style="margin-top:5px">Generate this still image, then upload it or click “Paste image” and press Ctrl+V. For Flow, use it as the optional end frame. ${AS["kf:"+n]?"Saved end frame ✓":"No end-frame image uploaded yet."}</div>${AS["kf:"+n]?`<img src="${AS["kf:"+n]}" style="max-width:260px;max-height:180px;object-fit:contain;border-radius:8px;margin-top:6px">`:""}</div>
+ <input type="text" data-n="${n}" placeholder="notes (e.g. seed, what to fix, file name)" value=""></div>`;});
+ clips.innerHTML=h;CL.forEach((_,i)=>{const e=document.querySelector(`[data-n="${i+1}"]`);if(e)e.value=(S[i+1]||{}).note||""});
+ stat();}
+function getCurrentClip(){let n=0;try{n=+(localStorage.getItem("r9-current-clip")||0)}catch(_){}if(n>=1&&n<=CL.length)return n;const i=nextIdx();return i>=0?i+1:CL.length;}
+function setCurrentClip(n,scroll=false){n=Math.max(1,Math.min(CL.length,+n||1));try{localStorage.setItem("r9-current-clip",String(n))}catch(_){}if(scroll){const el=document.getElementById("c"+n);if(el)el.scrollIntoView({behavior:"auto",block:"start"});}}
+window.addEventListener("scroll",()=>{if(document.getElementById("clips").classList.contains("hide"))return;const cards=document.querySelectorAll("#clips .card[id^='c']");let current=null;for(const el of cards){const r=el.getBoundingClientRect();if(r.top<=180&&r.bottom>180){current=el;break;}}if(current)setCurrentClip(current.id.slice(1),false);},{passive:true});
+function copy(txt,btn){txt=txt.replace(/16:9 landscape/g,ar.value=="9:16"?"9:16 vertical portrait":"16:9 landscape").replace(/16:9/g,ar.value);navigator.clipboard.writeText(txt).then(()=>{if(btn){const o=btn.textContent;btn.textContent="Copied ✓";setTimeout(()=>btn.textContent=o,1200)}})}
+document.addEventListener("click",e=>{const b=e.target;
+ const clipCard=b.closest&&b.closest("#clips .card[id^='c']");if(clipCard)setCurrentClip(clipCard.id.slice(1),false);
+ if(b.dataset.c){setCurrentClip(b.dataset.c,false);copy(build(b.dataset.c-1),b);}
+ if(b.dataset.d){const n=+b.dataset.d;S[n]=S[n]||{note:""};S[n].done=b.checked?1:0;save(n);if(b.checked){const ni=nextIdx();setCurrentClip(ni>=0?ni+1:CL.length,false);}else setCurrentClip(n,false);render();if(!document.getElementById("clips").classList.contains("hide"))setCurrentClip(getCurrentClip(),true);}
+ if(b.id==="nx"){const i=nextIdx();if(i<0)return;setCurrentClip(i+1,false);document.querySelector('[data-t="clips"]').click();copy(build(i),b);document.getElementById("c"+(i+1)).scrollIntoView({behavior:"auto",block:"start"});}
+ if(b.dataset.t){["prep","clips","story","bible","guide"].forEach(k=>document.getElementById(k).classList.toggle("hide",k!==b.dataset.t));document.querySelectorAll("[data-t]").forEach(x=>x.classList.toggle("on",x===b));if(b.dataset.t==="clips")setCurrentClip(getCurrentClip(),true);}});
+document.addEventListener("change",e=>{const n=e.target.dataset.n;if(n){S[n]=S[n]||{done:0};S[n].note=e.target.value;save(+n);}});
+
+bible.innerHTML=`<div class="card"><h2>Logline</h2>Night clerk Mira Voss gets a pale guest who asks for the room closed for eleven years. He knows her name, her scar, and why she never remembers her childhood.</div>
+<div class="card"><h2>Style lock (paste in every prompt)</h2><pre>${STYLE}</pre><button data-k="s">Copy</button></div>
+<div class="card"><h2>Mira</h2><pre>${CH.M}</pre><h2>Mr. Crane</h2><pre>${CH.C}</pre></div>
+<div class="card"><h2>Locations</h2>${Object.entries(EV).map(([k,v])=>`<pre>${v}</pre>`).join("")}</div>
+<div class="card"><h2>Series arc (next episodes)</h2><ol><li>Ep1 Room 9 – the arrival, the ledger, the closet of raincoats (this)</li><li>Ep2 The Other Guests – the yellow-coat figures; Mira meets the one who escaped</li><li>Ep3 Eleven Years – flashbacks; why Crane collects clerks</li><li>Ep4 Checkout – Mira uses the ledger to break the deal</li></ol><div class="sub">Ask me for Episode 2 and I’ll add it to this same tracker.</div></div>`;
+guide.innerHTML=`<div class="card"><h2>How Flow works (from Google’s Flow help pages)</h2><ul>
+<li><b>Characters:</b> in a project, left menu → Characters → New Character. One character per person. Only ONE image is required; Flow can then create the body for you (“Create body”). Google’s help page says “1 or 2 images”. You add a name, a voice and optional character info. In a prompt, type <code>@</code> and pick the name (for example @Mira).</li>
+<li><b>Two video modes</b> (click the model name → Video): <b>Frames</b> (a start frame and an optional end frame) and <b>Ingredients</b> (characters, location images, voices).</li>
+<li>Reference images work best on a <b>plain background</b>, and your text must not contradict your images.</li>
+<li>Voice references work only in Ingredients mode with the Omni Flash model. Clips can be 4, 6, 8 or 10 seconds on Omni Flash: pick 10 s.</li>
+<li>Scenebuilder in Flow can assemble clips into a sequence that you download as one file.</li>
+<li>Not confirmed by me: whether @Mira can be used together with Frames. Test it once on Clip 1.</li></ul></div>
+<div class="card"><h2>1. Chained clips (CHAIN)</h2><ol>
+<li>Download the clip. Open the Frame grabber at the top of this page, choose the file, check the last frame is sharp (use “step back” if not), click Copy frame.</li>
+<li>In Flow: Video → Frames. Paste the frame into “+ Add start frame”. Optionally add the matching K image as the end frame.</li>
+<li>Paste the prompt from the Clips tab. It already says what the start frame shows (START STATE), what happens (ACTION) and where it ends (END STATE).</li>
+<li>Pick the best take. Don’t continue from a clip whose last frame has a wrong face; regenerate it.</li>
+<li>Write the take/file name in the note box and tick the clip.</li></ol></div>
+<div class="card"><h2>2. New angle or place (CUT)</h2><ul>
+<li>Do NOT use the last frame of the previous clip. Use Video → Ingredients: type @Mira and/or @Crane and add the location image.</li>
+<li>Reason: the start frame beats everything else. A start frame from another place makes Flow blend two scenes.</li>
+<li>Every prompt must match its start frame. Never write an action that begins somewhere different.</li></ul></div>
+<div class="card"><h2>3. Character consistency</h2><ul>
+<li>One Flow character per person (Mira, Crane), made from ONE image on a plain white background. Let Flow’s “Create body” make the body, then check it still matches. Never several characters for one person.</li>
+<li>Keep the fixed details: Mira’s yellow raincoat, silver crescent necklace, name tag and scar on the LEFT eyebrow; Crane’s round wire glasses, grey slicked hair and long charcoal coat.</li>
+<li>Faces drift in wide shots. Prefer medium and close shots.</li>
+<li>Chaining many clips loses quality. Every 3 to 4 clips, re-anchor with an Ingredients clip using the characters.</li></ul></div>
+<div class="card"><h2>4. Scene and story consistency</h2><ul>
+<li>Keep the style lock and location text identical (the tracker adds them when “include style + character blocks” is ticked).</li>
+<li>Locations: save the four location images in Storyboard and add the right one in Ingredients mode.</li>
+<li>Generate in story order. Use the end-frame keyframes (K images) to keep important moments on target.</li>
+<li>When editing: trim 0.2 to 0.4 s from the start of each clip to hide seams; add continuous rain and music under everything.</li></ul></div>
+<div class="card"><h2>5. Voices and voice-over (researched prompting practice)</h2><ul>
+<li>Google’s <a href="https://deepmind.google/models/veo/prompt-guide/" target="_blank" rel="noopener">official Veo prompt guide</a> recommends clear shot/action/audio directions. But a prompt saying “Mira’s internal narration” can still cause Veo to animate Mira as if she is speaking, especially when the narration is first-person. Lip movement is not reliably controllable by negative wording alone.</li>
+<li><b>New rule for this tracker:</b> any line marked <b>OFF-SCREEN VOICE-OVER</b> is a <b>POST-PRODUCTION VOICE-OVER SCRIPT — REFERENCE ONLY</b>. It is not requested as generated audio. Generate the visuals and natural ambience first; add the narration later as a separate audio track in your editor. This avoids asking Veo to synthesize narration while showing Mira.</li>
+<li>For clips with actual on-screen dialogue, only the explicitly attributed line is generated as speech. The voice-over text is reserved for editing. For silent shots, the prompt requests natural closed-mouth acting and gives Mira physical alternatives—eye movements, restrained breathing, hands, posture—instead of merely repeating “do not move lips.”</li>
+<li>Google Flow has a <a href="https://support.google.com/flow/answer/16935718?hl=en" target="_blank" rel="noopener">video edit and scene-building guide</a>. If your Flow settings offer <b>Return silent videos</b>, turn it on for silent/VO shots, then add narration in post. This is more reliable than trying to force generated narration to remain disconnected from a visible face. Always inspect the result; prompt changes improve odds but cannot guarantee exact facial motion.</li></ul></div>
+<div class="card"><h2>6. Database</h2>Progress is stored in table <code>clip_progress</code> and images in <code>assets</code>. If the cloud is unreachable the page falls back to local storage. “Reset all” in the top bar clears progress (and optionally images). This file contains your database token: keep it private.</div>`;
+document.addEventListener("click",e=>{if(e.target.dataset.k)copy(STYLE,e.target)});
+inc.addEventListener("change",()=>{});
+// ---------- STORYBOARD (image prompts + saved images) ----------
+const IMG="Cinematic photoreal still frame, 16:9, 35mm anamorphic lens, teal-and-amber color grade, heavy rain, deep shadows, film grain, highly expressive faces. No text, no watermark.";
+const REFSTYLE="Character reference photo, photoreal, 35mm lens, plain pure white studio background, soft even lighting, sharp focus on the face and clothing, no rain, no text, no watermark, 16:9.";
+const REFS=[
+["M1","Mira – close-up","M","","Head-and-shoulders portrait facing the camera, neutral wary expression, the scar on her left eyebrow, raincoat, necklace and name tag all clearly visible."],
+["C1","Crane – close-up","C","","Head-and-shoulders portrait facing the camera, calm unsettling half-smile, glasses and trench coat collar clearly visible."],
+["L1","Location – exterior lot","","R","Wide establishing shot, no people."],
+["L2","Location – lobby","","D","Wide interior shot, no people."],
+["L3","Location – corridor","","H","Eye-level shot down the corridor, no people."],
+["L4","Location – Room 9","","N","Wide interior shot, no people."],
+["OPEN","Clip 1 start frame – Mira at the lobby door","M","R","Medium shot of Mira outside the lobby door in the rain, wet and frightened, looking toward the camera, a dark sidewalk behind her."]];
+const KF=[
+["R","M","Mira at the open lobby door looking back over her shoulder, a tall silhouette far down the rain-soaked sidewalk, neon VACANCY glow."],
+["D","M","Mira inside at the desk, hands gripping its edge, looking toward the rain-streaked window on the left, untouched cereal bowl and brass bell beside her."],
+["D","MC","The SAME single motel entrance door is open inward; Crane stands in that doorway dripping wet, rain visible only outside the door. The large window immediately beside the entrance is sealed fixed glass and remains closed. Mira is already inside behind the front desk, forcing a nervous smile. Match the established lobby geometry exactly; no extra entrances."],
+["D","C","Extreme close-up of Crane’s pale face, wet glasses, slow unsettling smile."],
+["D","MC","Close-up of Mira terrified in the lobby, key 9 swaying on the key rack behind her; Crane is already INSIDE the lobby on the visitor side of the desk, softly visible in the background. The adjacent rain-streaked window is empty; Crane is not outside, not in the window, and not a reflection."],
+["D","MC","Foreground: three steaming gold coins on the desk and Crane’s gloved hand; Mira staring in the background."],
+["D","MC","Crane leaning over the desk inches from Mira, she recoils covering her name tag."],
+["D","M","Mira’s trembling hand holding out key 9, eyes wet, looking down."],
+["H","C","Back view of Crane walking down the dark corridor, bulbs dead behind him, door 9 at the far end."],
+["H","M","Through the lobby window: corridor in darkness, door 9 closed; Mira’s silhouette in the foreground, gasping."],
+["D","M","Mira bent over the open ledger, finger on an entry, mouth open in shock."],
+["D","M","Mira leaning toward the CCTV monitor, a pale face flashing on the screen."],
+["D","M","Desk phone ringing, caller ID glowing ROOM 9, Mira’s hand hovering over it."],
+["D","M","Mira holding the phone to her ear, tears on her cheeks, eyes sliding toward the window."],
+["D","M","Window reflection: Crane standing outside in the rain staring in, Mira in the foreground."],
+["D","M","Wet footprints crossing the lobby floor to the door, Mira pressed against the wall."],
+["D","M","Front door open on empty rain, Mira clutching a flashlight and master key, staring out."],
+["D","M","Close-up of Mira zipping her yellow jacket, jaw set, storm behind her."],
+["R","M","Wide shot: Mira crossing the flooded lot with a flashlight, fogged car windows covered in small handprints."],
+["H","M","Mira with her ear against door 9, eyes wide, hand on the knob."],
+["N","M","Room 9 interior: dust, the bed with a wet man-shaped dent, Mira’s flashlight beam sweeping."],
+["N","M","Close-up of the framed photo of a scarred girl beside a man with a scratched-out face; Mira’s hand over her mouth."],
+["N","M","Mira staggering, clutching her scarred eyebrow, overexposed flashback glow, ghost image of a child in a yellow raincoat."],
+["N","M","Open closet full of yellow raincoats with tags reading “MIRA”, Mira backing away."],
+["N","M","Near-total darkness, only a dying flashlight glow on Mira’s terrified face, mouth open."],
+["N","MC","Mira screaming, Crane’s gloved hand on her shoulder, glasses glinting in the dark."],
+["R","M","Mira on the gravel in the rain outside the smashed window, glass shards, bleeding palm, getting to her feet."],
+["R","M","Wide shot: Mira running toward the lobby, neon reading NO VACANCY, every motel door open with silhouettes in yellow raincoats."],
+["D","MC","Close-up of the CCTV monitor: Mira sitting against the door and a calm Crane standing right behind her."]];
+const ITEMS=REFS.map(r=>({k:"ref:"+r[0],t:r[1],d:r[4],w:who(r[3],r[2]),p:ip(r[3],r[2],r[4])})).concat(KF.map((f,i)=>({k:"kf:"+(i+1),t:`K${i+1} · end frame of Clip ${i+1}`,d:f[2],w:who(f[0],f[1]),p:ip(f[0],f[1],f[2])})));
+function who(sc,ch){return [...ch].map(c=>c=="M"?"Mira":"Crane").concat(sc?[AN[sc]]:[]).join(" + ")||"no people";}
+const RULES=`You are my image-generation agent for a short suspense film project called ROOM 9. I will use your images as reference images and as start/end frames for AI video clips in Google Flow, so CONSISTENCY matters more than variety.
+
+RULES
+1. One image per request. 16:9 landscape, highest resolution available, photoreal cinematic look. No text, captions, watermarks, borders, collages or split panels (except the neon sign wording when a shot mentions it).
+2. Identity lock: Mira and Mr. Crane must look identical in every image: same face, age, hair, glasses, scar, wardrobe, necklace, name tag. Once I approve a character reference image, use it as the identity source for every later image. Never redesign them.
+3. Location lock: keep each location’s layout identical. Lobby: long wooden desk in the foreground with the brass bell, big rain-streaked window on the LEFT facing the lot, old CRT CCTV monitor by the window, wall-mounted CCTV monitor and wooden key rack on the RIGHT wall. Corridor: green wallpaper, door 9 at the far end. Room 9: iron bed centre, closet on the left wall, nightstand on the right. Exterior: L-shaped motel, neon sign on a pole.
+4. Style lock: apply the STYLE LOCK below to every image so the colour grade, rain, grain and lighting never change.
+5. Work in order: first the reference sheets (M1 and C1 on a plain white studio background, head and shoulders; L1-L4 locations; OPEN). Show me them and wait for my approval of one version of each character. Then generate the keyframes K1-K29 in order, using the approved references.
+6. If a face is off-model, a hand is distorted or the wardrobe is wrong, regenerate before showing me.
+7. Suspense comes from light, shadow and facial expression. No gore. Keep faces highly expressive.
+8. Name each output by its ID, for example ref-M1, kf-05, so I can upload it to the right slot.`;
+function masterBrief(){return RULES+"\n\nSTYLE LOCK:\n"+IMG+"\n\nCHARACTERS:\n"+CH.M+"\n"+CH.C+"\n\nLOCATIONS:\n"+Object.values(EV).join("\n")+"\n\nSHOT LIST (each is its own image; each keyframe is the END frame of a video clip and the START frame of the next):\n"+ITEMS.map(x=>`[${x.k.replace("ref:","ref-").replace("kf:","kf-")}] ${x.t} (${x.w}): ${x.d}`).join("\n");}
+function ip(sc,ch,t){const p=[(!sc&&ch)?REFSTYLE:IMG];for(const c of ch)p.push(CH[c]);if(sc)p.push(EV[sc]);p.push("SHOT: "+t);return p.join("\n\n");}
+let AS={}, activePasteKey=null;
+async function loadAssets(){try{await sql("CREATE TABLE IF NOT EXISTS assets(key TEXT PRIMARY KEY,data TEXT)");(await sql("SELECT key,data FROM assets")).forEach(r=>AS[r[0]]=r[1]);}catch(e){}renderStory();render();}
+function shrink(f){return new Promise(res=>{const im=new Image();im.onload=()=>{const w=Math.min(768,im.width),h=im.height*w/im.width,c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);res(c.toDataURL("image/jpeg",.82));};im.src=URL.createObjectURL(f);});}
+async function putAsset(k,f){const d=await shrink(f);AS[k]=d;try{await sql("INSERT INTO assets(key,data) VALUES(?,?) ON CONFLICT(key) DO UPDATE SET data=excluded.data",[k,d]);}catch(e){alert("Shown here, but cloud save failed.");}renderStory();render();}
+function copyImg(k,b){const im=new Image();im.onload=async()=>{const c=document.createElement("canvas");c.width=im.width;c.height=im.height;c.getContext("2d").drawImage(im,0,0);const bl=await new Promise(r=>c.toBlob(r,"image/png"));try{await navigator.clipboard.write([new ClipboardItem({"image/png":bl})]);const o=b.textContent;b.textContent="Copied ✓";setTimeout(()=>b.textContent=o,1200);}catch(e){alert("Clipboard blocked");}};im.src=AS[k];}
+function renderStory(){story.innerHTML=`<button class="p" data-mb="1">Copy master brief for your image AI agent</button><div class="sub" style="margin:8px 0">Generate each image with its prompt. You can choose a file OR click “Paste image” and press Ctrl+V to paste a copied screenshot/image. It is saved to your database. Order: reference sheets first, then keyframes. Each keyframe = the END frame of that clip and the START frame of the next.</div>`+
+ ITEMS.map((x,i)=>`${i==0?'<div class="act">Reference sheets</div>':i==REFS.length?'<div class="act">Keyframes</div>':""}<div class="card ${AS[x.k]?"done":""}"><div class="top"><span class="n">${x.t}</span><span style="flex:1"></span>${AS[x.k]?`<button data-ci="${x.k}">Copy image</button>`:""}<button class="p" data-ip="${i}">Copy prompt</button><button class="p" data-paste-key="${x.k}">Paste image</button><input type="file" accept="image/*" data-up="${x.k}" style="max-width:170px"></div><div class="sub" style="margin:6px 0">${x.d}</div>${AS[x.k]?`<img src="${AS[x.k]}" style="max-width:280px;border-radius:8px">`:""}</div>`).join("");}
+document.addEventListener("click",e=>{const b=e.target;if(b.dataset.mb)copy(masterBrief(),b);if(b.dataset.ip)copy(ITEMS[b.dataset.ip].p,b);if(b.dataset.ci)copyImg(b.dataset.ci,b);});
+document.addEventListener("change",e=>{const k=e.target.dataset.up;if(k&&e.target.files[0])putAsset(k,e.target.files[0]);});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-paste-key]");if(!b)return;activePasteKey=b.dataset.pasteKey;b.textContent="Now press Ctrl+V…";alert("Copy an image or screenshot first. Now press Ctrl+V anywhere on this page to save it to this slot.");});
+document.addEventListener("paste",e=>{if(!activePasteKey)return;const items=Array.from((e.clipboardData||window.clipboardData).items||[]);const item=items.find(x=>x.type&&x.type.startsWith("image/"));if(!item){alert("No image found on clipboard. Copy an image or screenshot, then press Ctrl+V again.");return;}const file=item.getAsFile();if(file){const key=activePasteKey;activePasteKey=null;putAsset(key,file);}});
+// ---------- START HERE (preparation checklist) ----------
+const PREP=[
+["Set up Flow and this page","In Flow, create one project called ROOM 9. Choose the picture shape in the “shape” box at the top of this page (9:16 vertical or 16:9 wide) and use the SAME shape in Flow for every image and video. Make one folder on your PC for all downloads. Nothing to generate yet.",[],[]],
+["Mira: ONE image","You only need ONE image per character. Plain white background, head and shoulders, showing her face, scar, yellow raincoat, necklace and name tag. Copy the prompt and make 4 or more versions in your image AI, or paste it into the prompt box on Flow’s Characters → New Character page. Pick the best one and upload it here to save it.",["ref:M1"],[]],
+["Make ONE Flow character: Mira","Flow: left menu → Characters → New Character. Upload this one image (or generate it there). Then use Flow’s “Create body” option; if it asks for the outfit and body, use the button below to copy the full description. Check that the body keeps the same face, black bob, yellow raincoat, necklace and name tag, and regenerate the body until it does. Name her exactly Mira, choose a voice, paste the same description into the optional character info box, and click Done. If you already made extra characters (close-up, three-quarter, full body), keep the best one and delete the rest.",[],["ref:M1"],"M"],
+["Crane: ONE image","Plain white background, head and shoulders: pale face, round wire glasses, slicked grey hair, charcoal trench coat, black gloves visible if possible. Upload the winner here.",["ref:C1"],[]],
+["Make ONE Flow character: Crane","Same as Mira: Characters → New Character, upload this one image, use “Create body”, check it still looks like him, name him exactly Crane, choose a voice (different from Mira’s), paste the description into the info box, click Done.",[],["ref:C1"],"C"],
+["Create the 4 locations","No people in these. You already have a good lobby: upload it as the lobby (window on the left, key rack on the right) and make the others in the same look.",["ref:L1","ref:L2","ref:L3","ref:L4"],[]],
+["Clip 1 start frame","Mira at the lobby door in the rain. Attach Mira and the exterior image as references. Or upload your existing yellow-jacket door image. This becomes the FIRST frame of Clip 1.",["ref:OPEN"],["ref:M1","ref:L1"]],
+["End frames for Clips 1 to 3","Make these three now. Make the rest (Storyboard tab) a few at a time, before you need them. Attach Mira, Crane (for K3) and the location image.",["kf:1","kf:2","kf:3"],["ref:M1","ref:C1","ref:L2"]],
+["Generate Clip 1 in Flow","In Flow’s prompt box, click the model name → Video → Frames. Drag the Clip 1 start frame into “+ Add start frame” (optional: K1 into “+ Add end frame”). Paste the Clip 1 prompt, which describes the action between the frames. Set the aspect ratio and length (10 s) and generate. Flow also has an Ingredients mode (used for CUT clips) where you type @Mira to add her. I could not confirm whether @Mira also works together with Frames, so try it on Clip 1: if Flow accepts it, keep it; if not, the start frame already shows Mira. Pick the best take, download it, use the Frame grabber at the top of this page to copy its last frame, then go to Clip 2.",[],["ref:OPEN","ref:M1","ref:L1","kf:1"]]];
+function lab(k){const x=ITEMS.find(i=>i.k==k);return x?x.t:k;}
+function pitem(k){const i=ITEMS.findIndex(x=>x.k==k),x=ITEMS[i];return `<div class="shot" style="border-left:3px solid var(--line);padding-left:8px"><div class="top"><b>${x.t}</b><span style="flex:1"></span><button class="p" data-ip="${i}">Copy prompt</button><input type="file" accept="image/*" data-up="${k}" style="max-width:170px"></div>${AS[k]?`<img src="${AS[k]}" style="max-width:150px;border-radius:8px;margin-top:6px"> <span class="sub">saved ✓</span>`:`<span class="sub">no image saved yet</span>`}</div>`;}
+function att(k){return AS[k]?`<button data-ci="${k}">Copy ${lab(k)}</button> <a class="sub" style="color:var(--ok)" href="${AS[k]}" download="${k.replace(":","-")}.jpg">save file</a>`:`<span class="sub">⚠ ${lab(k)} is not saved yet</span>`;}
+function renderPrep(){prep.innerHTML=`<div class="sub" style="margin:8px 0">Do these in order and tick each step when done. Use the same image AI for all steps. Uploaded images are saved to your database.</div>`+PREP.map((s,i)=>{const d=(S[1000+i]||{}).done;return `<div class="card ${d?"done":""}"><div class="top"><label><input type="checkbox" data-pd="${i}" ${d?"checked":""}></label><span class="n">Step ${i+1}: ${s[0]}</span></div><div class="shot">${s[1]}</div>${s[4]?`<div class="shot"><button data-cb="${s[4]}">Copy character info for Flow</button></div>`:""}${s[2].map(pitem).join("")}${s[3].length?`<div class="shot"><b>Attach these images:</b><br>${s[3].map(att).join("<br>")}</div>`:""}${i==PREP.length-1?`<button class="p" data-c="1">Copy Clip 1 prompt</button>`:""}</div>`;}).join("");}
+document.addEventListener("click",e=>{const b=e.target;if(b.dataset.cb)copy(CH[b.dataset.cb],b);if(b.dataset.pd){const n=1000+ +b.dataset.pd;S[n]=S[n]||{note:""};S[n].done=b.checked?1:0;save(n);renderPrep();}});
+{const o=renderStory;renderStory=()=>{o();renderPrep();};}
+try{ar.value=localStorage.getItem("r9ar")||"9:16";}catch(_){}
+ar.addEventListener("change",()=>{try{localStorage.setItem("r9ar",ar.value);}catch(_){}});
+renderStory();
+// ---------- FRAME GRABBER ----------
+const vid=document.createElement("video");vid.muted=true;vid.preload="auto";
+function gsel(){gn.innerHTML=CL.map((_,i)=>`<option value="${i+1}">${i+1}</option>`).join("");const i=nextIdx();gn.value=i<0?1:i+1;}
+function grab(){if(!vid.duration)return;const back=+go.value*0.04+0.04;gv.textContent=back.toFixed(2)+"s";vid.currentTime=Math.max(0,vid.duration-back);}
+vid.addEventListener("seeked",()=>{gc.width=vid.videoWidth;gc.height=vid.videoHeight;gc.getContext("2d").drawImage(vid,0,0);gc.style.display="block";gs.textContent=gc.width+"×"+gc.height;});
+gf.onchange=()=>{const f=gf.files[0];if(!f)return;vid.src=URL.createObjectURL(f);vid.onloadedmetadata=grab;};
+go.oninput=grab;
+gcp.onclick=async()=>{if(gc.style.display==="none")return;
+ try{const b=await new Promise(r=>gc.toBlob(r,"image/png"));await navigator.clipboard.write([new ClipboardItem({"image/png":b})]);gs.textContent="Copied ✓ now Ctrl+V in Flow";}
+ catch(e){gs.textContent="Clipboard blocked: use Download PNG";return}
+ if(gm.checked){const n=+gn.value;S[n]=S[n]||{note:""};S[n].done=1;save(n);render();gsel();}};
+gdl.onclick=()=>{const a=document.createElement("a");a.href=gc.toDataURL("image/png");a.download="clip"+gn.value+"-lastframe.png";a.click();};
+rs.onclick=async()=>{if(!confirm("Reset ALL progress and ticks?"))return;const di=confirm("Also delete all saved images? OK = delete images too, Cancel = keep images");S={};try{localStorage.removeItem("r9")}catch(_){}
+ try{await sql("DELETE FROM clip_progress WHERE ep=?",[EP]);if(di){await sql("DELETE FROM assets");AS={};}}catch(e){}render();renderStory();stat();};
+load().then(()=>{gsel();return loadAssets();});
+</script></body></html>
