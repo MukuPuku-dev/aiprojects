@@ -108,7 +108,7 @@
   }
 
   async function cacheWriteMany(entries) {
-    if (!entries.length) return;
+    if (!entries.length) return true;
     try {
       const db = await openCache();
       await new Promise((resolve, reject) => {
@@ -122,8 +122,10 @@
         transaction.oncomplete = () => resolve();
         transaction.onerror = () => reject(transaction.error || new Error("Could not update the local image cache"));
       });
+      return true;
     } catch (error) {
       warnCache(error);
+      return false;
     }
   }
 
@@ -301,6 +303,10 @@
       await cacheWrite(cacheKey(key), data);
     }
 
+    async function saveAssetLocal(key, data) {
+      if (!await cacheWrite(cacheKey(key), data)) throw new Error("Could not save the image in this browser's local storage.");
+    }
+
     async function deleteAssets(keys, legacyKeys = {}) {
       const dbKeys = [...new Set(keys.flatMap(key => [databaseKey(key), legacyKeys[key]].filter(Boolean)))];
       if (dbKeys.length) {
@@ -312,7 +318,7 @@
       await cacheDelete(keys.map(cacheKey));
     }
 
-    return { sql, listAssets, getAssets, saveAsset, deleteAssets };
+    return { sql, listAssets, getAssets, saveAsset, saveAssetLocal, deleteAssets };
   }
 
   window.StoryStudioStorage = { createProjectStorage };
