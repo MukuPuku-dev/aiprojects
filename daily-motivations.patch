@@ -1,0 +1,291 @@
+From fd85de4dabc5a6eb705e718aa2b64adaf56d1992 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 29 Oct 2026 10:54:56 +0000
+Subject: [PATCH] feat(daily-motivations): add Daily Motivations project with
+ 30 cinematic Nepali motivation clips for Flow
+
+---
+ platform/projects.js                  |   8 +
+ projects/daily-motivations/index.html | 252 ++++++++++++++++++++++++++
+ 2 files changed, 260 insertions(+)
+ create mode 100644 projects/daily-motivations/index.html
+
+diff --git a/platform/projects.js b/platform/projects.js
+index ef214dc..56fe2c6 100644
+--- a/platform/projects.js
++++ b/platform/projects.js
+@@ -6,5 +6,13 @@ const PROJECTS = [
+     href: "clever-monkey-tracker.html",
+     mark: "🐒",
+     accent: "gold"
++  },
++  {
++    name: "Daily Motivations",
++    type: "Nepali motivation shorts",
++    description: "30 cinematic 10-second Flow clips with original Nepali motivational lines, voice-over scripts, and ready-to-post captions.",
++    href: "projects/daily-motivations/index.html",
++    mark: "🔥",
++    accent: "coral"
+   }
+ ];
+diff --git a/projects/daily-motivations/index.html b/projects/daily-motivations/index.html
+new file mode 100644
+index 0000000..ce054d2
+--- /dev/null
++++ b/projects/daily-motivations/index.html
+@@ -0,0 +1,252 @@
++<!DOCTYPE html>
++<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
++<title>Daily Motivations – Flow Series Workspace</title>
++<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
++<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
++<style>
++:root{--bg:#12100f;--card:#1e1a18;--ink:#f6f1ee;--mut:#b3a69f;--acc:#ff8f5a;--ok:#62d99a;--line:#3a312d;--ne:"Noto Sans Devanagari","Mukta","Nirmala UI","Mangal",system-ui,sans-serif}
++*{box-sizing:border-box}
++body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
++header{position:sticky;top:0;background:#12100fee;backdrop-filter:blur(7px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
++h1{margin:0;font-size:19px}h1 .ne{font-family:var(--ne);font-weight:700;color:var(--acc)}
++h2{margin:18px 0 6px;font-size:17px}h3{margin:14px 0 4px;font-size:15px}
++.sub{color:var(--mut);font-size:12px}
++.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}.bar i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
++nav{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
++button,select{background:#2c2420;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
++button.p{background:var(--acc);color:#2a1004;border-color:var(--acc);font-weight:700}
++button.on{border-color:var(--acc)}
++button:focus-visible,select:focus-visible,summary:focus-visible,input:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
++nav a{color:var(--acc);padding:7px 4px}
++main{max-width:920px;margin:0 auto;padding:14px}
++.hide{display:none}
++.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;scroll-margin-top:150px}
++.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
++.card.done{opacity:.72}
++.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
++.day{background:var(--acc);color:#2a1004;font-weight:800;border-radius:7px;padding:1px 9px;font-size:13px}
++.chip{border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--mut)}
++.chip .ne{font-family:var(--ne)}
++.top label{margin-left:auto;font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center;cursor:pointer}
++.q{font-family:var(--ne);font-size:22px;line-height:1.55;font-weight:700;margin:6px 0 4px}
++.en{color:var(--mut);font-style:italic;margin:0 0 4px}
++.scene{font-size:13px;margin:6px 0 10px}.scene b{color:var(--acc)}
++.btns{display:flex;gap:8px;flex-wrap:wrap}
++details{margin-top:10px}summary{cursor:pointer;color:var(--mut);font-size:13px}
++pre{white-space:pre-wrap;word-break:break-word;background:#0f0c0b;border:1px solid var(--line);border-radius:10px;padding:10px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
++.filters{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
++.filters button{font-size:13px;padding:5px 10px}.filters .ne{font-family:var(--ne)}
++ol,ul{padding-left:20px}li{margin:4px 0}
++.note{border-left:3px solid var(--acc);padding:6px 12px;background:#1a1512;border-radius:0 8px 8px 0;margin:10px 0}
++#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#062014;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
++#toast.show{opacity:1}
++@media(max-width:560px){.q{font-size:19px}}
++</style></head><body>
++<header>
++<h1>🔥 DAILY MOTIVATIONS · <span class="ne">दैनिक प्रेरणा</span> <span class="sub" id="st"></span></h1>
++<div class="sub">Nepali motivation shorts · 30 videos × 10 seconds · generated in Google Flow (Omni) · Nepali text and voice added in your editor</div>
++<div class="bar"><i id="pb"></i></div>
++<nav>
++<button class="p" id="nx">Copy NEXT prompt</button>
++<button data-t="vids" class="on">Videos</button>
++<button data-t="flow">Workflow</button>
++<button data-t="guide">Style &amp; Rules</button>
++<button id="dl">Download all prompts (.txt)</button>
++<a href="../../index.html">← All projects</a>
++<label class="sub">Shape <select id="ar"><option value="9:16">9:16 vertical</option><option value="16:9">16:9 wide</option></select></label>
++</nav>
++</header>
++<main>
++<section id="vids"><div class="filters" id="filters"></div><div id="list"></div></section>
++<section id="flow" class="hide"></section>
++<section id="guide" class="hide"></section>
++</main>
++<div id="toast" role="status" aria-live="polite"></div>
++<script>
++/* ---------- Shared prompt blocks (live-action cinema, silent, built for Flow Omni 10-second clips) ---------- */
++const STYLE="STYLE LOCK — photorealistic live-action cinema shot on a large-format digital cinema camera with anamorphic lenses: epic scale, rich natural light (golden hour or blue hour), strong rim light and volumetric haze, shallow depth of field with creamy bokeh, deep contrast with a teal-and-gold color grade, subtle film grain, authentic Nepali landscapes and people, tack-sharp tactile details (sweat, dust, mud, water droplets, breath in cold air). Not cartoon, not plastic CGI, not flat stock footage.";
++const PACE="PACING AND CAMERA: Frame 1 is already the most striking image of the clip, a pattern-interrupt (extreme close-up, impossible angle or explosive motion), never an establishing shot and never someone standing still. Mix speeds inside the 10 seconds: fast, punchy action and speed ramps, then ONE slow-motion hero moment (120fps look), then a stable final hero shot. One continuous shot with no hard cuts; the camera always moves with purpose (FPV swoop, low tracking, whip-pan, crash zoom, orbit, drone pull-back). Every emotion must be readable with the sound off: breath, sweat, eyes, clenched hands, determination.";
++const AUDIO="AUDIO: NO speech, NO dialogue, NO narration, NO singing and NO lyrics. Only natural sound design (breathing, footsteps, wind, water, fabric, impacts) and an epic cinematic orchestral score that builds from tension to a soaring crescendo on the final hero shot. Keep the mix clean so a voice-over can be added later.";
++function FORMAT(ar){return "FORMAT: "+(ar==="9:16"?"9:16 vertical for phones, subject large and centered with tall layered depth and tight punchy framing":"16:9 wide cinematic landscape framing")+". Exactly 10 seconds, no hard cuts. The last 2 seconds are a stable, beautiful hero shot with calm negative space (open sky or soft background) in the upper third, where a caption will be added later. Clean frame with no on-screen text, subtitles, captions, signs, logos or watermarks."}
++
++const THEMES=[
++{k:"morning",ne:"बिहान र अनुशासन",en:"Morning & discipline"},
++{k:"work",ne:"परिश्रम",en:"Hard work"},
++{k:"grit",ne:"धैर्य र हार नमान्नु",en:"Resilience"},
++{k:"dream",ne:"आत्मविश्वास र सपना",en:"Belief & dreams"},
++{k:"time",ne:"समय र अवसर",en:"Time & opportunity"},
++{k:"study",ne:"अध्ययन र परीक्षा",en:"Study & exams"}
++];
++
++/* t = theme index, q = Nepali line (original), en = meaning, scene = short title, shot = the 10-second shot list */
++const VIDEOS=[
++{t:0,q:"बिहान उठ्ने पहिलो निर्णयले नै दिनको जित तय गर्छ।",en:"The first decision of the morning, getting up, decides the day's victory.",scene:"Pre-dawn run through the valley mist",
++shot:"0–1s HOOK: extreme close-up of a lean Nepali man's eyes snapping open in a dark room, a phone light flashing across his pupils. 1–3s FAST: he whips out of bed, laces worn running shoes in a blur and bursts through a wooden door into a misty Kathmandu valley dawn, FPV camera chasing him from behind. 3–6s SLOW-MOTION: his first powerful stride on a quiet road, breath steaming, mist swirling around his legs, rim light glowing. 6–8s FAST: he accelerates, whip-pan to a sweeping drone pull-back over terraced hills as the sun burns above the Himalayas. 8–10s HERO SHOT: he runs toward the glowing horizon, tiny against the vast golden sky. SOUND: heartbeat, footsteps, rising strings."},
++{t:0,q:"सबै सुतिरहँदा तिमी दौडियौ भने, सबै उठ्दा तिमी धेरै अगाडि हुनेछौ।",en:"If you run while everyone sleeps, you will be far ahead when they wake.",scene:"Woman runs past a sleeping village",
++shot:"0–1s HOOK: low-angle shot at road level, a running shoe slams into a puddle and the water explodes in slow motion. 1–4s FAST: tracking alongside a Nepali woman in her 20s in a black jacket and headband, running on an empty mountain road past shuttered shops and sleeping village houses, a lone street lamp flickering off. 4–7s SLOW-MOTION: close-up of her determined face, breath steaming, sweat glinting as the first sunlight touches her cheek. 7–8s FAST: drone whips up to show the village waking below. 8–10s HERO SHOT: she runs into the golden sunrise with Himalayan peaks glowing pink behind her. SOUND: breath, footsteps, wind, building score."},
++{t:0,q:"अनुशासनले आज दुख दिन्छ, तर भोलि गर्व दिन्छ।",en:"Discipline gives pain today, but gives pride tomorrow.",scene:"Sprinting up an endless stone staircase",
++shot:"0–1s HOOK: extreme low shot looking up an endless ancient stone staircase, a man's foot smashes into frame. 1–4s FAST: a muscular Nepali man in his 30s in a sweat-soaked tank top bounds up the steps two at a time, camera tracking backward in front of him, prayer flags snapping in the wind. 4–7s SLOW-MOTION: he stumbles, catches himself with one hand, grits his teeth, sweat drops flying, and pushes back up. 7–8s FAST: crash zoom as he sprints the last steps. 8–10s HERO SHOT: he reaches the top and raises his arms as a vast valley sunrise opens beyond a white stupa. SOUND: heavy breathing, stone footsteps, war-drum pulse."},
++{t:0,q:"हरेक दिन सानो कदम चाल्यौ भने पहाड पनि सानो लाग्न थाल्छ।",en:"Take a small step every day, and even the mountain starts to look small.",scene:"One lone trekker, one step at a time",
++shot:"0–1s HOOK: extreme macro of a boot pressing into wet mountain soil, mud squeezing out, camera rising fast. 1–4s FAST: steady tracking of a lone Nepali woman trekker in her 30s in a red jacket and backpack on a terraced hillside trail, each step landing in rhythm while clouds race overhead. 4–7s SLOW-MOTION: close side profile, breath steaming, a tired but stubborn smile as she keeps walking up the trail. 7–8s: whip-tilt up to reveal a giant snow-covered peak ahead. 8–10s HERO SHOT: she stands small on the ridge, golden light blazing on the peak, wind in her jacket. SOUND: rhythmic footsteps, wind, soft rising score."},
++{t:0,q:"आजको पसिना भोलिको मुस्कान बन्छ।",en:"Today's sweat becomes tomorrow's smile.",scene:"Skipping rope at sunrise",
++shot:"0–1s HOOK: macro slow-motion of a sweat drop leaving a young Nepali man's chin, the camera falling with it into the dust. 1–4s FAST: he skips rope at blinding speed in a rustic village courtyard at sunrise, the rope whipping, dust kicking up, camera orbiting at low angle. 4–7s SLOW-MOTION: the rope frozen mid-arc, sweat spraying off him, intense eyes. 7–8s FAST: he drops the rope and throws sharp punches at the air, crash zoom. 8–10s HERO SHOT: he stands with chest heaving and breaks into a proud smile as the sun rises behind him, rim light on his shoulders. SOUND: rope whip, breath, driving percussion."},
++
++{t:1,q:"मेहनतको बाटो लामो हुन्छ, तर मञ्जिलले कहिल्यै धोका दिँदैन।",en:"The road of hard work is long, but the destination never betrays you.",scene:"Farmer ploughing terraced fields",
++shot:"0–1s HOOK: extreme close-up of an ox's eye reflecting the sunrise, camera pulling back fast. 1–4s FAST: a weathered Nepali farmer in his 50s ploughs a flooded terraced rice field with two oxen, mud splashing, low tracking shot at water level. 4–7s SLOW-MOTION: he wipes sweat from his brow, droplets and mud arcing, light flaring through the mist. 7–8s FAST: time ramp, the field turns lush green and then golden as the sun arcs overhead. 8–10s HERO SHOT: drone pull-back over sweeping golden terraced hills, the farmer standing proud holding a bundle of harvested rice. SOUND: oxen bells, splashing mud, warm swelling strings."},
++{t:1,q:"भाग्यले होइन, परिश्रमले इतिहास रच्छ।",en:"Not luck, but hard work creates history.",scene:"Metalsmith's sparks in slow motion",
++shot:"0–1s HOOK: a hammer strikes glowing orange metal and sparks explode toward the lens in extreme slow motion. 1–4s FAST: tight shots through the sparks of a Newar metalsmith, a Nepali man in his 40s in a leather apron, hammering with rhythmic power in a dark traditional workshop, firelight on his face. 4–7s SLOW-MOTION: he plunges the glowing metal into water and a huge cloud of steam rolls past the lens. 7–8s FAST: he polishes the piece, whip-pan. 8–10s HERO SHOT: he lifts a gleaming brass lamp into the light, shining like gold, his face calm and proud. SOUND: hammer rhythm, hiss of steam, cinematic drums."},
++{t:1,q:"मौन भएर मेहनत गर, सफलताले आफैँ आवाज निकाल्छ।",en:"Work in silence, and let success make the noise.",scene:"Rowing across a misty mountain lake",
++shot:"0–1s HOOK: an oar slices through glassy water in extreme slow motion, droplets scattering like diamonds, camera at water level. 1–4s: drone glides over a lone Nepali woman rowing a wooden boat across a misty lake at dawn, silent and steady. 4–7s FAST: her rowing accelerates, ripples racing, close-up on her forearms and focused eyes. 7–8s SLOW-MOTION: the mist parts. 8–10s HERO SHOT: the snow peaks of the Annapurna range appear in perfect reflection while she glides on, tiny in the golden light. SOUND: water, oar creak, hushed then soaring score."},
++{t:1,q:"हार्ने डरभन्दा नगर्ने पछुतो धेरै ठूलो हुन्छ।",en:"The regret of not trying is bigger than the fear of failing.",scene:"Running across a gorge suspension bridge",
++shot:"0–1s HOOK: straight-down vertical shot through the planks of a high suspension bridge, a raging river far below, a pair of trembling feet at the edge. 1–4s: close-up of a young Nepali man's wide, fearful eyes, hands clenched on the cables, wind whipping his shirt, the bridge swaying. 4–7s SLOW-MOTION: he breathes in, his jaw sets, he steps forward. 7–8s FAST: he runs across, FPV chasing, planks blurring. 8–10s HERO SHOT: he bursts onto the far side with arms wide as sunbeams pour over the gorge, camera pulling back wide. SOUND: rushing river, creaking cables, pounding heartbeat into triumphant score."},
++{t:1,q:"तिम्रो मेहनत आज देखिँदैन, तर समयले एक दिन अवश्य देखाउँछ।",en:"Your effort is invisible today, but time will show it one day.",scene:"A sapling becomes a mighty tree",
++shot:"0–1s HOOK: macro close-up of hands pushing a tiny green sapling into dark mountain soil, soil particles spraying. 1–4s FAST: the camera rises as a weathered Nepali elder's hands press down and water the plant, clouds racing overhead in time-lapse. 4–7s SLOW-MOTION: seasons pass in a time-lapse, the sapling stretches and unfurls its leaves in flickering golden light. 7–8s FAST: camera orbits up the trunk as the tree grows tall. 8–10s HERO SHOT: wide shot of a magnificent mature tree on a hillside at sunset, light streaming through its leaves, the same hands resting on its bark. SOUND: soil, wind in leaves, gentle strings growing into a full orchestra."},
++
++{t:2,q:"हजार पटक लडे पनि हजार एक पटक उठ्नेले नै जित्छ।",en:"Even if you fall a thousand times, the one who rises a thousand and one times wins.",scene:"Runner falls in mud, rises in the rain",
++shot:"0–1s HOOK: a runner's foot slips and the camera follows him crashing into thick mud in extreme slow motion, mud spraying. 1–3s: a Nepali man in his 20s lies in the downpour, breathing hard, rain hammering the ground. 3–5s FAST: crash zoom on his eyes as they harden with resolve. 5–7s SLOW-MOTION: he pushes up from the ground, mud sliding off his arms, rain streaming down. 7–8s FAST: he sprints, FPV behind him. 8–10s HERO SHOT: he runs toward a break in the clouds as a golden ray of light lands on him. SOUND: heavy rain, thunder, pounding drums into soaring strings."},
++{t:2,q:"आँधी आउँछ, तर जरा बलियो भए रूख ढल्दैन।",en:"The storm comes, but a tree with strong roots does not fall.",scene:"Lone tree defies the storm",
++shot:"0–1s HOOK: a lightning bolt cracks across a black sky, lighting a lone tree on a ridge. 1–4s FAST: violent wind whips the branches, leaves explode off, rain slashes sideways, camera circling low. 4–7s SLOW-MOTION: close on thick roots gripping rocky soil, then tilting up the trunk as it bends but holds. 7–8s: the storm breaks. 8–10s HERO SHOT: calm, a glowing sunrise bursts through the clouds behind the tree, mist drifting across the hills. SOUND: thunder, howling wind, deep brass, then a calm swelling choir."},
++{t:2,q:"रात जति नै अँध्यारो भए पनि बिहान अवश्य आउँछ।",en:"However dark the night is, the morning will surely come.",scene:"Headlamp climber meets the dawn",
++shot:"0–1s HOOK: a headlamp beam cuts through pitch darkness onto a boot slamming into snow, breath clouding. 1–4s: a lone Nepali mountaineer in a down jacket climbs a steep ridge in the dark, camera tracking behind him under a sky of wildly bright stars. 4–7s FAST: wind and blowing snow lash him as he pushes step after step. 7–8s SLOW-MOTION: he turns, the headlamp flaring, as dawn light suddenly ignites the peaks. 8–10s HERO SHOT: he switches off the lamp, his face lit gold, the whole Himalayan range glowing orange and pink behind him. SOUND: crunching snow, wind, low drone rising to a glorious swell."},
++{t:2,q:"नदीले चट्टानसँग लडेर होइन, बाटो खोजेर समुद्र भेट्छ।",en:"A river does not fight the rock; it finds a path and meets the sea.",scene:"Kayaker threads the white-water gorge",
++shot:"0–1s HOOK: a kayak paddle blade explodes through white water, spray hitting the lens. 1–4s FAST: a Nepali kayaker in helmet and life vest rockets through roaring rapids in a Himalayan river gorge, FPV close behind, waves crashing. 4–7s SLOW-MOTION: he drops into a huge wave, water cascading off his shoulders, eyes locked ahead. 7–8s FAST: he finds the clean line between giant boulders. 8–10s HERO SHOT: he glides out into calm emerald water as a drone rises to reveal the sunlit valley, the river curving to the horizon. SOUND: roaring water, paddle strokes, driving percussion into a bright finale."},
++{t:2,q:"कठिन समयले कमजोर होइन, बलियो मान्छे बनाउँछ।",en:"Hard times do not make people weak; they make them strong.",scene:"Eagle breaks through the storm clouds",
++shot:"0–1s HOOK: extreme close-up of a golden eagle's eye, rain streaking past. 1–4s FAST: it battles a black storm of clouds and wind, wings shuddering, camera tracking at high speed. 4–7s SLOW-MOTION: raindrops beading on feathers, wings spread wide, thunder rolling as it pushes upward. 7–8s: it breaks through the cloud ceiling. 8–10s HERO SHOT: above the clouds the sun blazes, a golden sea of cloud with snow peaks piercing through, the eagle soaring free. SOUND: thunder, wind, wingbeats, a triumphant orchestral lift."},
++
++{t:3,q:"आफूमाथि विश्वास राख्यौ भने संसारले पनि तिमीमाथि विश्वास गर्न थाल्छ।",en:"Believe in yourself, and the world will begin to believe in you too.",scene:"Final steps to the summit",
++shot:"0–1s HOOK: a gloved hand slams an ice axe into a wall of blue ice, shards exploding toward the camera. 1–4s FAST: a Nepali mountaineer in red climbing gear climbs the last steep section of a summit ridge, wind blowing snow, FPV from beside his helmet. 4–7s SLOW-MOTION: he pulls himself over the final ridge, drops to his knees breathing hard, then rises. 7–8s FAST: crash zoom on his face. 8–10s HERO SHOT: he stands on the summit with arms spread, a drone orbiting him, an ocean of clouds and peaks below at golden sunrise. SOUND: ice crunch, wind, breath, glorious full-orchestra crescendo."},
++{t:3,q:"सपना देख्नु पहिलो जित हो, पूरा गर्नु अन्तिम जित।",en:"Dreaming is the first victory; fulfilling the dream is the final one.",scene:"A kite soars above the rooftops",
++shot:"0–1s HOOK: a colorful kite string snaps taut, extreme close-up of a young man's hands gripping it. 1–4s FAST: a Nepali man in his early 20s sprints across a Kathmandu rooftop at golden hour, the kite lifting, other rooftops and prayer flags racing past, camera chasing. 4–7s SLOW-MOTION: he releases the string, the kite soars up, he looks skyward in pure wonder with light flaring across his eyes. 7–8s: whip-tilt following the kite up. 8–10s HERO SHOT: the kite floats high against a glowing sunset sky above the city and distant Himalayas, his small silhouette below. SOUND: fluttering kite, wind, soft piano into soaring strings."},
++{t:3,q:"आफ्नो कथाका नायक तिमी आफैँ हौ, अरूका सहायक होइनौ।",en:"You are the hero of your own story, not a helper in someone else's.",scene:"Walking calmly through a rushing market",
++shot:"0–1s HOOK: a crowded Kathmandu market explodes into fast motion, hundreds of people blurring past in time-lapse while one man in a white shirt at the center stays perfectly still. 1–4s SLOW-MOTION: he starts walking in real slow motion through the rushing crowd, determined face, camera tracking backward in front of him. 4–7s: the world around him speeds up even more, colors streaking, and he never breaks stride. 7–8s: whip-tilt up. 8–10s HERO SHOT: the crowd fades and he walks alone into warm sunrise light between old brick buildings, steady and proud. SOUND: crowd blur turning to silence, a deep heartbeat, rising strings."},
++{t:3,q:"लक्ष्य जति ठूलो भए पनि, सुरु आजै गर।",en:"However big the goal is, start today.",scene:"Sprinter explodes from the blocks",
++shot:"0–1s HOOK: extreme close-up of a sprinter's eyes at the starting line, a bead of sweat trembling. 1–3s: low angle on hands pressing into a dusty track, total stillness. 3–4s FAST: explosive launch, dust bursting from the blocks, camera whip-tracking alongside a Nepali woman sprinter in her 20s. 4–7s SLOW-MOTION: mid-stride, muscles tight, face rippling, sweat spraying and dust glittering. 7–8s FAST: full acceleration. 8–10s HERO SHOT: she runs across an open village field toward a rising sun, arms pumping. SOUND: held silence, then a burst of dust and pounding drums building."},
++{t:3,q:"आकाश सीमा होइन, आकाश त बाटो हो।",en:"The sky is not the limit; the sky is the path.",scene:"Paragliding off the cliff over the lake",
++shot:"0–1s HOOK: a paraglider wing snaps open with a crack against a blue sky, camera whipping toward it. 1–3s FAST: a Nepali pilot sprints off a green cliff edge above a huge turquoise lake, FPV right behind him, the ground falling away. 3–6s SLOW-MOTION: he lifts into the air, feet leaving the ground, arms out, joy on his face, the world dropping beneath him. 6–8s FAST: swooping turns over the lake and terraced hills, whip-pan to the snow peaks. 8–10s HERO SHOT: a drone orbits as he soars, tiny against infinite sky and glowing Himalayas. SOUND: rushing wind, fabric flap, an uplifting orchestral lift."},
++
++{t:4,q:"समय कसैको पर्खाइमा रोकिँदैन, त्यसैले आजै सुरु गर।",en:"Time does not wait for anyone, so start today.",scene:"A runner steady while time races around him",
++shot:"0–1s HOOK: a lone runner at the center of an old brick temple square while the city explodes into time-lapse around him, clouds and shadows racing. 1–4s SLOW-MOTION (him only): sun, moon and stars wheel overhead as lights flicker and crowds stream past in blurs, while he keeps running in smooth, perfect slow motion. 4–7s: the camera orbits him as day turns to night and back to dawn in seconds. 7–8s: whip-pan. 8–10s HERO SHOT: sunrise lights his face, he stops, breathing, and looks straight at the camera with quiet confidence. SOUND: ticking pulses, whooshing time, a deep orchestral build."},
++{t:4,q:"हरेक बिहान नयाँ मौका हो, हिजोको हार हिजैमा छोड।",en:"Every morning is a new chance; leave yesterday's defeat in yesterday.",scene:"Arms open to a Himalayan sunrise",
++shot:"0–1s HOOK: a sunburst flare explodes across the lens as the sun pops over a Himalayan ridge. 1–4s FAST: a drone swoops over a misty valley, birds bursting from the trees, light racing across the terraces. 4–7s SLOW-MOTION: a Nepali woman in her 30s on a hilltop opens her arms and closes her eyes, scarf and hair streaming in the wind, golden rim light. 7–8s: camera cranes up. 8–10s HERO SHOT: wide crane shot, she is a small silhouette before an ocean of golden clouds and snow peaks. SOUND: birdsong, wind, a gentle swell becoming a majestic finale."},
++{t:4,q:"अवसर सधैँ ढोका ढकढक्याएर आउँदैन, तयार हुनेले मात्र समात्छ।",en:"Opportunity does not always knock; only the prepared person catches it.",scene:"The archer's perfect release",
++shot:"0–1s HOOK: extreme close-up of an archer's eye narrowing, a bowstring creaking taut, a distant target reflected in the pupil. 1–4s FAST: the camera circles a Nepali man in dark simple clothing drawing a bow on a windy ridge, grass blasting sideways. 4–7s SLOW-MOTION: the release, the string vibrating, the arrow flying in 120fps through drifting dust with a glowing air trail. 7–8s FAST: crash zoom to the target as the arrow slams into the bullseye. 8–10s HERO SHOT: the archer lowers the bow with a quiet smile as the sun lights the ridge. SOUND: string creak, wind, silence, a sharp thud then triumphant brass."},
++{t:4,q:"भोलि भन्नेहरू धेरै हुन्छन्, आजै गर्नेहरू थोरै हुन्छन्।",en:"Many people say tomorrow; few people do it today.",scene:"Mountain bike down the Himalayan switchbacks",
++shot:"0–1s HOOK: a mountain bike tire explodes through a puddle, mud spraying straight at the lens. 1–4s FAST: a Nepali rider rockets down a dusty Himalayan switchback trail, FPV chasing, dust clouds billowing, prayer flags blurring. 4–7s SLOW-MOTION: a huge jump off a rock lip, bike and rider frozen against the glowing sky, dust floating. 7–8s FAST: the landing with a big spray. 8–10s HERO SHOT: he skids to a stop on the ridge, dust drifting in golden backlight, looking out over the valley. SOUND: tires, gravel, wind, a thumping electronic-orchestral beat."},
++{t:4,q:"समयको कदर गर्नेलाई समयले पनि कदर गर्छ।",en:"Time respects the person who respects time.",scene:"Cold-lake swim at dawn",
++shot:"0–1s HOOK: an underwater view as a swimmer's hand slices into glittering turquoise water, bubbles exploding. 1–4s FAST: a Nepali woman in her 20s swims fast freestyle in a cold mountain lake at dawn, mist on the surface, camera tracking at the waterline. 4–7s SLOW-MOTION: underwater close-up of her face, streaming bubbles, determined eyes, sunbeams piercing the water. 7–8s FAST: she bursts upward. 8–10s HERO SHOT: she breaks the surface, gasps and smiles, water streaming off her, snowy mountains glowing behind in the dawn. SOUND: muffled underwater rhythm, a splash, a bright orchestral rise."},
++
++{t:5,q:"आज पढेको एउटा पाना भोलिको सफलताको जग हो।",en:"The one page you read today is the foundation of tomorrow's success.",scene:"Night study turns to dawn",
++shot:"0–1s HOOK: extreme close-up of a pen tip pressing into a notebook under a warm desk lamp, pages flicking. 1–4s FAST: a Nepali young man studies intensely in a small rustic room at night, books stacked high, camera orbiting while the moon crosses the window behind him in time-lapse. 4–7s SLOW-MOTION: he rubs his eyes, takes a breath, and looks back down with fresh focus as a page turns through dust floating in the lamplight. 7–8s: night turns to dawn at the window. 8–10s HERO SHOT: sunrise floods the room gold and he closes the book with a smile of quiet determination, silhouetted against the Himalayan view outside. SOUND: pen scratch, page turns, a soft piano swelling into strings."},
++{t:5,q:"थाकेर पनि पढ्न नछाड्नेले अन्ततः जित्छ।",en:"The one who keeps studying even when tired wins in the end.",scene:"Cold water, wide awake, back to the desk",
++shot:"0–1s HOOK: cold water splashes into a tired face in extreme slow motion, droplets frozen mid-air. 1–3s: a Nepali young woman, exhausted at a rainy window at 3 a.m., heavy eyelids, an open textbook, city lights blurring. 3–5s FAST: she slaps her cheeks, ties up her hair, rolls up her sleeves, crash zoom to her eyes. 5–8s SLOW-MOTION: she sits and starts writing with power, rain streaking down the window behind her. 8–10s HERO SHOT: the rain stops, a dawn glow fills the window, and she keeps writing, steady and strong. SOUND: rain, pen strokes, a rising heartbeat and strings."},
++{t:5,q:"लोकसेवाको बाटो कठिन छ, तर असम्भव छैन।",en:"The path to the Public Service Commission exam is hard, but not impossible.",scene:"Striding toward the exam hall",
++shot:"0–1s HOOK: low-angle shot of polished shoes marching through a school gate into frame in slow motion. 1–4s FAST: a determined Nepali young man in a neat shirt strides through a crowd of nervous aspirants, camera tracking backward, folders and pens in hand, sunrise behind him. 4–7s SLOW-MOTION: he stops at the foot of a wide flight of steps leading up to a big exam-hall building, takes one deep breath, eyes sharp. 7–8s FAST: he climbs. 8–10s HERO SHOT: he enters the doorway, light flooding in from behind, his silhouette striding forward. SOUND: crowd murmur fading, footsteps, a deep breath, a noble orchestral rise."},
++{t:5,q:"असफल भए पनि सिक्न नछोड, अर्को प्रयास तिम्रै हो।",en:"Even if you fail, never stop learning; the next attempt is yours.",scene:"Rain to rainbow on the hilltop",
++shot:"0–1s HOOK: a drenched textbook lands in a puddle, rain splashes bursting around it. 1–4s: a soaked Nepali young woman picks up the book, rain hammering, hair dripping, face hurt but jaw set. 4–7s FAST: she walks up a hillside road in the downpour, FPV behind her, thunder rolling. 7–8s SLOW-MOTION: the rain stops, light rays break through, droplets glow. 8–10s HERO SHOT: she opens the book on a hilltop with a vivid rainbow arcing over the valley behind her, drops sparkling on the pages. SOUND: heavy rain easing to birdsong, a hopeful orchestral rise."},
++{t:5,q:"तिमी जे बन्न चाहन्छौ, त्यसको तयारी आजै सुरु गर।",en:"Whatever you want to become, start preparing for it today.",scene:"Ridge sprint to the sunrise finale",
++shot:"0–1s HOOK: crash zoom through thick dawn mist into a runner's face mid-sprint. 1–3s FAST: an unstoppable Nepali man in his 20s sprints along a mountain ridge trail, FPV chasing, mist tearing apart around him. 3–5s: he vaults over a stream. 5–7s SLOW-MOTION: frozen mid-air at the peak of the leap, sunlight exploding behind him, water droplets glittering. 7–8s FAST: he lands and accelerates. 8–10s HERO SHOT: he reaches the ridge crest and raises his arms as the sun rises over an endless sea of clouds and snow peaks, a drone pulling back, grand and epic. SOUND: breath, footsteps, a rising crescendo with full choir."}
++];
++
++/* ---------- helpers ---------- */
++const $=s=>document.querySelector(s);
++const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
++const DIG="०१२३४५६७८९";const neNum=n=>String(n).split("").map(d=>DIG[+d]).join("");
++const KEY="dailymotivations-v1";
++let S={done:{},ar:"9:16",filter:"all",cur:0,tab:"vids"};
++try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
++function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
++
++function buildPrompt(i){const v=VIDEOS[i];return "SHOT — one continuous 10-second live-action clip, fast and cinematic:\n"+v.shot+"\n\n"+STYLE+"\n\n"+PACE+"\n\n"+AUDIO+"\n\n"+FORMAT(S.ar)}
++function buildCaption(i){const v=VIDEOS[i];const tags=["#प्रेरणा","#दैनिकप्रेरणा","#नेपाल","#NepaliMotivation","#Motivation"];if(v.t===5)tags.push("#लोकसेवा","#परीक्षातयारी");
++return v.q+"\n\n🔥 दैनिक प्रेरणा · दिन "+neNum(i+1)+"\n\nयो भिडियो साथीहरूसँग सेयर गर्नुहोस् र हरेक दिन नयाँ प्रेरणा पाउन फलो गर्नुहोस्। 🙏\n\n"+tags.join(" ")}
++
++let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1600)}
++async function copy(text,msg){try{await navigator.clipboard.writeText(text)}catch(e){const a=document.createElement("textarea");a.value=text;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(_){}a.remove()}toast(msg||"Copied ✓")}
++
++/* ---------- Videos tab ---------- */
++function renderFilters(){
++  const all=[{k:"all",ne:"सबै",en:"All"},...THEMES];
++  $("#filters").innerHTML=all.map(t=>`<button data-f="${t.k}" class="${S.filter===t.k?"on":""}"><span class="ne">${esc(t.ne)}</span> · ${esc(t.en)}</button>`).join("");
++}
++function renderList(){
++  $("#list").innerHTML=VIDEOS.map((v,i)=>({v,i})).filter(({v})=>S.filter==="all"||THEMES[v.t].k===S.filter).map(({v,i})=>{
++    const th=THEMES[v.t];const done=!!S.done[i+1];
++    return `<article class="card ${done?"done":""} ${S.cur===i?"cur":""}" id="v${i}" data-i="${i}">
++<div class="top"><span class="day">Day ${i+1}</span><span class="chip"><span class="ne">${esc(th.ne)}</span> · ${esc(th.en)}</span>
++<label><input type="checkbox" data-done="${i}" ${done?"checked":""}> Made in Flow</label></div>
++<div class="q" lang="ne">${esc(v.q)}</div>
++<p class="en">${esc(v.en)}</p>
++<p class="scene"><b>Scene:</b> ${esc(v.scene)}</p>
++<div class="btns"><button class="p" data-act="prompt" data-i="${i}">Copy Flow prompt</button>
++<button data-act="line" data-i="${i}">Copy Nepali line</button>
++<button data-act="cap" data-i="${i}">Copy post caption</button></div>
++<details><summary>Show the prompt</summary><pre>${esc(buildPrompt(i))}</pre></details></article>`}).join("");
++}
++function progress(){const n=Object.keys(S.done).filter(k=>S.done[k]).length;$("#pb").style.width=(n/VIDEOS.length*100)+"%";$("#st").textContent=n+"/"+VIDEOS.length+" made · "+(n*10)+"s of footage"}
++function nextIndex(){for(let i=0;i<VIDEOS.length;i++)if(!S.done[i+1])return i;return -1}
++
++$("#list").addEventListener("click",e=>{
++  const b=e.target.closest("button[data-act]");if(!b)return;const i=+b.dataset.i;S.cur=i;save();
++  if(b.dataset.act==="prompt")copy(buildPrompt(i),"Flow prompt copied ✓");
++  if(b.dataset.act==="line")copy(VIDEOS[i].q,"Nepali line copied ✓");
++  if(b.dataset.act==="cap")copy(buildCaption(i),"Caption copied ✓");
++  document.querySelectorAll(".card.cur").forEach(c=>c.classList.remove("cur"));$("#v"+i)&&$("#v"+i).classList.add("cur");
++});
++$("#list").addEventListener("change",e=>{
++  const c=e.target.closest("input[data-done]");if(!c)return;const i=+c.dataset.done;
++  if(c.checked)S.done[i+1]=true;else delete S.done[i+1];save();progress();
++  c.closest(".card").classList.toggle("done",c.checked);
++});
++$("#filters").addEventListener("click",e=>{const b=e.target.closest("button[data-f]");if(!b)return;S.filter=b.dataset.f;save();renderFilters();renderList()});
++$("#nx").onclick=()=>{
++  const i=nextIndex();if(i<0){toast("All 30 videos are marked made 🎉");return}
++  S.cur=i;S.filter="all";save();show("vids");renderFilters();renderList();
++  copy(buildPrompt(i),"Day "+(i+1)+" prompt copied ✓");
++  const el=$("#v"+i);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
++};
++$("#ar").onchange=e=>{S.ar=e.target.value;save();renderList()};
++$("#dl").onclick=()=>{
++  const txt=VIDEOS.map((v,i)=>"=== DAY "+(i+1)+" ===\nNepali line: "+v.q+"\nMeaning: "+v.en+"\n\nFLOW PROMPT:\n"+buildPrompt(i)+"\n\nPOST CAPTION:\n"+buildCaption(i)+"\n").join("\n\n");
++  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="daily-motivations-prompts.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
++};
++
++/* ---------- Workflow + Guide tabs ---------- */
++$("#flow").innerHTML=`
++<h2>How each video gets made</h2>
++<div class="note">Each video = <b>one 10-second Flow clip</b> + <b>Nepali text and voice added in your editor</b>. Flow makes the cinematic picture and music; you add the words. AI video tools usually garble Devanagari text and are unreliable at Nepali speech, so the prompts forbid both.</div>
++<ol>
++<li><b>Generate in Flow.</b> Choose the Omni model at 10 seconds, pick the shape (9:16 for Reels/Shorts), tap <i>Copy Flow prompt</i> on a video, and paste it exactly as copied.</li>
++<li><b>Judge the first second.</b> If frame 1 would not stop your thumb mid-scroll, regenerate. Each take differs, so keep the best of 2 or 3.</li>
++<li><b>Add the Nepali line as text.</b> In your editor (CapCut or similar), use <i>Copy Nepali line</i>. Use a bold Devanagari font such as Noto Sans Devanagari Bold or Mukta ExtraBold, white with a soft shadow, in the calm upper third. Reveal it around 2 seconds, after the hook.</li>
++<li><b>Add the Nepali voice-over.</b> Run the same line through the Nepali voice tool you prefer and test that it pronounces the words naturally. Start it around 1.5 to 2 seconds in and finish before 9 seconds. Lower the music under the voice.</li>
++<li><b>Post.</b> Use <i>Copy post caption</i>. It already has the Nepali line, a share prompt and hashtags. Tick <i>Made in Flow</i> to track progress.</li>
++</ol>
++<h3>Batching tip</h3>
++<p>Generate 5 clips in one sitting, edit them together, then schedule one a day. Use <i>Copy NEXT prompt</i> to jump to the first video not yet ticked.</p>`;
++
++$("#guide").innerHTML=`
++<h2>Shared prompt rules</h2>
++<p class="sub">These four blocks are added to every video's shot list automatically.</p>
++<h3>Style lock</h3><pre>${esc(STYLE)}</pre>
++<h3>Pacing and camera</h3><pre>${esc(PACE)}</pre>
++<h3>Audio</h3><pre>${esc(AUDIO)}</pre>
++<h3>Format (9:16 shown)</h3><pre>${esc(FORMAT("9:16"))}</pre>
++<h2>Rules that keep it cinematic</h2>
++<ul>
++<li>Every clip opens on a pattern-interrupt in the first second: an extreme close-up, a strange angle or an explosion of motion.</li>
++<li>Fast action first, then <b>one</b> slow-motion hero moment, then a still, beautiful final shot. Too many slow-motion beats make it feel slow again.</li>
++<li>One continuous shot with no hard cuts, so people and places stay consistent inside the clip.</li>
++<li>The last 2 seconds keep calm space in the upper third for your caption.</li>
++<li>No real people, brands, logos or signs in the picture. The prompts describe fictional Nepali characters.</li>
++<li>For a recurring hero across many videos, upload the same character reference image as an Ingredient in Flow.</li>
++<li>If Flow adds speech, mumbling or text on screen, regenerate.</li>
++</ul>
++<h2>The lines</h2>
++<p>All 30 Nepali lines are original wording written for this project. Read them aloud once and adjust the wording to your own voice before you record the voice-over.</p>`;
++
++/* ---------- tabs ---------- */
++function show(t){S.tab=t;document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("hide",s.id!==t));document.querySelectorAll("nav button[data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t))}
++document.querySelectorAll("nav button[data-t]").forEach(b=>b.onclick=()=>show(b.dataset.t));
++
++$("#ar").value=S.ar;renderFilters();renderList();progress();show("vids");
++</script></body></html>
+-- 
+2.43.0
+
