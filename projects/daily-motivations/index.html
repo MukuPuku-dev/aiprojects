@@ -44,7 +44,7 @@ ol,ul{padding-left:20px}li{margin:4px 0}
 </style></head><body>
 <header>
 <h1>🔥 DAILY MOTIVATIONS · <span class="ne">दैनिक प्रेरणा</span> <span class="sub" id="st"></span></h1>
-<div class="sub">Nepali motivation shorts · 30 videos × 10 seconds · generated in Google Flow (Omni) · Nepali text and voice added in your editor</div>
+<div class="sub">Nepali motivation shorts · 30 videos × 10 seconds · complete video with Nepali voice-over generated in Google Flow (Omni)</div>
 <div class="bar"><i id="pb"></i></div>
 <nav>
 <button class="p" id="nx">Copy NEXT prompt</button>
@@ -63,11 +63,11 @@ ol,ul{padding-left:20px}li{margin:4px 0}
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
 <script>
-/* ---------- Shared prompt blocks (live-action cinema, silent, built for Flow Omni 10-second clips) ---------- */
+/* ---------- Shared prompt blocks (live-action cinema with Nepali voice-over, built for Flow Omni 10-second clips) ---------- */
 const STYLE="STYLE LOCK — photorealistic live-action cinema shot on a large-format digital cinema camera with anamorphic lenses: epic scale, rich natural light (golden hour or blue hour), strong rim light and volumetric haze, shallow depth of field with creamy bokeh, deep contrast with a teal-and-gold color grade, subtle film grain, authentic Nepali landscapes and people, tack-sharp tactile details (sweat, dust, mud, water droplets, breath in cold air). Not cartoon, not plastic CGI, not flat stock footage.";
 const PACE="PACING AND CAMERA: Frame 1 is already the most striking image of the clip, a pattern-interrupt (extreme close-up, impossible angle or explosive motion), never an establishing shot and never someone standing still. Mix speeds inside the 10 seconds: fast, punchy action and speed ramps, then ONE slow-motion hero moment (120fps look), then a stable final hero shot. One continuous shot with no hard cuts; the camera always moves with purpose (FPV swoop, low tracking, whip-pan, crash zoom, orbit, drone pull-back). Every emotion must be readable with the sound off: breath, sweat, eyes, clenched hands, determination.";
-const AUDIO="AUDIO: NO speech, NO dialogue, NO narration, NO singing and NO lyrics. Only natural sound design (breathing, footsteps, wind, water, fabric, impacts) and an epic cinematic orchestral score that builds from tension to a soaring crescendo on the final hero shot. Keep the mix clean so a voice-over can be added later.";
-function FORMAT(ar){return "FORMAT: "+(ar==="9:16"?"9:16 vertical for phones, subject large and centered with tall layered depth and tight punchy framing":"16:9 wide cinematic landscape framing")+". Exactly 10 seconds, no hard cuts. The last 2 seconds are a stable, beautiful hero shot with calm negative space (open sky or soft background) in the upper third, where a caption will be added later. Clean frame with no on-screen text, subtitles, captions, signs, logos or watermarks."}
+const AUDIO="AUDIO: Include a clear, natural-sounding Nepali voice-over speaking the exact motivational line provided below. Use a warm, confident, inspiring adult Nepali voice with authentic Nepali pronunciation; deliver it sincerely at a measured pace, emphasizing key words without shouting. Start the voice-over after the opening hook and finish before the final hero shot. Do not translate, paraphrase, add an introduction, or speak any other words. No dialogue from characters and no singing or lyrics. Mix the voice clearly above subtle cinematic music and synchronized natural sound effects; duck the music under the voice. The finished clip must include its voice-over and complete audio mix.";
+function FORMAT(ar){return "FORMAT: "+(ar==="9:16"?"9:16 vertical for phones, subject large and centered with tall layered depth and tight punchy framing":"16:9 wide cinematic landscape framing")+". Exactly 10 seconds, no hard cuts. The last 2 seconds are a stable, beautiful hero shot with calm negative space (open sky or soft background) in the upper third. Clean frame with no on-screen text, subtitles, captions, signs, logos or watermarks."}
 
 const THEMES=[
 {k:"morning",ne:"बिहान र अनुशासन",en:"Morning & discipline"},
@@ -96,7 +96,7 @@ shot:"0–1s HOOK: extreme close-up of an ox's eye reflecting the sunrise, camer
 {t:1,q:"भाग्यले होइन, परिश्रमले इतिहास रच्छ।",en:"Not luck, but hard work creates history.",scene:"Metalsmith's sparks in slow motion",
 shot:"0–1s HOOK: a hammer strikes glowing orange metal and sparks explode toward the lens in extreme slow motion. 1–4s FAST: tight shots through the sparks of a Newar metalsmith, a Nepali man in his 40s in a leather apron, hammering with rhythmic power in a dark traditional workshop, firelight on his face. 4–7s SLOW-MOTION: he plunges the glowing metal into water and a huge cloud of steam rolls past the lens. 7–8s FAST: he polishes the piece, whip-pan. 8–10s HERO SHOT: he lifts a gleaming brass lamp into the light, shining like gold, his face calm and proud. SOUND: hammer rhythm, hiss of steam, cinematic drums."},
 {t:1,q:"मौन भएर मेहनत गर, सफलताले आफैँ आवाज निकाल्छ।",en:"Work in silence, and let success make the noise.",scene:"Rowing across a misty mountain lake",
-shot:"0–1s HOOK: an oar slices through glassy water in extreme slow motion, droplets scattering like diamonds, camera at water level. 1–4s: drone glides over a lone Nepali woman rowing a wooden boat across a misty lake at dawn, silent and steady. 4–7s FAST: her rowing accelerates, ripples racing, close-up on her forearms and focused eyes. 7–8s SLOW-MOTION: the mist parts. 8–10s HERO SHOT: the snow peaks of the Annapurna range appear in perfect reflection while she glides on, tiny in the golden light. SOUND: water, oar creak, hushed then soaring score."},
+shot:"0–1s HOOK: an oar slices through glassy water in extreme slow motion, droplets scattering like diamonds, camera at water level. 1–4s: drone glides over a lone Nepali woman rowing a wooden boat across a misty lake at dawn, smooth and steady. 4–7s FAST: her rowing accelerates, ripples racing, close-up on her forearms and focused eyes. 7–8s SLOW-MOTION: the mist parts. 8–10s HERO SHOT: the snow peaks of the Annapurna range appear in perfect reflection while she glides on, tiny in the golden light. SOUND: water, oar creak, hushed then soaring score."},
 {t:1,q:"हार्ने डरभन्दा नगर्ने पछुतो धेरै ठूलो हुन्छ।",en:"The regret of not trying is bigger than the fear of failing.",scene:"Running across a gorge suspension bridge",
 shot:"0–1s HOOK: straight-down vertical shot through the planks of a high suspension bridge, a raging river far below, a pair of trembling feet at the edge. 1–4s: close-up of a young Nepali man's wide, fearful eyes, hands clenched on the cables, wind whipping his shirt, the bridge swaying. 4–7s SLOW-MOTION: he breathes in, his jaw sets, he steps forward. 7–8s FAST: he runs across, FPV chasing, planks blurring. 8–10s HERO SHOT: he bursts onto the far side with arms wide as sunbeams pour over the gorge, camera pulling back wide. SOUND: rushing river, creaking cables, pounding heartbeat into triumphant score."},
 {t:1,q:"तिम्रो मेहनत आज देखिँदैन, तर समयले एक दिन अवश्य देखाउँछ।",en:"Your effort is invisible today, but time will show it one day.",scene:"A sapling becomes a mighty tree",
@@ -156,7 +156,7 @@ let S={done:{},ar:"9:16",filter:"all",cur:0,tab:"vids"};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
-function buildPrompt(i){const v=VIDEOS[i];return "SHOT — one continuous 10-second live-action clip, fast and cinematic:\n"+v.shot+"\n\n"+STYLE+"\n\n"+PACE+"\n\n"+AUDIO+"\n\n"+FORMAT(S.ar)}
+function buildPrompt(i){const v=VIDEOS[i];return "SHOT — one continuous 10-second live-action clip, fast and cinematic:\n"+v.shot+"\n\nNEPALI VOICE-OVER SCRIPT (speak exactly as written, with no additions):\n“"+v.q+"”\n\n"+STYLE+"\n\n"+PACE+"\n\n"+AUDIO+"\n\n"+FORMAT(S.ar)}
 function buildCaption(i){const v=VIDEOS[i];const tags=["#प्रेरणा","#दैनिकप्रेरणा","#नेपाल","#NepaliMotivation","#Motivation"];if(v.t===5)tags.push("#लोकसेवा","#परीक्षातयारी");
 return v.q+"\n\n🔥 दैनिक प्रेरणा · दिन "+neNum(i+1)+"\n\nयो भिडियो साथीहरूसँग सेयर गर्नुहोस् र हरेक दिन नयाँ प्रेरणा पाउन फलो गर्नुहोस्। 🙏\n\n"+tags.join(" ")}
 
@@ -180,7 +180,7 @@ function renderList(){
 <div class="btns"><button class="p" data-act="prompt" data-i="${i}">Copy Flow prompt</button>
 <button data-act="line" data-i="${i}">Copy Nepali line</button>
 <button data-act="cap" data-i="${i}">Copy post caption</button></div>
-<details><summary>Show the prompt</summary><pre>${esc(buildPrompt(i))}</pre></details></article>`}).join("");
+<details><summary>Show the complete video prompt</summary><pre>${esc(buildPrompt(i))}</pre></details></article>`}).join("");
 }
 function progress(){const n=Object.keys(S.done).filter(k=>S.done[k]).length;$("#pb").style.width=(n/VIDEOS.length*100)+"%";$("#st").textContent=n+"/"+VIDEOS.length+" made · "+(n*10)+"s of footage"}
 function nextIndex(){for(let i=0;i<VIDEOS.length;i++)if(!S.done[i+1])return i;return -1}
@@ -206,27 +206,26 @@ $("#nx").onclick=()=>{
 };
 $("#ar").onchange=e=>{S.ar=e.target.value;save();renderList()};
 $("#dl").onclick=()=>{
-  const txt=VIDEOS.map((v,i)=>"=== DAY "+(i+1)+" ===\nNepali line: "+v.q+"\nMeaning: "+v.en+"\n\nFLOW PROMPT:\n"+buildPrompt(i)+"\n\nPOST CAPTION:\n"+buildCaption(i)+"\n").join("\n\n");
+  const txt=VIDEOS.map((v,i)=>"=== DAY "+(i+1)+" ===\nNepali line: "+v.q+"\nMeaning: "+v.en+"\n\nCOMPLETE FLOW VIDEO + VOICE-OVER PROMPT:\n"+buildPrompt(i)+"\n\nPOST CAPTION:\n"+buildCaption(i)+"\n").join("\n\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="daily-motivations-prompts.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
 
 /* ---------- Workflow + Guide tabs ---------- */
 $("#flow").innerHTML=`
 <h2>How each video gets made</h2>
-<div class="note">Each video = <b>one 10-second Flow clip</b> + <b>Nepali text and voice added in your editor</b>. Flow makes the cinematic picture and music; you add the words. AI video tools usually garble Devanagari text and are unreliable at Nepali speech, so the prompts forbid both.</div>
+<div class="note">Each video is one complete 10-second Flow generation: the cinematic picture, Nepali motivational voice-over, music, and sound effects are all requested in the same prompt. No separate voice tool or editing step is needed. The prompt keeps Devanagari text out of the picture to avoid garbled on-screen writing.</div>
 <ol>
-<li><b>Generate in Flow.</b> Choose the Omni model at 10 seconds, pick the shape (9:16 for Reels/Shorts), tap <i>Copy Flow prompt</i> on a video, and paste it exactly as copied.</li>
+<li><b>Generate the finished video.</b> Choose the Omni model at 10 seconds, pick the shape (9:16 for Reels/Shorts), tap <i>Copy Flow prompt</i> on a video, and paste it exactly as copied. The prompt includes that video's Nepali voice-over script and audio directions.</li>
 <li><b>Judge the first second.</b> If frame 1 would not stop your thumb mid-scroll, regenerate. Each take differs, so keep the best of 2 or 3.</li>
-<li><b>Add the Nepali line as text.</b> In your editor (CapCut or similar), use <i>Copy Nepali line</i>. Use a bold Devanagari font such as Noto Sans Devanagari Bold or Mukta ExtraBold, white with a soft shadow, in the calm upper third. Reveal it around 2 seconds, after the hook.</li>
-<li><b>Add the Nepali voice-over.</b> Run the same line through the Nepali voice tool you prefer and test that it pronounces the words naturally. Start it around 1.5 to 2 seconds in and finish before 9 seconds. Lower the music under the voice.</li>
-<li><b>Post.</b> Use <i>Copy post caption</i>. It already has the Nepali line, a share prompt and hashtags. Tick <i>Made in Flow</i> to track progress.</li>
+<li><b>Check the generated audio.</b> Make sure the Nepali line is spoken clearly and the voice sits above the music. If the generator omits or garbles it, regenerate with the same complete prompt.</li>
+<li><b>Post the finished clip.</b> No separate editing step is required. Use <i>Copy post caption</i> for the social post, and tick <i>Made in Flow</i> to track progress.</li>
 </ol>
 <h3>Batching tip</h3>
 <p>Generate 5 clips in one sitting, edit them together, then schedule one a day. Use <i>Copy NEXT prompt</i> to jump to the first video not yet ticked.</p>`;
 
 $("#guide").innerHTML=`
 <h2>Shared prompt rules</h2>
-<p class="sub">These four blocks are added to every video's shot list automatically.</p>
+<p class="sub">These shared blocks and each video's Nepali voice-over script are combined in its complete Flow prompt.</p>
 <h3>Style lock</h3><pre>${esc(STYLE)}</pre>
 <h3>Pacing and camera</h3><pre>${esc(PACE)}</pre>
 <h3>Audio</h3><pre>${esc(AUDIO)}</pre>
@@ -239,10 +238,10 @@ $("#guide").innerHTML=`
 <li>The last 2 seconds keep calm space in the upper third for your caption.</li>
 <li>No real people, brands, logos or signs in the picture. The prompts describe fictional Nepali characters.</li>
 <li>For a recurring hero across many videos, upload the same character reference image as an Ingredient in Flow.</li>
-<li>If Flow adds speech, mumbling or text on screen, regenerate.</li>
+<li>If Flow omits or garbles the Nepali voice-over, adds character dialogue, or renders on-screen text, regenerate.</li>
 </ul>
 <h2>The lines</h2>
-<p>All 30 Nepali lines are original wording written for this project. Read them aloud once and adjust the wording to your own voice before you record the voice-over.</p>`;
+<p>All 30 Nepali lines are included verbatim in their corresponding Flow prompts as the voice-over script.</p>`;
 
 /* ---------- tabs ---------- */
 function show(t){S.tab=t;document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("hide",s.id!==t));document.querySelectorAll("nav button[data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t))}
