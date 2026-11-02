@@ -22,5 +22,13 @@ const PROJECTS = [
     href: "projects/kam-nalagne/index.html",
     mark: "🏔️",
     accent: "gold"
+  },
+  {
+    name: "साधु र राडी",
+    type: "Nepali folk tale · short story",
+    description: "A 22-clip short film about a sadhu, a woolen mat and stolen grain, with Nepali dialogue, reference images and a final moral.",
+    href: "projects/sadhu-rani/index.html",
+    mark: "🪔",
+    accent: "coral"
   }
 ];

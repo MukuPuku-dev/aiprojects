@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>साधु र राडी – Short Story Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1512;--card:#17201c;--ink:#eef4f0;--mut:#9fb2a8;--acc:#f0a04b;--warm:#e8b86a;--line:#2b3a33;--ne:"Noto Sans Devanagari","Mukta","Nirmala UI","Mangal",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,sans-serif}
+header{position:sticky;top:0;background:#0f1512ee;backdrop-filter:blur(7px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
+h1{margin:0;font-size:19px}.ne{font-family:var(--ne)}h1 .ne{font-weight:700;color:var(--acc)}
+h2{margin:18px 0 6px;font-size:17px}h3{margin:14px 0 4px;font-size:15px}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .3s}
+nav,.eps{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.eps{margin-top:8px}
+button,select{background:#22302a;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+button.p{background:var(--acc);color:#07210f;border-color:var(--acc);font-weight:700}
+button.on{border-color:var(--acc)}.eps button{padding:4px 10px;font-size:13px;font-family:var(--ne)}.eps button.fin{color:var(--acc)}
+button:focus-visible,select:focus-visible,summary:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+nav a{color:var(--acc);padding:7px 4px}
+main{max-width:920px;margin:0 auto;padding:14px}.hide{display:none}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:12px 0;scroll-margin-top:190px}
+.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}.card.done{opacity:.7}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.tag{background:var(--acc);color:#07210f;font-weight:800;border-radius:7px;padding:1px 9px;font-size:13px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--mut)}
+.top label{margin-left:auto;font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center;cursor:pointer}
+.dl{font-family:var(--ne);font-size:18px;line-height:1.7;margin:6px 0;padding:8px 12px;background:#101a15;border-left:3px solid var(--warm);border-radius:0 8px 8px 0}
+.dl div+div{margin-top:4px}.dl b{color:var(--warm)}
+.scene{font-size:13px;margin:6px 0 10px}.scene b{color:var(--acc)}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+details{margin-top:10px}summary{cursor:pointer;color:var(--mut);font-size:13px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0b100d;border:1px solid var(--line);border-radius:10px;padding:10px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
+.note{border-left:3px solid var(--acc);padding:6px 12px;background:#121b16;border-radius:0 8px 8px 0;margin:10px 0}
+ol,ul{padding-left:20px}li{margin:4px 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--acc);color:#07210f;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}#toast.show{opacity:1}
+.asset-buttons{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin:8px 0}.asset-buttons button{font-size:12px}
+button.missing{color:#ffd38a;border-style:dashed}
+.img{display:block;max-width:260px;max-height:190px;border-radius:8px;margin-top:8px}
+.card h3{margin:0}.board-h{margin:22px 0 4px}
+#clips .asset-buttons button[data-ci]{position:relative;overflow:visible}
+#clips .asset-buttons button[data-ci]:hover,#clips .asset-buttons button[data-ci]:focus-visible{z-index:20}
+#clips .asset-buttons button[data-ci] .image-hover-preview{display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:21;padding:4px;background:#0b100d;border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px #0009;pointer-events:none;color:var(--mut);font-size:11px;white-space:nowrap}
+#clips .asset-buttons button[data-ci]:hover .image-hover-preview,#clips .asset-buttons button[data-ci]:focus-visible .image-hover-preview{display:block}
+#clips .asset-buttons button[data-ci] .image-hover-preview img{display:block;max-width:140px;max-height:105px;object-fit:contain;border-radius:4px}
+</style></head><body>
+<header>
+<h1>🪔 <span class="ne">साधु र राडी</span> · Short story <span class="sub" id="st"></span></h1>
+<div class="sub">Nepali folk tale · 22 clips × 10 seconds · about 3m40s · joined in your editor</div>
+<div class="bar"><i id="pb"></i></div>
+<nav>
+<button class="p" id="nx">Copy NEXT prompt</button>
+<button data-t="clips" class="on">Clips</button>
+<button data-t="cast">Storyboard &amp; Images</button>
+<button data-t="flow">Workflow &amp; Rules</button>
+<button id="dle">Download all prompts (.txt)</button>
+<a href="../../index.html">← All projects</a>
+<label class="sub">Shape <select id="ar"><option value="16:9">16:9 wide</option><option value="9:16">9:16 vertical</option></select></label>
+</nav>
+<div class="eps" id="eps"></div>
+</header>
+<main>
+<section id="clips"></section><section id="cast" class="hide"></section><section id="flow" class="hide"></section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script>
+/* ---------- Shared blocks ---------- */
+const STYLE="STYLE LOCK — grounded, photorealistic live-action Nepali rural folk tale shot on a cinema camera with natural lenses: warm dusk and kerosene-lamp light, soft morning river light, earthy palette of ochre, mud brown, faded saffron and harvest gold, gentle film grain, real skin texture and lived-in hand-spun costumes, authentic hill-village Nepal (mud-and-stone farmhouses, terraced paddy fields, a river bend with a pipal tree). Handheld but steady, intimate framing, shallow depth of field. Quiet, spiritual and humane, not glossy, not cartoon, not stock footage. Characters must match their reference images exactly in face, build and clothing in every clip.";
+const PACE="PACING AND CAMERA: ONE continuous shot with no hard cuts. Slow, motivated camera (gentle push-in, slow pan, handheld follow). One simple action beat per clip; let silence and reactions breathe. Start with about 0.5 seconds of ambient sound before anyone speaks, deliver any dialogue between roughly 0.8s and 8.5s, and finish on a calm, held, well-composed final frame for the last 1 second so the clip joins cleanly to the next one. Emotion is shown in eyes, hands and posture.";
+const AUDIO="AUDIO: The characters speak the Nepali lines listed under DIALOGUE, word for word, in the order given, in natural conversational Nepali with authentic pronunciation and lip-sync to the speaker. Do not translate, paraphrase, add words, or add other speech. If there is no DIALOGUE, nobody speaks. No narrator, no singing. Use real ambient sound design (wind, birds, hens, footsteps, water, rain, cloth, tools) and at most a very soft, sparse score that stays under the voices.";
+function FORMAT(ar){return "FORMAT: "+(ar==="9:16"?"9:16 vertical, faces large and centered, tall layered depth":"16:9 wide cinematic framing")+". Exactly 10 seconds. Clean frame with no on-screen text, subtitles, captions, signs with readable writing, logos or watermarks."}
+
+const CH={
+G:"THE SADHU (60s): lean, calm ascetic with long grey matted hair tied up, long white-grey beard, ochre-saffron robe worn thin, rudraksha beads, a wooden staff and a brass water pot (kamandalu), a small cloth bundle, bare feet. Serene, gentle eyes; speaks softly; truly honest by nature.",
+H:"HARI (45): village farmer; sun-darkened skin, short hair, cotton daura-suruwal with a grey shawl, a Dhaka topi; warm and hospitable, but weak when tempted and quick to justify small wrongs.",
+W:"DEVI (40): Hari's wife; red-bordered cotton sari with a faded shawl, simple glass bangles, a pinch of worry always in her eyes; kind, honest, uneasy about her husband's habits.",
+N:"RAMKAJI (50): Hari's neighbour and a hard-working farmer; stocky, moustache, brown vest over white shirt, a cloth wrapped around his head; blunt and short-tempered but fair at heart."
+};
+const NAMES={G:"Sadhu",H:"Hari",W:"Devi",N:"Ramkaji"};
+const LN={H:"Hari's house",F:"Paddy field",V:"Village path",R:"River bank"};
+const LOC={
+H:"LOCATION — HARI'S HOUSE: modest mud-and-stone farmhouse with a slate roof, courtyard with a wooden mortar for pounding grain, a clay hearth in the main room lit by a kerosene lamp, a corner where a thick woolen mat (raadi) is kept. Same layout in every clip.",
+F:"LOCATION — PADDY FIELD: terraced hillside paddy fields at harvest, golden ripe stalks, narrow earth bunds, dusk light; the neighbour Ramkaji's field is the one next to Hari's.",
+V:"LOCATION — VILLAGE PATH: dusty hill-village path with stone walls, a small roadside shrine with a bell, a few houses, hens and dogs, morning or dusk light.",
+R:"LOCATION — RIVER BANK: quiet river bend outside the village with smooth stones and a huge pipal tree with a stone platform beneath it; clear morning light on the water."
+};
+
+/* [location, characters, scene title, shot, dialogue lines separated by |] */
+const EPS=[
+{ne:"साधु र राडी",en:"The Sadhu and the Mat",clips:[
+["F","H","The few sheaves","Dusk at the edge of a neighbour's ripe golden paddy field. Hari glances around, quickly cuts a few bundles with a sickle and hides them under his shawl, sweat on his brow; a distant dog barks. Low handheld shot, tension in near-silence.","हरि: थोरै नै त हो, कसले थाहा पाउँछ र?"],
+["V","H","Meeting a villager","Hari hurries along the village path with the bundle hidden under his shawl; a villager stops him by the roadside shrine. Medium two-shot, shrine bell swaying; the villager is a friendly neighbour in simple clothes.","गाउँले: हरि दाइ, यत्ति अबेर कहाँबाट?|हरि: खेतबाट… अलिकति काम थियो।"],
+["H","HW","Where did it come from?","Hari sets the bundle in a dark corner of the courtyard; Devi sees it and stops with a lamp in her hand. Slow push-in on her doubtful face.","देवी: यो धान कहाँबाट ल्याउनुभयो?|हरि: हाम्रै खेतको हो। सोधिरहन पर्दैन।"],
+["H","W","Pounding the paddy","Night. Devi pounds the paddy in the wooden mortar by lamplight, husks flying, glancing now and then toward the closed door where Hari sits. Slow side track, rhythmic thuds. No dialogue."],
+["V","G","A stranger at dusk","A sadhu walks the dusk path with his staff and bundle, stopping at a gate where a villager shakes his head. Low tracking shot, long shadows.","साधु: नारायण… रातभर बास पाउँ कि?|गाउँले: ठाउँ छैन महाराज, अरू ठाउँ हेर्नुहोस्।"],
+["H","GH","At the gate","The sadhu stands at Hari's gate; Hari looks up from the veranda and hurries to greet him with joined palms. Eye-level two-shot, warm dusk light.","साधु: ॐ नमो नारायण। एक रातको बास पाउँ कि, बाबु?|हरि: आउनुहोस् महाराज। अतिथि त देवता हुन्।"],
+["H","GHW","Food for the guest","By the hearth lamp, Devi serves the sadhu steaming rice and lentils on a leaf plate; she glances at Hari, who looks away. The sadhu eats with gratitude. Slow push-in, three-shot.","साधु: अन्नपूर्णा प्रसन्न होऊन्। कति मीठो भात!|देवी: खानुहोस् महाराज।"],
+["H","GH","Twelve pure years","After eating, the sadhu speaks calmly by the fire; Hari listens, then lowers his eyes. Close two-shot, firelight on faces.","साधु: बाबु, मैले बाह्र वर्ष हिँडेँ, कसैको एक दाना पनि नसोधी लिएको छैन।"],
+["H","GW","The woolen mat","Devi lays a thick woolen mat (raadi) by the hearth for the sadhu; he touches it with thanks and settles down. Medium shot, soft lamp-light.","साधु: राडीको न्यानोले आज राम्रो निद्रा आउला।|देवी: शुभ रात्रि महाराज।"],
+["H","H","Hari can't sleep","Night. Hari lies awake beside Devi, staring at the dark ceiling; from the next room comes the sadhu's faint steady breathing. Slow push-in on Hari's troubled eyes. No dialogue."],
+["H","G","Before dawn","Before sunrise the sadhu rises silently, folds the woolen mat and ties it to his bundle; he hesitates, a shadow of temptation crosses his face, then he steps out of the sleeping house. Slow handheld follow, close on his hand gripping the mat. No dialogue."],
+["H","HW","The mat is gone","Morning. Hari carries tea toward the corner where the sadhu slept and finds it empty; Devi stops sweeping. Medium two-shot, shocked silence.","हरि: साधु महाराज कहाँ गए? ए… राडी पनि छैन!|देवी: राडी पो लगेछन्!"],
+["V","HN","Raising the village","Hari runs through the village, calling out; villagers and Ramkaji gather with sticks. Handheld, fast but not frantic.","हरि: ए छिमेकी हो! एउटा साधुले मेरो राडी चोरेर भागे!|रामकाजी: साधुको भेषमा चोर! खोज्नुपर्छ।"],
+["V","HN","Following the trail","A line of villagers follows footprints in the dusty trail, a dog sniffing ahead, then a boy points. Low tracking shot.","गाउँले: उता नदीतिर गएको देखियो।"],
+["R","G","The restless sadhu","Under the pipal tree beside the river the sadhu sits with the mat on his lap, eyes restless, fingers tapping the wool; he cannot meditate. Slow push-in, then distant voices rise. No dialogue."],
+["R","GHN","Caught","The villagers surround the pipal platform; Hari steps forward, hurt; Ramkaji glares. Slow push-in on the sadhu's calm face.","हरि: महाराज, तपाईंले मेरो राडी किन चोर्नुभयो?|रामकाजी: ढोंगी साधु!"],
+["R","G","I was pure","The sadhu stands, holds the mat in both hands and bows his head, speaking from a heavy heart. Close shot, soft river light.","साधु: म तिम्रो घर आउँदा शुद्ध थिएँ। निस्कने बेला पो मनमा चोरी पस्यो।"],
+["R","GH","The grain","The sadhu looks gently at Hari; Hari's face freezes as a quick light-only flash of the dusk field and the hidden sickle crosses his mind. Slow push-in on Hari.","साधु: तिमीले दिएको अन्न नै चोरीको थियो जस्तो लाग्छ। त्यसैको असर मभित्र पस्यो।"],
+["R","HN","The confession","Hari falls to his knees before Ramkaji and the crowd, shaking; Ramkaji's anger turns to shock. Handheld close shots.","हरि: महाराज होइन, चोर त म हुँ। त्यो धान रामकाजीको खेतबाट काटेको थिएँ।|रामकाजी: हरि… तैँले?"],
+["R","HN","Forgiveness","Ramkaji stands silent, then lifts Hari by the shoulders; the villagers lower their sticks. Medium two-shot, slow pull-back.","रामकाजी: गल्ती मान्ने मान्छे सानो हुँदैन। धानको मोल फर्काइदे।|हरि: म आजै फर्काउँछु, दाइ।"],
+["R","GHN","The mat returned","The sadhu offers the woolen mat back to Hari with both hands; Hari bows, deeply moved. Close three-shot, warm morning light.","साधु: यो राडी फिर्ता लिनू, बाबु। चोरीको थोरै पनि मन भारी बनाउँछ।|हरि: महाराज… आजदेखि मेरो अन्न इमानदारीको मात्र हुनेछ।"],
+["R","G","Jasto ann, usto man","The sadhu raises his staff, nods to the villagers and walks away along the river path into the rising sun. Hari and Ramkaji stand together watching; the villagers fall silent. Slow pull-back, final held wide frame.","साधु: याद राख, जस्तो अन्न, उस्तै मन।"]
+]}
+];
+
+/* ---------- helpers ---------- */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const DIG="०१२३४५६७८९";const neNum=n=>String(n).split("").map(d=>DIG[+d]).join("");
+const KEY="sadhu-rani-v1";
+let S={done:{},ar:"16:9",ep:0,cur:"0-0",tab:"clips"};
+try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const id=(e,c)=>e+"-"+c;
+const total=()=>EPS.reduce((n,e)=>n+e.clips.length,0);
+
+function buildPrompt(e,c){
+  const k=EPS[e].clips[c],n=EPS[e].clips.length,lines=k[4]?k[4].split("|"):[];
+  const chars=[...k[1]].map(x=>CH[x]).join("\n\n")||"No people in frame.";
+  const prev=c>0?"CONTINUITY: Start from the final frame of the previous clip (attach it as the start frame) and keep people, clothing, light and screen direction identical.":"CONTINUITY: This is the opening clip of the film; establish the place and people exactly as in the reference images.";
+  return "SHOT — clip "+(c+1)+" of "+n+" in the short film \""+EPS[e].en+"\", one continuous 10-second live-action drama clip:\n"+k[3]+"\n\nCHARACTERS — match the reference images exactly:\n"+chars+"\n\n"+LOC[k[0]]+"\n\nDIALOGUE (speak exactly as written, in Nepali):\n"+(lines.length?lines.map(l=>"• "+l).join("\n"):"None. Nobody speaks in this clip.")+"\n\n"+prev+"\n\n"+STYLE+"\n\n"+PACE+"\n\n"+AUDIO+"\n\n"+FORMAT(S.ar)}
+
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1600)}
+async function copy(text,msg){try{await navigator.clipboard.writeText(text)}catch(e){const a=document.createElement("textarea");a.value=text;a.style.position="fixed";a.style.opacity="0";document.body.appendChild(a);a.select();try{document.execCommand("copy")}catch(_){}a.remove()}toast(msg||"Copied ✓")}
+function epDone(e){return EPS[e].clips.every((_,c)=>S.done[id(e,c)])}
+
+/* ---------- render ---------- */
+function renderEps(){if(EPS.length<2){$("#eps").hidden=true;return}$("#eps").innerHTML=EPS.map((x,e)=>{const d=EPS[e].clips.filter((_,c)=>S.done[id(e,c)]).length;return `<button data-e="${e}" class="${S.ep===e?"on":""} ${epDone(e)?"fin":""}" title="${esc(x.en)} · ${d}/${x.clips.length}">${neNum(e+1)}</button>`}).join("")}
+function renderClips(){
+  const e=S.ep,E=EPS[e];
+  const head=`<h2><span class="ne">${esc(E.ne)}</span></h2><p class="sub">${esc(E.en)} · ${E.clips.length} clips × 10s = ${E.clips.length*10}s base footage. Join the clips in order in your editor.</p>`;
+  $("#clips").innerHTML=head+E.clips.map((k,c)=>{
+    const d=!!S.done[id(e,c)],lines=k[4]?k[4].split("|"):[];
+    return `<article class="card ${d?"done":""} ${S.cur===id(e,c)?"cur":""}" id="k${e}-${c}">
+<div class="top"><span class="tag">Clip ${c+1}/${E.clips.length}</span><span class="chip">${LN[k[0]]}</span><span class="chip">${[...k[1]].map(x=>NAMES[x]).join(", ")||"no people"}</span>
+<label><input type="checkbox" data-done="${id(e,c)}" ${d?"checked":""}> Made in Flow</label></div>
+<p class="scene"><b>Scene:</b> ${esc(k[2])}</p>
+${lines.length?`<div class="dl" lang="ne">${lines.map(l=>{const i=l.indexOf(":");return `<div><b>${esc(l.slice(0,i))}:</b>${esc(l.slice(i+1))}</div>`}).join("")}</div>`:`<p class="sub">No dialogue: ambient sound only.</p>`}
+<div class="btns"><button class="p" data-act="prompt" data-e="${e}" data-c="${c}">Copy Flow prompt</button><button data-act="line" data-e="${e}" data-c="${c}">Copy dialogue</button></div>
+${assetRow(e,c,k)}
+<details><summary>Show the complete prompt</summary><pre>${esc(buildPrompt(e,c))}</pre></details></article>`}).join("");
+  loadEnds();
+}
+function progress(){let n=0;EPS.forEach((E,e)=>E.clips.forEach((_,c)=>{if(S.done[id(e,c)])n++}));const T=total();$("#pb").style.width=(n/T*100)+"%";$("#st").textContent=n+"/"+T+" clips · "+Math.floor(n*10/60)+"m "+(n*10%60)+"s"}
+function nextPos(){for(let e=0;e<EPS.length;e++)for(let c=0;c<EPS[e].clips.length;c++)if(!S.done[id(e,c)])return[e,c];return null}
+function fileText(e){const E=EPS[e];return E.clips.map((k,c)=>"=== CLIP "+(c+1)+"/"+E.clips.length+" — "+k[2]+" ===\nDialogue:\n"+(k[4]?k[4].split("|").join("\n"):"(none)")+"\n\nFLOW PROMPT:\n"+buildPrompt(e,c)+"\n").join("\n\n")}
+function download(name,txt){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+/* ---------- image layer: saved in this browser (IndexedDB) ---------- */
+const AS={},SAVED=new Set(),LOADING=new Set();let activePasteKey=null,idbBroken=false;
+const IDB={db:null,open(){if(!this.db)this.db=new Promise((res,rej)=>{if(!("indexedDB" in window))return rej(new Error("IndexedDB is unavailable"));const r=indexedDB.open("sadhu-rani-assets",1);r.onupgradeneeded=()=>r.result.createObjectStore("a");r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)});return this.db},
+async run(mode,fn){const db=await this.open();return new Promise((res,rej)=>{const t=db.transaction("a",mode),st=t.objectStore("a");let out;fn(st,v=>{out=v});t.oncomplete=()=>res(out);t.onerror=()=>rej(t.error)})},
+get(k){return this.run("readonly",(s,o)=>{const r=s.get(k);r.onsuccess=()=>o(r.result)})},
+put(k,v){return this.run("readwrite",s=>{s.put(v,k)})},
+del(k){return this.run("readwrite",s=>{s.delete(k)})},
+keys(){return this.run("readonly",(s,o)=>{const r=s.getAllKeys();r.onsuccess=()=>o(r.result)})}};
+const endKey=(e,c)=>"end-"+(e+1)+"-"+(c+1);
+const labelOf=k=>k.startsWith("char-")?NAMES[k.slice(5)]:k.startsWith("loc-")?LN[k.slice(4)]:"clip end frame";
+async function ensure(key){if(AS[key])return AS[key];if(!SAVED.has(key))return null;try{AS[key]=await IDB.get(key)}catch(_){}return AS[key]||null}
+function shrink(f){return new Promise((resolve,reject)=>{const im=new Image(),url=URL.createObjectURL(f);im.onload=()=>{try{const w=Math.min(1024,im.width),h=im.height*w/im.width,c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);resolve(c.toDataURL("image/jpeg",.85))}catch(e){reject(e)}finally{URL.revokeObjectURL(url)}};im.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("Could not read that image."))};im.src=url})}
+function toPng(dataUrl){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext("2d").drawImage(im,0,0);c.toBlob(b=>b?resolve(b):reject(new Error("Could not convert the image.")),"image/png")};im.onerror=()=>reject(new Error("Could not decode the image."));im.src=dataUrl})}
+async function copyImage(key){
+  try{
+    if(!navigator.clipboard||!window.ClipboardItem)throw new Error("This browser cannot copy images (use Chrome, Edge or Safari over https).");
+    await navigator.clipboard.write([new ClipboardItem({"image/png":(async()=>{const d=await ensure(key);if(!d)throw new Error("No saved image for "+labelOf(key)+" yet.");return toPng(d)})()})]);
+    toast("Image copied ✓ paste it into Flow");
+  }catch(err){toast(err.message||"Could not copy the image",3200)}
+}
+async function saveAsset(key,file){
+  try{
+    const data=await shrink(file);AS[key]=data;SAVED.add(key);activePasteKey=null;
+    try{await IDB.put(key,data)}catch(e){idbBroken=true;toast("Saved for this tab only: your browser blocked local storage.",3600)}
+    renderBoard();renderClips();toast("Image saved ✓");
+  }catch(err){toast(err.message||"Could not save the image",3200)}
+}
+async function removeAsset(key){if(!confirm("Remove the saved "+labelOf(key)+" image?"))return;delete AS[key];SAVED.delete(key);try{await IDB.del(key)}catch(_){}renderBoard();renderClips()}
+function startPaste(key){activePasteKey=key;document.querySelectorAll("[data-paste]").forEach(b=>{const on=b.dataset.paste===key;b.textContent=on?"Press Ctrl+V":b.dataset.label;b.classList.toggle("on",on)})}
+async function initAssets(){try{const ks=await IDB.keys();ks.forEach(k=>SAVED.add(k));await Promise.all(ks.filter(k=>!k.startsWith("end-")).map(async k=>{AS[k]=await IDB.get(k)}))}catch(_){idbBroken=true}renderBoard();renderClips()}
+async function loadEnds(){const need=EPS[S.ep].clips.map((_,c)=>endKey(S.ep,c)).filter(x=>SAVED.has(x)&&!AS[x]&&!LOADING.has(x));if(!need.length)return;need.forEach(x=>LOADING.add(x));await Promise.all(need.map(async x=>{try{AS[x]=await IDB.get(x)}catch(_){}}));renderClips()}
+function assetRow(e,c,k){
+  const keys=[...[...k[1]].map(x=>"char-"+x),"loc-"+k[0]],eKey=endKey(e,c),pKey=c>0?endKey(e,c-1):null;
+  const btn=x=>`<button data-ci="${x}" class="${SAVED.has(x)?"":"missing"}">Copy ${esc(labelOf(x))} image</button>`;
+  const lbl="Paste this clip's end frame";
+  return `<div class="asset-buttons">${keys.map(btn).join("")}</div>
+<div class="asset-buttons">${pKey?`<button data-ci="${pKey}" class="${SAVED.has(pKey)?"":"missing"}">Copy clip ${c} end frame</button>`:""}<button data-paste="${eKey}" data-label="${lbl}">${activePasteKey===eKey?"Press Ctrl+V":lbl}</button><label class="sub">or choose file <input type="file" accept="image/*" data-up="${eKey}" style="max-width:170px"></label><span class="sub">${AS[eKey]?"End frame saved":SAVED.has(eKey)?"Saved · loading…":"No end frame yet"}</span></div>${AS[eKey]?`<img class="img" loading="lazy" alt="End frame of clip ${c+1}" src="${AS[eKey]}">`:""}`}
+const REFKEYS=[];
+function refPrompt(x){return x.startsWith("char-")?"Character reference: full-body front three-quarter view of "+REFS[x.slice(5)]+". Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.":"Environment reference only, no people: "+LREF[x.slice(4)]+". Photorealistic, soft natural light, muted earthy palette, cinematic wide shot, no text."}
+function boardCard(x){const t=x.startsWith("char-")?NAMES[x.slice(5)]:LN[x.slice(4)],lbl="Paste image";
+  return `<div class="card" data-board="${x}"><div class="top"><b>${esc(t)}</b><span style="flex:1"></span><button class="p" data-ic="${x}">Copy image prompt</button><button data-ci="${x}" class="${SAVED.has(x)?"":"missing"}">Copy saved image</button><button data-paste="${x}" data-label="${lbl}">${activePasteKey===x?"Press Ctrl+V":lbl}</button><label class="sub">Choose file <input type="file" accept="image/*" data-up="${x}" style="max-width:170px"></label>${SAVED.has(x)?`<button data-rm="${x}">Remove</button>`:""}</div><pre>${esc(refPrompt(x))}</pre><span class="sub">${AS[x]?"Saved image":"No image saved yet"}</span>${AS[x]?`<img class="img" loading="lazy" alt="Saved reference for ${esc(t)}" src="${AS[x]}">`:""}</div>`}
+function renderBoard(){
+  if(!REFKEYS.length)REFKEYS.push(...Object.keys(REFS).map(k=>"char-"+k),...Object.keys(LREF).map(k=>"loc-"+k));
+  const n=REFKEYS.filter(x=>SAVED.has(x)).length;
+  $("#cast").innerHTML=`<h2>Storyboard &amp; reference images</h2><div class="note"><b>${n}/${REFKEYS.length} references saved.</b> Make each image once (copy its prompt into Flow, Whisk or any image tool), then press <i>Paste image</i> and Ctrl+V, or choose a file. On every clip card you can copy the right character and place images and paste them into Flow as Ingredients, so faces and places stay consistent. Images are stored only in this browser; clearing site data removes them.${idbBroken?" <b>Local storage is blocked here, so images last only until you close this tab.</b>":""}</div><h3 class="board-h">Characters</h3>${Object.keys(REFS).map(k=>boardCard("char-"+k)).join("")}<h3 class="board-h">Places</h3>${Object.keys(LREF).map(k=>boardCard("loc-"+k)).join("")}`;
+}
+
+/* ---------- events ---------- */
+$("#clips").addEventListener("click",ev=>{const b=ev.target.closest("button[data-act]");if(!b)return;const e=+b.dataset.e,c=+b.dataset.c;S.cur=id(e,c);save();
+  if(b.dataset.act==="prompt")copy(buildPrompt(e,c),"Flow prompt copied ✓");
+  if(b.dataset.act==="line")copy((EPS[e].clips[c][4]||"").split("|").join("\n"),"Dialogue copied ✓");
+  document.querySelectorAll(".card.cur").forEach(x=>x.classList.remove("cur"));const el=$("#k"+e+"-"+c);el&&el.classList.add("cur")});
+$("#clips").addEventListener("change",ev=>{const x=ev.target.closest("input[data-done]");if(!x)return;if(x.checked)S.done[x.dataset.done]=true;else delete S.done[x.dataset.done];save();progress();renderEps();x.closest(".card").classList.toggle("done",x.checked)});
+$("#eps").addEventListener("click",ev=>{const b=ev.target.closest("button[data-e]");if(!b)return;S.ep=+b.dataset.e;save();show("clips");renderEps();renderClips();scrollTo({top:0})});
+$("#nx").onclick=()=>{const p=nextPos();if(!p){toast("All clips are marked made 🎉");return}
+  S.ep=p[0];S.cur=id(p[0],p[1]);save();show("clips");renderEps();renderClips();copy(buildPrompt(p[0],p[1]),"Ep "+(p[0]+1)+" clip "+(p[1]+1)+" prompt copied ✓");
+  const el=$("#k"+p[0]+"-"+p[1]);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})};
+$("#ar").onchange=ev=>{S.ar=ev.target.value;save();renderClips()};
+$("#dle").onclick=()=>download("sadhu-rani-prompts.txt",fileText(0));
+
+/* ---------- Cast + Workflow ---------- */
+const REFS={G:"a 60-year-old Nepali sadhu, long grey matted hair tied up, long white-grey beard, thin ochre-saffron robe, rudraksha beads, wooden staff, brass water pot, small cloth bundle, bare feet, serene eyes",H:"a 45-year-old Nepali village farmer, sun-darkened skin, short hair, cotton daura-suruwal with grey shawl and Dhaka topi, slightly guilty warm expression",W:"a 40-year-old Nepali village woman, red-bordered cotton sari with faded shawl, glass bangles, kind worried eyes",N:"a 50-year-old stocky Nepali farmer with moustache, brown vest over white shirt, cloth wrapped around the head, blunt expression"};
+const LREF={H:"modest mud-and-stone farmhouse with slate roof, courtyard with wooden mortar, clay hearth room lit by a kerosene lamp, a thick woolen mat in the corner",F:"terraced hillside paddy fields at harvest, golden ripe stalks, narrow earth bunds, dusk light",V:"dusty hill-village path with stone walls and a small roadside shrine with a bell",R:"quiet river bend with smooth stones and a huge pipal tree with a stone platform"};
+$("#flow").innerHTML=`<h2>How the story gets made</h2>
+<div class="note">A 22-clip short film, about 3 minutes 40 seconds. Every clip is one continuous 10-second shot ending on a calm held frame so the clips join cleanly in your editor.</div>
+<ol><li><b>Make the references.</b> In the Storyboard &amp; Images tab, save the four characters and four places (paste or choose a file). Always attach them to Flow as Ingredients.</li>
+<li><b>Generate in order</b> with <i>Copy NEXT prompt</i>, using the Omni model at 10 seconds.</li>
+<li><b>Chain the frames.</b> Save each finished clip's last frame with <i>Paste this clip's end frame</i>, then on the next clip use <i>Copy clip N end frame</i> as the start frame. Start fresh from the references when the place or time changes (clips 1, 5, 11, 15).</li>
+<li><b>Check the Nepali.</b> Characters must say the listed lines word for word. Regenerate if the voice garbles, adds speech or shows text.</li>
+<li><b>Edit.</b> Trim 0.3s at each join, cross-fade the audio, and add one soft flute or sarangi music bed under the whole film.</li></ol>
+<h2>The idea behind the story</h2><ul>
+<li>The sadhu was honest when he arrived. The theft happens only after he eats grain that was stolen, which is the story's moral: <b>जस्तो अन्न, उस्तै मन।</b></li>
+<li>Clips 1 to 4 show the audience Hari's small theft before the sadhu arrives, so the reveal in clip 18 lands as a realization, not a surprise.</li>
+<li>Keep the sadhu gentle and never comic. Keep Hari human: weak, not evil.</li></ul>`;
+
+document.addEventListener("click",ev=>{const b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.paste){startPaste(b.dataset.paste);return}
+  if(b.dataset.ci){copyImage(b.dataset.ci);return}
+  if(b.dataset.ic){copy(refPrompt(b.dataset.ic),"Image prompt copied ✓");return}
+  if(b.dataset.rm)removeAsset(b.dataset.rm)});
+document.addEventListener("change",ev=>{const t=ev.target;if(t.dataset&&t.dataset.up&&t.files[0])saveAsset(t.dataset.up,t.files[0])});
+document.addEventListener("paste",ev=>{const k=activePasteKey;if(!k)return;const cd=ev.clipboardData||window.clipboardData;const it=Array.from((cd&&cd.items)||[]).find(x=>x.type&&x.type.startsWith("image/"));if(!it)return;ev.preventDefault();saveAsset(k,it.getAsFile())});
+function hoverPreview(btn){if(btn.dataset.pv==="1")return;btn.dataset.pv="1";let sp=btn.querySelector(".image-hover-preview");if(!sp){sp=document.createElement("span");sp.className="image-hover-preview";sp.setAttribute("aria-hidden","true");btn.append(sp)}sp.textContent="Loading preview…";ensure(btn.dataset.ci).then(d=>{if(!btn.isConnected)return;if(d){const im=document.createElement("img");im.alt="";im.src=d;sp.replaceChildren(im)}else{sp.textContent="No saved image";delete btn.dataset.pv}})}
+document.addEventListener("pointerover",ev=>{const b=ev.target.closest("#clips button[data-ci]");if(b&&!b.contains(ev.relatedTarget))hoverPreview(b)});
+document.addEventListener("focusin",ev=>{const b=ev.target.closest&&ev.target.closest("#clips button[data-ci]");if(b)hoverPreview(b)});
+
+/* ---------- tabs ---------- */
+function show(t){S.tab=t;document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("hide",s.id!==t));document.querySelectorAll("nav button[data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t))}
+document.querySelectorAll("nav button[data-t]").forEach(b=>b.onclick=()=>show(b.dataset.t));
+$("#ar").value=S.ar;renderEps();renderClips();renderBoard();progress();show("clips");initAssets();
+</script></body></html>
