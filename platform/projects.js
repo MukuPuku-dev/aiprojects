@@ -14,5 +14,13 @@ const PROJECTS = [
     href: "projects/daily-motivations/index.html",
     mark: "🔥",
     accent: "coral"
+  },
+  {
+    name: "काम नलाग्ने कोही हुँदैन",
+    type: "Nepali village drama · Season 1",
+    description: "12 episodes, each broken into several 10-second Flow clips with Nepali dialogue, cast and place references, and episode progress tracking.",
+    href: "projects/kam-nalagne/index.html",
+    mark: "🏔️",
+    accent: "gold"
   }
 ];
