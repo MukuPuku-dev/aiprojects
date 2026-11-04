@@ -34,7 +34,7 @@ const PROJECTS = [
   {
     name: "लोभले लाभ, लाभले विलाप",
     type: "Tolstoy folk tale · Nepali dialogue drama",
-    description: "A 5-part, 20-clip dialogue-led adaptation with Nepali scripts, character and location continuity, copy-ready Google Flow prompts, and progress tracking.",
+    description: "A 5-part, 23-clip dialogue-led adaptation with Nepali scripts, character and location continuity, copy-ready Google Flow prompts, and progress tracking.",
     href: "projects/loobh-le-labh/index.html",
     mark: "🌾",
     accent: "gold"
