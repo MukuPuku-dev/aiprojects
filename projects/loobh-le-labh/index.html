@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ne"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>लोभले लाभ, लाभले विलाप</title>
+<style>
+:root{--bg:#11140f;--card:#1d231b;--ink:#f3f0e8;--mut:#aeb5a4;--gold:#d8b46c;--line:#394334}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 system-ui,"Noto Sans Devanagari","Nirmala UI",sans-serif}header{position:sticky;top:0;background:#11140ff2;padding:14px;border-bottom:1px solid var(--line);z-index:3}h1,h2{color:var(--gold);margin:0 0 7px}h1{font-size:21px}h2{font-size:19px}.muted{color:var(--mut);font-size:12px}nav,.tools,.top{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:9px}button,select{background:#303a2b;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 11px;cursor:pointer;font:inherit}button.primary{background:var(--gold);color:#241b0d;font-weight:700}nav a{color:var(--gold);padding:7px}main{max-width:950px;margin:auto;padding:14px}.box,.clip{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0}.clip{margin:10px 0}.top{justify-content:space-between}.tag{color:var(--gold);font-size:12px}.line{background:#273024;border-left:3px solid #84996d;border-radius:5px;padding:8px 11px;margin:7px 0}.speaker{color:#e8c67c;font-weight:800}.prompt{white-space:pre-wrap;background:#0c100b;padding:10px;border-radius:8px;font:12px/1.55 monospace;word-break:break-word}.hide{display:none}.bar{height:6px;background:#394334;border-radius:9px;margin:8px 0}.bar i{display:block;background:#85c995;height:100%;width:0}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#85c995;color:#102014;padding:7px 14px;border-radius:30px;opacity:0}#toast.show{opacity:1}
+</style>
+<header><h1>लोभले लाभ, लाभले विलाप</h1><div class="muted">How Much Land Does a Man Need? · लियो टोल्स्टोयको कथामा आधारित संवादप्रधान नेपाली रूपान्तरण · ५ भाग · २० क्लिप × १० सेकेन्ड</div><div class="bar"><i id="bar"></i></div><div class="muted" id="count"></div><nav><button class="primary" id="next">Copy NEXT Flow prompt</button><button data-tab="script">कथा र संवाद</button><button data-tab="cast">पात्र र स्थान</button><button data-tab="rules">Flow निर्देशन</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a><select id="ratio"><option>16:9</option><option>9:16</option></select></nav></header>
+<main><section id="script"></section><section id="cast" class="hide"></section><section id="rules" class="hide"></section></main><div id="toast"></div>
+<script>
+const C={
+P:"पाहोम (३५–४५): मेहनती किसान, बलियो सामान्य शरीर, घामले डढेको अनुहार, छोटो खैरो कपाल र बाक्लो जुँगा। खैरो लिनेन कमिज, गाढा ऊनी भेस्ट, खैरो पाइन्ट, छालाको जुत्ता। कथाभरि अनुहार/कपाल/शरीर उही; क्रमशः थकान र लोभ बढ्ने।",
+W:"श्रीमती (३०–४०): शान्त, व्यावहारिक र स्पष्ट बोल्ने। गाढा नीलो ऊनी स्कर्ट, क्रीम ब्लाउज, टाउकोमा साधारण रुमाल।",
+S:"दिदी (४०): सहरमा बस्ने आत्मविश्वासी महिला, गाढा हरियो कोट र हल्का टोपी।",
+L:"जमिनधनी (५०): विधवा जमिनधनी, मरुन लामो पोसाक र ऊनी सल।",
+N:"छिमेकी किसान (४५): माटो लागेको खैरो भेस्ट, फिक्का कमिज र ऊनी टोपी।",
+M:"व्यापारी (४५): लामो गाढा कोट, छालाको झोला र टोपी।",
+B:"बास्किर मुखिया (५५): बाक्लो दाह्री, परम्परागत लामो कोट, फरको टोपी, उदार र हँसिला।",
+I:"दोभाषे (३५): साधारण ऊनी पोसाक र छालाको कम्मर पेटी।",
+H:"नोकर (२५): खैरो कमिज र ऊनी टोपी लगाउने वफादार युवक।"
+};
+const E=[
+{t:"१. अझै धेरै जमिन",s:"दिदीबहिनीको बहस, पाहोमको सपना र पहिलो खरिद",c:[
+["घर","साँझको काठको घर। दिदीबहिनी चुल्होछेउ सहर र गाउँको जीवनबारे कुरा गर्छन्। पाहोम ढोकामा आइपुग्छ।",["दिदी: सहरमा कमाइ राम्रो, लुगा राम्रो, सुविधा पनि कति छन्!","श्रीमती: तर गाउँमा आफ्नै अन्न, आफ्नै दूध। सहरमा सबै कुरा किन्नुपर्छ।"],"S W P"],
+["घर","पाहोम आगोछेउ बस्छ र दिदीबहिनीको बहस सुन्छ।",["पाहोम: सहर होस् कि गाउँ, जमिन आफ्नो भए जीवन सजिलो हुन्छ।","दिदी: जमिनले मात्रै सुख दिन्छ र?"],"P S"],
+["घर","पाहोम झ्यालबाट आफ्नो सानो खेत हेर्छ। श्रीमतीले उसको असन्तुष्टि देख्छिन्।",["पाहोम: मसँग पर्याप्त जमिन भएको भए कसैले मलाई दबाउन सक्दैनथ्यो।","श्रीमती: भएकोमा सन्तोष गर्न पनि सिक्नुपर्छ नि।"],"P W"],
+["खेत","पाहोम र जमिनधनी महिला बिक्रीमा राखिएको खेतको माटो हेर्छन्।",["पाहोम: यो माटो राम्रो छ। मूल्य अलि घटाउन सक्नुहुन्छ?","जमिनधनी: उचित मूल्य दिनुभयो भने बेच्न तयार छु।"],"P L"]]},
+{t:"२. सीमाना र झगडा",s:"जमिन बढ्छ, तर मनको असन्तुष्टि पनि बढ्छ",c:[
+["नयाँ खेत","पाहोम नयाँ खेतको माटो हातमा लिएर खुसी हुन्छ। श्रीमती पछाडि उभिएकी छिन्।",["पाहोम: अब यो माटो हाम्रो हो। जति मेहनत गर्छौँ, फल आफ्नै हुन्छ।","श्रीमती: मेहनतसँगै शान्ति पनि चाहिन्छ।"],"P W"],
+["खेतको डिल","छिमेकीको गाई पाहोमको खेतमा पसेको छ। पाहोम रिसाउँदै छिमेकीलाई बोलाउँछ।",["पाहोम: तिम्रा गाईले मेरो बाली कुल्चिएछन्!","छिमेकी: जानाजानी होइन। सीमाना स्पष्ट छैन।"],"P N"],
+["गाउँ कार्यालय","गाउँको कार्यालयमा पाहोम उजुरी लेखाउँदैछ; छिमेकी रिसाएर उभिएको छ।",["छिमेकी: एउटा गाईको गल्तीमा यति ठूलो झगडा?","पाहोम: नियम सबैका लागि एउटै हुनुपर्छ।"],"P N"],
+["घर","राति श्रीमतीले पाहोमलाई सम्झाउँछिन्। ऊ कागजपत्र मिलाउँदैछ।",["श्रीमती: खेत बढ्यो, तर तिम्रो मन शान्त भएन।","पाहोम: अरूले मेरो हक मिच्न नपाऊन् भनेर मात्रै हो।"],"P W"]]},
+{t:"३. अझ उर्वर जमिन",s:"भोल्गाको यात्रा, समृद्धि र फेरि पलाएको लोभ",c:[
+["बजार","व्यापारी पाहोमलाई भोल्गा नदीपारिको उर्वर जमिनबारे बताउँछ।",["व्यापारी: भोल्गा नदीपारि जमिन सस्तो र निकै उर्वर छ।","पाहोम: सस्तो? त्यहाँ पुग्न कति दिन लाग्छ?"],"P M"],
+["भोल्गाको खेत","पाहोम र श्रीमती फराकिलो उर्वर खेत हेर्छन्।",["पाहोम: हेर त! यहाँ त जमिन जति हेरे पनि सकिँदैन।","श्रीमती: टाढा आयौँ, अब शान्तिसँग बसौँ।"],"P W"],
+["भोल्गाको घर","गोदाम अन्नका बोराले भरिएको छ। पाहोम भने अझ ठूलो जमिनको नक्सा हेर्छ।",["श्रीमती: यसपालि त अन्नले गोदाम भरियो।","पाहोम: हो, तर अझ ठूलो खेत भए झन् राम्रो हुन्थ्यो।"],"P W"],
+["घर","श्रीमतीले पाहोमको फेरि यात्रा गर्ने तयारी देखेर रोक्न खोज्छिन्।",["श्रीमती: हामीसँग अहिले जे छ, त्यो पनि कम छैन।","पाहोम: यस्तो मौका बारम्बार आउँदैन।"],"P W"]]},
+{t:"४. एक दिनमा जति घेर्‍यौ",s:"बास्किरहरूको आतिथ्य र असाधारण प्रस्ताव",c:[
+["बास्किर मैदान","बास्किरहरू पाहोम र नोकरलाई स्वागत गर्छन्। मुखिया हाँस्दै हात मिलाउँछन्।",["मुखिया: स्वागत छ यात्री! हाम्रो भूमिमा के खोज्दै आउनुभयो?","पाहोम: खेती गर्नका लागि जमिन किन्न चाहन्छु।"],"P B H"],
+["मुखियाको पाल","मुखियाको पालभित्र पाहोमलाई खाना र दूध दिइन्छ। दोभाषेले कुरा बुझाउँछ।",["मुखिया: पाहुनालाई पहिले खाना, त्यसपछि कारोबार।","पाहोम: तपाईंहरूको आतिथ्यका लागि धन्यवाद।"],"P B I"],
+["बास्किर मैदान","पाहोम र मुखिया खुला मैदान हेर्दै हिँड्छन्।",["पाहोम: यति धेरै जमिनको मूल्य कति पर्छ?","मुखिया: हामी जमिनलाई टुक्रा गनेर बेच्दैनौँ।"],"P B"],
+["मुखियाको पाल","मुखियाले सूर्योदय र सूर्यास्तको दिशा देखाउँदै प्रस्ताव राख्छन्। पाहोम उत्साहित हुन्छ।",["मुखिया: एक हजार रुबल दिनुहोस्। सूर्योदयमा हिँड्नुहोस्; जति घेरा लगाउनुहुन्छ, त्यो तपाईंको।","दोभाषे: तर सूर्यास्तअघि यही ठाउँमा फर्किनुपर्छ।"],"P B I"]]},
+{t:"५. छ फिट जमिन",s:"लोभको अन्तिम दौड र कथाको अन्त्य",c:[
+["बास्किर शिविर","राति पाहोम ओछ्यानमा पल्टेर मैदान सम्झिरहेको छ। नोकर निदाएको छ।",["पाहोम: भोलि धेरै टाढासम्म पुग्नुपर्छ। यस्तो मौका फेरि आउँदैन।","नोकर: मालिक, बाटो लामो छ। शरीरलाई पनि ख्याल गर्नुहोस्।"],"P H"],
+["बास्किर मैदान","सूर्योदयसँगै पाहोमले पहिलो पाइला चाल्छ। मुखिया टाढाबाट हेरिरहेका छन्।",["मुखिया: घाम निस्कियो! अब तपाईंको दिन सुरु भयो।","पाहोम: आज म धेरै जमिन आफ्नो बनाउनेछु!"],"P B"],
+["खुला मैदान","बिहान पाहोम बाटो मोड्दै अगाडि बढ्छ; नोकर टाढाबाट पछ्याउँछ।",["नोकर: मालिक, फर्किने बाटो पनि सोच्नुहोस्।","पाहोम: अलिकति अझै! अगाडि झन् राम्रो जमिन छ।"],"P H"],
+["खुला मैदान","दिउँसोको घाम चर्किएको छ। पाहोम टाढा पुगेको छ; नोकरले घाम ढल्किएको देखाउँछ।",["पाहोम: त्यो भाग पनि घेरेँ भने जमिन दोब्बर हुन्छ।","नोकर: घाम ढल्किन थाल्यो मालिक! अब फर्कौँ।"],"P H"],
+["फर्किने बाटो","साँझको घाम। पाहोम थाकेर पनि दौडिरहेको छ; शिविर टाढा देखिन्छ।",["पाहोम: म पुग्नैपर्छ! अझै अलिकति मात्रै!","नोकर: मालिक, अब आफूलाई नथकाउनुहोस्!"],"P H"],
+["सुरुको ठाउँ","सूर्य अस्ताउनै लाग्दा पाहोम सुरुवाती ठाउँमा पुगेर ढल्छ। मुखिया र नोकर उसको छेउमा झुक्छन्।",["मुखिया: पाहोम! तपाईं फर्किनुभयो—तर उठ्नुहोस्!","नोकर: मालिक! मालिक! आँखा खोल्नुहोस्!"],"P B H"],
+["चिहान","साँझको शान्त मैदान। पाहोमको शव नजिक नोकर र मुखिया उभिएका छन्। नोकरले कोदालो समातेको छ।",["नोकर: अब मालिकलाई कहाँ गाड्ने?","मुखिया: जति जमिन चाहिएको थियो, त्यति नै—छ फिट।"],"B H"]]}
+];
+const LOC={
+"घर":"१९औँ शताब्दीको काठ र माटोको सामान्य किसान घर, फलामे चुल्हो, काठको टेबल र सानो झ्याल।",
+"खेत":"कालो मलिलो माटो भएको खेतीयोग्य जमिन, काठका साना सीमाना खूटा र टाढा फार्महाउस।",
+"नयाँ खेत":"काठको बार, तरकारी बारी, अन्नबाली र सानो गोठ भएको नयाँ किसान खेत।",
+"खेतको डिल":"छेउछाउका दुई किसानका खेत, साँघुरो माटोको डिल र चरिरहेका गाई।",
+"गाउँ कार्यालय":"साधारण काठको कार्यालय, पुरानो डेस्क, मसी, कागज र बेन्च।",
+"बजार":"घोडागाडी, कपडाका पसल, अन्नका बोरा भएको ग्रामीण बजार।",
+"भोल्गाको खेत":"फराकिलो कालो मलिलो माटो, अग्लो घाँस र अन्नबाली, टाढासम्म खुला क्षितिज।",
+"भोल्गाको घर":"काठको ठूलो किसान घर, अन्नका बोरा र साधारण फर्निचर।",
+"बास्किर मैदान":"असीमित खुला घाँसे मैदान, साना पहाड र विशाल आकाश।",
+"मुखियाको पाल":"परम्परागत फेल्ट पाल, गलैँचा, काठका भाँडा र दूध।",
+"बास्किर शिविर":"उही फेल्ट पाल र खुला मैदानको शिविर, रातको शान्त प्रकाश।",
+"खुला मैदान":"उही घाँसे मैदानको निरन्तर बाटो, कुनै आधुनिक वस्तु वा सडक छैन।",
+"फर्किने बाटो":"उही मैदानबाट टाढाको बास्किर शिविरतर्फ फर्किने बाटो; सूर्य क्षितिज नजिक।",
+"सुरुको ठाउँ":"पालछेउको उही सुरुवाती थुम्को, पश्चिमी क्षितिज स्पष्ट।",
+"चिहान":"शिविरछेउको शान्त मैदान, नयाँ माटोको चिहान र काठको कोदालो।"
+};
+const STYLE="VISUAL STYLE: photorealistic 19th-century rural Eastern European period drama. Authentic timber peasant homes, linen and wool clothing, leather boots, horse carts, broad grasslands, natural weather, restrained earthy palette, tactile skin and fabric, natural light, subtle 35mm film grain. No modern objects, fantasy, cartoon or glossy CGI. Keep actor faces, age, hair and costumes identical in every clip.";
+const AUDIO="AUDIO: Speak only the listed Nepali dialogue exactly as written, natural conversational delivery and accurate lip sync. Only named visible characters speak. Speaker labels are not spoken. No narrator, no voice-over, no subtitles, no added words. Authentic environment sounds and restrained instrumental score under dialogue.";
+const CONT="CONTINUITY: Match character and location references exactly. Start from previous clip final frame when supplied. Preserve screen direction, time, weather, props and costume. One continuous 10-second shot, no hard cuts. Hold the final frame for the last second.";
+let state={done:{},ratio:"16:9",tab:"script"};try{state=Object.assign(state,JSON.parse(localStorage.getItem("loobh-le-labh")||"{}"))}catch(e){}
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function save(){try{localStorage.setItem("loobh-le-labh",JSON.stringify(state))}catch(e){}}
+function prompt(e,c){let x=E[e].c[c],ids=x[3].split(" "),who=ids.map(id=>C[id]).join("\n");return "PROJECT: लोभले लाभ, लाभले विलाप — Nepali dialogue-led period drama.\nEPISODE "+(e+1)+" / CLIP "+(c+1)+"\nACTION: "+x[1]+"\nCHARACTERS:\n"+who+"\nLOCATION: "+LOC[x[0]]+"\nDIALOGUE — speak exactly, speaker labels not spoken:\n"+x[2].map(v=>"• "+v).join("\n")+"\nCONTINUITY: "+(e===0&&c===0?"Opening clip; establish the world and character references.":"Begin from the exact final frame of the previous clip; preserve positions, light, props and emotion.")+"\n"+STYLE+"\n"+CONT+"\n"+AUDIO+"\nFORMAT: exactly 10 seconds, "+state.ratio+" framing. No readable text, captions, logos or watermark."}
+function toast(t){let x=$("#toast");x.textContent=t;x.classList.add("show");setTimeout(()=>x.classList.remove("show"),1500)}
+function copy(t){if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(()=>toast("Prompt copied ✓")).catch(()=>fallback(t));else fallback(t)}
+function fallback(t){let a=document.createElement("textarea");a.value=t;document.body.append(a);a.select();document.execCommand("copy");a.remove();toast("Prompt copied ✓")}
+function render(){let total=E.reduce((n,e)=>n+e.c.length,0),done=Object.values(state.done).filter(Boolean).length;$("#bar").style.width=(done/total*100)+"%";$("#count").textContent=done+"/"+total+" clips complete";
+$("#script").innerHTML=E.map((e,i)=>'<section class="box"><h2>भाग '+(i+1)+' — '+esc(e.t)+'</h2><div class="muted">'+esc(e.s)+'</div>'+e.c.map((x,j)=>{let k=i+"-"+j;return '<article class="clip"><div class="top"><span class="tag">क्लिप '+(j+1)+' · १० सेकेन्ड</span><label><input type="checkbox" data-done="'+k+'" '+(state.done[k]?"checked":"")+'> पूरा भयो</label></div><p>'+esc(x[1])+'</p>'+x[2].map(v=>{let z=v.indexOf(":");return '<div class="line"><span class="speaker">'+esc(v.slice(0,z+1))+'</span>'+esc(v.slice(z+1))+'</div>'}).join("")+'<div class="tools"><button data-copy="'+k+'">Copy Flow prompt</button><button data-show="'+k+'">Show / hide prompt</button></div><pre class="prompt hide" id="p'+k+'">'+esc(prompt(i,j))+'</pre></article>'}).join("")+'</section>').join("");
+$("#cast").innerHTML='<div class="box"><h2>पात्रहरूको स्थायी रूप</h2>'+Object.keys(C).map(k=>'<p><b>'+k+':</b> '+esc(C[k])+'</p>').join("")+'</div><div class="box"><h2>स्थानहरूको continuity</h2>'+Object.keys(LOC).map(k=>'<p><b>'+k+':</b> '+esc(LOC[k])+'</p>').join("")+'</div>';
+$("#rules").innerHTML='<div class="box"><h2>कथा र उत्पादन निर्देशन</h2><p>यो लियो टोल्स्टोयको “How Much Land Does a Man Need?” कथाको संवादप्रधान नेपाली रूपान्तरण हो। दिदीबहिनीको बहस, पहिलो जमिन, छिमेकीसँगको विवाद, भोल्गा बसाइँ, बास्किरहरूको प्रस्ताव, सूर्योदयदेखि सूर्यास्तसम्मको दौड र छ फिटको चिहानजस्ता मुख्य घटना सुरक्षित राखिएका छन्। संवाद र जोड्ने दृश्यहरू भिडियोका लागि सिर्जनात्मक रूपमा लेखिएका हुन्।</p><ul><li>हरेक क्लिप ठीक १० सेकेन्ड र एउटै continuous shot।</li><li>कुनै narrator वा voice-over छैन; देखिएका पात्रले मात्र बोल्छन्।</li><li>नेपाली संवाद अक्षरशः बोल्ने; speaker label नबोल्ने र थप शब्द नथप्ने।</li><li>अघिल्लो क्लिपको अन्तिम frame अर्को क्लिपको start frame बनाउने।</li><li>पाहोमको लोभ बिस्तारै बढाउने; सुरुबाटै खलनायक नबनाउने।</li><li>अन्तिम दौडमा घामको दिशा र समय क्रमशः साँझतिर गएको देखाउने।</li><li>अन्तिम दृश्य शान्त, गम्भीर र भावनात्मक; हास्यास्पद प्रस्तुति होइन।</li></ul><p><b>मुख्य शिक्षा:</b> मानिसको आवश्यकता सीमित हुन्छ, तर लोभको कुनै सीमा हुँदैन।</p></div>'}
+document.addEventListener("click",ev=>{let b=ev.target.closest("button");if(!b)return;if(b.dataset.tab){state.tab=b.dataset.tab;["script","cast","rules"].forEach(id=>$("#"+id).classList.toggle("hide",id!==state.tab));document.querySelectorAll("[data-tab]").forEach(x=>x.classList.toggle("on",x.dataset.tab===state.tab));save()}if(b.dataset.copy){let a=b.dataset.copy.split("-").map(Number);copy(prompt(a[0],a[1]))}if(b.dataset.show){$("#p"+b.dataset.show).classList.toggle("hide")}});
+document.addEventListener("change",ev=>{if(ev.target.dataset.done!==undefined){state.done[ev.target.dataset.done]=ev.target.checked;save();render()}});
+$("#next").onclick=()=>{for(let e=0;e<E.length;e++)for(let c=0;c<E[e].c.length;c++)if(!state.done[e+"-"+c]){copy(prompt(e,c));return}toast("सबै क्लिप पूरा भए")};
+$("#ratio").value=state.ratio;$("#ratio").onchange=function(){state.ratio=this.value;save();render()};
+$("#download").onclick=()=>{let blob=new Blob(["<!doctype html>\n"+document.documentElement.outerHTML],{type:"text/html;charset=utf-8"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="loobh-le-labh.html";a.click();URL.revokeObjectURL(a.href)};
+render();["script","cast","rules"].forEach(id=>$("#"+id).classList.toggle("hide",id!==state.tab));
+</script></main><div id="toast"></div></html>
