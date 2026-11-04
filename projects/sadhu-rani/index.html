@@ -43,6 +43,9 @@ button.missing{color:#ffd38a;border-style:dashed}
 #clips .asset-buttons button[data-ci] .image-hover-preview{display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:21;padding:4px;background:#0b100d;border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px #0009;pointer-events:none;color:var(--mut);font-size:11px;white-space:nowrap}
 #clips .asset-buttons button[data-ci]:hover .image-hover-preview,#clips .asset-buttons button[data-ci]:focus-visible .image-hover-preview{display:block}
 #clips .asset-buttons button[data-ci] .image-hover-preview img{display:block;max-width:140px;max-height:105px;object-fit:contain;border-radius:4px}
+.cont{font-size:13px;margin:6px 0 10px;padding:6px 10px;border-radius:8px}
+.cont.c{background:#14261c;border:1px solid #2f6b4a;color:#a8e8c3}
+.cont.n{background:#2a2112;border:1px solid #6b5426;color:#f2d28f}
 </style></head><body>
 <header>
 <h1>🪔 <span class="ne">साधु र राडी</span> · Short story <span class="sub" id="st"></span></h1>
@@ -97,19 +100,19 @@ const EPS=[
 ["H","GHW","Food for the guest","By the hearth lamp, Devi serves the sadhu steaming rice and lentils on a leaf plate; she glances at Hari, who looks away. The sadhu eats with gratitude. Slow push-in, three-shot.","साधु: अन्नपूर्णा प्रसन्न होऊन्। कति मीठो भात!|देवी: खानुहोस् महाराज।"],
 ["H","GH","Twelve pure years","After eating, the sadhu speaks calmly by the fire; Hari listens, then lowers his eyes. Close two-shot, firelight on faces.","साधु: बाबु, मैले बाह्र वर्ष हिँडेँ, कसैको एक दाना पनि नसोधी लिएको छैन।"],
 ["H","GW","The woolen mat","Devi lays a thick woolen mat (raadi) by the hearth for the sadhu; he touches it with thanks and settles down. Medium shot, soft lamp-light.","साधु: राडीको न्यानोले आज राम्रो निद्रा आउला।|देवी: शुभ रात्रि महाराज।"],
-["H","H","Hari can't sleep","Night. Hari lies awake beside Devi, staring at the dark ceiling; from the next room comes the sadhu's faint steady breathing. Slow push-in on Hari's troubled eyes. No dialogue."],
+["H","HW","Hari can't sleep","Night. Hari lies awake beside Devi, staring at the dark ceiling; from the next room comes the sadhu's faint steady breathing. Slow push-in on Hari's troubled eyes. No dialogue."],
 ["H","G","Before dawn","Before sunrise the sadhu rises silently, folds the woolen mat and ties it to his bundle; he hesitates, a shadow of temptation crosses his face, then he steps out of the sleeping house. Slow handheld follow, close on his hand gripping the mat. No dialogue."],
 ["H","HW","The mat is gone","Morning. Hari carries tea toward the corner where the sadhu slept and finds it empty; Devi stops sweeping. Medium two-shot, shocked silence.","हरि: साधु महाराज कहाँ गए? ए… राडी पनि छैन!|देवी: राडी पो लगेछन्!"],
 ["V","HN","Raising the village","Hari runs through the village, calling out; villagers and Ramkaji gather with sticks. Handheld, fast but not frantic.","हरि: ए छिमेकी हो! एउटा साधुले मेरो राडी चोरेर भागे!|रामकाजी: साधुको भेषमा चोर! खोज्नुपर्छ।"],
-["V","HN","Following the trail","A line of villagers follows footprints in the dusty trail, a dog sniffing ahead, then a boy points. Low tracking shot.","गाउँले: उता नदीतिर गएको देखियो।"],
+["V","HN","Following the trail","Hari and Ramkaji lead a line of villagers along footprints in the dusty trail, a dog sniffing ahead, then a boy points. Low tracking shot.","गाउँले: उता नदीतिर गएको देखियो।","N","new moment: leaving the village on the trail"],
 ["R","G","The restless sadhu","Under the pipal tree beside the river the sadhu sits with the mat on his lap, eyes restless, fingers tapping the wool; he cannot meditate. Slow push-in, then distant voices rise. No dialogue."],
 ["R","GHN","Caught","The villagers surround the pipal platform; Hari steps forward, hurt; Ramkaji glares. Slow push-in on the sadhu's calm face.","हरि: महाराज, तपाईंले मेरो राडी किन चोर्नुभयो?|रामकाजी: ढोंगी साधु!"],
 ["R","G","I was pure","The sadhu stands, holds the mat in both hands and bows his head, speaking from a heavy heart. Close shot, soft river light.","साधु: म तिम्रो घर आउँदा शुद्ध थिएँ। निस्कने बेला पो मनमा चोरी पस्यो।"],
 ["R","GH","The grain","The sadhu looks gently at Hari; Hari's face freezes as a quick light-only flash of the dusk field and the hidden sickle crosses his mind. Slow push-in on Hari.","साधु: तिमीले दिएको अन्न नै चोरीको थियो जस्तो लाग्छ। त्यसैको असर मभित्र पस्यो।"],
 ["R","HN","The confession","Hari falls to his knees before Ramkaji and the crowd, shaking; Ramkaji's anger turns to shock. Handheld close shots.","हरि: महाराज होइन, चोर त म हुँ। त्यो धान रामकाजीको खेतबाट काटेको थिएँ।|रामकाजी: हरि… तैँले?"],
 ["R","HN","Forgiveness","Ramkaji stands silent, then lifts Hari by the shoulders; the villagers lower their sticks. Medium two-shot, slow pull-back.","रामकाजी: गल्ती मान्ने मान्छे सानो हुँदैन। धानको मोल फर्काइदे।|हरि: म आजै फर्काउँछु, दाइ।"],
-["R","GHN","The mat returned","The sadhu offers the woolen mat back to Hari with both hands; Hari bows, deeply moved. Close three-shot, warm morning light.","साधु: यो राडी फिर्ता लिनू, बाबु। चोरीको थोरै पनि मन भारी बनाउँछ।|हरि: महाराज… आजदेखि मेरो अन्न इमानदारीको मात्र हुनेछ।"],
-["R","G","Jasto ann, usto man","The sadhu raises his staff, nods to the villagers and walks away along the river path into the rising sun. Hari and Ramkaji stand together watching; the villagers fall silent. Slow pull-back, final held wide frame.","साधु: याद राख, जस्तो अन्न, उस्तै मन।"]
+["R","GHN","The mat returned","The sadhu offers the woolen mat back to Hari with both hands; Hari bows, deeply moved, while Ramkaji watches with softened eyes. Close three-shot, warm morning light.","साधु: यो राडी फिर्ता लिनू, बाबु। चोरीको थोरै पनि मन भारी बनाउँछ।|हरि: महाराज… आजदेखि मेरो अन्न इमानदारीको मात्र हुनेछ।"],
+["R","GHN","Jasto ann, usto man","The sadhu raises his staff, nods to the villagers and walks away along the river path into the rising sun. Hari and Ramkaji stand together watching; the villagers fall silent. Slow pull-back, final held wide frame.","साधु: याद राख, जस्तो अन्न, उस्तै मन।"]
 ]}
 ];
 
@@ -124,10 +127,22 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const id=(e,c)=>e+"-"+c;
 const total=()=>EPS.reduce((n,e)=>n+e.clips.length,0);
 
+const TIMEWORD=/^(Night|Dusk|Morning|Dawn|Evening|Midnight|Late|Before|Back home|Days later|Flashback|Cold open|Afternoon|Quiet establishing)/i;
+function contOf(e,c){
+  const k=EPS[e].clips[c];
+  if(k[5]==="C")return{cont:true,why:k[6]||"same place and moment"};
+  if(k[5]==="N")return{cont:false,why:k[6]||"new setup"};
+  if(c===0)return{cont:false,why:"opening clip: build it from the references"};
+  const p=EPS[e].clips[c-1];
+  if(p[0]!==k[0])return{cont:false,why:"new place"};
+  if(TIMEWORD.test(k[3])||/flashback|flash-forward|cold open/i.test(k[2]+" "+k[3].slice(0,90)))return{cont:false,why:"new time of day or a different look"};
+  return{cont:true,why:"same place, same moment"};
+}
+function contBadge(e,c){const t=contOf(e,c);return t.cont?`<p class="cont c">↪ <b>Recommended: CONTINUE</b> from clip ${c}. Attach clip ${c}'s end frame as the start frame, then any new characters below.</p>`:`<p class="cont n">✦ <b>Recommended: START FRESH</b> (${esc(t.why)}). Attach only the reference images below, with no start frame.</p>`}
 function buildPrompt(e,c){
   const k=EPS[e].clips[c],n=EPS[e].clips.length,lines=k[4]?k[4].split("|"):[];
   const chars=[...k[1]].map(x=>CH[x]).join("\n\n")||"No people in frame.";
-  const prev=c>0?"CONTINUITY: Start from the final frame of the previous clip (attach it as the start frame) and keep people, clothing, light and screen direction identical.":"CONTINUITY: This is the opening clip of the film; establish the place and people exactly as in the reference images.";
+  const ct=contOf(e,c);const prev=ct.cont?"CONTINUITY — CONTINUE FROM CLIP "+c+": attach the final frame of clip "+c+" as the start frame and keep people, clothing, light, place and screen direction identical to it. Anyone newly arriving in this clip must match their reference image.":"CONTINUITY — NEW SETUP ("+ct.why+"): do not use a start frame. Build the shot fresh from the attached reference images (characters and place), with the clothing, light and look described here.";
   return "SHOT — clip "+(c+1)+" of "+n+" in the short film \""+EPS[e].en+"\", one continuous 10-second live-action drama clip:\n"+k[3]+"\n\nCHARACTERS — match the reference images exactly:\n"+chars+"\n\n"+LOC[k[0]]+"\n\nDIALOGUE (speak exactly as written, in Nepali):\n"+(lines.length?lines.map(l=>"• "+l).join("\n"):"None. Nobody speaks in this clip.")+"\n\n"+prev+"\n\n"+STYLE+"\n\n"+PACE+"\n\n"+AUDIO+"\n\n"+FORMAT(S.ar)}
 
 let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1600)}
@@ -145,6 +160,7 @@ function renderClips(){
 <div class="top"><span class="tag">Clip ${c+1}/${E.clips.length}</span><span class="chip">${LN[k[0]]}</span><span class="chip">${[...k[1]].map(x=>NAMES[x]).join(", ")||"no people"}</span>
 <label><input type="checkbox" data-done="${id(e,c)}" ${d?"checked":""}> Made in Flow</label></div>
 <p class="scene"><b>Scene:</b> ${esc(k[2])}</p>
+${contBadge(e,c)}
 ${lines.length?`<div class="dl" lang="ne">${lines.map(l=>{const i=l.indexOf(":");return `<div><b>${esc(l.slice(0,i))}:</b>${esc(l.slice(i+1))}</div>`}).join("")}</div>`:`<p class="sub">No dialogue: ambient sound only.</p>`}
 <div class="btns"><button class="p" data-act="prompt" data-e="${e}" data-c="${c}">Copy Flow prompt</button><button data-act="line" data-e="${e}" data-c="${c}">Copy dialogue</button></div>
 ${assetRow(e,c,k)}
@@ -188,11 +204,11 @@ function startPaste(key){activePasteKey=key;document.querySelectorAll("[data-pas
 async function initAssets(){try{const ks=await IDB.keys();ks.forEach(k=>SAVED.add(k));await Promise.all(ks.filter(k=>!k.startsWith("end-")).map(async k=>{AS[k]=await IDB.get(k)}))}catch(_){idbBroken=true}renderBoard();renderClips()}
 async function loadEnds(){const need=EPS[S.ep].clips.map((_,c)=>endKey(S.ep,c)).filter(x=>SAVED.has(x)&&!AS[x]&&!LOADING.has(x));if(!need.length)return;need.forEach(x=>LOADING.add(x));await Promise.all(need.map(async x=>{try{AS[x]=await IDB.get(x)}catch(_){}}));renderClips()}
 function assetRow(e,c,k){
-  const keys=[...[...k[1]].map(x=>"char-"+x),"loc-"+k[0]],eKey=endKey(e,c),pKey=c>0?endKey(e,c-1):null;
+  const keys=[...[...k[1]].map(x=>"char-"+x),"loc-"+k[0]],eKey=endKey(e,c),ct=contOf(e,c),pKey=ct.cont?endKey(e,c-1):null;
   const btn=x=>`<button data-ci="${x}" class="${SAVED.has(x)?"":"missing"}">Copy ${esc(labelOf(x))} image</button>`;
   const lbl="Paste this clip's end frame";
-  return `<div class="asset-buttons">${keys.map(btn).join("")}</div>
-<div class="asset-buttons">${pKey?`<button data-ci="${pKey}" class="${SAVED.has(pKey)?"":"missing"}">Copy clip ${c} end frame</button>`:""}<button data-paste="${eKey}" data-label="${lbl}">${activePasteKey===eKey?"Press Ctrl+V":lbl}</button><label class="sub">or choose file <input type="file" accept="image/*" data-up="${eKey}" style="max-width:170px"></label><span class="sub">${AS[eKey]?"End frame saved":SAVED.has(eKey)?"Saved · loading…":"No end frame yet"}</span></div>${AS[eKey]?`<img class="img" loading="lazy" alt="End frame of clip ${c+1}" src="${AS[eKey]}">`:""}`}
+  return `<div class="asset-buttons"><span class="sub">Attach in Flow:</span>${pKey?`<button data-ci="${pKey}" class="${SAVED.has(pKey)?"":"missing"}">Copy clip ${c} end frame (start frame)</button>`:""}${keys.map(btn).join("")}</div>
+<div class="asset-buttons"><button data-paste="${eKey}" data-label="${lbl}">${activePasteKey===eKey?"Press Ctrl+V":lbl}</button><label class="sub">or choose file <input type="file" accept="image/*" data-up="${eKey}" style="max-width:170px"></label><span class="sub">${AS[eKey]?"End frame saved":SAVED.has(eKey)?"Saved · loading…":"No end frame yet"}</span></div>${AS[eKey]?`<img class="img" loading="lazy" alt="End frame of clip ${c+1}" src="${AS[eKey]}">`:""}`}
 const REFKEYS=[];
 function refPrompt(x){return x.startsWith("char-")?"Character reference: full-body front three-quarter view of "+REFS[x.slice(5)]+". Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.":"Environment reference only, no people: "+LREF[x.slice(4)]+". Photorealistic, soft natural light, muted earthy palette, cinematic wide shot, no text."}
 function boardCard(x){const t=x.startsWith("char-")?NAMES[x.slice(5)]:LN[x.slice(4)],lbl="Paste image";
@@ -223,7 +239,7 @@ $("#flow").innerHTML=`<h2>How the story gets made</h2>
 <div class="note">A 22-clip short film, about 3 minutes 40 seconds. Every clip is one continuous 10-second shot ending on a calm held frame so the clips join cleanly in your editor.</div>
 <ol><li><b>Make the references.</b> In the Storyboard &amp; Images tab, save the four characters and four places (paste or choose a file). Always attach them to Flow as Ingredients.</li>
 <li><b>Generate in order</b> with <i>Copy NEXT prompt</i>, using the Omni model at 10 seconds.</li>
-<li><b>Chain the frames.</b> Save each finished clip's last frame with <i>Paste this clip's end frame</i>, then on the next clip use <i>Copy clip N end frame</i> as the start frame. Start fresh from the references when the place or time changes (clips 1, 5, 11, 15).</li>
+<li><b>Chain the frames.</b> Each clip card shows a green CONTINUE or an amber START FRESH recommendation. On a CONTINUE clip, press <i>Copy clip N end frame</i> and paste it into Flow as the start frame, then attach any new characters. On a START FRESH clip, attach only the reference images. Save each finished clip's last frame with <i>Paste this clip's end frame</i> so the next one can use it.</li>
 <li><b>Check the Nepali.</b> Characters must say the listed lines word for word. Regenerate if the voice garbles, adds speech or shows text.</li>
 <li><b>Edit.</b> Trim 0.3s at each join, cross-fade the audio, and add one soft flute or sarangi music bed under the whole film.</li></ol>
 <h2>The idea behind the story</h2><ul>

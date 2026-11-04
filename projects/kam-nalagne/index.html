@@ -43,6 +43,9 @@ button.missing{color:#ffd38a;border-style:dashed}
 #clips .asset-buttons button[data-ci] .image-hover-preview{display:none;position:absolute;top:calc(100% + 6px);left:50%;transform:translateX(-50%);z-index:21;padding:4px;background:#0b100d;border:1px solid var(--line);border-radius:8px;box-shadow:0 4px 14px #0009;pointer-events:none;color:var(--mut);font-size:11px;white-space:nowrap}
 #clips .asset-buttons button[data-ci]:hover .image-hover-preview,#clips .asset-buttons button[data-ci]:focus-visible .image-hover-preview{display:block}
 #clips .asset-buttons button[data-ci] .image-hover-preview img{display:block;max-width:140px;max-height:105px;object-fit:contain;border-radius:4px}
+.cont{font-size:13px;margin:6px 0 10px;padding:6px 10px;border-radius:8px}
+.cont.c{background:#14261c;border:1px solid #2f6b4a;color:#a8e8c3}
+.cont.n{background:#2a2112;border:1px solid #6b5426;color:#f2d28f}
 </style></head><body>
 <header>
 <h1>🏔️ <span class="ne">काम नलाग्ने कोही हुँदैन</span> · Season 1 <span class="sub" id="st"></span></h1>
@@ -102,7 +105,7 @@ const EPS=[
 {ne:"गाउँले चिनेको सुमन",en:"The village's Suman",clips:[
 ["V","S","Cold open: the night it all comes to","Cold open, flash-forward look: desaturated, cold, rain-lashed night on a dark hillside. A mud-covered hand grips a soaked notebook as rain hammers it; far below, lantern lights move uphill; a deep rumble rolls through the earth; Suman's drenched face turns toward the sound, breathing hard. Slow handheld push-in, a held frame on his eyes, then the picture fades to black in the last second.","सुमन: सबै माथि जानुहोस्… छिटो!"],
 ["V","","Sundarpur at dawn","Quiet establishing shot, no people in frame: dawn mist over the terraced hills of Sundarpur, thin streams of water glinting in stone canals, smoke rising from slate roofs, a hen crossing a path. Slow drone-like glide down toward one small stone house. A soft hint of water sound under everything. No dialogue."],
-["H","SMA","Five more minutes","Dawn in the stone yard, hens scattering. Saraswati sprinkles water and calls toward the doorway; Suman groans under a blanket on the veranda. Slow push-in from the yard.","सरस्वती: सुमन! घाम आँगनमा आइपुग्यो, तँ अझै सिरकभित्रै?|सुमन: उठ्दै छु आमा… पाँच मिनेट।"],
+["H","SA","Five more minutes","Dawn in the stone yard, hens scattering. Saraswati sprinkles water and calls toward the doorway; Suman groans under a blanket on the veranda. Slow push-in from the yard.","सरस्वती: सुमन! घाम आँगनमा आइपुग्यो, तँ अझै सिरकभित्रै?|सुमन: उठ्दै छु आमा… पाँच मिनेट।"],
 ["H","SMA","A job in the bazaar","Maya steps out with her books and a dry look at her brother; Saraswati hands Suman a cup of tea and nudges him toward the gate. Medium three-shot, handheld.","माया: तिम्रो पाँच मिनेटमा त मेरो आधा कक्षा सकिन्छ।|सरस्वती: आज बजारमा केदार ठेकेदारले मान्छे खोजेको रे। जा, छोरा।"],
 ["V","SL","The curious boy","On the hillside path a small village boy (Bishal, 9) skips after Suman, who walks with his shoulder bag; they stop beside a trickling stone-lined stream. Low tracking shot at the boy's height.","बिशाल: दाइ, कुलोमा पानी किन कहिल्यै सुक्दैन?|सुमन: किनकि कसैले पानीको बाटो खुला राखेको छ।"],
 ["T","SR","Welcome to the tea shop","Suman arrives at the tea stall; Ramesh and two villagers on a bench turn and grin. Ramesh opens his arms in mock welcome. Handheld, eye level, steam rising from glasses.","रमेश: ओहो, गाउँको सबैभन्दा व्यस्त मान्छे आइपुग्यो!|सुमन: के काम छ तेरो?"],
@@ -110,7 +113,7 @@ const EPS=[
 ["T","SR","The label","An older villager at the end of the bench says the cruel line quietly, as if it were common sense; the laughter fades; Suman puts coins on the counter and stands. Ramesh calls after him softly, but Suman walks out without turning. Slow push-in on Suman's back, then a held frame of the empty doorway.","गाउँले: काम नलाग्ने मान्छे पनि कतै कामको हुन्छ र?|रमेश: ए सुमन… ठट्टा गरेको हो।"],
 ["C","S","A leaking canal","A farmer packs wet soil against a leaking canal wall, cursing as water keeps seeping; Suman arrives on the path above and stops to watch. Low tracking shot at water level.","किसान: यो कुलोले आज पनि मलाई दुःख दियो!"],
 ["C","S","Three stones","Suman crouches and quietly shifts three stones; the water turns back into the channel; the farmer stares, stunned. Close on Suman's hands, then a slow pull-back.","किसान: तँलाई यो कुलोको कुरा कसले सिकायो?|सुमन: बुबासँग हिँड्दा देखेको।"],
-["C","S","The carved stone","Alone at the canal, Suman brushes soil off a half-buried old stone marker carved with three wavy lines; for a moment his hand rests where a larger hand once guided his (a brief warm memory shown by light only, no extra person). Slow push-in on the stone. No dialogue."],
+["C","S","The carved stone","Alone at the canal, Suman brushes soil off a half-buried old stone marker carved with three wavy lines; for a moment his hand rests where a larger hand once guided his (a brief warm memory shown by light only, no extra person). Slow push-in on the stone. No dialogue.","","N","the farmer has left; Suman is alone"],
 ["H","SM","The fee deadline","Evening lamp-light in the house. Maya reads from her notebook at the floor-table; Suman sits by the wall, avoiding her eyes. Static two-shot, slow drift in.","माया: दाइ, शुल्क बुझाउने अन्तिम मिति आउँदैछ।|सुमन: म मिलाउँछु। दुई दिन दे।"],
 ["H","MA","Two days again","Maya answers flatly and leaves the room; Saraswati, in the background, opens a small tin box and counts a few crumpled notes, then closes it quietly. Slow rack of focus from Maya to Saraswati.","माया: हरेक पटक दुई दिन भन्छौ।"],
 ["H","S","The father's photo","Night. Suman sits alone before the framed photo of his late father beside a kerosene lamp, and speaks softly to it. Close shot, slow push-in, flame flickering.","सुमन: बुबा… म साँच्चै काम नलाग्ने हो र?"],
@@ -128,7 +131,7 @@ const EPS=[
 ]},
 {ne:"साथी र सपनाहरू",en:"Friends and dreams",clips:[
 ["B","SR","Ramesh's big plans","Bazaar, bright afternoon. Ramesh in new shoes and a clean shirt shows Suman his passport photos, beaming; Suman smiles and claps his shoulder. Handheld two-shot.","रमेश: अब दुई महिनाभित्र उडिन्छ होला।|सुमन: पहिले भिसा आओस्, त्यसपछि मलाई चकलेट पठाइस्।"],
-["H","S","The comparison","Outside Ramesh's house, an older man proudly praises his son to neighbors and gestures at Suman as the example not to follow; Ramesh winces; Suman quietly turns and leaves. Slow lateral track.","रमेशका बुबा: हेर्, छोरा भए रमेशजस्तो! अरू त…"],
+["H","SR","The comparison","Outside Ramesh's house, an older man proudly praises his son to neighbors and gestures at Suman as the example not to follow; Ramesh winces; Suman quietly turns and leaves. Slow lateral track.","रमेशका बुबा: हेर्, छोरा भए रमेशजस्तो! अरू त…"],
 ["V","SR","Walking the path","The two friends walk along a hillside path, shoulders almost touching, a small silence between them. Slow tracking shot from the front.","रमेश: यहाँ बसेर के गर्छस्? मसँगै हिँड न।|सुमन: गएपछि घर कसले हेर्छ?"],
 ["V","SR","The village is emptying","They stop at a ridge overlooking half-empty terraces and shuttered houses. Ramesh shrugs; Suman stares at the fields. Slow push-in on both.","रमेश: घर त सबैले छोडेर गएका छन्।|सुमन: त्यही भएर त गाउँ खाली हुँदैछ।"],
 ["B","SR","The bus leaves","A battered local bus at the stand. Ramesh hugs Suman, climbs aboard and leans out of the window; the bus pulls away in dust; Suman stands alone, then slowly walks back along the empty path. Wide held final frame.","रमेश: म गएँ भनेर हराउँदिनँ।"]
@@ -155,8 +158,8 @@ const EPS=[
 ["S","MU","The application","School office. Maya signs the application form with a steady hand and slides it across the desk to Sushila, who smiles. Close shot on the pen, then Maya's resolved face.","माया: यो मेरो निर्णय हो।"]
 ]},
 {ne:"वर्षा आउँदैछ",en:"The rains are coming",clips:[
-["V","D","Preparing for monsoon","Late-spring morning. Villagers repair terrace edges, patch slate roofs, clear drains; children carry stones; the slow rhythm of work before the rains, clouds gathering over the ridge. Wide slow pan. No dialogue."],
-["V","SD","The water changed direction","Upper canal. Suman and Dhaniram stand where the new road drain cuts across the old water path; Suman kneels, studies the flow, frowns. Low handheld shot.","सुमन: काका, यो पानी पहिले यताबाट आउँथ्यो?|धनिराम: पहिले बाटो फराकिलो थियो। अहिले सडकले काटेको छ।"],
+["V","D","Preparing for monsoon","Late-spring morning. Villagers repair terrace edges, patch slate roofs, clear drains; children carry stones; the slow rhythm of work before the rains, Dhaniram stands on a terrace edge directing the work with his stick; clouds gather over the ridge. Wide slow pan. No dialogue."],
+["V","SD","The water changed direction","Upper canal. Suman and Dhaniram stand where the new road drain cuts across the old water path; Suman kneels, studies the flow, frowns. Low handheld shot.","सुमन: काका, यो पानी पहिले यताबाट आउँथ्यो?|धनिराम: पहिले बाटो फराकिलो थियो। अहिले सडकले काटेको छ।","N","new place: the upper canal"],
 ["V","SD","Paper and ground","Same place. Dhaniram taps his stick on the ground; Suman looks from the road drain to the slope above. Slow push-in on both.","सुमन: कागजमा चाहिँ के देखाएको छ?|धनिराम: कागज हेर्ने मान्छेले जमिन पनि हेर्नुपर्छ नि।"],
 ["H","SAM","Mother's fear","Evening kitchen. Saraswati fears the old quarrel repeating; Maya advises her brother to gather facts first; Suman listens, then nods slowly. Handheld three-shot.","सरस्वती: फेरि बुबाजस्तै झगडामा नपर्, छोरा।|माया: पहिले तथ्य जुटाऊ, दाइ।"],
 ["V","S","First heavy rain","Night. The first big rain hammers the slate roof; from the window Suman sees the road drain overflowing and brown water running across the path. He pulls on his bag and steps into the rain to look. Slow push-in to a held frame. No dialogue."]
@@ -164,29 +167,29 @@ const EPS=[
 {ne:"चेतावनी",en:"The warning",clips:[
 ["H","S","Notebook against the map","Midnight. Suman lays his father's notebook beside a printed map of the new road, lamp-lit, comparing lines with a pencil; one line fails to meet. Overhead slow push-in.","सुमन: पुरानो निकास यहाँ नक्सामा छैन।"],
 ["V","SD","The buried outlet","Hillside above the road. Suman and Dhaniram pull weeds off a stone outlet buried in soil; Suman measures it with a rope and notes it in the notebook. Handheld.","धनिराम: तेरो बाउले पनि यही बाटो देखाउँथ्यो।|सुमन: त्यसैले मात्र सही मान्न मिल्दैन काका। अहिलेको अवस्था पनि हेर्नुपर्छ।"],
-["V","SK","Contractor confrontation","On the half-finished road, Kedar blocks Suman's path, arms folded, dust on his boots. Suman stays calm. Medium two-shot, slow push-in.","केदार: त्यो हेर्ने काम इन्जिनियरको हो।|सुमन: हो, त्यसैले उहाँलाई देखाउन खोजेको।"],
+["V","SK","Contractor confrontation","On the half-finished road, Kedar blocks Suman's path, arms folded, dust on his boots. Suman stays calm. Medium two-shot, slow push-in.","केदार: त्यो हेर्ने काम इन्जिनियरको हो।|सुमन: हो, त्यसैले उहाँलाई देखाउन खोजेको।","N","new spot on the road"],
 ["H","MAS","Maya's good news","Yard, morning. Maya runs in waving a letter; Saraswati drops her water pot with joy; Suman laughs for the first time in the story and lifts his sister off the ground. Handheld, bright.","माया: दाइ! छात्रवृत्तिको प्रारम्भिक छनोटमा परेँ!"],
 ["V","S","The marker stake","Hillside. Suman drives a small wooden stake beside a thin crack and photographs it; the next morning the crack is wider and seepage runs. Time cut inside the same shot via a slow camera drift from evening to morning light. Final held frame on the wet crack. No dialogue."]
 ]},
 {ne:"कसले सुन्ने?",en:"Who will listen?",clips:[
 ["W","SB","The meeting","Ward meeting on the veranda; villagers on benches; Suman unrolls his map and begins to speak; Bhim cuts across him. Slow push-in on Suman.","सुमन: पुरानो निकास र नयाँ नालीको बीचमा पानी थुनिएको छ।|भीमबहादुर: तँले बनाएको नक्सा हेरेर गाउँ चलाउने?"],
-["W","SKB","Calling for a technician","Same meeting. Kedar defends the work; Suman keeps his voice level and keeps his hand on the map. Medium two-shot, handheld.","केदार: काम प्राविधिकको स्वीकृतिमा भएको हो।|सुमन: त्यसो भए प्राविधिकलाई यहीँ बोलाएर हेरौँ।"],
+["W","SKB","Calling for a technician","Same meeting. Kedar defends the work; Suman keeps his voice level and keeps his hand on the map. Bhimbahadur sits listening with arms crossed. Medium three-shot, handheld.","केदार: काम प्राविधिकको स्वीकृतिमा भएको हो।|सुमन: त्यसो भए प्राविधिकलाई यहीँ बोलाएर हेरौँ।"],
 ["S","SU","The teacher reads","Empty classroom after hours. Sushila reads the notebook page by page, adjusting her spectacles; Suman waits at the desk. Slow push-in.","सुशीला: म इन्जिनियर होइन, तर यो नगरपालिकाको प्राविधिकलाई देखाउनुपर्छ।"],
 ["W","BK","Blaming each other","Night, behind the ward office. Bhim and Kedar argue in low harsh voices, each pointing at the other. Handheld, lit by a single bulb.","केदार: तपाईंले सही गर्नुभएको थियो।|भीमबहादुर: तैँले पनि त साँघुरो बनाइस्!"],
 ["H","SA","Speak with proof","Night at home. Saraswati sits close to Suman and holds his hand. Slow push-in, warm light.","सरस्वती: बोल्। तर यसपालि प्रमाण लिएर बोल्, र आफ्नो ज्यान जोखिममा नपार्।"]
 ]},
 {ne:"त्यो रात नजिकिँदै",en:"The night draws near",clips:[
 ["V","ST","The technician arrives","Hillside. The municipal technician measures the narrowed drain and the crack with a tape while Suman lays out the notebook and photos. Handheld two-shot, grey sky.","प्राविधिक: तिमीले देखाएको ठाउँ जाँच गर्नुपर्ने रहेछ। अनुमानले होइन, थप निरीक्षणपछि निर्णय गर्छौँ।|सुमन: मलाई पनि त्यही चाहिएको हो सर।"],
-["H","AM","Maya leaves for the exam","Morning. Saraswati packs food into Maya's bag in the yard; clouds darken; Maya hugs her, Suman gives her a small nod. Slow push-in.","सरस्वती: खाना खान नबिर्स।|माया: चिन्ता नगर आमा।"],
+["H","AMS","Maya leaves for the exam","Morning. Saraswati packs food into Maya's bag in the yard; clouds darken; Maya hugs her, Suman gives her a small nod. Slow push-in.","सरस्वती: खाना खान नबिर्स।|माया: चिन्ता नगर आमा।"],
 ["V","SD","The marker in the rain","Heavy rain on the slope. Suman and Dhaniram keep their distance and look at the stake and crack from afar; the seepage is stronger. Long lens, slow push-in.","धनिराम: आज चुहावट बढेको छ।|सुमन: यहाँ नउभिऔँ काका, टाढाबाटै हेरौँ।"],
-["V","SB","Convincing the lower hamlet","Lower hamlet, rain dripping from eaves. Suman and Bhim at a doorway; a villager refuses to leave his house. Handheld close-ups.","गाउँले: हरेक वर्ष पानी पर्छ। घर छोडेर कहाँ जाने?|सुमन: जाँच नहुँदासम्म सुरक्षित ठाउँमा बसौँ।"],
+["V","SB","Convincing the lower hamlet","Lower hamlet, rain dripping from eaves. Suman and Bhim at a doorway; a villager refuses to leave his house. Handheld close-ups.","गाउँले: हरेक वर्ष पानी पर्छ। घर छोडेर कहाँ जाने?|सुमन: जाँच नहुँदासम्म सुरक्षित ठाउँमा बसौँ।","N","new place: the lower hamlet"],
 ["W","B","The alarm","Night. Bhim speaks into a loudspeaker on the ward veranda as lantern-lit families start walking uphill with bundles and children. Far away a low rumble of sliding earth; faces turn toward the dark hillside; the shot holds, then fades to black.","भीमबहादुर: तल्लो बस्तीका सबै परिवार विद्यालयको चौरमा जानुहोस्!"]
 ]},
 {ne:"गाउँको परीक्षा",en:"The village's test",clips:[
 ["S","B","Gathering at the school ground","Night, rain. Families huddle on the upper school ground under tarps; Bhim carries sacks himself and organizes. Handheld wide shot, lanterns and tarps.","भीमबहादुर: बच्चा र वृद्धलाई पहिले भित्र लैजाऔँ।"],
 ["V","SR","Ramesh returns","Rainy road. A soaked Ramesh with a bag arrives and finds Suman among the crowd. They clasp arms. Handheld two-shot.","रमेश: म विदेश जान निस्केको, गाउँमै फसिएछु।|सुमन: अहिले जो जहाँ छ, त्यहीँबाट काम गरौँ।"],
-["V","SR","Moving the animals","Muddy lane. Suman and Ramesh coax cows and goats toward the community shed through the rain; a villager hesitates and then follows. Steady tracking shot.","रमेश: ल, आज तेरो आदेश मान्छु।"],
-["V","ST","A small slide","Hillside in rain, wide. A section of earth slumps and mud slides toward the road; the technician shouts and everyone steps back to a safe line. Handheld, tense.","प्राविधिक: सुरक्षित दूरीमा बस्नुहोस्! पानीलाई पुरानो निकासतिर मोड्न सकिन्छ।"],
+["V","SR","Moving the animals","Muddy lane. Suman and Ramesh coax cows and goats toward the community shed through the rain; a villager hesitates and then follows. Steady tracking shot.","रमेश: ल, आज तेरो आदेश मान्छु।","N","new moment: moving the animals"],
+["V","ST","A small slide","Hillside in rain, wide. A section of earth slumps and mud slides toward the road; the technician shouts and Suman pulls a villager back as everyone steps to a safe line. Handheld, tense.","प्राविधिक: सुरक्षित दूरीमा बस्नुहोस्! पानीलाई पुरानो निकासतिर मोड्न सकिन्छ।","N","new place: the hillside"],
 ["V","SKD","Opening the old outlet","Villagers, Kedar's laborers and Dhaniram clear branches and silt from the old stone outlet; Suman points the line; water finds its path and rushes through. Low tracking shot, then a held frame on the running water.","सुमन: सबै मिलेर तान्नुहोस्!"],
 ["S","SB","Dawn after the night","Dawn, rain easing. Bhim sits down beside an exhausted Suman on a ground-level wall; the valley is wet and grey. Slow push-in on the two.","भीमबहादुर: तँले समयमै कुरा नउठाएको भए…|सुमन: मैले मात्र गरेको होइन अध्यक्षज्यू। सबैले मिलेर गरेको हो।"],
 ["H","SA","Maya on the phone","Dawn at home. Saraswati holds an old phone to her ear; the signal crackles; Suman leans in; Maya's far voice breaks in and out. Close handheld two-shot.","माया (फोनमा): दाइ, म सुरक्षित छु। आमालाई भन्नुहोस्।"]
@@ -194,10 +197,11 @@ const EPS=[
 {ne:"कसैलाई सानो नसम्झ",en:"Never think anyone small",clips:[
 ["V","S","The morning after","Mud-covered lane, a collapsed empty shed, villagers sweeping silt from doorways, tired and quiet, helping each other; Suman carries a basket of rubble. Slow wide pan. No dialogue."],
 ["W","BK","Taking responsibility","Village meeting at the ward veranda. Bhim stands, removes his topi, and admits his part; Kedar follows, looking at the floor. Slow push-in on Bhim.","भीमबहादुर: गल्ती ठेकेदारको मात्र होइन। मैले पनि कागज हेरेँ, जमिन हेरिनँ।|केदार: मैले लागत घटाएँ। त्यसको असर के पर्छ भनेर पर्याप्त सोचिनँ।"],
-["W","SD","A new committee","The villagers form a circle: farmers, technician, ward members, youth. Dhaniram speaks; Suman is invited to join and hesitates, then steps in. Handheld, warm light.","धनिराम: अब दोष गनेर मात्र हुँदैन। अर्को वर्ष फेरि यही नहोस्।"],
+["W","SDTBK","A new committee","The villagers form a circle: farmers, the technician, Bhimbahadur and Kedar among them, youth. Dhaniram speaks; Suman is invited to join and hesitates, then steps in. Handheld, warm light.","धनिराम: अब दोष गनेर मात्र हुँदैन। अर्को वर्ष फेरि यही नहोस्।"],
 ["H","SM","Maya comes home","Afternoon, the yard. Maya enters with her bag; the siblings face each other, then hug. Medium two-shot.","माया: दाइ, गाउँको पानीको बाटो तिमीले देख्यौ। अब आफ्नो बाटो पनि खोज।|सुमन: खोज्दै छु। यसपालि भागेर होइन, बुझेर।"],
 ["H","AB","An apology to his widow","The yard of the house. Bhim, hat in his hands, speaks to Saraswati; she looks at him for a long time, then gives a small nod. Slow push-in on the two.","भीमबहादुर: तपाईंका श्रीमान्लाई हामीले समयमै सुनिदिएनौँ। माफ गर्नुहोला।"],
-["C","S","The last scene","Days later. Suman repairs a small canal section; a boy beside him places a stone and watches the water turn. After the last line the camera drifts back to reveal the village in its everyday life: Maya with a book walking to school, Ramesh on the phone, Dhaniram in the field, Bhim and Kedar working with the repair crew. Slow pull-back, final held wide frame.","बालक: दाइ, यो ढुंगा राखेपछि पानी किन अर्कोतिर गयो?|सुमन: पानीलाई बाटो देखाइदिएको।|बालक: मान्छेलाई पनि बाटो देखाउन मिल्छ?|सुमन: मिल्छ। तर पहिले उसको कुरा सुन्नुपर्छ।"]
+["C","SL","The last scene","Days later. Suman repairs a small canal section; Bishal, the boy beside him, places a stone and watches the water turn, then looks up at Suman. Slow push-in on the two of them, held final frame.","बालक: दाइ, यो ढुंगा राखेपछि पानी किन अर्कोतिर गयो?|सुमन: पानीलाई बाटो देखाइदिएको।|बालक: मान्छेलाई पनि बाटो देखाउन मिल्छ?|सुमन: मिल्छ। तर पहिले उसको कुरा सुन्नुपर्छ।"],
+["C","MRDBK","The village goes on","Slow pull-back from the canal water to reveal the village in its everyday life, the figures small in the wide frame: Maya with a book walking toward the school, Ramesh on the phone doing sums on a scrap of paper, Dhaniram working in his terrace field, Bhimbahadur and Kedar labouring with the repair crew. Sunlit, calm, hopeful. Final held wide frame. No dialogue.","","C","pull-back continues from the canal shot"]
 ]}
 ];
 /* NOTE: the last clip carries four lines; if Flow rushes them, split it into two clips. */
@@ -213,10 +217,22 @@ function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 const id=(e,c)=>e+"-"+c;
 const total=()=>EPS.reduce((n,e)=>n+e.clips.length,0);
 
+const TIMEWORD=/^(Night|Dusk|Morning|Dawn|Evening|Midnight|Late|Before|Back home|Days later|Flashback|Cold open|Afternoon|Quiet establishing)/i;
+function contOf(e,c){
+  const k=EPS[e].clips[c];
+  if(k[5]==="C")return{cont:true,why:k[6]||"same place and moment"};
+  if(k[5]==="N")return{cont:false,why:k[6]||"new setup"};
+  if(c===0)return{cont:false,why:"opening clip: build it from the references"};
+  const p=EPS[e].clips[c-1];
+  if(p[0]!==k[0])return{cont:false,why:"new place"};
+  if(TIMEWORD.test(k[3])||/flashback|flash-forward|cold open/i.test(k[2]+" "+k[3].slice(0,90)))return{cont:false,why:"new time of day or a different look"};
+  return{cont:true,why:"same place, same moment"};
+}
+function contBadge(e,c){const t=contOf(e,c);return t.cont?`<p class="cont c">↪ <b>Recommended: CONTINUE</b> from clip ${c}. Attach clip ${c}'s end frame as the start frame, then any new characters below.</p>`:`<p class="cont n">✦ <b>Recommended: START FRESH</b> (${esc(t.why)}). Attach only the reference images below, with no start frame.</p>`}
 function buildPrompt(e,c){
   const k=EPS[e].clips[c],n=EPS[e].clips.length,lines=k[4]?k[4].split("|"):[];
   const chars=[...k[1]].map(x=>CH[x]).join("\n\n")||"No people in frame.";
-  const prev=c>0?"CONTINUITY: Start from the final frame of the previous clip (attach it as the start frame) and keep people, clothing, light and screen direction identical.":"CONTINUITY: This is the opening clip of the episode; establish the place and people exactly as in the reference images.";
+  const ct=contOf(e,c);const prev=ct.cont?"CONTINUITY — CONTINUE FROM CLIP "+c+": attach the final frame of clip "+c+" as the start frame and keep people, clothing, light, place and screen direction identical to it. Anyone newly arriving in this clip must match their reference image.":"CONTINUITY — NEW SETUP ("+ct.why+"): do not use a start frame. Build the shot fresh from the attached reference images (characters and place), with the clothing, light and look described here.";
   return "SHOT — clip "+(c+1)+" of "+n+" in Episode "+(e+1)+" ("+EPS[e].en+"), one continuous 10-second live-action drama clip:\n"+k[3]+"\n\nCHARACTERS — match the reference images exactly:\n"+chars+"\n\n"+LOC[k[0]]+"\n\nDIALOGUE (speak exactly as written, in Nepali):\n"+(lines.length?lines.map(l=>"• "+l).join("\n"):"None. Nobody speaks in this clip.")+"\n\n"+prev+"\n\n"+STYLE+"\n\n"+PACE+"\n\n"+AUDIO+"\n\n"+FORMAT(S.ar)}
 
 let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),1600)}
@@ -234,6 +250,7 @@ function renderClips(){
 <div class="top"><span class="tag">Ep ${e+1} · Clip ${c+1}/${E.clips.length}</span><span class="chip">${LN[k[0]]}</span><span class="chip">${[...k[1]].map(x=>NAMES[x]).join(", ")||"no people"}</span>
 <label><input type="checkbox" data-done="${id(e,c)}" ${d?"checked":""}> Made in Flow</label></div>
 <p class="scene"><b>Scene:</b> ${esc(k[2])}</p>
+${contBadge(e,c)}
 ${lines.length?`<div class="dl" lang="ne">${lines.map(l=>{const i=l.indexOf(":");return `<div><b>${esc(l.slice(0,i))}:</b>${esc(l.slice(i+1))}</div>`}).join("")}</div>`:`<p class="sub">No dialogue: ambient sound only.</p>`}
 <div class="btns"><button class="p" data-act="prompt" data-e="${e}" data-c="${c}">Copy Flow prompt</button><button data-act="line" data-e="${e}" data-c="${c}">Copy dialogue</button></div>
 ${assetRow(e,c,k)}
@@ -277,11 +294,11 @@ function startPaste(key){activePasteKey=key;document.querySelectorAll("[data-pas
 async function initAssets(){try{const ks=await IDB.keys();ks.forEach(k=>SAVED.add(k));await Promise.all(ks.filter(k=>!k.startsWith("end-")).map(async k=>{AS[k]=await IDB.get(k)}))}catch(_){idbBroken=true}renderBoard();renderClips()}
 async function loadEnds(){const need=EPS[S.ep].clips.map((_,c)=>endKey(S.ep,c)).filter(x=>SAVED.has(x)&&!AS[x]&&!LOADING.has(x));if(!need.length)return;need.forEach(x=>LOADING.add(x));await Promise.all(need.map(async x=>{try{AS[x]=await IDB.get(x)}catch(_){}}));renderClips()}
 function assetRow(e,c,k){
-  const keys=[...[...k[1]].map(x=>"char-"+x),"loc-"+k[0]],eKey=endKey(e,c),pKey=c>0?endKey(e,c-1):null;
+  const keys=[...[...k[1]].map(x=>"char-"+x),"loc-"+k[0]],eKey=endKey(e,c),ct=contOf(e,c),pKey=ct.cont?endKey(e,c-1):null;
   const btn=x=>`<button data-ci="${x}" class="${SAVED.has(x)?"":"missing"}">Copy ${esc(labelOf(x))} image</button>`;
   const lbl="Paste this clip's end frame";
-  return `<div class="asset-buttons">${keys.map(btn).join("")}</div>
-<div class="asset-buttons">${pKey?`<button data-ci="${pKey}" class="${SAVED.has(pKey)?"":"missing"}">Copy clip ${c} end frame</button>`:""}<button data-paste="${eKey}" data-label="${lbl}">${activePasteKey===eKey?"Press Ctrl+V":lbl}</button><label class="sub">or choose file <input type="file" accept="image/*" data-up="${eKey}" style="max-width:170px"></label><span class="sub">${AS[eKey]?"End frame saved":SAVED.has(eKey)?"Saved · loading…":"No end frame yet"}</span></div>${AS[eKey]?`<img class="img" loading="lazy" alt="End frame of clip ${c+1}" src="${AS[eKey]}">`:""}`}
+  return `<div class="asset-buttons"><span class="sub">Attach in Flow:</span>${pKey?`<button data-ci="${pKey}" class="${SAVED.has(pKey)?"":"missing"}">Copy clip ${c} end frame (start frame)</button>`:""}${keys.map(btn).join("")}</div>
+<div class="asset-buttons"><button data-paste="${eKey}" data-label="${lbl}">${activePasteKey===eKey?"Press Ctrl+V":lbl}</button><label class="sub">or choose file <input type="file" accept="image/*" data-up="${eKey}" style="max-width:170px"></label><span class="sub">${AS[eKey]?"End frame saved":SAVED.has(eKey)?"Saved · loading…":"No end frame yet"}</span></div>${AS[eKey]?`<img class="img" loading="lazy" alt="End frame of clip ${c+1}" src="${AS[eKey]}">`:""}`}
 const REFKEYS=[];
 function refPrompt(x){return x.startsWith("char-")?"Character reference: full-body front three-quarter view of "+REFS[x.slice(5)]+". Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.":"Environment reference only, no people: "+LREF[x.slice(4)]+". Photorealistic, soft natural light, muted earthy palette, cinematic wide shot, no text."}
 function boardCard(x){const t=x.startsWith("char-")?NAMES[x.slice(5)]:LN[x.slice(4)],lbl="Paste image";
@@ -313,7 +330,7 @@ $("#flow").innerHTML=`<h2>How each episode gets made</h2>
 <div class="note">Each episode is a chain of 10-second clips. The full plan is about 15 to 24 clips per episode (roughly 3 minutes each, 37 minutes for the season); Episode 1 is complete at 18 clips and the rest are being expanded in batches. Every clip holds one beat and ends on a calm held frame so it joins cleanly to the next.</div>
 <ol><li><b>Make references.</b> Save the cast and place images in the Storyboard &amp; Images tab (paste or choose a file). On every clip card, use the <i>Copy … image</i> buttons and paste each image into Flow as an Ingredient.</li>
 <li><b>Generate in order.</b> Use <i>Copy NEXT prompt</i>, paste it exactly, choose the Omni model at 10 seconds and the shape you set above.</li>
-<li><b>Chain the frames.</b> Screenshot or export the last frame of each finished clip and save it with <i>Paste this clip's end frame</i>. On the next clip, press <i>Copy clip N end frame</i> and paste it into Flow as the start frame. For a new place or time, start fresh from the references.</li>
+<li><b>Chain the frames.</b> Each clip card shows a green CONTINUE or an amber START FRESH recommendation. On a CONTINUE clip, press <i>Copy clip N end frame</i> and paste it into Flow as the start frame, then attach any new characters. On a START FRESH clip, attach only the reference images. Save each finished clip's last frame with <i>Paste this clip's end frame</i> so the next one can use it.</li>
 <li><b>Check the Nepali.</b> The characters must say the listed lines. If the voice garbles words, adds extra speech, or subtitles appear, regenerate. Two or three takes per clip is normal.</li>
 <li><b>Join the clips</b> in your editor (CapCut, DaVinci). Trim the first and last 0.3s of each clip, add a short audio cross-fade, and keep one soft music bed under the whole episode.</li>
 <li><b>Tick “Made in Flow”</b> to track progress. The numbered episode buttons turn green when all of an episode's clips are done.</li></ol>
