@@ -191,7 +191,7 @@ $("#ratio").onchange=render;$("#search").oninput=list;
 $("#download").onclick=()=>{const blob=new Blob(["<!doctype html>\n"+document.documentElement.outerHTML],{type:"text/html;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gk-questions-30-days.html";a.click();URL.revokeObjectURL(a.href)};
 
 const API_DEFAULT="https://mukeshpokharel-testing.hf.space/gemini";
-let pendingPairs=[];
+
 function parseAIText(raw){let t=raw.trim().replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();const a=t.indexOf("{"),z=t.lastIndexOf("}");if(a>=0&&z>a)t=t.slice(a,z+1);return JSON.parse(t)}
 function locallyReadPairs(raw){
  return raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(line=>{
@@ -234,10 +234,10 @@ ${raw}`;
   if(received.length!==expected.length||received.some((q,i)=>q[0]!==expected[i][0]||q[1]!==expected[i][1]))throw new Error("AI output मूल प्रश्न–उत्तरबाट फरक भयो। सुरक्षा कारणले कुनै प्रश्न थपिएन।");
   addPairsRandomly(received);$("#aiPreview").innerHTML="<h3>जाँच सफल — "+received.length+" प्रश्न–उत्तर</h3>"+received.map((q,i)=>'<div class="q"><b>'+(i+1)+'. '+escapeHtml(q[0])+'</b><br>उत्तर: '+escapeHtml(q[1])+'</div>').join("");
   $("#aiStatus").textContent="AI output मूल सामग्रीसँग अक्षरशः मिल्यो। अब ३० दिनमा अनियमित रूपमा थप्नुहोस्।";
- }catch(err){pendingPairs=[];$("#aiStatus").textContent="Error: "+err.message;toast("Format असफल भयो।")}
+ }catch(err){$("#aiStatus").textContent="Error: "+err.message;toast("Format असफल भयो।")}
  finally{btn.disabled=false}
 };
-$("#clearOwn").onclick=()=>{$("#ownQuestions").value="";$("#aiPreview").innerHTML="";pendingPairs=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="इनपुट खाली गरियो।"};
+$("#clearOwn").onclick=()=>{$("#ownQuestions").value="";$("#aiPreview").innerHTML="";$("#aiStatus").textContent="इनपुट खाली गरियो।"};
 $("#clearCustom").onclick=()=>{if(confirm("तपाईंले थपेका प्रश्नहरू मात्र हटाउने? मूल ३० दिनका प्रश्नहरू सुरक्षित रहनेछन्।")){addedQuestionClips=[];localStorage.removeItem("gk_added_question_clips");list();render();$("#aiStatus").textContent="थपिएका प्रश्नहरू हटाइए; मूल सामग्री सुरक्षित छ।";toast("थपिएका प्रश्नहरू हटाइए।")}};
 $("#apiUrl").value=localStorage.getItem("gk_ai_endpoint")||API_DEFAULT;
 $("#apiUrl").onchange=()=>localStorage.setItem("gk_ai_endpoint",$("#apiUrl").value.trim());
