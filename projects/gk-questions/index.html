@@ -163,7 +163,7 @@ function render(){
  document.querySelectorAll(".daybtn").forEach((b,i)=>b.classList.toggle("selected",i===current));
 }
 function escapeHtml(s){return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
-function copy(s){navigator.clipboard.writeText(s).then(()=>toast("Prompt clipboard मा copy भयो!")).catch(()=>{const t=document.createElement("textarea");t.value=s;document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Prompt copy भयो!");})}
+function copy(s){navigator.clipboard.writeText(s).then(()=>toast("Clipboard मा copy भयो!")).catch(()=>{const t=document.createElement("textarea");t.value=s;document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Prompt copy भयो!");})}
 function toast(s){$("#toast").textContent=s;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),1800)}
 function list(){
  const term=$("#search").value.trim().toLowerCase();
