@@ -26,7 +26,7 @@ nav a{color:var(--gold);padding:7px}.grid{display:grid;grid-template-columns:rep
 <header><div class="wrap" style="padding:0 10px"><h1>🇳🇵 GK Questions — दैनिक Rapid-Fire</h1>
 <div class="muted">३० दिन · ९० नेपाली सामान्यज्ञान प्रश्न · प्रत्येक दिन एउटा तयार Google Flow prompt · १० सेकेन्डको भिडियो</div>
 <div class="bar"><i id="progress"></i></div><div class="muted" id="stats"></div><div class="readyNote" id="nextReady"></div>
-<nav><button class="primary" id="copyCurrent">आजको Flow Prompt Copy</button><button id="copyAll">सबै ३० दिनका Prompt Copy</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a>
+<nav><button class="primary" id="copyCurrent">आजको Flow Prompt Copy</button><button id="copyCaptionCurrent">आजको Caption Copy</button><button id="copyAll">सबै ३० दिनका Prompt Copy</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a>
 <select id="ratio"><option value="9:16">9:16 Vertical</option><option value="16:9">16:9 Landscape</option></select></nav>
 <div class="filters"><input id="search" placeholder="दिन वा प्रश्न खोज्नुहोस्…" style="flex:1;min-width:190px"><button id="prev">← अघिल्लो</button><button id="next">अर्को →</button></div></div></header>
 <main class="wrap">
@@ -140,6 +140,7 @@ function render(){
  ${d.qs.map((q,i)=>`<div class="q"><b>प्रश्न ${i+1}:</b> ${q[0]}<br><b>उत्तर:</b> ${q[1]}</div>`).join("")}
  <h3>Google Flow Prompt</h3><div class="prompt" id="prompt">${escapeHtml(promptFor(d,current))}</div>`;
  $("#copyOne").onclick=()=>{copy(promptFor(d,current));markDayDone(current,true);toast("Prompt copy भयो — यो दिन Done मा चिन्ह लगाइयो।")};
+  $("#copyCaptionOne").onclick=()=>{copy(captionFor(d,current));toast("Facebook, YouTube र TikTok का लागि caption copy भयो!")};
  $("#selectedDone").onchange=e=>markDayDone(current,e.target.checked);
  $("#prev").disabled=current===0;$("#next").disabled=current===29;
  $("#progress").style.width=(completedDays.size/30*100)+"%";$("#stats").textContent=`${completedDays.size}/३० दिन पूरा · ${30-completedDays.size} दिन बाँकी · ${DAYS.reduce((n,x)=>n+x.qs.length,0)} प्रश्न`;
@@ -156,6 +157,7 @@ function list(){
  document.querySelectorAll("[data-done]").forEach(b=>b.onchange=()=>markDayDone(+b.dataset.done,b.checked));
 }
 $("#copyCurrent").onclick=()=>{copy(promptFor(DAYS[current],current));markDayDone(current,true);toast("Prompt copy भयो — Day Done मा चिन्ह लगाइयो।")};
+$("#copyCaptionCurrent").onclick=()=>{copy(captionFor(DAYS[current],current));toast("Facebook, YouTube र TikTok का लागि caption copy भयो!")};
 $("#copyAll").onclick=()=>{copy(DAYS.map((d,i)=>promptFor(d,i)).join("\n\n"+"=".repeat(65)+"\n\n"));for(let i=0;i<DAYS.length;i++)completedDays.add(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays]));render();list();toast("सबै ३० दिनका prompt copy भए — सबै Done चिन्ह लगाइयो।")};
 $("#prev").onclick=()=>{current=Math.max(0,current-1);render();list()};
 $("#next").onclick=()=>{current=Math.min(29,current+1);render();list()};
@@ -168,9 +170,10 @@ let pendingCustom=[];
 function saveCustom(){localStorage.setItem("gk_custom_clips",JSON.stringify(customClips));renderCustomClips()}
 function renderCustomClips(){
  const el=$("#customClips"); if(!customClips.length){el.innerHTML='<div class="muted">अहिलेसम्म custom clips छैनन्। माथि प्रश्न थपेर सुरु गर्नुहोस्।</div>';return}
- el.innerHTML=customClips.map((x,i)=>`<article class="day"><div class="top"><b>${escapeHtml(x.title||"Custom clip "+(i+1))}</b><button data-custom-copy="${i}">Copy Flow Prompt</button></div><div class="muted">${x.qs.length} प्रश्न · ${x.qs.map(q=>escapeHtml(q[0])).join(" / ")}</div><button data-custom-remove="${i}">हटाउनुहोस्</button></article>`).join("");
+ el.innerHTML=customClips.map((x,i)=>`<article class="day"><div class="top"><b>${escapeHtml(x.title||"Custom clip "+(i+1))}</b><div class="tools"><button data-custom-copy="${i}">Copy Flow Prompt</button><button data-custom-caption="${i}">Copy Caption</button></div></div><div class="muted">${x.qs.length} प्रश्न · ${x.qs.map(q=>escapeHtml(q[0])).join(" / ")}</div><button data-custom-remove="${i}">हटाउनुहोस्</button></article>`).join("");
  el.querySelectorAll("[data-custom-copy]").forEach(b=>b.onclick=()=>copy(customPrompt(customClips[+b.dataset.customCopy],+b.dataset.customCopy)));
- el.querySelectorAll("[data-custom-remove]").forEach(b=>b.onclick=()=>{customClips.splice(+b.dataset.customRemove,1);saveCustom()});
+ el.querySelectorAll("[data-custom-caption]").forEach(b=>b.onclick=()=>copy(captionFor(customClips[+b.dataset.customCaption],+b.dataset.customCaption,true)));
+  el.querySelectorAll("[data-custom-remove]").forEach(b=>b.onclick=()=>{customClips.splice(+b.dataset.customRemove,1);saveCustom()});
 }
 function parseAIText(raw){
  let t=raw.trim().replace(/^\`\`\`(?:json)?/i,"").replace(/\`\`\`$/,"").trim();
