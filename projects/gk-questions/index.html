@@ -78,7 +78,8 @@ const DAYS = [
 {title:"नेपालका महत्वपूर्ण स्थान",qs:[["जानकी मन्दिर कुन शहरमा अवस्थित छ?","जनकपुरधाम"],["मुक्तिनाथ मन्दिर कुन जिल्लामा पर्छ?","मुस्ताङ"],["स्वयम्भूनाथ स्तूप कुन शहरमा छ?","काठमाडौं"]]},
 {title:"मिश्रित GK चुनौती",qs:[["नेपालको समय क्षेत्र UTC भन्दा कति अगाडि छ?","५ घण्टा ४५ मिनेट"],["विश्व वातावरण दिवस कहिले मनाइन्छ?","जुन ५"],["अन्तर्राष्ट्रिय महिला दिवस कहिले मनाइन्छ?","मार्च ८"]]}
 ];
-const $=s=>document.querySelector(s);let current=0;\nlet completedDays=(()=>{try{return new Set(JSON.parse(localStorage.getItem("gk_completed_days")||"[]").map(Number).filter(n=>n>=0&&n<30))}catch(e){return new Set()}})();\nfunction firstIncompleteIndex(){for(let i=0;i<DAYS.length;i++)if(!completedDays.has(i))return i;return 0}\nfunction markDayDone(i,done=true){if(done)completedDays.add(i);else completedDays.delete(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays].sort((a,b)=>a-b)));if(done&&current===i&&completedDays.size<DAYS.length)current=firstIncompleteIndex();render();list();}
+const $=s=>document.querySelector(s);let current=0;\nlet completedDays=(()=>{try{return new Set(JSON.parse(localStorage.getItem("gk_completed_days")||"[]").map(Number).filter(n=>n>=0&&n<30))}catch(e){return new Set()}})();
+function firstIncompleteIndex(){for(let i=0;i<DAYS.length;i++)if(!completedDays.has(i))return i;return 0}\nfunction markDayDone(i,done=true){if(done)completedDays.add(i);else completedDays.delete(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays].sort((a,b)=>a-b)));if(done&&current===i&&completedDays.size<DAYS.length)current=firstIncompleteIndex();render();list();}
 function customPrompt(day,index){
  const qs=day.qs, ratio=$("#ratio").value;
  const starts=["0.0–1.3","2.3–3.6","4.6–5.9"], ends=["1.3–2.3","3.6–4.6","5.9–7.0"];
@@ -136,7 +137,8 @@ function render(){
  const d=DAYS[current];$("#selectedDay").innerHTML=`<div class="top"><div><div class="muted">DAY ${String(current+1).padStart(2,"0")} / 30</div><h2>${d.title}</h2><label class="daycheck"><input type="checkbox" id="selectedDone" ${completedDays.has(current)?"checked":""}> यो दिन पूरा भयो / Done</label></div><button class="primary" id="copyOne">यो दिनको Prompt Copy</button></div>
  ${d.qs.map((q,i)=>`<div class="q"><b>प्रश्न ${i+1}:</b> ${q[0]}<br><b>उत्तर:</b> ${q[1]}</div>`).join("")}
  <h3>Google Flow Prompt</h3><div class="prompt" id="prompt">${escapeHtml(promptFor(d,current))}</div>`;
- $("#copyOne").onclick=()=>{copy(promptFor(d,current));markDayDone(current,true);toast("Prompt copy भयो — यो दिन Done मा चिन्ह लगाइयो।")};\n $("#selectedDone").onchange=e=>markDayDone(current,e.target.checked);
+ $("#copyOne").onclick=()=>{copy(promptFor(d,current));markDayDone(current,true);toast("Prompt copy भयो — यो दिन Done मा चिन्ह लगाइयो।")};
+ $("#selectedDone").onchange=e=>markDayDone(current,e.target.checked);
  $("#prev").disabled=current===0;$("#next").disabled=current===29;
  $("#progress").style.width=(completedDays.size/30*100)+"%";$("#stats").textContent=`${completedDays.size}/३० दिन पूरा · ${30-completedDays.size} दिन बाँकी · ${DAYS.reduce((n,x)=>n+x.qs.length,0)} प्रश्न`;\n const next=firstIncompleteIndex();$("#nextReady").textContent=completedDays.size===30?"🎉 सबै ३० दिन पूरा भयो!":"अर्को तयार दिन: Day "+(next+1)+" — "+DAYS[next].title;
  document.querySelectorAll(".daybtn").forEach((b,i)=>b.classList.toggle("selected",i===current));
@@ -147,7 +149,8 @@ function toast(s){$("#toast").textContent=s;$("#toast").classList.add("show");se
 function list(){
  const term=$("#search").value.trim().toLowerCase();
  $("#days").innerHTML=DAYS.map((d,i)=>({d,i})).filter(x=>(x.d.title+" "+x.d.qs.flat().join(" ")).toLowerCase().includes(term)).map(({d,i})=>`<article class="day ${i===current?"active":""} ${completedDays.has(i)?"doneDay":""}"><div class="top"><b>Day ${String(i+1).padStart(2,"0")} ${completedDays.has(i)?"<span class=\"doneTag\">✓ Done</span>":""}</b><label class="daycheck"><input type="checkbox" data-done="${i}" ${completedDays.has(i)?"checked":""}> पूरा भयो</label><button class="daybtn ${i===current?"selected":""}" data-i="${i}">खोल्नुहोस्</button></div><h3>${d.title}</h3><div class="muted">३ प्रश्न · ${d.qs.map(q=>q[0]).join(" / ")}</div></article>`).join("");
- document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{current=+b.dataset.i;render();list();window.scrollTo({top:0,behavior:"smooth"});});\n document.querySelectorAll("[data-done]").forEach(b=>b.onchange=()=>markDayDone(+b.dataset.done,b.checked));
+ document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{current=+b.dataset.i;render();list();window.scrollTo({top:0,behavior:"smooth"});});
+ document.querySelectorAll("[data-done]").forEach(b=>b.onchange=()=>markDayDone(+b.dataset.done,b.checked));
 }
 $("#copyCurrent").onclick=()=>{copy(promptFor(DAYS[current],current));markDayDone(current,true);toast("Prompt copy भयो — Day Done मा चिन्ह लगाइयो।")};
 $("#copyAll").onclick=()=>copy(DAYS.map((d,i)=>promptFor(d,i)).join("\n\n"+"=".repeat(65)+"\n\n"));
