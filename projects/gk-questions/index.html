@@ -26,24 +26,22 @@ nav a{color:var(--gold);padding:7px}.grid{display:grid;grid-template-columns:rep
 <header><div class="wrap" style="padding:0 10px"><h1>🇳🇵 GK Questions — दैनिक Rapid-Fire</h1>
 <div class="muted">३० दिन · ९० नेपाली सामान्यज्ञान प्रश्न · प्रत्येक दिन एउटा तयार Google Flow prompt · १० सेकेन्डको भिडियो</div>
 <div class="bar"><i id="progress"></i></div><div class="muted" id="stats"></div><div class="readyNote" id="nextReady"></div>
-<nav><button class="primary" id="copyCurrent">आजको Flow Prompt Copy</button><button id="copyCaptionCurrent">आजको Caption Copy</button><button id="copyAll">सबै ३० दिनका Prompt Copy</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a>
+<nav><button class="primary" id="copyAll">सबै ३० दिनका Prompt Copy</button><button id="copyAllCaptions">सबै ३० दिनका Caption Copy</button><button id="copyEverything">मूल + थपिएका सबै Prompt Copy</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a>
 <select id="ratio"><option value="9:16">9:16 Vertical</option><option value="16:9">16:9 Landscape</option></select></nav>
 <div class="filters"><input id="search" placeholder="दिन वा प्रश्न खोज्नुहोस्…" style="flex:1;min-width:190px"><button id="prev">← अघिल्लो</button><button id="next">अर्को →</button></div></div></header>
 <main class="wrap">
 <section class="box" id="customWorkspace">
- <div class="top"><div><h2>✍️ My Questions — आफ्नै प्रश्न थप्नुहोस्</h2><div class="muted">प्रश्न–उत्तर paste गर्नुहोस्, AI बाट Flow format बनाउनुहोस् र एकै क्लिकमा clips मा थप्नुहोस्।</div></div><span class="muted">Custom clips</span></div>
+ <div class="top"><div><h2>✍️ My Questions — आफ्नै प्रश्न थप्नुहोस्</h2><div class="muted">तपाईंका प्रश्न–उत्तर मात्र AI बाट JSON ढाँचामा मिलाइन्छन्। त्यसपछि मूल ३० दिनका prompt नहटाई, नयाँ प्रश्नहरूलाई अनियमित रूपमा विभिन्न दिनमा थपिन्छ।</div></div><span class="muted">Custom clips</span></div>
  <label for="apiUrl"><b>AI API URL</b></label>
  <input id="apiUrl" style="width:100%;margin:5px 0 10px" value="https://mukeshpokharel-testing.hf.space/gemini">
  <div class="muted">Default: Hugging Face Space · POST /gemini · JSON { "prompt": "..." } → { "text": "..." }</div>
  <label for="ownQuestions"><b>तपाईंका प्रश्न र उत्तर</b></label>
  <textarea id="ownQuestions" rows="8" style="width:100%;margin:6px 0" placeholder="१. नेपालको राष्ट्रिय फूल कुन हो? — लालीगुराँस&#10;२. नेपालको राष्ट्रिय चरा कुन हो? — डाँफे&#10;३. नेपालको राष्ट्रिय जनावर कुन हो? — गाई&#10;&#10;एक लाइनमा एउटा प्रश्न र उत्तर लेख्नुहोस्। प्रश्न–उत्तर छुट्याउन —, : वा ? प्रयोग गर्न सकिन्छ।"></textarea>
- <label for="aiInstruction"><b>AI लाई निर्देशन (ऐच्छिक)</b></label>
- <input id="aiInstruction" style="width:100%;margin:5px 0 10px" value="यी प्रश्नहरूलाई १० सेकेन्डका नेपाली rapid-fire GK clips मा मिलाऊ। प्रश्न र सही उत्तर नबदल। तयार भएपछि सिधै My Custom Clips मा थप।">
- <div class="tools"><button class="primary" id="formatAI">✨ Format with AI</button><button id="clearOwn">Clear</button><span class="muted" id="aiStatus">अहिलेसम्म कुनै custom clip छैन।</span></div>
+ <div class="tools"><button class="primary" id="formatAI">✨ प्रश्न–उत्तर Format</button><button id="clearOwn">Clear</button><span class="muted" id="aiStatus">AI ले प्रश्न/उत्तरको ढाँचा मात्र मिलाउँछ; नयाँ प्रश्नहरू ३० दिनमा अनियमित रूपमा थपिन्छन्।</span></div>
  <div id="aiPreview"></div>
- <div class="tools"><button class="primary" id="addCustom" disabled>＋ Add to clips</button></div>
+ <div class="tools"><button class="primary" id="addCustom" disabled>＋ ३० दिनमा अनियमित रूपमा थप्नुहोस्</button></div>
 </section>
-<section class="box"><div class="top"><h2>📌 My Custom Clips</h2><button id="clearCustom">सबै custom clips हटाउनुहोस्</button></div><div id="customClips" class="grid"></div></section>
+<section class="box"><div class="top"><h2>📌 थपिएका प्रश्नहरू</h2><span class="muted" id="addedStats"></span><button id="clearCustom">थपिएका प्रश्नहरू हटाउनुहोस्</button></div><div class="muted">यी प्रश्नहरू तल सम्बन्धित दिनमै देखिन्छन्। मूल ९० प्रश्न र prompt सुरक्षित रहन्छन्।</div></section>
 <section class="box" id="selectedDay"></section><section><h2>३० दिनको सूची</h2><div class="grid" id="days"></div></section></main><div id="toast"></div>
 <script>
 const DAYS = [
@@ -79,6 +77,7 @@ const DAYS = [
 {title:"मिश्रित GK चुनौती",qs:[["नेपालको समय क्षेत्र UTC भन्दा कति अगाडि छ?","५ घण्टा ४५ मिनेट"],["विश्व वातावरण दिवस कहिले मनाइन्छ?","जुन ५"],["अन्तर्राष्ट्रिय महिला दिवस कहिले मनाइन्छ?","मार्च ८"]]}
 ];
 const $=s=>document.querySelector(s);let current=0;
+let addedQuestionClips=(()=>{try{return JSON.parse(localStorage.getItem("gk_added_question_clips")||"[]")}catch(e){return []}})();
 let completedDays=(()=>{try{return new Set(JSON.parse(localStorage.getItem("gk_completed_days")||"[]").map(Number).filter(n=>n>=0&&n<30))}catch(e){return new Set()}})();
 function firstIncompleteIndex(){for(let i=0;i<DAYS.length;i++)if(!completedDays.has(i))return i;return 0}
 function markDayDone(i,done=true){if(done)completedDays.add(i);else completedDays.delete(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays].sort((a,b)=>a-b)));if(done&&current===i&&completedDays.size<DAYS.length)current=firstIncompleteIndex();render();list();}
@@ -167,72 +166,81 @@ function copy(s){navigator.clipboard.writeText(s).then(()=>toast("Clipboard म�
 function toast(s){$("#toast").textContent=s;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),1800)}
 function list(){
  const term=$("#search").value.trim().toLowerCase();
- $("#days").innerHTML=DAYS.map((d,i)=>({d,i})).filter(x=>(x.d.title+" "+x.d.qs.flat().join(" ")).toLowerCase().includes(term)).map(({d,i})=>`<article class="day ${i===current?"active":""} ${completedDays.has(i)?"doneDay":""}"><div class="top"><b>Day ${String(i+1).padStart(2,"0")} ${completedDays.has(i)?"<span class=\"doneTag\">✓ Done</span>":""}</b><label class="daycheck"><input type="checkbox" data-done="${i}" ${completedDays.has(i)?"checked":""}> पूरा भयो</label><button class="daybtn ${i===current?"selected":""}" data-i="${i}">खोल्नुहोस्</button></div><h3>${d.title}</h3><div class="muted">३ प्रश्न · ${d.qs.map(q=>q[0]).join(" / ")}</div></article>`).join("");
- document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{current=+b.dataset.i;render();list();window.scrollTo({top:0,behavior:"smooth"});});
+ $("#days").innerHTML=DAYS.map((d,i)=>({d,i})).filter(x=>(x.d.title+" "+x.d.qs.flat().join(" ")).toLowerCase().includes(term)||addedQuestionClips.some(a=>a.dayIndex===x.i&&a.qs.flat().join(" ").toLowerCase().includes(term))).map(({d,i})=>{
+  const extras=addedQuestionClips.map((x,j)=>({...x,clipIndex:j})).filter(x=>x.dayIndex===i);
+  return `<article class="day ${completedDays.has(i)?"doneDay":""}">
+   <div class="top"><b>Day ${String(i+1).padStart(2,"0")} ${completedDays.has(i)?"<span class=\\\"doneTag\\\">✓ Done</span>":""}</b><label class="daycheck"><input type="checkbox" data-done="${i}" ${completedDays.has(i)?"checked":""}> पूरा भयो</label></div>
+   <h3>${d.title}</h3><div class="muted">मूल ३ प्रश्न · ${d.qs.map(q=>escapeHtml(q[0])).join(" / ")}</div>
+   <div class="tools"><button class="primary" data-base-prompt="${i}">मूल Prompt Copy</button><button data-day-caption="${i}">Caption Copy</button></div>
+   ${extras.map(x=>`<div class="q"><b>थपिएको Clip ${x.clipIndex+1}</b><div class="muted">${x.qs.map(q=>escapeHtml(q[0])+" → "+escapeHtml(q[1])).join(" / ")}</div><div class="tools"><button data-extra-prompt="${x.clipIndex}">थपिएको Prompt Copy</button><button data-extra-caption="${x.clipIndex}">Caption Copy</button></div></div>`).join("")}
+  </article>`;
+ }).join("");
+ document.querySelectorAll("[data-base-prompt]").forEach(b=>b.onclick=()=>{const i=+b.dataset.basePrompt;copy(promptFor(DAYS[i],i));markDayDone(i,true)});
+ document.querySelectorAll("[data-day-caption]").forEach(b=>b.onclick=()=>copy(captionFor(DAYS[+b.dataset.dayCaption],+b.dataset.dayCaption)));
+ document.querySelectorAll("[data-extra-prompt]").forEach(b=>b.onclick=()=>{const x=addedQuestionClips[+b.dataset.extraPrompt],i=x.dayIndex;copy(customPrompt({title:DAYS[i].title+" · थपिएको GK",qs:x.qs},i));markDayDone(i,true)});
+ document.querySelectorAll("[data-extra-caption]").forEach(b=>b.onclick=()=>{const x=addedQuestionClips[+b.dataset.extraCaption];copy(captionFor({title:DAYS[x.dayIndex].title+" · थपिएको GK"},x.dayIndex,true))});
  document.querySelectorAll("[data-done]").forEach(b=>b.onchange=()=>markDayDone(+b.dataset.done,b.checked));
+ $("#addedStats").textContent=addedQuestionClips.length+" थपिएका clips · "+addedQuestionClips.reduce((n,x)=>n+x.qs.length,0)+" प्रश्न";
 }
-$("#copyCurrent").onclick=()=>{copy(promptFor(DAYS[current],current));markDayDone(current,true);toast("Prompt copy भयो — Day Done मा चिन्ह लगाइयो।")};
-$("#copyCaptionCurrent").onclick=()=>{copy(captionFor(DAYS[current],current));toast("Caption copy भयो — Facebook, YouTube र TikTok मा प्रयोग गर्न मिल्छ।")};
-$("#copyCaptionCurrent").onclick=()=>{copy(captionFor(DAYS[current],current));toast("Facebook, YouTube र TikTok का लागि caption copy भयो!")};
-$("#copyAll").onclick=()=>{copy(DAYS.map((d,i)=>promptFor(d,i)).join("\n\n"+"=".repeat(65)+"\n\n"));for(let i=0;i<DAYS.length;i++)completedDays.add(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays]));render();list();toast("सबै ३० दिनका prompt copy भए — सबै Done चिन्ह लगाइयो।")};
+$("#copyAll").onclick=()=>{copy(DAYS.map((d,i)=>promptFor(d,i)).join("\n\n"+"=".repeat(65)+"\n\n"));for(let i=0;i<DAYS.length;i++)completedDays.add(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays]));render();list();toast("सबै ३० दिनका मूल prompt copy भए।")};
+$("#copyAllCaptions").onclick=()=>copy(DAYS.map((d,i)=>captionFor(d,i)).join("\n\n"+"=".repeat(45)+"\n\n"));
+$("#copyEverything").onclick=()=>{const all=DAYS.map((d,i)=>[promptFor(d,i),...addedQuestionClips.filter(x=>x.dayIndex===i).map(x=>customPrompt({title:d.title+" · थपिएको GK",qs:x.qs},i))].join("\n\n"));copy(all.join("\n\n"+"=".repeat(65)+"\n\n"));toast("मूल र थपिएका सबै prompt copy भए।")};
 $("#prev").onclick=()=>{current=Math.max(0,current-1);render();list()};
 $("#next").onclick=()=>{current=Math.min(29,current+1);render();list()};
 $("#ratio").onchange=render;$("#search").oninput=list;
 $("#download").onclick=()=>{const blob=new Blob(["<!doctype html>\n"+document.documentElement.outerHTML],{type:"text/html;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gk-questions-30-days.html";a.click();URL.revokeObjectURL(a.href)};
 
 const API_DEFAULT="https://mukeshpokharel-testing.hf.space/gemini";
-let customClips=(()=>{try{return JSON.parse(localStorage.getItem("gk_custom_clips")||"[]")}catch(e){return []}})();
-let pendingCustom=[];
-function saveCustom(){localStorage.setItem("gk_custom_clips",JSON.stringify(customClips));renderCustomClips()}
-function renderCustomClips(){
- const el=$("#customClips"); if(!customClips.length){el.innerHTML='<div class="muted">अहिलेसम्म custom clips छैनन्। माथि प्रश्न थपेर सुरु गर्नुहोस्।</div>';return}
- el.innerHTML=customClips.map((x,i)=>`<article class="day"><div class="top"><b>${escapeHtml(x.title||"Custom clip "+(i+1))}</b><div class="tools"><button data-custom-copy="${i}">Copy Flow Prompt</button><button data-custom-caption="${i}">Copy Caption</button></div></div><div class="muted">${x.qs.length} प्रश्न · ${x.qs.map(q=>escapeHtml(q[0])).join(" / ")}</div><button data-custom-remove="${i}">हटाउनुहोस्</button></article>`).join("");
- el.querySelectorAll("[data-custom-copy]").forEach(b=>b.onclick=()=>copy(customPrompt(customClips[+b.dataset.customCopy],+b.dataset.customCopy)));
- el.querySelectorAll("[data-custom-caption]").forEach(b=>b.onclick=()=>copy(captionFor(customClips[+b.dataset.customCaption],+b.dataset.customCaption,true)));
-  el.querySelectorAll("[data-custom-remove]").forEach(b=>b.onclick=()=>{customClips.splice(+b.dataset.customRemove,1);saveCustom()});
+let pendingPairs=[];
+function parseAIText(raw){let t=raw.trim().replace(/^```(?:json)?/i,"").replace(/```$/,"").trim();const a=t.indexOf("{"),z=t.lastIndexOf("}");if(a>=0&&z>a)t=t.slice(a,z+1);return JSON.parse(t)}
+function locallyReadPairs(raw){
+ return raw.split(/\r?\n/).map(x=>x.trim()).filter(Boolean).map(line=>{
+  let s=line.replace(/^\s*(?:प्रश्न\s*)?(?:[०-९0-9]+[.)।:-]|[-*])\s*/,"").trim();
+  let parts=s.split(/\s*(?:—|–|\s-\s|\||\t)\s*/);
+  if(parts.length<2){const q=s.indexOf("?");if(q>=0)parts=[s.slice(0,q+1),s.slice(q+1).replace(/^\s*[:：–—-]?\s*/,"")]}
+  if(parts.length<2||!parts[0].trim()||!parts.slice(1).join(" ").trim())throw new Error("प्रत्येक लाइनमा प्रश्न र उत्तरलाई — वा | ले छुट्याउनुहोस्। समस्या भएको लाइन: "+line);
+  return [parts[0].trim(),parts.slice(1).join(" ").trim()];
+ });
 }
-function parseAIText(raw){
- let t=raw.trim().replace(/^\`\`\`(?:json)?/i,"").replace(/\`\`\`$/,"").trim();
- const a=t.indexOf("{"),z=t.lastIndexOf("}");
- if(a>=0&&z>a)t=t.slice(a,z+1);
- return JSON.parse(t);
+function addPairsRandomly(pairs){
+ const groups=[];for(let i=0;i<pairs.length;i+=3)groups.push(pairs.slice(i,i+3));
+ const order=Array.from({length:30},(_,i)=>i).sort(()=>Math.random()-.5);
+ groups.forEach((qs,i)=>addedQuestionClips.push({dayIndex:order[i%30],title:"थपिएका प्रश्नहरू",qs}));
+ localStorage.setItem("gk_added_question_clips",JSON.stringify(addedQuestionClips));list();render();
 }
 $("#formatAI").onclick=async()=>{
  const raw=$("#ownQuestions").value.trim();if(!raw){toast("पहिले प्रश्न र उत्तर लेख्नुहोस्।");return}
- const btn=$("#formatAI");btn.disabled=true;$("#aiStatus").textContent="AI ले प्रश्नहरू मिलाउँदैछ…";$("#aiPreview").innerHTML="";$("#addCustom").disabled=true;
+ let expected;try{expected=locallyReadPairs(raw)}catch(e){$("#aiStatus").textContent=e.message;return}
+ const btn=$("#formatAI");btn.disabled=true;$("#aiStatus").textContent="AI ले प्रश्न–उत्तरलाई मात्र संरचनाबद्ध गर्दैछ…";$("#aiPreview").innerHTML="";$("#addCustom").disabled=true;
  const endpoint=$("#apiUrl").value.trim()||API_DEFAULT;
- const instruction=$("#aiInstruction").value.trim();
- const prompt=`You are a strict Nepali GK quiz formatter. Convert the user's supplied question-answer pairs into Google Flow rapid-fire quiz clip data. Return ONLY valid JSON, no markdown, no commentary, in exactly this schema:
-{"clips":[{"title":"short Nepali title","questions":[{"question":"exact question","answer":"exact answer"}]}]}
-Rules:
-- Preserve every supplied question and its paired correct answer. Do not invent questions, answers, facts, explanations, or distractors.
-- Correct only obvious spacing/numbering/formatting errors. Keep Nepali wording as supplied wherever possible.
-- Split into clips with no more than 3 question-answer pairs per clip, preserving original order. Never drop any pair. A final clip may contain 1 or 2 pairs.
-- Use concise Nepali titles. Each question and answer must be a plain string.
-- If a pair is unclear or missing an answer, include it unchanged and add a "notes" field explaining the ambiguity; do not guess.
-- User instruction: ${instruction||"Format these questions for rapid-fire GK clips."}
-- User supplied questions:
+ const prompt=`You are a data formatter, NOT a question writer and NOT a video prompt writer.
+Convert the supplied lines into JSON only, using exactly this schema:
+{"questions":[{"question":"...","answer":"..."}]}
+STRICT RULES:
+- Copy the exact question and its paired answer from the input.
+- Do not create, improve, rewrite, correct, translate, expand, shorten, fact-check, or replace any wording.
+- Do not add titles, explanations, distractors, dialogue, characters, video instructions, or Google Flow prompts.
+- Do not omit, merge, split, reorder, or duplicate any pair.
+- Output exactly one object per input pair, in the same order.
+- Return valid JSON only. No markdown or commentary.
+INPUT:
 ${raw}`;
  try{
   const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
   const data=await response.json();if(!response.ok)throw new Error(data.detail||("HTTP "+response.status));
   if(typeof data.text!=="string"||!data.text.trim())throw new Error("API returned no text field.");
-  const parsed=parseAIText(data.text);if(!Array.isArray(parsed.clips)||!parsed.clips.length)throw new Error("AI response did not contain a clips array.");
-  pendingCustom=parsed.clips.map((x,i)=>({title:x.title||("मेरो प्रश्नहरू · "+(i+1)),qs:(x.questions||[]).map(q=>[String(q.question||""),String(q.answer||"")]).filter(q=>q[0]&&q[1])})).filter(x=>x.qs.length);
-  if(!pendingCustom.length)throw new Error("No valid question-answer pairs found.");
-  $("#aiPreview").innerHTML='<h3>AI Preview — '+pendingCustom.length+' clips</h3>'+pendingCustom.map((x,i)=>'<div class="q"><b>'+escapeHtml(x.title)+'</b><br>'+x.qs.map(q=>escapeHtml(q[0])+' → <b>'+escapeHtml(q[1])+'</b>').join("<br>")+'</div>').join("");
-  const addRequested=/add\s+to\s+(the\s+)?clips|clips\s+मा\s+थप|clip\s+मा\s+थप|सिधै\s+.*clips/i.test(instruction);
-  if(addRequested){customClips.push(...pendingCustom);saveCustom();pendingCustom=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="AI ले तयार गरेका clips स्वतः My Custom Clips मा थपिए।";toast("तपाईंका clips थपिए!");}
-  else{$("#addCustom").disabled=false;$("#aiStatus").textContent="Preview तयार भयो। ठीक छ भने Add to clips थिच्नुहोस्।";}
- }catch(err){$("#aiStatus").textContent="Error: "+err.message;toast("AI formatting असफल भयो। URL र API जाँच्नुहोस्।")}
+  const parsed=parseAIText(data.text);if(!Array.isArray(parsed.questions))throw new Error("AI response मा questions array भेटिएन।");
+  const received=parsed.questions.map(q=>[String(q.question??"").trim(),String(q.answer??"").trim()]);
+  if(received.length!==expected.length||received.some((q,i)=>q[0]!==expected[i][0]||q[1]!==expected[i][1]))throw new Error("AI output मूल प्रश्न–उत्तरबाट फरक भयो। सुरक्षा कारणले कुनै प्रश्न थपिएन।");
+  pendingPairs=received;$("#aiPreview").innerHTML="<h3>जाँच सफल — "+received.length+" प्रश्न–उत्तर</h3>"+received.map((q,i)=>'<div class="q"><b>'+(i+1)+'. '+escapeHtml(q[0])+'</b><br>उत्तर: '+escapeHtml(q[1])+'</div>').join("");
+  $("#addCustom").disabled=false;$("#aiStatus").textContent="AI output मूल सामग्रीसँग अक्षरशः मिल्यो। अब ३० दिनमा अनियमित रूपमा थप्नुहोस्।";
+ }catch(err){pendingPairs=[];$("#aiStatus").textContent="Error: "+err.message;toast("Format असफल भयो।")}
  finally{btn.disabled=false}
 };
-$("#addCustom").onclick=()=>{if(!pendingCustom.length)return;customClips.push(...pendingCustom);saveCustom();pendingCustom=[];$("#addCustom").disabled=true;$("#aiPreview").innerHTML="";$("#aiStatus").textContent="Custom clips सफलतापूर्वक थपिए।";toast("तपाईंका clips थपिए!")};
-$("#clearOwn").onclick=()=>{$("#ownQuestions").value="";$("#aiPreview").innerHTML="";pendingCustom=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="इनपुट खाली गरियो।"};
-$("#clearCustom").onclick=()=>{if(confirm("सबै custom clips हटाउने?")){customClips=[];saveCustom();toast("Custom clips हटाइयो।")}};
+$("#addCustom").onclick=()=>{if(!pendingPairs.length)return;const n=pendingPairs.length;addPairsRandomly(pendingPairs);pendingPairs=[];$("#addCustom").disabled=true;$("#aiPreview").innerHTML="";$("#ownQuestions").value="";$("#aiStatus").textContent=n+" प्रश्न–उत्तर थपिए। मूल ३० दिनका सामग्री सुरक्षित छन्।";toast(n+" नयाँ प्रश्न ३० दिनमा थपिए!")};
+$("#clearOwn").onclick=()=>{$("#ownQuestions").value="";$("#aiPreview").innerHTML="";pendingPairs=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="इनपुट खाली गरियो।"};
+$("#clearCustom").onclick=()=>{if(confirm("तपाईंले थपेका प्रश्नहरू मात्र हटाउने? मूल ३० दिनका प्रश्नहरू सुरक्षित रहनेछन्।")){addedQuestionClips=[];localStorage.removeItem("gk_added_question_clips");list();render();$("#aiStatus").textContent="थपिएका प्रश्नहरू हटाइए; मूल सामग्री सुरक्षित छ।";toast("थपिएका प्रश्नहरू हटाइए।")}};
 $("#apiUrl").value=localStorage.getItem("gk_ai_endpoint")||API_DEFAULT;
 $("#apiUrl").onchange=()=>localStorage.setItem("gk_ai_endpoint",$("#apiUrl").value.trim());
-renderCustomClips();
-
 render();list();
 </script></main></body></html>
