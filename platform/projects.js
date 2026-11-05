@@ -16,6 +16,14 @@ const PROJECTS = [
     accent: "coral"
   },
   {
+    name: "GK Questions",
+    type: "Nepali daily rapid-fire quiz",
+    description: "30 days of ready-to-copy 10-second Google Flow prompts, with 90 Nepali general-knowledge questions and answers.",
+    href: "projects/gk-questions/index.html",
+    mark: "🇳🇵",
+    accent: "gold"
+  },
+  {
     name: "काम नलाग्ने कोही हुँदैन",
     type: "Nepali village drama · Season 1",
     description: "12 episodes, each broken into several 10-second Flow clips with Nepali dialogue, cast and place references, and episode progress tracking.",
