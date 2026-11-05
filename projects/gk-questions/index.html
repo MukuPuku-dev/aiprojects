@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="ne">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GK Questions — 30 Days of Nepali Rapid-Fire Quiz</title>
+<style>
+:root{--bg:#10151b;--card:#1b2632;--ink:#f3f6f8;--mut:#a9b7c5;--gold:#f2c66d;--line:#354657;--green:#83d6a0}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.7 system-ui,"Noto Sans Devanagari","Nirmala UI",sans-serif}
+header{position:sticky;top:0;background:#10151bf2;padding:14px;border-bottom:1px solid var(--line);z-index:5}
+h1,h2,h3{color:var(--gold);margin:0 0 7px}h1{font-size:22px}h2{font-size:19px}h3{font-size:16px}
+.muted{color:var(--mut);font-size:12px}.wrap{max-width:1050px;margin:auto;padding:14px}
+nav,.tools,.top,.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:9px}
+button,select,input{background:#293746;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:8px 11px;cursor:pointer;font:inherit}
+button.primary{background:var(--gold);color:#211a0d;font-weight:800}button:disabled{opacity:.4;cursor:not-allowed}
+nav a{color:var(--gold);padding:7px}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:14px}
+.box,.day{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:14px;margin:12px 0}
+.day{margin:0}.day.active{border-color:var(--gold)}.top{justify-content:space-between;margin:0 0 8px}
+.q{background:#243443;border-left:3px solid var(--green);padding:8px 10px;border-radius:6px;margin:8px 0}
+.q b{color:var(--gold)}.prompt{white-space:pre-wrap;background:#0a1016;padding:12px;border-radius:9px;font:12px/1.6 ui-monospace,Consolas,monospace;word-break:break-word;max-height:480px;overflow:auto;margin-top:12px}
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--green);color:#102018;padding:7px 14px;border-radius:30px;opacity:0;transition:.2s;z-index:9}#toast.show{opacity:1}
+.bar{height:6px;background:#354657;border-radius:9px;margin:8px 0}.bar i{display:block;background:var(--green);height:100%;width:0}
+.daybtn{min-width:42px}.selected{background:var(--gold);color:#211a0d;font-weight:800}
+@media(max-width:600px){header{position:relative}.wrap{padding:10px}.prompt{font-size:11px}}
+</style></head>
+<body>
+<header><div class="wrap" style="padding:0 10px"><h1>🇳🇵 GK Questions — दैनिक Rapid-Fire</h1>
+<div class="muted">३० दिन · ९० नेपाली सामान्यज्ञान प्रश्न · प्रत्येक दिन एउटा तयार Google Flow prompt · १० सेकेन्डको भिडियो</div>
+<div class="bar"><i id="progress"></i></div><div class="muted" id="stats"></div>
+<nav><button class="primary" id="copyCurrent">आजको Flow Prompt Copy</button><button id="copyAll">सबै ३० दिनका Prompt Copy</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a>
+<select id="ratio"><option value="9:16">9:16 Vertical</option><option value="16:9">16:9 Landscape</option></select></nav>
+<div class="filters"><input id="search" placeholder="दिन वा प्रश्न खोज्नुहोस्…" style="flex:1;min-width:190px"><button id="prev">← अघिल्लो</button><button id="next">अर्को →</button></div></div></header>
+<main class="wrap"><section class="box" id="selectedDay"></section><section><h2>३० दिनको सूची</h2><div class="grid" id="days"></div></section></main><div id="toast"></div>
+<script>
+const DAYS = [
+{title:"नेपालका राष्ट्रिय पहिचान",qs:[["नेपालको राष्ट्रिय फूल कुन हो?","लालीगुराँस"],["नेपालको राष्ट्रिय चरा कुन हो?","डाँफे"],["नेपालको राष्ट्रिय जनावर कुन हो?","गाई"]]},
+{title:"नेपालको भूगोल",qs:[["नेपालको सबैभन्दा अग्लो हिमाल कुन हो?","सगरमाथा"],["नेपालको सबैभन्दा लामो नदी कुन हो?","कर्णाली नदी"],["नेपालको सबैभन्दा ठूलो ताल कुन हो?","रारा ताल"]]},
+{title:"राजधानी र प्रदेश",qs:[["नेपालको राजधानी कहाँ हो?","काठमाडौं"],["नेपालमा कति वटा प्रदेश छन्?","७ वटा"],["नेपालको क्षेत्रफलका आधारमा सबैभन्दा ठूलो जिल्ला कुन हो?","डोल्पा"]]},
+{title:"इतिहासका आधारभूत तथ्य",qs:[["नेपाल एकीकरण अभियानका नेतृत्वकर्ता को हुन्?","पृथ्वीनारायण शाह"],["नेपालको पहिलो निर्वाचित प्रधानमन्त्री को हुन्?","बी.पी. कोइराला"],["नेपालमा गणतन्त्र घोषणा कहिले भयो?","२०६५ जेठ १५ गते"]]},
+{title:"संविधान र शासन",qs:[["नेपालको वर्तमान संविधान कहिले जारी भयो?","२०७२ असोज ३ गते"],["नेपालको संघीय संसद् कति सदनको छ?","दुई सदन"],["प्रतिनिधि सभामा कति सदस्य हुन्छन्?","२७५ जना"]]},
+{title:"प्रकृति र वातावरण",qs:[["नेपालको पहिलो राष्ट्रिय निकुञ्ज कुन हो?","चितवन राष्ट्रिय निकुञ्ज"],["नेपालको सबैभन्दा ठूलो राष्ट्रिय निकुञ्ज कुन हो?","शे-फोक्सुण्डो राष्ट्रिय निकुञ्ज"],["एकसिङ्गे गैँडा मुख्यतः कुन निकुञ्जमा प्रसिद्ध छ?","चितवन राष्ट्रिय निकुञ्ज"]]},
+{title:"विज्ञानका रोचक तथ्य",qs:[["पानीको रासायनिक सूत्र के हो?","H₂O"],["सूर्यको प्रकाश पृथ्वीमा आइपुग्न करिब कति समय लाग्छ?","८ मिनेट २० सेकेन्ड"],["मानव शरीरको सबैभन्दा ठूलो अङ्ग कुन हो?","छाला"]]},
+{title:"विश्व भूगोल",qs:[["विश्वको सबैभन्दा ठूलो महासागर कुन हो?","प्रशान्त महासागर"],["विश्वको सबैभन्दा ठूलो महादेश कुन हो?","एसिया"],["विश्वको सर्वोच्च शिखर कुन हो?","सगरमाथा"]]},
+{title:"अन्तर्राष्ट्रिय संस्था",qs:[["संयुक्त राष्ट्रसंघको स्थापना कहिले भयो?","सन् १९४५"],["संयुक्त राष्ट्रसंघको मुख्यालय कहाँ छ?","न्युयोर्क"],["विश्व स्वास्थ्य संगठनको छोटकरी नाम के हो?","WHO"]]},
+{title:"नेपाली संस्कृति",qs:[["नेपालको राष्ट्रिय गानका रचनाकार को हुन्?","व्याकुल माइला"],["नेपालको राष्ट्रिय गानका संगीतकार को हुन्?","अम्बर गुरुङ"],["नेपालको राष्ट्रिय भाषा कुन हो?","नेपाली"]]},
+{title:"खेलकुद ज्ञान",qs:[["फुटबलमा एक टोलीबाट मैदानमा कति खेलाडी खेल्छन्?","११ जना"],["ओलम्पिक खेल कति वर्षको अन्तरालमा आयोजना हुन्छ?","४ वर्ष"],["क्रिकेटमा एक ओभरमा कति वैध बल हुन्छन्?","६ बल"]]},
+{title:"अन्तरिक्ष र ग्रह",qs:[["सौर्यमण्डलको सबैभन्दा ठूलो ग्रह कुन हो?","बृहस्पति"],["रातो ग्रह भनेर कुन ग्रहलाई चिनिन्छ?","मङ्गल"],["पृथ्वीको प्राकृतिक उपग्रह कुन हो?","चन्द्रमा"]]},
+{title:"नेपालका ताल र नदी",qs:[["फोक्सुण्डो ताल कुन जिल्लामा पर्छ?","डोल्पा"],["नेपालको सबैभन्दा गहिरो तालका रूपमा कुन ताल चिनिन्छ?","शे-फोक्सुण्डो ताल"],["कोशी नदीलाई भारतमा कुन नामले पनि चिनिन्छ?","सप्तकोशी"]]},
+{title:"अर्थतन्त्र र मुद्रा",qs:[["नेपालको केन्द्रीय बैंक कुन हो?","नेपाल राष्ट्र बैंक"],["नेपालको मुद्रा के हो?","नेपाली रुपैयाँ"],["नेपाल राष्ट्र बैंक स्थापना भएको वर्ष कुन हो?","वि.सं. २०१३"]]},
+{title:"शरीर र स्वास्थ्य विज्ञान",qs:[["मानव शरीरमा सामान्यतया कति वटा हड्डी हुन्छन्?","२०६ वटा"],["रगतमा अक्सिजन बोक्ने तत्व कुन हो?","हेमोग्लोबिन"],["मानव शरीरको सबैभन्दा ठूलो आन्तरिक अङ्ग कुन हो?","कलेजो"]]},
+{title:"नेपालका विश्व सम्पदा",qs:[["लुम्बिनी कुन जिल्लामा पर्छ?","रुपन्देही"],["पशुपतिनाथ मन्दिर कुन नदीको किनारमा छ?","बागमती नदी"],["नेपालका विश्व सम्पदा सूचीमा सूचीकृत काठमाडौं उपत्यकामा कति स्मारक क्षेत्र छन्?","७ वटा"]]},
+{title:"आविष्कार र प्रविधि",qs:[["टेलिफोनका आविष्कारकका रूपमा कसलाई चिनिन्छ?","अलेक्जेन्डर ग्राहम बेल"],["World Wide Web का आविष्कारक को हुन्?","टिम बर्नर्स-ली"],["कम्प्युटरको 'मस्तिष्क' भनेर कुन भागलाई भनिन्छ?","CPU"]]},
+{title:"विश्वका देश र राजधानी",qs:[["जापानको राजधानी कुन हो?","टोकियो"],["अस्ट्रेलियाको राजधानी कुन हो?","क्यानबेरा"],["भुटानको राजधानी कुन हो?","थिम्पु"]]},
+{title:"नेपालको प्रशासन",qs:[["नेपालमा कति वटा जिल्ला छन्?","७७ वटा"],["नेपालको सबैभन्दा सानो जिल्ला क्षेत्रफलका आधारमा कुन हो?","भक्तपुर"],["नेपालको संघीय राजधानी कुन महानगरपालिकामा पर्छ?","काठमाडौं महानगरपालिका"]]},
+{title:"वन्यजन्तु र जैविक विविधता",qs:[["हिमचितुवा मुख्यतः कस्तो क्षेत्रमा पाइन्छ?","उच्च हिमाली क्षेत्रमा"],["नेपालको तराई क्षेत्रमा पाइने ठूलो बिरालो प्रजाति कुन हो?","बाघ"],["मधुमक्खीले फूलबाट के सङ्कलन गर्छ?","मकरन्द"]]},
+{title:"भौतिक विज्ञान",qs:[["बलको SI एकाइ के हो?","न्यूटन"],["विद्युत् धाराको SI एकाइ के हो?","एम्पियर"],["प्रकाशको गति सबैभन्दा बढी कुन माध्यममा हुन्छ?","निर्वात"]]},
+{title:"रसायन विज्ञान",qs:[["सुनको रासायनिक संकेत के हो?","Au"],["अक्सिजनको रासायनिक संकेत के हो?","O"],["साधारण नुनको रासायनिक नाम के हो?","सोडियम क्लोराइड"]]},
+{title:"साहित्य र भाषा",qs:[["‘मुनामदन’ का लेखक को हुन्?","लक्ष्मीप्रसाद देवकोटा"],["‘शिरीषको फूल’ उपन्यासकी लेखिका को हुन्?","पारिजात"],["आदिकवि भनेर कसलाई चिनिन्छ?","भानुभक्त आचार्य"]]},
+{title:"नेपालका पर्व",qs:[["छठ पर्वमा मुख्यतः कुन देवताको पूजा गरिन्छ?","सूर्य"],["गाईजात्रा विशेष रूपमा कुन शहरमा प्रसिद्ध छ?","काठमाडौं"],["इन्द्रजात्रा कुन शहरको प्रसिद्ध पर्व हो?","काठमाडौं"]]},
+{title:"महादेश र महासागर",qs:[["क्षेत्रफलका आधारमा सबैभन्दा सानो महादेश कुन हो?","अस्ट्रेलिया"],["विश्वको सबैभन्दा ठूलो तातो मरुभूमि कुन हो?","सहारा मरुभूमि"],["भूमध्यरेखा कति डिग्री अक्षांशमा पर्छ?","० डिग्री"]]},
+{title:"ऊर्जा र पृथ्वी",qs:[["नवीकरणीय ऊर्जाको एउटा उदाहरण के हो?","सौर्य ऊर्जा"],["पृथ्वीको सबैभन्दा बाहिरी ठोस तहलाई के भनिन्छ?","भूपर्पटी"],["भूकम्प मापन गर्न प्रयोग हुने यन्त्र के हो?","सिस्मोग्राफ"]]},
+{title:"कृषि र खाद्य",qs:[["नेपालको प्रमुख खाद्यान्न बालीमध्ये एक कुन हो?","धान"],["चियाका लागि प्रसिद्ध नेपाली जिल्ला कुन हो?","इलाम"],["माटोमा नाइट्रोजन स्थिरीकरणमा सहयोग गर्ने सूक्ष्मजीव कुन हो?","राइजोबियम"]]},
+{title:"विश्व इतिहास",qs:[["फ्रान्सेली क्रान्ति कुन वर्ष सुरु भयो?","सन् १७८९"],["चन्द्रमामा पहिलो पाइला टेक्ने व्यक्ति को हुन्?","नील आर्मस्ट्रङ"],["बर्लिन पर्खाल कहिले ढल्यो?","सन् १९८९"]]},
+{title:"नेपालका महत्वपूर्ण स्थान",qs:[["जानकी मन्दिर कुन शहरमा अवस्थित छ?","जनकपुरधाम"],["मुक्तिनाथ मन्दिर कुन जिल्लामा पर्छ?","मुस्ताङ"],["स्वयम्भूनाथ स्तूप कुन शहरमा छ?","काठमाडौं"]]},
+{title:"मिश्रित GK चुनौती",qs:[["नेपालको समय क्षेत्र UTC भन्दा कति अगाडि छ?","५ घण्टा ४५ मिनेट"],["विश्व वातावरण दिवस कहिले मनाइन्छ?","जुन ५"],["अन्तर्राष्ट्रिय महिला दिवस कहिले मनाइन्छ?","मार्च ८"]]}
+];
+const $=s=>document.querySelector(s);let current=0;
+function promptFor(day,index){
+ const ratio=$("#ratio").value, qs=day.qs;
+ const qlines=qs.map((q,i)=>{const start=["0.0–2.0","2.0–4.0","4.0–6.0"][i];return `${start} sec — HOST: “${q[0]}”\n${["2.0–3.0","4.0–5.0","6.0–7.0"][i]} sec — CONTESTANT: “${q[1]}!”`;}).join("\n\n");
+ return `**GOOGLE FLOW VIDEO PROMPT — NEPALI RAPID-FIRE GK 🇳🇵 — DAY ${String(index+1).padStart(2,"0")}**
+
+Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY two funny Nepali men with human bodies, wearing traditional Daura Suruwal and beautiful Dhaka topis. Keep the same two character designs in every shot and in every daily episode. The host is energetic, mischievous and expressive; the contestant is confident, quick-witted and playful.
+
+**SETTING:** A beautiful Nepali village courtyard with green hills and the Himalayas in the background. Colorful polished 3D animation, expressive faces, natural body movements, professional cinematic lighting. Keep the setting and character appearance consistent across the series.
+
+**DAY ${index+1}: ${day.title.toUpperCase()}**
+
+**DIALOGUE — RAPID-FIRE NEPALI QUIZ:**
+
+${qlines}
+
+7.0–10.0 sec — HOST: The host reacts with comic surprise and says, “वाह! तीनवटै मिलायौ, तिमी त GK च्याम्पियन रहेछौ!” Both characters laugh, celebrate and give thumbs-up.
+
+**VOICE AND TIMING:** Speak extremely quickly but clearly in natural Nepali. Perfect turn-taking, accurate Nepali pronunciation, synchronized lip movements, no overlapping dialogue and almost no pauses. The host sounds like a lively Nepali TV quiz presenter; the contestant sounds confident and playful.
+
+**CAMERA:** Quick cinematic cuts between the host's questioning face and the contestant's instant answers. Use close-ups for reactions. Keep the action readable and energetic.
+
+**TEXT OVERLAY:** Show each question in large, bold Nepali Devanagari text. Reveal the correct answer immediately after the contestant responds. Spell every Nepali word correctly. Do not add unrelated captions.
+
+**AUDIO:** Energetic quiz-show background music at low volume, clear dialogue in the foreground, subtle comedic sound effect on the final reaction.
+
+**STRICT REQUIREMENTS:** Exactly 10 seconds. ${ratio} aspect ratio. Only two characters. Preserve identical character designs and clothing in every shot. No English dialogue, no extra speech, no narration, no voice-over, no wasted transitions. Keep the entire three-question exchange within the 10-second duration. The spoken questions and answers must match the supplied script exactly; do not invent or alter facts.`;
+}
+function render(){
+ const d=DAYS[current];$("#selectedDay").innerHTML=`<div class="top"><div><div class="muted">DAY ${String(current+1).padStart(2,"0")} / 30</div><h2>${d.title}</h2></div><button class="primary" id="copyOne">यो दिनको Prompt Copy</button></div>
+ ${d.qs.map((q,i)=>`<div class="q"><b>प्रश्न ${i+1}:</b> ${q[0]}<br><b>उत्तर:</b> ${q[1]}</div>`).join("")}
+ <h3>Google Flow Prompt</h3><div class="prompt" id="prompt">${escapeHtml(promptFor(d,current))}</div>`;
+ $("#copyOne").onclick=()=>copy(promptFor(d,current));
+ $("#prev").disabled=current===0;$("#next").disabled=current===29;
+ $("#progress").style.width=((current+1)/30*100)+"%";$("#stats").textContent=`दिन ${current+1} / ३० चयन गरिएको · जम्मा ${DAYS.reduce((n,x)=>n+x.qs.length,0)} प्रश्न`;
+ document.querySelectorAll(".daybtn").forEach((b,i)=>b.classList.toggle("selected",i===current));
+}
+function escapeHtml(s){return s.replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")}
+function copy(s){navigator.clipboard.writeText(s).then(()=>toast("Prompt clipboard मा copy भयो!")).catch(()=>{const t=document.createElement("textarea");t.value=s;document.body.append(t);t.select();document.execCommand("copy");t.remove();toast("Prompt copy भयो!");})}
+function toast(s){$("#toast").textContent=s;$("#toast").classList.add("show");setTimeout(()=>$("#toast").classList.remove("show"),1800)}
+function list(){
+ const term=$("#search").value.trim().toLowerCase();
+ $("#days").innerHTML=DAYS.map((d,i)=>({d,i})).filter(x=>(x.d.title+" "+x.d.qs.flat().join(" ")).toLowerCase().includes(term)).map(({d,i})=>`<article class="day ${i===current?"active":""}"><div class="top"><b>Day ${String(i+1).padStart(2,"0")}</b><button class="daybtn ${i===current?"selected":""}" data-i="${i}">खोल्नुहोस्</button></div><h3>${d.title}</h3><div class="muted">३ प्रश्न · ${d.qs.map(q=>q[0]).join(" / ")}</div></article>`).join("");
+ document.querySelectorAll("[data-i]").forEach(b=>b.onclick=()=>{current=+b.dataset.i;render();list();window.scrollTo({top:0,behavior:"smooth"});});
+}
+$("#copyCurrent").onclick=()=>copy(promptFor(DAYS[current],current));
+$("#copyAll").onclick=()=>copy(DAYS.map((d,i)=>promptFor(d,i)).join("\n\n"+"=".repeat(65)+"\n\n"));
+$("#prev").onclick=()=>{current=Math.max(0,current-1);render();list()};
+$("#next").onclick=()=>{current=Math.min(29,current+1);render();list()};
+$("#ratio").onchange=render;$("#search").oninput=list;
+$("#download").onclick=()=>{const blob=new Blob(["<!doctype html>\n"+document.documentElement.outerHTML],{type:"text/html;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gk-questions-30-days.html";a.click();URL.revokeObjectURL(a.href)};
+render();list();
+</script></main></body></html>
