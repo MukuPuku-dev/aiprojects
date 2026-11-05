@@ -38,7 +38,7 @@ nav a{color:var(--gold);padding:7px}.grid{display:grid;grid-template-columns:rep
  <label for="ownQuestions"><b>तपाईंका प्रश्न र उत्तर</b></label>
  <textarea id="ownQuestions" rows="8" style="width:100%;margin:6px 0" placeholder="१. नेपालको राष्ट्रिय फूल कुन हो? — लालीगुराँस&#10;२. नेपालको राष्ट्रिय चरा कुन हो? — डाँफे&#10;३. नेपालको राष्ट्रिय जनावर कुन हो? — गाई&#10;&#10;एक लाइनमा एउटा प्रश्न र उत्तर लेख्नुहोस्। प्रश्न–उत्तर छुट्याउन —, : वा ? प्रयोग गर्न सकिन्छ।"></textarea>
  <label for="aiInstruction"><b>AI लाई निर्देशन (ऐच्छिक)</b></label>
- <input id="aiInstruction" style="width:100%;margin:5px 0 10px" value="यी प्रश्नहरूलाई १० सेकेन्डका नेपाली rapid-fire GK clips मा मिलाऊ। प्रश्न र सही उत्तर नबदल।">
+ <input id="aiInstruction" style="width:100%;margin:5px 0 10px" value="यी प्रश्नहरूलाई १० सेकेन्डका नेपाली rapid-fire GK clips मा मिलाऊ। प्रश्न र सही उत्तर नबदल। तयार भएपछि सिधै My Custom Clips मा थप।">
  <div class="tools"><button class="primary" id="formatAI">✨ Format with AI</button><button id="clearOwn">Clear</button><span class="muted" id="aiStatus">अहिलेसम्म कुनै custom clip छैन।</span></div>
  <div id="aiPreview"></div>
  <div class="tools"><button class="primary" id="addCustom" disabled>＋ Add to clips</button></div>
@@ -196,7 +196,9 @@ ${raw}`;
   pendingCustom=parsed.clips.map((x,i)=>({title:x.title||("मेरो प्रश्नहरू · "+(i+1)),qs:(x.questions||[]).map(q=>[String(q.question||""),String(q.answer||"")]).filter(q=>q[0]&&q[1])})).filter(x=>x.qs.length);
   if(!pendingCustom.length)throw new Error("No valid question-answer pairs found.");
   $("#aiPreview").innerHTML='<h3>AI Preview — '+pendingCustom.length+' clips</h3>'+pendingCustom.map((x,i)=>'<div class="q"><b>'+escapeHtml(x.title)+'</b><br>'+x.qs.map(q=>escapeHtml(q[0])+' → <b>'+escapeHtml(q[1])+'</b>').join("<br>")+'</div>').join("");
-  $("#addCustom").disabled=false;$("#aiStatus").textContent="Preview तयार भयो। ठीक छ भने Add to clips थिच्नुहोस्।";
+  const addRequested=/add\s+to\s+(the\s+)?clips|clips\s+मा\s+थप|clip\s+मा\s+थप|सिधै\s+.*clips/i.test(instruction);
+  if(addRequested){customClips.push(...pendingCustom);saveCustom();pendingCustom=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="AI ले तयार गरेका clips स्वतः My Custom Clips मा थपिए।";toast("तपाईंका clips थपिए!");}
+  else{$("#addCustom").disabled=false;$("#aiStatus").textContent="Preview तयार भयो। ठीक छ भने Add to clips थिच्नुहोस्।";}
  }catch(err){$("#aiStatus").textContent="Error: "+err.message;toast("AI formatting असफल भयो। URL र API जाँच्नुहोस्।")}
  finally{btn.disabled=false}
 };
