@@ -29,7 +29,22 @@ nav a{color:var(--gold);padding:7px}.grid{display:grid;grid-template-columns:rep
 <nav><button class="primary" id="copyCurrent">आजको Flow Prompt Copy</button><button id="copyAll">सबै ३० दिनका Prompt Copy</button><button id="download">HTML डाउनलोड</button><a href="../../index.html">← सबै प्रोजेक्ट</a>
 <select id="ratio"><option value="9:16">9:16 Vertical</option><option value="16:9">16:9 Landscape</option></select></nav>
 <div class="filters"><input id="search" placeholder="दिन वा प्रश्न खोज्नुहोस्…" style="flex:1;min-width:190px"><button id="prev">← अघिल्लो</button><button id="next">अर्को →</button></div></div></header>
-<main class="wrap"><section class="box" id="selectedDay"></section><section><h2>३० दिनको सूची</h2><div class="grid" id="days"></div></section></main><div id="toast"></div>
+<main class="wrap">
+<section class="box" id="customWorkspace">
+ <div class="top"><div><h2>✍️ My Questions — आफ्नै प्रश्न थप्नुहोस्</h2><div class="muted">प्रश्न–उत्तर paste गर्नुहोस्, AI बाट Flow format बनाउनुहोस् र एकै क्लिकमा clips मा थप्नुहोस्।</div></div><span class="muted">Custom clips</span></div>
+ <label for="apiUrl"><b>AI API URL</b></label>
+ <input id="apiUrl" style="width:100%;margin:5px 0 10px" value="https://mukeshpokharel-testing.hf.space/gemini">
+ <div class="muted">Default: Hugging Face Space · POST /gemini · JSON { "prompt": "..." } → { "text": "..." }</div>
+ <label for="ownQuestions"><b>तपाईंका प्रश्न र उत्तर</b></label>
+ <textarea id="ownQuestions" rows="8" style="width:100%;margin:6px 0" placeholder="१. नेपालको राष्ट्रिय फूल कुन हो? — लालीगुराँस&#10;२. नेपालको राष्ट्रिय चरा कुन हो? — डाँफे&#10;३. नेपालको राष्ट्रिय जनावर कुन हो? — गाई&#10;&#10;एक लाइनमा एउटा प्रश्न र उत्तर लेख्नुहोस्। प्रश्न–उत्तर छुट्याउन —, : वा ? प्रयोग गर्न सकिन्छ।"></textarea>
+ <label for="aiInstruction"><b>AI लाई निर्देशन (ऐच्छिक)</b></label>
+ <input id="aiInstruction" style="width:100%;margin:5px 0 10px" value="यी प्रश्नहरूलाई १० सेकेन्डका नेपाली rapid-fire GK clips मा मिलाऊ। प्रश्न र सही उत्तर नबदल।">
+ <div class="tools"><button class="primary" id="formatAI">✨ Format with AI</button><button id="clearOwn">Clear</button><span class="muted" id="aiStatus">अहिलेसम्म कुनै custom clip छैन।</span></div>
+ <div id="aiPreview"></div>
+ <div class="tools"><button class="primary" id="addCustom" disabled>＋ Add to clips</button></div>
+</section>
+<section class="box"><div class="top"><h2>📌 My Custom Clips</h2><button id="clearCustom">सबै custom clips हटाउनुहोस्</button></div><div id="customClips" class="grid"></div></section>
+<section class="box" id="selectedDay"></section><section><h2>३० दिनको सूची</h2><div class="grid" id="days"></div></section></main><div id="toast"></div>
 <script>
 const DAYS = [
 {title:"नेपालका राष्ट्रिय पहिचान",qs:[["नेपालको राष्ट्रिय फूल कुन हो?","लालीगुराँस"],["नेपालको राष्ट्रिय चरा कुन हो?","डाँफे"],["नेपालको राष्ट्रिय जनावर कुन हो?","गाई"]]},
@@ -64,6 +79,32 @@ const DAYS = [
 {title:"मिश्रित GK चुनौती",qs:[["नेपालको समय क्षेत्र UTC भन्दा कति अगाडि छ?","५ घण्टा ४५ मिनेट"],["विश्व वातावरण दिवस कहिले मनाइन्छ?","जुन ५"],["अन्तर्राष्ट्रिय महिला दिवस कहिले मनाइन्छ?","मार्च ८"]]}
 ];
 const $=s=>document.querySelector(s);let current=0;
+function customPrompt(day,index){
+ const qs=day.qs, ratio=$("#ratio").value;
+ const starts=["0.0–1.3","2.3–3.6","4.6–5.9"], ends=["1.3–2.3","3.6–4.6","5.9–7.0"];
+ const dialogue=qs.map((q,i)=>`${starts[i]} sec — HOST: “${q[0]}”\\n${ends[i]} sec — CONTESTANT: “${q[1]}!”`).join("\\n\\n");
+ return `**GOOGLE FLOW VIDEO PROMPT — NEPALI RAPID-FIRE GK 🇳🇵 — ${day.title}**
+
+Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY two funny Nepali men wearing traditional Daura Suruwal and beautiful Dhaka topis. The energetic host asks questions; the confident contestant answers instantly.
+
+**SETTING:** A beautiful Nepali village courtyard with green hills and the Himalayas in the background. Colorful polished 3D animation, expressive faces, natural body movements and professional lighting. Keep both character designs and clothing identical throughout.
+
+**DIALOGUE — RAPID-FIRE NEPALI QUIZ:**
+
+${dialogue}
+
+7.0–10.0 sec — HOST: Reacts with comic surprise: “वाह! तिमी त GK च्याम्पियन रहेछौ!” Both laugh and give thumbs-up.
+
+**VOICE AND TIMING:** Extremely quick but clear natural Nepali, accurate pronunciation, synchronized lip movements, strict turn-taking, no overlapping dialogue or unnecessary pauses.
+
+**CAMERA:** Fast cinematic cuts between host questions and contestant answers, with close-up reactions.
+
+**TEXT OVERLAY:** Display each question in large bold Nepali Devanagari text and reveal its correct answer immediately after the response. Correct spelling only.
+
+**AUDIO:** Energetic low-volume quiz-show music, clear foreground dialogue and a subtle comic ending sound.
+
+**STRICT REQUIREMENTS:** Exactly 10 seconds, ${ratio}, only two characters, consistent designs and clothes, no English dialogue, narration or extra speech. Speak the supplied questions and answers exactly as written. Do not invent, replace or modify facts. Fit all ${qs.length} question-answer pairs into the clip.`;
+}
 function promptFor(day,index){
  const ratio=$("#ratio").value, qs=day.qs;
  const qlines=qs.map((q,i)=>{const start=["0.0–1.3","2.3–3.6","4.6–5.9"][i];return `${start} sec — HOST: “${q[0]}”\n${["1.3–2.3","3.6–4.6","5.9–7.0"][i]} sec — CONTESTANT: “${q[1]}!”`;}).join("\n\n");
@@ -114,5 +155,57 @@ $("#prev").onclick=()=>{current=Math.max(0,current-1);render();list()};
 $("#next").onclick=()=>{current=Math.min(29,current+1);render();list()};
 $("#ratio").onchange=render;$("#search").oninput=list;
 $("#download").onclick=()=>{const blob=new Blob(["<!doctype html>\n"+document.documentElement.outerHTML],{type:"text/html;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="gk-questions-30-days.html";a.click();URL.revokeObjectURL(a.href)};
+
+const API_DEFAULT="https://mukeshpokharel-testing.hf.space/gemini";
+let customClips=(()=>{try{return JSON.parse(localStorage.getItem("gk_custom_clips")||"[]")}catch(e){return []}})();
+let pendingCustom=[];
+function saveCustom(){localStorage.setItem("gk_custom_clips",JSON.stringify(customClips));renderCustomClips()}
+function renderCustomClips(){
+ const el=$("#customClips"); if(!customClips.length){el.innerHTML='<div class="muted">अहिलेसम्म custom clips छैनन्। माथि प्रश्न थपेर सुरु गर्नुहोस्।</div>';return}
+ el.innerHTML=customClips.map((x,i)=>`<article class="day"><div class="top"><b>${escapeHtml(x.title||"Custom clip "+(i+1))}</b><button data-custom-copy="${i}">Copy Flow Prompt</button></div><div class="muted">${x.qs.length} प्रश्न · ${x.qs.map(q=>escapeHtml(q[0])).join(" / ")}</div><button data-custom-remove="${i}">हटाउनुहोस्</button></article>`).join("");
+ el.querySelectorAll("[data-custom-copy]").forEach(b=>b.onclick=()=>copy(customPrompt(customClips[+b.dataset.customCopy],+b.dataset.customCopy)));
+ el.querySelectorAll("[data-custom-remove]").forEach(b=>b.onclick=()=>{customClips.splice(+b.dataset.customRemove,1);saveCustom()});
+}
+function parseAIText(raw){
+ let t=raw.trim().replace(/^\`\`\`(?:json)?/i,"").replace(/\`\`\`$/,"").trim();
+ const a=t.indexOf("{"),z=t.lastIndexOf("}");
+ if(a>=0&&z>a)t=t.slice(a,z+1);
+ return JSON.parse(t);
+}
+$("#formatAI").onclick=async()=>{
+ const raw=$("#ownQuestions").value.trim();if(!raw){toast("पहिले प्रश्न र उत्तर लेख्नुहोस्।");return}
+ const btn=$("#formatAI");btn.disabled=true;$("#aiStatus").textContent="AI ले प्रश्नहरू मिलाउँदैछ…";$("#aiPreview").innerHTML="";$("#addCustom").disabled=true;
+ const endpoint=$("#apiUrl").value.trim()||API_DEFAULT;
+ const instruction=$("#aiInstruction").value.trim();
+ const prompt=`You are a strict Nepali GK quiz formatter. Convert the user's supplied question-answer pairs into Google Flow rapid-fire quiz clip data. Return ONLY valid JSON, no markdown, no commentary, in exactly this schema:
+{"clips":[{"title":"short Nepali title","questions":[{"question":"exact question","answer":"exact answer"}]}]}
+Rules:
+- Preserve every supplied question and its paired correct answer. Do not invent questions, answers, facts, explanations, or distractors.
+- Correct only obvious spacing/numbering/formatting errors. Keep Nepali wording as supplied wherever possible.
+- Split into clips with no more than 3 question-answer pairs per clip, preserving original order. Never drop any pair. A final clip may contain 1 or 2 pairs.
+- Use concise Nepali titles. Each question and answer must be a plain string.
+- If a pair is unclear or missing an answer, include it unchanged and add a "notes" field explaining the ambiguity; do not guess.
+- User instruction: ${instruction||"Format these questions for rapid-fire GK clips."}
+- User supplied questions:
+${raw}`;
+ try{
+  const response=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompt})});
+  const data=await response.json();if(!response.ok)throw new Error(data.detail||("HTTP "+response.status));
+  if(typeof data.text!=="string"||!data.text.trim())throw new Error("API returned no text field.");
+  const parsed=parseAIText(data.text);if(!Array.isArray(parsed.clips)||!parsed.clips.length)throw new Error("AI response did not contain a clips array.");
+  pendingCustom=parsed.clips.map((x,i)=>({title:x.title||("मेरो प्रश्नहरू · "+(i+1)),qs:(x.questions||[]).map(q=>[String(q.question||""),String(q.answer||"")]).filter(q=>q[0]&&q[1])})).filter(x=>x.qs.length);
+  if(!pendingCustom.length)throw new Error("No valid question-answer pairs found.");
+  $("#aiPreview").innerHTML='<h3>AI Preview — '+pendingCustom.length+' clips</h3>'+pendingCustom.map((x,i)=>'<div class="q"><b>'+escapeHtml(x.title)+'</b><br>'+x.qs.map(q=>escapeHtml(q[0])+' → <b>'+escapeHtml(q[1])+'</b>').join("<br>")+'</div>').join("");
+  $("#addCustom").disabled=false;$("#aiStatus").textContent="Preview तयार भयो। ठीक छ भने Add to clips थिच्नुहोस्।";
+ }catch(err){$("#aiStatus").textContent="Error: "+err.message;toast("AI formatting असफल भयो। URL र API जाँच्नुहोस्।")}
+ finally{btn.disabled=false}
+};
+$("#addCustom").onclick=()=>{if(!pendingCustom.length)return;customClips.push(...pendingCustom);saveCustom();pendingCustom=[];$("#addCustom").disabled=true;$("#aiPreview").innerHTML="";$("#aiStatus").textContent="Custom clips सफलतापूर्वक थपिए।";toast("तपाईंका clips थपिए!")};
+$("#clearOwn").onclick=()=>{$("#ownQuestions").value="";$("#aiPreview").innerHTML="";pendingCustom=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="इनपुट खाली गरियो।"};
+$("#clearCustom").onclick=()=>{if(confirm("सबै custom clips हटाउने?")){customClips=[];saveCustom();toast("Custom clips हटाइयो।")}};
+$("#apiUrl").value=localStorage.getItem("gk_ai_endpoint")||API_DEFAULT;
+$("#apiUrl").onchange=()=>localStorage.setItem("gk_ai_endpoint",$("#apiUrl").value.trim());
+renderCustomClips();
+
 render();list();
 </script></main></body></html>
