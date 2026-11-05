@@ -66,7 +66,7 @@ const DAYS = [
 const $=s=>document.querySelector(s);let current=0;
 function promptFor(day,index){
  const ratio=$("#ratio").value, qs=day.qs;
- const qlines=qs.map((q,i)=>{const start=["0.0–2.0","2.0–4.0","4.0–6.0"][i];return `${start} sec — HOST: “${q[0]}”\n${["2.0–3.0","4.0–5.0","6.0–7.0"][i]} sec — CONTESTANT: “${q[1]}!”`;}).join("\n\n");
+ const qlines=qs.map((q,i)=>{const start=["0.0–1.3","2.3–3.6","4.6–5.9"][i];return `${start} sec — HOST: “${q[0]}”\n${["1.3–2.3","3.6–4.6","5.9–7.0"][i]} sec — CONTESTANT: “${q[1]}!”`;}).join("\n\n");
  return `**GOOGLE FLOW VIDEO PROMPT — NEPALI RAPID-FIRE GK 🇳🇵 — DAY ${String(index+1).padStart(2,"0")}**
 
 Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY two funny Nepali men with human bodies, wearing traditional Daura Suruwal and beautiful Dhaka topis. Keep the same two character designs in every shot and in every daily episode. The host is energetic, mischievous and expressive; the contestant is confident, quick-witted and playful.
