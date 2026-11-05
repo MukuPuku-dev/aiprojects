@@ -37,9 +37,9 @@ nav a{color:var(--gold);padding:7px}.grid{display:grid;grid-template-columns:rep
  <div class="muted">Default: Hugging Face Space · POST /gemini · JSON { "prompt": "..." } → { "text": "..." }</div>
  <label for="ownQuestions"><b>तपाईंका प्रश्न र उत्तर</b></label>
  <textarea id="ownQuestions" rows="8" style="width:100%;margin:6px 0" placeholder="१. नेपालको राष्ट्रिय फूल कुन हो? — लालीगुराँस&#10;२. नेपालको राष्ट्रिय चरा कुन हो? — डाँफे&#10;३. नेपालको राष्ट्रिय जनावर कुन हो? — गाई&#10;&#10;एक लाइनमा एउटा प्रश्न र उत्तर लेख्नुहोस्। प्रश्न–उत्तर छुट्याउन —, : वा ? प्रयोग गर्न सकिन्छ।"></textarea>
- <div class="tools"><button class="primary" id="formatAI">✨ प्रश्न–उत्तर Format</button><button id="clearOwn">Clear</button><span class="muted" id="aiStatus">AI ले प्रश्न/उत्तरको ढाँचा मात्र मिलाउँछ; नयाँ प्रश्नहरू ३० दिनमा अनियमित रूपमा थपिन्छन्।</span></div>
+ <div class="tools"><button class="primary" id="formatAI">✨ Format & Add to 30 days</button><button id="clearOwn">Clear</button><span class="muted" id="aiStatus">AI ले प्रश्न/उत्तरको ढाँचा मात्र मिलाउँछ; नयाँ प्रश्नहरू ३० दिनमा अनियमित रूपमा थपिन्छन्।</span></div>
  <div id="aiPreview"></div>
- <div class="tools"><button class="primary" id="addCustom" disabled>＋ ३० दिनमा अनियमित रूपमा थप्नुहोस्</button></div>
+ 
 </section>
 <section class="box"><div class="top"><h2>📌 थपिएका प्रश्नहरू</h2><span class="muted" id="addedStats"></span><button id="clearCustom">थपिएका प्रश्नहरू हटाउनुहोस्</button></div><div class="muted">यी प्रश्नहरू तल सम्बन्धित दिनमै देखिन्छन्। मूल ९० प्रश्न र prompt सुरक्षित रहन्छन्।</div></section>
 <section class="box" id="selectedDay"></section><section><h2>३० दिनको सूची</h2><div class="grid" id="days"></div></section></main><div id="toast"></div>
@@ -211,7 +211,7 @@ function addPairsRandomly(pairs){
 $("#formatAI").onclick=async()=>{
  const raw=$("#ownQuestions").value.trim();if(!raw){toast("पहिले प्रश्न र उत्तर लेख्नुहोस्।");return}
  let expected;try{expected=locallyReadPairs(raw)}catch(e){$("#aiStatus").textContent=e.message;return}
- const btn=$("#formatAI");btn.disabled=true;$("#aiStatus").textContent="AI ले प्रश्न–उत्तरलाई मात्र संरचनाबद्ध गर्दैछ…";$("#aiPreview").innerHTML="";$("#addCustom").disabled=true;
+ const btn=$("#formatAI");btn.disabled=true;$("#aiStatus").textContent="AI ले प्रश्न–उत्तरलाई मात्र संरचनाबद्ध गर्दैछ…";$("#aiPreview").innerHTML="";
  const endpoint=$("#apiUrl").value.trim()||API_DEFAULT;
  const prompt=`You are a data formatter, NOT a question writer and NOT a video prompt writer.
 Convert the supplied lines into JSON only, using exactly this schema:
@@ -232,12 +232,11 @@ ${raw}`;
   const parsed=parseAIText(data.text);if(!Array.isArray(parsed.questions))throw new Error("AI response मा questions array भेटिएन।");
   const received=parsed.questions.map(q=>[String(q.question??"").trim(),String(q.answer??"").trim()]);
   if(received.length!==expected.length||received.some((q,i)=>q[0]!==expected[i][0]||q[1]!==expected[i][1]))throw new Error("AI output मूल प्रश्न–उत्तरबाट फरक भयो। सुरक्षा कारणले कुनै प्रश्न थपिएन।");
-  pendingPairs=received;$("#aiPreview").innerHTML="<h3>जाँच सफल — "+received.length+" प्रश्न–उत्तर</h3>"+received.map((q,i)=>'<div class="q"><b>'+(i+1)+'. '+escapeHtml(q[0])+'</b><br>उत्तर: '+escapeHtml(q[1])+'</div>').join("");
-  $("#addCustom").disabled=false;$("#aiStatus").textContent="AI output मूल सामग्रीसँग अक्षरशः मिल्यो। अब ३० दिनमा अनियमित रूपमा थप्नुहोस्।";
+  addPairsRandomly(received);$("#aiPreview").innerHTML="<h3>जाँच सफल — "+received.length+" प्रश्न–उत्तर</h3>"+received.map((q,i)=>'<div class="q"><b>'+(i+1)+'. '+escapeHtml(q[0])+'</b><br>उत्तर: '+escapeHtml(q[1])+'</div>').join("");
+  $("#aiStatus").textContent="AI output मूल सामग्रीसँग अक्षरशः मिल्यो। अब ३० दिनमा अनियमित रूपमा थप्नुहोस्।";
  }catch(err){pendingPairs=[];$("#aiStatus").textContent="Error: "+err.message;toast("Format असफल भयो।")}
  finally{btn.disabled=false}
 };
-$("#addCustom").onclick=()=>{if(!pendingPairs.length)return;const n=pendingPairs.length;addPairsRandomly(pendingPairs);pendingPairs=[];$("#addCustom").disabled=true;$("#aiPreview").innerHTML="";$("#ownQuestions").value="";$("#aiStatus").textContent=n+" प्रश्न–उत्तर थपिए। मूल ३० दिनका सामग्री सुरक्षित छन्।";toast(n+" नयाँ प्रश्न ३० दिनमा थपिए!")};
 $("#clearOwn").onclick=()=>{$("#ownQuestions").value="";$("#aiPreview").innerHTML="";pendingPairs=[];$("#addCustom").disabled=true;$("#aiStatus").textContent="इनपुट खाली गरियो।"};
 $("#clearCustom").onclick=()=>{if(confirm("तपाईंले थपेका प्रश्नहरू मात्र हटाउने? मूल ३० दिनका प्रश्नहरू सुरक्षित रहनेछन्।")){addedQuestionClips=[];localStorage.removeItem("gk_added_question_clips");list();render();$("#aiStatus").textContent="थपिएका प्रश्नहरू हटाइए; मूल सामग्री सुरक्षित छ।";toast("थपिएका प्रश्नहरू हटाइए।")}};
 $("#apiUrl").value=localStorage.getItem("gk_ai_endpoint")||API_DEFAULT;
