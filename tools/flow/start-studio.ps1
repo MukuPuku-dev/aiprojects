@@ -17,6 +17,22 @@ function Test-OurStudio($health) {
 
 try {
     $health = Get-StudioHealth
+    if ((Test-OurStudio $health) -and $health.jobApi -ne 1) {
+        Add-Type -AssemblyName System.Windows.Forms
+        $answer = [System.Windows.Forms.MessageBox]::Show(
+            'Story Studio needs to restart to enable background generation. Restarting will interrupt any active generation. Restart now?',
+            'Story Studio', 'YesNo', 'Question')
+        if ($answer -ne [System.Windows.Forms.DialogResult]::Yes) { return }
+        $listener = @(Get-NetTCPConnection -LocalPort 8787 -State Listen -ErrorAction Stop)
+        if ($listener.Count -ne 1) { throw 'Could not identify the running Story Studio server safely.' }
+        $process = Get-CimInstance Win32_Process -Filter "ProcessId = $($listener[0].OwningProcess)"
+        if ($process.Name -ne 'node.exe' -or $process.CommandLine -notmatch 'tools[\\/]flow[\\/]server\.mjs') {
+            throw 'Could not identify the running Story Studio server safely. Close the server and try again.'
+        }
+        Stop-Process -Id $process.ProcessId -ErrorAction Stop
+        for ($i = 0; $i -lt 30 -and (Get-StudioHealth); $i++) { Start-Sleep -Milliseconds 100 }
+        $health = Get-StudioHealth
+    }
     if (-not (Test-OurStudio $health)) {
         if ($null -ne $health) {
             throw 'Port 8787 is already being used by another server. Close it and try again.'
@@ -36,11 +52,11 @@ try {
         do {
             Start-Sleep -Milliseconds 300
             $health = Get-StudioHealth
-            if (Test-OurStudio $health) { break }
+            if ((Test-OurStudio $health) -and $health.jobApi -eq 1) { break }
             $server.Refresh()
         } while (-not $server.HasExited -and (Get-Date) -lt $deadline)
 
-        if (-not (Test-OurStudio $health)) {
+        if (-not (Test-OurStudio $health) -or $health.jobApi -ne 1) {
             if (-not $server.HasExited) { Stop-Process -Id $server.Id }
             throw 'The generator could not start. Port 8787 may already be in use, or the server may have failed to start.'
         }

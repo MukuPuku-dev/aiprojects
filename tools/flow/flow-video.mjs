@@ -23,7 +23,7 @@ async function connect(log) {
   if (!fs.existsSync(CHROME)) throw new Error(`Chrome not found at ${CHROME}. Set FLOW_CHROME_PATH.`);
   fs.mkdirSync(PROFILE, { recursive: true });
   log(`Starting Chrome with the Flow profile (${PROFILE})...`);
-  spawn(CHROME, [`--remote-debugging-port=${PORT}`, `--user-data-dir=${PROFILE}`, '--no-first-run', '--no-default-browser-check', FLOW_URL],
+  spawn(CHROME, [`--remote-debugging-port=${PORT}`, `--user-data-dir=${PROFILE}`, '--no-first-run', '--no-default-browser-check', '--start-minimized', FLOW_URL],
     { detached: true, stdio: 'ignore' }).unref();
   for (let i = 0; i < 60; i++) {
     await sleep(1000);
@@ -40,7 +40,6 @@ async function findFlowPage(browser) {
     await page.goto(FLOW_URL, { waitUntil: 'domcontentloaded' });
   }
   if (/accounts\.google\./.test(page.url())) throw new Error('Google sign-in is showing. Sign in in the Flow Chrome window, then retry.');
-  await page.bringToFront();
   return page;
 }
 

@@ -5,6 +5,7 @@ Generates a project's video in Google Flow and saves it into `projects/<project>
 ## Run
 
 On Windows, double-click **Start Story Studio.vbs** in the `aiprojects` folder. It starts the generator in the background and opens the studio in your browser. If it is already running, the launcher reuses it. Open your project from the studio rather than opening its HTML file directly. Node.js and the project dependencies must already be installed.
+After a server update, the launcher may ask to restart the generator. Restarting interrupts active generations; approve only when they have finished.
 
 Alternatively, start it from a terminal:
 
@@ -40,6 +41,7 @@ Open `http://127.0.0.1:8787/tools/flow/settings.html` (or the "Flow settings" li
 - Saved to `tools/flow/settings.json`. Built-in defaults: Omni 1.1 Flash, 9:16, 10s.
 - `POST /api/generate` uses the project's settings for any field the request leaves out, so an automation only needs `project`, `day` and `prompt`.
 - Daily Motivations uses these defaults until someone changes its model, aspect or duration on the page.
+- The Flow icon on the GK Questions project card starts the first original day not marked done in that browser, without leaving the studio. It uses the GK project settings and marks the day done as generation starts. You can navigate away or refresh; return to the project card for its status and video link. Keep the generator and Flow Chrome running: restarting the generator interrupts jobs and clears their status. The existing GK prompts require a 10-second duration. If generation fails, the day remains marked done; uncheck it in the project to retry. Progress saved under `file://` or in a different browser is separate; if no saved progress is found, the page asks before starting Day 1.
 
 Image settings are stored and returned by the API, but the driver does not generate images yet. Flow's image-mode selectors need to be added to `selectors.mjs` first.
 

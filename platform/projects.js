@@ -22,7 +22,8 @@ const PROJECTS = [
     description: "30 days of ready-to-copy 10-second Google Flow prompts, with 90 Nepali general-knowledge questions and answers.",
     href: "projects/gk-questions/index.html",
     mark: "🇳🇵",
-    accent: "gold"
+    accent: "gold",
+    flowNext: true
   },
   {
     name: "काम नलाग्ने कोही हुँदैन",
