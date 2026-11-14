@@ -1,0 +1,12 @@
+{
+  "name": "aiprojects",
+  "private": true,
+  "description": "Static project studio with a local helper that drives Google Flow for video generation.",
+  "type": "module",
+  "scripts": {
+    "start": "node tools/flow/server.mjs"
+  },
+  "dependencies": {
+    "playwright-core": "^1.49.0"
+  }
+}

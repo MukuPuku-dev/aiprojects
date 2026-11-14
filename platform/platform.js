@@ -23,6 +23,12 @@ function renderProjects(query = "") {
     type.className = "project-type";
     type.textContent = project.type;
     top.append(mark, type);
+    if (project.finished) {
+      const finished = document.createElement("span");
+      finished.className = "project-finished";
+      finished.textContent = "✓ Finished";
+      top.append(finished);
+    }
 
     const title = document.createElement("h3");
     title.textContent = project.name;

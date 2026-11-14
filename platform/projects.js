@@ -5,7 +5,8 @@ const PROJECTS = [
     description: "A playful 24-clip story workspace with character and location references, dialogue prompts, and progress tracking.",
     href: "clever-monkey-tracker.html",
     mark: "🐒",
-    accent: "gold"
+    accent: "gold",
+    finished: true
   },
   {
     name: "Daily Motivations",
@@ -45,6 +46,7 @@ const PROJECTS = [
     description: "A funny 3D animated animal-character adaptation in 5 parts and 23 clips, with Nepali dialogue, anthropomorphic cast references, copy-ready Google Flow prompts, and progress tracking.",
     href: "projects/loobh-le-labh/index.html",
     mark: "🌾",
-    accent: "gold"
+    accent: "gold",
+    finished: true
   }
 ];
