@@ -42,8 +42,15 @@ Open `http://127.0.0.1:8787/tools/flow/settings.html` (or the "Flow settings" li
 - `POST /api/generate` uses the project's settings for any field the request leaves out, so an automation only needs `project`, `day` and `prompt`.
 - Daily Motivations uses these defaults until someone changes its model, aspect or duration on the page.
 - The Flow icon on the GK Questions project card starts the first original day not marked done in that browser, without leaving the studio. It uses the GK project settings and marks the day done as generation starts. You can navigate away or refresh; return to the project card for its status and video link. Keep the generator and Flow Chrome running: restarting the generator interrupts jobs and clears their status. The existing GK prompts require a 10-second duration. If generation fails, the day remains marked done; uncheck it in the project to retry. Progress saved under `file://` or in a different browser is separate; if no saved progress is found, the page asks before starting Day 1.
+- The Daily Motivations card also has a Flow icon. It uses that workspace's selected settings, or its Flow defaults if none were selected, and marks the next day made when the job starts. Its prompts also require 10 seconds. If the job fails, uncheck the day in the workspace before retrying.
 
 Image settings are stored and returned by the API, but the driver does not generate images yet. Flow's image-mode selectors need to be added to `selectors.mjs` first.
+
+## Post to TikTok
+
+The GK Questions and Daily Motivations cards list the generated MP4s on this computer. Click the music-note icon beside an unposted video and confirm to post it through TikTok's website, without a TikTok API. The generator asks the public Gemini service at `https://mukeshpokharel-testing.hf.space/gemini` for a Nepali caption using the selected day's description, then opens TikTok Studio in the same Chrome profile as Flow. Sign in to TikTok in that Chrome window when needed and keep the generator and browser open. TikTok's own posting and privacy settings apply. The actual Space currently exposes `/gemini`, with the same `{"prompt":"..."}` and `{"text":"..."}` contract as `/geminiGenerate`.
+
+Confirmed submissions are remembered in `tools/flow/tiktok-posts.json`, keyed to the video content; generating a replacement makes it eligible to post again. Submission does not guarantee public visibility: TikTok may put a video under review or apply privacy restrictions. If a browser error or restart occurs after submission, the result is marked **unknown** to prevent duplicate posts. Check TikTok first, then use **Resolve status** to mark it posted or allow a retry. A previously posted video that predates this feature must be checked manually before using its icon. Do not remove the posting history unless you are prepared to check videos manually.
 
 API:
 

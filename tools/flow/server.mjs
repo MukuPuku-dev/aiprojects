@@ -4,6 +4,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateVideo } from './flow-video.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
+import { createTikTokService } from './tiktok.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings } from './flow-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -12,6 +13,7 @@ const PORT = Number(process.env.AIPROJECTS_PORT || 8787);
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp4': 'video/mp4' };
 
 const queue = createGenerationQueue(generateVideo);
+const tiktok = createTikTokService(ROOT);
 const send = (res, status, body) => {
   res.writeHead(status, { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': 'no-store' });
   res.end(JSON.stringify(body));
@@ -119,7 +121,33 @@ async function handleSettings(req, res, url) {
 
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
-  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/tiktok/videos') {
+    if (req.method !== 'GET') return send(res, 405, { ok: false, error: 'Use GET.' });
+    try { return send(res, 200, { ok: true, videos: tiktok.list(url.searchParams.get('project')) }); }
+    catch (err) { return send(res, 400, { ok: false, error: err.message }); }
+  }
+  if (url.pathname === '/api/tiktok/posts' || url.pathname === '/api/tiktok/resolve') {
+    if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+    if (req.headers.origin !== `http://127.0.0.1:${PORT}` || !/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')) {
+      return send(res, 403, { ok: false, error: 'Requests must originate from the local studio.' });
+    }
+    try {
+      const body = await readBody(req);
+      if (url.pathname === '/api/tiktok/resolve') {
+        tiktok.resolve(body.project, body.day, body.posted);
+        return send(res, 200, { ok: true });
+      }
+      const job = tiktok.start(body.project, body.day, body.context);
+      return send(res, 202, { ok: true, id: job.id });
+    } catch (err) { return send(res, 400, { ok: false, error: err.message }); }
+  }
+  if (url.pathname.startsWith('/api/tiktok/posts/')) {
+    if (req.method !== 'GET') return send(res, 405, { ok: false, error: 'Use GET.' });
+    const job = tiktok.get(url.pathname.slice('/api/tiktok/posts/'.length));
+    if (!job) return send(res, 404, { ok: false, error: 'TikTok job not found. Check the video status before retrying.' });
+    return send(res, 200, { ok: true, ...job });
+  }
   if (url.pathname === '/api/flow-settings') return handleSettings(req, res, url);
   if (url.pathname === '/api/generate') {
     if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });

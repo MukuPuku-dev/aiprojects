@@ -184,7 +184,7 @@ function renderProjects(query = "") {
       finished.textContent = "✓ Finished";
       top.append(finished);
     }
-    if (project.flowNext) {
+    if (project.flowNext && project.href.includes("gk-questions")) {
       card.dataset.flowProject = "gk-questions";
       const generate = document.createElement("button");
       generate.type = "button";
@@ -212,7 +212,7 @@ function renderProjects(query = "") {
     open.append(arrow);
 
     card.append(top, title, description, open);
-    if (project.flowNext) {
+    if (project.flowNext && project.href.includes("gk-questions")) {
       const status = document.createElement("p");
       status.className = "generate-status";
       status.setAttribute("role", "status");
@@ -231,6 +231,7 @@ function renderProjects(query = "") {
   emptyState.hidden = matches.length > 0;
   projectCount.textContent = `${PROJECTS.length} ${PROJECTS.length === 1 ? "project" : "projects"} · ready to continue`;
   updateGkCard();
+  window.dispatchEvent(new Event("projects-rendered"));
 }
 
 search.addEventListener("input", () => renderProjects(search.value));

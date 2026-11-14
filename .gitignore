@@ -3,3 +3,6 @@
 /.env
 /coverage
 /projects/gk-questions/videos
+/projects/daily-motivations/videos
+/tools/flow/tiktok-posts.json
+/tools/flow/tiktok-posts.json.tmp

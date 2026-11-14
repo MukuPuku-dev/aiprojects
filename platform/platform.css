@@ -89,8 +89,16 @@ main { max-width: 1120px; margin: auto; padding: 0 24px; }
 .generate-next { position: relative; z-index: 1; display: grid; width: 38px; height: 38px; flex: 0 0 38px; place-items: center; margin-left: auto; border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent); border-radius: 11px; color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, transparent); font-size: 15px; cursor: pointer; }
 .generate-next:hover { background: color-mix(in srgb, var(--accent) 22%, transparent); }
 .generate-next:disabled { opacity: .5; cursor: wait; }
-.generate-status { margin: 14px 0 0; color: #d3d1db; font-size: 12px; line-height: 1.5; }
+.generate-status, .motivation-status { margin: 14px 0 0; color: #d3d1db; font-size: 12px; line-height: 1.5; }
 .generate-status a { margin-left: 8px; color: var(--accent); font-weight: 700; }
+.tiktok-videos { position: relative; z-index: 1; margin-top: 12px; color: #d3d1db; font-size: 12px; }
+.tiktok-videos:empty { display: none; }
+.tiktok-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.tiktok-row a { color: var(--accent); }
+.tiktok-row button { border: 1px solid #625a73; border-radius: 7px; color: #fff; background: #272432; cursor: pointer; }
+.tiktok-post { width: 30px; height: 30px; font-size: 20px; font-weight: 700; }
+.tiktok-post:hover { background: #433448; }
+.tiktok-message { line-height: 1.5; }
 .project-card h3 { margin: 19px 0 7px; font-size: 19px; letter-spacing: -.025em; }
 .project-description { max-width: 410px; min-height: 40px; margin: 0; color: #aaaab7; font-size: 12px; line-height: 1.65; }
 .open-project { display: inline-flex; align-items: center; gap: 9px; margin-top: 19px; color: var(--accent); font-size: 12px; font-weight: 700; text-decoration: none; }

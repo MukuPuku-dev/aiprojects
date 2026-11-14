@@ -14,7 +14,8 @@ const PROJECTS = [
     description: "30 cinematic 10-second Flow clips with original Nepali motivational lines, voice-over scripts, and ready-to-post captions.",
     href: "projects/daily-motivations/index.html",
     mark: "🔥",
-    accent: "coral"
+    accent: "coral",
+    flowNext: true
   },
   {
     name: "GK Questions",

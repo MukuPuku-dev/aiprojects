@@ -18,7 +18,7 @@ const PROFILE = process.env.FLOW_PROFILE_DIR
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const stamp = () => new Date().toISOString().replace(/[:.]/g, '-');
 
-async function connect(log) {
+export async function connect(log) {
   try { return await chromium.connectOverCDP(ENDPOINT, { timeout: 5000 }); } catch {}
   if (!fs.existsSync(CHROME)) throw new Error(`Chrome not found at ${CHROME}. Set FLOW_CHROME_PATH.`);
   fs.mkdirSync(PROFILE, { recursive: true });
