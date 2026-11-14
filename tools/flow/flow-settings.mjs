@@ -34,7 +34,12 @@ const IMAGE_FIELDS = {
   },
   aspect: choice(ASPECTS, 'image aspect')
 };
-
+const FLOW_PROJECT_FIELD = {
+  flowProject: value => {
+    if (value.length > 80) throw new Error('Flow project name must be 80 characters or fewer.');
+    return value;
+  }
+};
 // Keeps only known, non-empty fields. Empty values mean "inherit".
 function cleanSection(input, fields) {
   const src = input && typeof input === 'object' ? input : {};
@@ -87,6 +92,17 @@ export function effectiveSettings(settings, project) {
     video: { ...settings.defaults.video, ...override.video },
     image: { ...settings.defaults.image, ...override.image }
   };
+}
+
+// The studio card name for a workspace id, read from platform/projects.js. Used as the Flow project name.
+export function studioProjectName(project) {
+  const file = path.join(ROOT, 'platform', 'projects.js');
+  const source = fs.existsSync(file) ? fs.readFileSync(file, 'utf8') : '';
+  const pattern = /name:\s*"([^"]+)"[^}]*?href:\s*"projects\/([a-z0-9-]+)\//g;
+  for (const match of source.matchAll(pattern)) {
+    if (match[2] === project) return match[1];
+  }
+  return null;
 }
 
 // Project folders are the ones under projects/ that have an index.html.

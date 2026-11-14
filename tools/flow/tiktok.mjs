@@ -11,11 +11,20 @@ export function createTikTokService(root, { generateCaption = captionFromGemini,
   const recordFile = path.join(root, 'tools', 'flow', 'tiktok-posts.json');
   const jobs = new Map();
   let active = null;
-  const keyFor = (project, day) => `${project}:${day}`;
+  const keyFor = (project, video) => typeof video === 'number' ? `${project}:${video}` : `${project}:file:${video}`;
 
-  function validate(project, day) {
-    if (!PROJECTS.has(project) || !Number.isInteger(day) || day < 1 || day > 30) throw new Error('Invalid project or day.');
-    return path.join(root, 'projects', project, 'videos', `day-${String(day).padStart(2, '0')}.mp4`);
+  function validate(project, video) {
+    if (!PROJECTS.has(project)) throw new Error('Invalid project.');
+    let filename;
+    if (Number.isInteger(video) && video >= 1 && video <= 30) {
+      filename = `day-${String(video).padStart(2, '0')}.mp4`;
+    } else if (typeof video === 'string' && video.length <= 255 && /^[^\\/:*?"<>|\x00-\x1f]+\.mp4$/i.test(video)
+        && !/^day-(?:0[1-9]|[12]\d|30)\.mp4$/i.test(video)) {
+      filename = video;
+    } else {
+      throw new Error('Invalid video.');
+    }
+    return path.join(root, 'projects', project, 'videos', filename);
   }
   function records() {
     if (!fs.existsSync(recordFile)) return {};
@@ -36,27 +45,37 @@ export function createTikTokService(root, { generateCaption = captionFromGemini,
     if (!PROJECTS.has(project)) throw new Error('Invalid project.');
     const saved = records();
     const result = [];
-    for (let day = 1; day <= 30; day++) {
-      const file = validate(project, day);
-      if (!fs.existsSync(file) || !fs.statSync(file).isFile()) continue;
-      const record = saved[keyFor(project, day)];
+    function add(video) {
+      const file = validate(project, video);
+      if (!fs.existsSync(file) || !fs.lstatSync(file).isFile()) return;
+      const record = saved[keyFor(project, video)];
       const sameVideo = record && record.hash === digest(file);
       const status = record?.status === 'pending' ? 'unknown' : sameVideo && record?.status === 'posted' ? 'posted' : 'unposted';
-      result.push({ day, status, active: !!active && active.project === project && active.day === day });
+      result.push({ ...(typeof video === 'number' ? { day: video } : { file: video }), status, active: !!active && active.project === project && active.video === video });
+    }
+    for (let day = 1; day <= 30; day++) {
+      add(day);
+    }
+    const directory = path.join(root, 'projects', project, 'videos');
+    if (fs.existsSync(directory)) {
+      for (const entry of fs.readdirSync(directory, { withFileTypes: true }).sort((a, b) => a.name.localeCompare(b.name))) {
+        if (!entry.isFile() || !/^[^\\/:*?"<>|\x00-\x1f]+\.mp4$/i.test(entry.name) || /^day-(?:0[1-9]|[12]\d|30)\.mp4$/i.test(entry.name)) continue;
+        add(entry.name);
+      }
     }
     return result;
   }
-  function start(project, day, context) {
-    const file = validate(project, day);
+  function start(project, video, context) {
+    const file = validate(project, video);
     if (typeof context !== 'string' || !context.trim() || context.length > 5000) throw new Error('Video context is required.');
     if (active) throw new Error('Another TikTok upload is already in progress.');
-    if (!fs.existsSync(file) || !fs.statSync(file).isFile()) throw new Error('The generated video was not found.');
+    if (!fs.existsSync(file) || !fs.lstatSync(file).isFile()) throw new Error('The generated video was not found.');
     const hash = digest(file);
-    const key = keyFor(project, day);
+    const key = keyFor(project, video);
     const saved = records();
     if (saved[key]?.status === 'pending') throw new Error('The previous posting result is unknown. Check TikTok before resolving it.');
     if (saved[key]?.status === 'posted' && saved[key].hash === hash) throw new Error('This video was already posted.');
-    const job = { id: randomUUID(), project, day, status: 'caption', error: null };
+    const job = { id: randomUUID(), project, video, ...(typeof video === 'number' ? { day: video } : { file: video }), status: 'caption', error: null };
     active = job;
     jobs.set(job.id, job);
     (async () => {
@@ -82,15 +101,16 @@ export function createTikTokService(root, { generateCaption = captionFromGemini,
       } catch (error) {
         job.status = submitted ? 'unknown' : 'failed';
         job.error = error.message;
-        console.error(`TikTok ${project} day ${day}: ${error.message}`);
+        console.error(`TikTok ${project} ${video}: ${error.message}`);
       } finally { active = null; }
     })();
     return job;
   }
-  function resolve(project, day, posted) {
-    const file = validate(project, day), key = keyFor(project, day);
+  function resolve(project, video, posted) {
+    validate(project, video);
+    const key = keyFor(project, video);
     if (typeof posted !== 'boolean') throw new Error('Choose whether the video was posted.');
-    if (active && active.project === project && active.day === day) throw new Error('The upload is still running.');
+    if (active && active.project === project && active.video === video) throw new Error('The upload is still running.');
     const saved = records();
     if (saved[key]?.status !== 'pending') throw new Error('There is no uncertain post to resolve.');
     if (posted) saved[key] = { ...saved[key], status: 'posted', updatedAt: new Date().toISOString() };
@@ -102,9 +122,9 @@ export function createTikTokService(root, { generateCaption = captionFromGemini,
 
 export async function captionFromGemini(context, project) {
   const guidance = project === 'gk-questions'
-    ? 'Invite viewers to answer the general knowledge quiz and comment how many answers they got right. Do not mention a specific topic, facts, people, places, dates, answer choices, multiple-choice, IQ scores or IQ tests.'
-    : 'Reflect the supplied motivational line. Do not add facts or claims that are not in the video details.';
-  const prompt = `Write one concise TikTok caption in Nepali. ${guidance} Include a few relevant hashtags. Output only the caption, without quotation marks or explanations.\n\nVideo details:\n${context}`;
+    ? 'Write an informative caption covering the supplied quiz questions and answers, with useful related general knowledge where you are confident it is accurate. Do not invent facts; omit uncertain details. Invite viewers to share their score. Do not mention a day number, episode number, or series numbering.'
+    : 'Build a strong, encouraging continuation of the supplied original motivational line: include the line and expand its specific message with a few meaningful sentences and practical encouragement. Keep the same intent and tone; do not make unsupported factual claims.';
+  const prompt = `Write one TikTok caption in Nepali. ${guidance} Include a few relevant hashtags. Output only the caption, without quotation marks or explanations.\n\nVideo details:\n${context}`;
   const response = await fetch(GEMINI_URL, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ prompt }), signal: AbortSignal.timeout(120000)

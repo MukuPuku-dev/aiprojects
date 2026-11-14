@@ -95,6 +95,32 @@ test('shows post icon only for generated unposted videos and sends the matching 
   } finally { await context.close(); }
 });
 
+test('shows standalone videos and uses their own description for TikTok', async () => {
+  const { context, page } = await setup();
+  try {
+    await page.route('**/api/tiktok/videos?*', route => {
+      const project = new URL(route.request().url()).searchParams.get('project');
+      return route.fulfill({ json: { ok: true, videos: project === 'daily-motivations'
+        ? [{ file: 'sunrise test.mp4', status: 'unposted', active: false }]
+        : [] } });
+    });
+    await page.reload();
+    const icon = page.getByRole('button', { name: 'Post Daily Motivations sunrise test.mp4 to TikTok' });
+    await icon.waitFor();
+    assert.match(await page.getByRole('link', { name: 'sunrise test.mp4' }).getAttribute('href'), /sunrise%20test\.mp4$/);
+    let posted;
+    await page.route('**/api/tiktok/posts', route => {
+      posted = route.request().postDataJSON();
+      return route.fulfill({ status: 202, json: { ok: true, id: 'job' } });
+    });
+    await page.route('**/api/tiktok/posts/job', route => route.fulfill({ json: { ok: true, status: 'posted' } }));
+    page.on('dialog', dialog => dialog.accept(dialog.type() === 'prompt' ? 'Sunrise over snowy mountains' : undefined));
+    await icon.click();
+    await page.getByText('sunrise test.mp4 submitted to TikTok.', { exact: false }).waitFor({ timeout: 10000 });
+    assert.deepEqual(posted, { project: 'daily-motivations', file: 'sunrise test.mp4', context: 'Sunrise over snowy mountains' });
+  } finally { await context.close(); }
+});
+
 test('handles TikTok check confirmation and verifies the submitted caption', async () => {
   const context = await browser.newContext();
   const page = await context.newPage();

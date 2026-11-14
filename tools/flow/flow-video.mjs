@@ -4,6 +4,8 @@ import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { FLOW_URL, SELECTORS as S } from './selectors.mjs';
+import { ensureCredits, readAccountList } from './flow-accounts.mjs';
+import { ensureFlowProject } from './flow-project.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
@@ -92,6 +94,61 @@ async function downloadVideo(page, src) {
   }
 }
 
+export async function saveOpenedVideo(page, outFile, aspect, log = console.log) {
+  const player = page.locator(S.videoPlayer).first();
+  await player.waitFor({ state: 'attached', timeout: 30000 });
+  const handle = await page.waitForFunction(selector => {
+    const video = document.querySelector(selector);
+    if (!video || video.readyState < 2 || !video.videoWidth || !video.videoHeight || !video.currentSrc) return false;
+    return { src: video.currentSrc, width: video.videoWidth, height: video.videoHeight };
+  }, S.videoPlayer, { timeout: 60000 });
+  const result = await handle.jsonValue();
+  await handle.dispose();
+
+  const [w, h] = aspect.split(':').map(Number);
+  if (Math.abs(result.width / result.height - w / h) / (w / h) > 0.08) {
+    throw new Error(`Flow returned ${result.width}x${result.height}, expected ${aspect}.`);
+  }
+  const bytes = await downloadVideo(page, result.src);
+  if (!bytes.length) throw new Error('Flow returned an empty video.');
+  fs.mkdirSync(path.dirname(outFile), { recursive: true });
+  fs.writeFileSync(outFile, bytes);
+  log(`Saved ${outFile} (${result.width}x${result.height}).`);
+  return { file: outFile, width: result.width, height: result.height };
+}
+
+const normalizePrompt = text => text.replace(/\s+/g, ' ').trim();
+
+export async function openNewVideo(page, previousThumbnails, prompt, timeout = 900000) {
+  const seen = new Set(previousThumbnails);
+  const deadline = Date.now() + timeout;
+  while (Date.now() < deadline) {
+    const handle = await page.waitForFunction(({ selector, seen }) => {
+      const image = [...document.querySelectorAll(selector)].find(el => el.src && !seen.includes(el.src));
+      return image ? image.src : false;
+    }, { selector: S.videoThumbnail, seen: [...seen] }, { timeout: Math.max(1, deadline - Date.now()), polling: 2000 });
+    const src = await handle.jsonValue();
+    await handle.dispose();
+    seen.add(src);
+    const thumbnail = page.locator(S.videoThumbnail).filter({ visible: true });
+    const count = await thumbnail.count();
+    let candidate;
+    for (let i = 0; i < count; i++) {
+      if (await thumbnail.nth(i).evaluate(el => el.src) === src) {
+        candidate = thumbnail.nth(i);
+        break;
+      }
+    }
+    if (!candidate) continue;
+    await candidate.click();
+    const promptElement = page.locator(S.videoPrompt).first();
+    await promptElement.waitFor({ state: 'visible', timeout: 30000 });
+    if (normalizePrompt(await promptElement.innerText()) === normalizePrompt(prompt)) return;
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+  }
+  throw new Error('Timed out waiting for the generated Flow video.');
+}
+
 async function diagnose(page, label, error) {
   fs.mkdirSync(LOG_DIR, { recursive: true });
   const base = path.join(LOG_DIR, `${stamp()}-${label}`);
@@ -109,18 +166,20 @@ async function diagnose(page, label, error) {
  * Generates one video in Flow and saves it to outFile.
  * Throws with a diagnostic log path on failure. Does not resubmit on its own.
  */
-export async function generateVideo({ prompt, outFile, model, aspect, duration, log = console.log }) {
+export async function generateVideo({ prompt, outFile, model, aspect, duration, flowProject, log = console.log }) {
   const browser = await connect(log);
   let page;
   try {
     page = await findFlowPage(browser);
+    await ensureCredits(page, { accounts: readAccountList(), log });
+    await ensureFlowProject(page, flowProject, { log });
     await configure(page, { model, aspect, duration });
 
     const box = page.locator(S.promptBox).first();
     await box.waitFor({ state: 'visible', timeout: 15000 });
     await box.fill(prompt);
 
-    const before = await page.evaluate(() => [...document.querySelectorAll('video')].map(v => v.currentSrc || v.src));
+    const before = await page.locator(S.videoThumbnail).evaluateAll(images => images.map(image => image.src).filter(Boolean));
     const submit = page.locator(S.submitButton).first();
     await submit.waitFor({ state: 'visible', timeout: 15000 });
     if (await submit.isDisabled()) throw new Error('Start generation is disabled after filling the prompt. Check Flow settings.');
@@ -128,27 +187,10 @@ export async function generateVideo({ prompt, outFile, model, aspect, duration, 
     log(`Submitting to Flow (${model}, ${aspect}, ${duration})...`);
     await submit.click();
 
-    const handle = await page.waitForFunction(old => {
-      const v = [...document.querySelectorAll('video')].find(x => {
-        const s = x.currentSrc || x.src;
-        return s && !old.includes(s) && x.readyState >= 2 && x.videoWidth > 0;
-      });
-      return v ? { src: v.currentSrc || v.src, width: v.videoWidth, height: v.videoHeight } : false;
-    }, before, { timeout: 900000, polling: 2000 });
-    const result = await handle.jsonValue();
-    await handle.dispose();
-
-    const [w, h] = aspect.split(':').map(Number);
-    if (Math.abs(result.width / result.height - w / h) / (w / h) > 0.08) {
-      const base = await diagnose(page, 'aspect-mismatch', `${result.width}x${result.height}`);
-      throw new Error(`Flow returned ${result.width}x${result.height}, expected ${aspect}. Diagnostics: ${base}`);
-    }
-
-    const bytes = await downloadVideo(page, result.src);
-    fs.mkdirSync(path.dirname(outFile), { recursive: true });
-    fs.writeFileSync(outFile, bytes);
-    log(`Saved ${outFile} (${result.width}x${result.height}).`);
-    return { file: outFile, width: result.width, height: result.height };
+    await openNewVideo(page, before, prompt);
+    const result = await saveOpenedVideo(page, outFile, aspect, log);
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    return result;
   } catch (err) {
     if (page) {
       const base = await diagnose(page, 'failure', err);

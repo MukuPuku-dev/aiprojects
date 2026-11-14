@@ -66,6 +66,34 @@ async function setup({ done = [], duration = '10s', result = 'success', saveProg
   return { context, page, requests, finish: () => { finished = true; } };
 }
 
+test('GK workspace opens and reloads at the first unchecked day', async () => {
+  const { context, page } = await setup({ done: [0, 2, 3] });
+  try {
+    await page.getByRole('link', { name: 'Open GK Questions workspace' }).click();
+    assert.match(await page.locator('#prompt').textContent(), /DAY 02/);
+    await page.getByRole('button', { name: 'अर्को →' }).click();
+    assert.match(await page.locator('#prompt').textContent(), /DAY 03/);
+    await page.reload();
+    assert.match(await page.locator('#prompt').textContent(), /DAY 02/);
+    await page.locator('#selectedDone').check();
+    assert.match(await page.locator('#prompt').textContent(), /DAY 05/);
+    await page.locator('[data-done="0"]').uncheck();
+    assert.match(await page.locator('#prompt').textContent(), /DAY 01/);
+  } finally { await context.close(); }
+});
+
+test('GK workspace follows progress changes from another tab', async () => {
+  const { context, page } = await setup({ done: [0] });
+  try {
+    await page.getByRole('link', { name: 'Open GK Questions workspace' }).click();
+    assert.match(await page.locator('#prompt').textContent(), /DAY 02/);
+    const other = await context.newPage();
+    await other.goto(base);
+    await other.evaluate(() => localStorage.setItem('gk_completed_days', JSON.stringify([0, 1, 3])));
+    await page.waitForFunction(() => document.querySelector('#prompt').textContent.includes('DAY 03'));
+  } finally { await context.close(); }
+});
+
 test('stays on the project screen and resumes the job after navigating away', async () => {
   const { context, page, requests, finish } = await setup({ done: [0, 2] });
   try {

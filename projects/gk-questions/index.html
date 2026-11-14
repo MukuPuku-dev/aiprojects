@@ -52,24 +52,27 @@ const $=s=>document.querySelector(s);let current=0;
 let addedQuestionClips=(()=>{try{return JSON.parse(localStorage.getItem("gk_added_question_clips")||"[]")}catch(e){return []}})();
 let completedDays=(()=>{try{return new Set(JSON.parse(localStorage.getItem("gk_completed_days")||"[]").map(Number).filter(n=>n>=0&&n<30))}catch(e){return new Set()}})();
 function firstIncompleteIndex(){for(let i=0;i<DAYS.length;i++)if(!completedDays.has(i))return i;return 0}
-function markDayDone(i,done=true){if(done)completedDays.add(i);else completedDays.delete(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays].sort((a,b)=>a-b)));if(done&&current===i&&completedDays.size<DAYS.length)current=firstIncompleteIndex();render();list();}
+current=firstIncompleteIndex();
+function markDayDone(i,done=true){if(done)completedDays.add(i);else completedDays.delete(i);localStorage.setItem("gk_completed_days",JSON.stringify([...completedDays].sort((a,b)=>a-b)));if(completedDays.size<DAYS.length)current=firstIncompleteIndex();render();list();}
 function customPrompt(day,index){
  const qs=day.qs, ratio=$("#ratio").value;
- const starts=["0.0–1.3","2.3–3.6","4.6–5.9"], ends=["1.3–2.3","3.6–4.6","5.9–7.0"];
- const dialogue=qs.map((q,i)=>`${starts[i]} sec — HOST: “${q[0]}”\\n${ends[i]} sec — CONTESTANT: “${q[1]}!”`).join("\\n\\n");
+ const varied=index+1>=8;
+ const cast=varied?"two funny Nepali men":"two funny Nepali men wearing traditional Daura Suruwal and beautiful Dhaka topis";
+ const look=varied?"Design NEW characters for this episode: faces, body types, hairstyles, outfits and accessories must match the subject of today's GK questions and must differ from every other episode.":"Keep both character designs and clothing identical throughout.";
+ const setting=varied?"A NEW environment that fits the subject of today's GK questions (for example a Himalayan trail, a Kathmandu heritage square, a Terai paddy field, a lakeside, a classroom or a national park). Use different locations, colors and backgrounds from the other episodes.":"A beautiful Nepali village courtyard with green hills and the Himalayas in the background.";
+ const strictLook=varied?"new characters and environment different from other episodes, consistent only within this clip":"consistent designs and clothes";
+ const dialogue=qs.map(q=>`HOST: “${q[0]}”\\nCONTESTANT: “${q[1]}!”`).join("\\n\\n");
  return `**GOOGLE FLOW VIDEO PROMPT — NEPALI RAPID-FIRE GK 🇳🇵 — ${day.title}**
 
-Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY two funny Nepali men wearing traditional Daura Suruwal and beautiful Dhaka topis. The energetic host asks questions; the confident contestant answers instantly.
+Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY ${cast}. The energetic host asks questions; the confident contestant answers instantly.
 
-**SETTING:** A beautiful Nepali village courtyard with green hills and the Himalayas in the background. Colorful polished 3D animation, expressive faces, natural body movements and professional lighting. Keep both character designs and clothing identical throughout.
+**SETTING:** ${setting} Colorful polished 3D animation, expressive faces, natural body movements and professional lighting. ${look}
 
 **DIALOGUE — RAPID-FIRE NEPALI QUIZ:**
 
 ${dialogue}
 
-7.0–10.0 sec — HOST: Reacts with comic surprise: “वाह! तिमी त GK च्याम्पियन रहेछौ!” Both laugh and give thumbs-up.
-
-**VOICE AND TIMING:** Extremely quick but clear natural Nepali, accurate pronunciation, synchronized lip movements, strict turn-taking, no overlapping dialogue or unnecessary pauses.
+**VOICE AND TIMING:** Make the video fast-paced. Extremely quick but clear natural Nepali, accurate pronunciation, synchronized lip movements, strict turn-taking, no overlapping dialogue or unnecessary pauses.
 
 **CAMERA:** Fast cinematic cuts between host questions and contestant answers, with close-up reactions.
 
@@ -77,7 +80,7 @@ ${dialogue}
 
 **AUDIO:** Energetic low-volume quiz-show music, clear foreground dialogue and a subtle comic ending sound.
 
-**STRICT REQUIREMENTS:** Exactly 10 seconds, ${ratio}, only two characters, consistent designs and clothes, no English dialogue, narration or extra speech. Speak the supplied questions and answers exactly as written. Do not invent, replace or modify facts. Fit all ${qs.length} question-answer pairs into the clip.`;
+**STRICT REQUIREMENTS:** Exactly 10 seconds, ${ratio}, only two characters, ${strictLook}, no English dialogue, narration or extra speech. Speak the supplied questions and answers exactly as written. Do not invent, replace or modify facts. Fit all ${qs.length} question-answer pairs into the clip.`;
 }
 function promptFor(day,index,ratio=$("#ratio").value){return gkPromptFor(day,index,ratio)}
 function captionFor(day,index,isCustom=false){
@@ -193,7 +196,7 @@ window.addEventListener("storage",e=>{
  try{
   const saved=JSON.parse(e.newValue||"[]");
   if(!Array.isArray(saved))throw new Error("Invalid saved progress.");
-  completedDays=new Set(saved.map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<DAYS.length));render();list();
+  completedDays=new Set(saved.map(Number).filter(n=>Number.isInteger(n)&&n>=0&&n<DAYS.length));if(completedDays.size<DAYS.length)current=firstIncompleteIndex();render();list();
  }catch(err){$("#flowStatus").hidden=false;$("#flowMessage").textContent="Could not read updated GK progress: "+err.message}
 });
 </script></main></body></html>

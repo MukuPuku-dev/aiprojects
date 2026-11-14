@@ -5,7 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { generateVideo } from './flow-video.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
-import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings } from './flow-settings.mjs';
+import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
@@ -34,15 +34,17 @@ function validate(body) {
   if (typeof body.prompt !== 'string' || body.prompt.trim().length < 20) throw new Error('prompt is required.');
   const project = body.project || 'daily-motivations';
   if (!PROJECT_ID.test(project)) throw new Error('project must use lowercase letters, digits and dashes.');
-  const defaults = effectiveSettings(readSettings(), project).video;
-  const model = body.model || defaults.model;
-  const aspect = body.aspect || defaults.aspect;
-  const duration = body.duration || defaults.duration;
+  const effective = effectiveSettings(readSettings(), project);
+  const model = body.model || effective.video.model;
+  const aspect = body.aspect || effective.video.aspect;
+  const duration = body.duration || effective.video.duration;
   if (!VIDEO_MODELS.includes(model)) throw new Error('Unknown model: ' + model);
   if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
   if (!DURATIONS.includes(duration)) throw new Error('Unknown duration: ' + duration);
+  const flowProject = studioProjectName(project);
+  if (!flowProject) throw new Error(`No studio card name found for project ${project}.`);
   const outFile = path.join(ROOT, 'projects', project, 'videos', `day-${String(day).padStart(2, '0')}.mp4`);
-  return { day, prompt: body.prompt, model, aspect, duration, outFile };
+  return { day, prompt: body.prompt, model, aspect, duration, outFile, flowProject };
 }
 
 async function handleGenerate(req, res) {
@@ -135,10 +137,10 @@ const server = http.createServer(async (req, res) => {
     try {
       const body = await readBody(req);
       if (url.pathname === '/api/tiktok/resolve') {
-        tiktok.resolve(body.project, body.day, body.posted);
+        tiktok.resolve(body.project, body.file ?? body.day, body.posted);
         return send(res, 200, { ok: true });
       }
-      const job = tiktok.start(body.project, body.day, body.context);
+      const job = tiktok.start(body.project, body.file ?? body.day, body.context);
       return send(res, 202, { ok: true, id: job.id });
     } catch (err) { return send(res, 400, { ok: false, error: err.message }); }
   }

@@ -12,5 +12,18 @@ export const SELECTORS = {
   aspectRadio: aspect => new RegExp(aspect + '$'),
   durationRadio: duration => new RegExp('^' + duration + '$'),
   singleRadio: /^x1$/,
-  resultVideo: 'video'
+  resultVideo: 'video',
+  videoThumbnail: 'flow-video-tile img[alt="Generated video thumbnail"]',
+  videoPlayer: 'video[aria-label="Generated video"]',
+  videoPrompt: '.prompt-text',
+  accountButton: '[aria-label="Account details"]',
+  menuPanel: '.cdk-overlay-container > *',
+  switchAccountText: 'Switch account',
+  closeAccountPanel: '[aria-label="Close account panel"]',
+  googleAccountsUrl: /accounts\.google\./,
+  projectCard: '.project-card',
+  projectLink: 'a[href*="/project/"]',
+  projectTitle: '.project-title-text',
+  newProjectButton: /^New project$/,
+  projectTitleInput: '.header-title flow-editable-text input'
 };

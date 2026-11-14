@@ -33,12 +33,17 @@ const GK_DAYS = [
 
 function gkPromptFor(day,index,ratio){
  const qs=day.qs;
- const qlines=qs.map((q,i)=>{const start=["0.0–1.3","2.3–3.6","4.6–5.9"][i];return `${start} sec — HOST: “${q[0]}”\n${["1.3–2.3","3.6–4.6","5.9–7.0"][i]} sec — CONTESTANT: “${q[1]}!”`;}).join("\n\n");
+ const varied=index+1>=8;
+ const cast=varied?"two funny Nepali men with human bodies":"two funny Nepali men with human bodies, wearing traditional Daura Suruwal and beautiful Dhaka topis";
+ const look=varied?"Design NEW characters for this episode: faces, body types, hairstyles, outfits and accessories must match the subject of today's GK questions (for example a mountain guide, a temple priest, a farmer, a teacher or a history scholar) and must differ from every other episode.":"Keep the same two character designs in every shot and in every daily episode.";
+ const setting=varied?"A NEW environment that fits the subject of today's GK questions (for example a Himalayan trail, a Kathmandu heritage square, a Terai paddy field, a lakeside, a classroom or a national park). Use different locations, colors and backgrounds from the other episodes.":"A beautiful Nepali village courtyard with green hills and the Himalayas in the background.";
+ const strictLook=varied?"Characters and environment must be new and different from other episodes, consistent only within this clip.":"Preserve identical character designs and clothing in every shot.";
+ const qlines=qs.map(q=>`HOST: “${q[0]}”\nCONTESTANT: “${q[1]}!”`).join("\n\n");
  return `**GOOGLE FLOW VIDEO PROMPT — NEPALI RAPID-FIRE GK 🇳🇵 — DAY ${String(index+1).padStart(2,"0")}**
 
-Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY two funny Nepali men with human bodies, wearing traditional Daura Suruwal and beautiful Dhaka topis. Keep the same two character designs in every shot and in every daily episode. The host is energetic, mischievous and expressive; the contestant is confident, quick-witted and playful.
+Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video featuring ONLY ${cast}. ${look} The host is energetic, mischievous and expressive; the contestant is confident, quick-witted and playful.
 
-**SETTING:** A beautiful Nepali village courtyard with green hills and the Himalayas in the background. Colorful polished 3D animation, expressive faces, natural body movements, professional cinematic lighting. Keep the setting and character appearance consistent across the series.
+**SETTING:** ${setting} Colorful polished 3D animation, expressive faces, natural body movements, professional cinematic lighting.${varied?"":" Keep the setting and character appearance consistent across the series."}
 
 **DAY ${index+1}: ${day.title.toUpperCase()}**
 
@@ -46,9 +51,7 @@ Create an exactly 10-second, ${ratio} high-quality cinematic 3D cartoon video fe
 
 ${qlines}
 
-7.0–10.0 sec — HOST: The host reacts with comic surprise and says, “वाह! तीनवटै मिलायौ, तिमी त GK च्याम्पियन रहेछौ!” Both characters laugh, celebrate and give thumbs-up.
-
-**VOICE AND TIMING:** Speak extremely quickly but clearly in natural Nepali. Perfect turn-taking, accurate Nepali pronunciation, synchronized lip movements, no overlapping dialogue and almost no pauses. The host sounds like a lively Nepali TV quiz presenter; the contestant sounds confident and playful.
+**VOICE AND TIMING:** Make the video fast-paced. Speak extremely quickly but clearly in natural Nepali. Perfect turn-taking, accurate Nepali pronunciation, synchronized lip movements, no overlapping dialogue and almost no pauses. The host sounds like a lively Nepali TV quiz presenter; the contestant sounds confident and playful.
 
 **CAMERA:** Quick cinematic cuts between the host's questioning face and the contestant's instant answers. Use close-ups for reactions. Keep the action readable and energetic.
 
@@ -56,5 +59,5 @@ ${qlines}
 
 **AUDIO:** Energetic quiz-show background music at low volume, clear dialogue in the foreground, subtle comedic sound effect on the final reaction.
 
-**STRICT REQUIREMENTS:** Exactly 10 seconds. ${ratio} aspect ratio. Only two characters. Preserve identical character designs and clothing in every shot. No English dialogue, no extra speech, no narration, no voice-over, no wasted transitions. Keep the entire three-question exchange within the 10-second duration. The spoken questions and answers must match the supplied script exactly; do not invent or alter facts.`;
+**STRICT REQUIREMENTS:** Exactly 10 seconds. ${ratio} aspect ratio. Only two characters. ${strictLook} No English dialogue, no extra speech, no narration, no voice-over, no wasted transitions. Keep the entire three-question exchange within the 10-second duration. The spoken questions and answers must match the supplied script exactly; do not invent or alter facts.`;
 }

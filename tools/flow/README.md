@@ -25,6 +25,8 @@ Check the status with `http://127.0.0.1:8787/api/health`.
 - `FLOW_CDP_URL` can point to an already running Chrome instead.
 - Jobs run one at a time. The page's Generate button calls `POST /api/generate` with the day's prompt, model, aspect and duration.
 - Failures save a screenshot and JSON to `tools/flow/logs/`.
+- Before each video, the active Google account's credits are read from the account menu. If it has fewer than 15, Flow switches to the next account in `tools/flow/flow-accounts.json` (a gitignored list of emails, tried in order) and checks again. If no account has 15 or more, the job fails.
+- Each studio project's video is generated in the Flow project with the same name as its card in the studio (e.g. "Daily Motivations"). If the active account has a project with that name, it is opened. Otherwise a new project is created and renamed to that name. The name comes from `platform/projects.js`.
 
 ## When Flow's UI changes
 
@@ -48,7 +50,9 @@ Image settings are stored and returned by the API, but the driver does not gener
 
 ## Post to TikTok
 
-The GK Questions and Daily Motivations cards list the generated MP4s on this computer. Click the music-note icon beside an unposted video and confirm to post it through TikTok's website, without a TikTok API. The generator asks the public Gemini service at `https://mukeshpokharel-testing.hf.space/gemini` for a Nepali caption using the selected day's description, then opens TikTok Studio in the same Chrome profile as Flow. Sign in to TikTok in that Chrome window when needed and keep the generator and browser open. TikTok's own posting and privacy settings apply. The actual Space currently exposes `/gemini`, with the same `{"prompt":"..."}` and `{"text":"..."}` contract as `/geminiGenerate`.
+The GK Questions and Daily Motivations cards list MP4s in their videos folders. Day-numbered videos use the selected day's description for their captions; for other files, enter a description when prompted. Click the music-note icon beside an unposted video and confirm to post it through TikTok's website, without a TikTok API. The generator asks the public Gemini service at `https://mukeshpokharel-testing.hf.space/gemini` for a Nepali caption, then opens TikTok Studio in the same Chrome profile as Flow. Sign in to TikTok in that Chrome window when needed and keep the generator and browser open. TikTok's own posting and privacy settings apply. The actual Space currently exposes `/gemini`, with the same `{"prompt":"..."}` and `{"text":"..."}` contract as `/geminiGenerate`.
+
+Gemini is instructed to include the quiz's questions and answers and related accurate GK information without day numbers; motivation captions expand on the original spoken line. For other files, provide the relevant quiz details or motivational line in the description.
 
 Confirmed submissions are remembered in `tools/flow/tiktok-posts.json`, keyed to the video content; generating a replacement makes it eligible to post again. Submission does not guarantee public visibility: TikTok may put a video under review or apply privacy restrictions. If a browser error or restart occurs after submission, the result is marked **unknown** to prevent duplicate posts. Check TikTok first, then use **Resolve status** to mark it posted or allow a retry. A previously posted video that predates this feature must be checked manually before using its icon. Do not remove the posting history unless you are prepared to check videos manually.
 
