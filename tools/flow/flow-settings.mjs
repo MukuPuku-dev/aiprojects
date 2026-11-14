@@ -1,0 +1,99 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const HERE = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(HERE, '..', '..');
+export const SETTINGS_FILE = path.join(HERE, 'settings.json');
+export const PROJECT_ID = /^[a-z0-9-]+$/;
+
+export const VIDEO_MODELS = ['Omni 1.1 Flash', 'Omni 1.2 Flash', 'Veo 3.1 - Lite', 'Veo 3.1 - Fast', 'Veo 3.1 - Quality'];
+export const DURATIONS = ['4s', '6s', '8s', '10s'];
+export const ASPECTS = ['9:16', '16:9'];
+export const FLOW_OPTIONS = { videoModels: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS };
+
+// An empty image model means "keep whatever model Flow currently has selected".
+const DEFAULTS = {
+  video: { model: VIDEO_MODELS[0], aspect: '9:16', duration: '10s' },
+  image: { model: '', aspect: '9:16' }
+};
+
+const choice = (allowed, label) => value => {
+  if (!allowed.includes(value)) throw new Error(`Unknown ${label}: ${value}`);
+  return value;
+};
+const VIDEO_FIELDS = {
+  model: choice(VIDEO_MODELS, 'video model'),
+  aspect: choice(ASPECTS, 'aspect'),
+  duration: choice(DURATIONS, 'duration')
+};
+const IMAGE_FIELDS = {
+  model: value => {
+    if (value.length > 80) throw new Error('Image model name must be 80 characters or fewer.');
+    return value;
+  },
+  aspect: choice(ASPECTS, 'image aspect')
+};
+
+// Keeps only known, non-empty fields. Empty values mean "inherit".
+function cleanSection(input, fields) {
+  const src = input && typeof input === 'object' ? input : {};
+  const out = {};
+  for (const [key, check] of Object.entries(fields)) {
+    const raw = src[key];
+    if (raw === undefined || raw === null) continue;
+    if (typeof raw !== 'string') throw new Error(`${key} must be text.`);
+    const value = raw.trim();
+    if (value) out[key] = check(value);
+  }
+  return out;
+}
+
+export function normalizeSettings(input) {
+  const src = input && typeof input === 'object' ? input : {};
+  const defaults = {
+    video: { ...DEFAULTS.video, ...cleanSection(src.defaults?.video, VIDEO_FIELDS) },
+    image: { ...DEFAULTS.image, ...cleanSection(src.defaults?.image, IMAGE_FIELDS) }
+  };
+  const projects = {};
+  for (const [id, entry] of Object.entries(src.projects || {})) {
+    if (!PROJECT_ID.test(id)) throw new Error(`Invalid project id: ${id}`);
+    const video = cleanSection(entry?.video, VIDEO_FIELDS);
+    const image = cleanSection(entry?.image, IMAGE_FIELDS);
+    if (Object.keys(video).length || Object.keys(image).length) projects[id] = { video, image };
+  }
+  return { defaults, projects };
+}
+
+export function readSettings() {
+  if (!fs.existsSync(SETTINGS_FILE)) return normalizeSettings({});
+  let parsed;
+  try { parsed = JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8')); }
+  catch { throw new Error(`settings.json is not valid JSON: ${SETTINGS_FILE}`); }
+  return normalizeSettings(parsed);
+}
+
+export function saveSettings(input) {
+  const settings = normalizeSettings(input);
+  const tmp = SETTINGS_FILE + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(settings, null, 2) + '\n');
+  fs.renameSync(tmp, SETTINGS_FILE);
+  return settings;
+}
+
+export function effectiveSettings(settings, project) {
+  const override = Object.hasOwn(settings.projects, project) ? settings.projects[project] : {};
+  return {
+    video: { ...settings.defaults.video, ...override.video },
+    image: { ...settings.defaults.image, ...override.image }
+  };
+}
+
+// Project folders are the ones under projects/ that have an index.html.
+export function listProjects() {
+  const dir = path.join(ROOT, 'projects');
+  return fs.readdirSync(dir, { withFileTypes: true })
+    .filter(entry => entry.isDirectory() && PROJECT_ID.test(entry.name) && fs.existsSync(path.join(dir, entry.name, 'index.html')))
+    .map(entry => entry.name)
+    .sort();
+}

@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10131b">
+  <title>Story Studio — Flow settings</title>
+  <link rel="stylesheet" href="../../platform/platform.css">
+  <style>
+    .settings { padding: 40px 0 60px; }
+    .settings h1 { margin: 0 0 10px; font-size: 30px; letter-spacing: -.04em; }
+    .lede { max-width: 620px; margin: 0 0 26px; color: #aaaab7; font-size: 13px; line-height: 1.7; }
+    .panel { margin-bottom: 16px; padding: 20px; border: 1px solid #343543; border-radius: 13px; background: #191a23; }
+    .panel h2 { margin: 0 0 4px; font-size: 17px; letter-spacing: -.02em; }
+    .panel h3 { margin: 20px 0 10px; color: #b6a2ff; font-size: 10px; letter-spacing: .17em; }
+    .panel > p { margin: 0 0 14px; color: #9c99aa; font-size: 12px; line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .field { display: flex; flex-direction: column; gap: 6px; color: #c9c7d3; font-size: 11px; font-weight: 600; }
+    .field select, .field input { width: 100%; padding: 9px 10px; border: 1px solid #353544; border-radius: 9px; color: #f3f2f0; background: #101119; font: inherit; font-size: 13px; }
+    .field input::placeholder { color: #75738a; }
+    .field select:focus-visible, .field input:focus-visible, button:focus-visible { outline: 2px solid #c1acff; outline-offset: 2px; }
+    .actions { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+    button { padding: 9px 16px; border: 1px solid #4a4860; border-radius: 9px; color: #f3f2f0; background: #2a2838; font: inherit; font-size: 13px; font-weight: 650; cursor: pointer; }
+    button.primary { border-color: #8a72e0; background: #6d52c9; }
+    button:disabled { opacity: .45; cursor: default; }
+    .status { color: #9c99aa; font-size: 12px; line-height: 1.5; }
+    .status.ok { color: #8cdda9; }
+    .status.error { color: #ff9c94; }
+    .note { margin-top: 18px; color: #7f7e8d; font-size: 11px; line-height: 1.6; }
+    @media (max-width: 640px) { .grid, .grid.two { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="../../index.html" aria-label="Story Studio home">
+      <span class="brand-mark" aria-hidden="true">S</span>
+      <span>STORY<span class="brand-light">STUDIO</span></span>
+    </a>
+    <span class="topbar-note">Flow automation settings</span>
+  </header>
+
+  <main>
+    <section class="settings">
+      <p class="eyebrow">GOOGLE FLOW</p>
+      <h1>Generation defaults</h1>
+      <p class="lede">Choose the Flow models and formats each project uses. Set defaults for all projects, then override any project that needs something different. A project field left on "Use default" follows the defaults.</p>
+
+      <form id="form" class="panel" novalidate>
+        <div class="field" style="margin-bottom:16px">
+          <label for="scope">Editing</label>
+          <select id="scope"></select>
+        </div>
+
+        <h2 id="scope-title">Defaults for all projects</h2>
+        <p id="scope-note">These apply to every project that has no override.</p>
+
+        <h3>VIDEO</h3>
+        <div class="grid">
+          <div class="field"><label for="video-model">Model</label><select id="video-model"></select></div>
+          <div class="field"><label for="video-aspect">Aspect ratio</label><select id="video-aspect"></select></div>
+          <div class="field"><label for="video-duration">Duration</label><select id="video-duration"></select></div>
+        </div>
+
+        <h3>IMAGE</h3>
+        <div class="grid two">
+          <div class="field"><label for="image-model">Model name</label><input id="image-model" type="text" maxlength="80" autocomplete="off"></div>
+          <div class="field"><label for="image-aspect">Aspect ratio</label><select id="image-aspect"></select></div>
+        </div>
+
+        <div class="actions">
+          <button type="submit" class="primary">Save settings</button>
+          <button type="button" id="reset">Reset this project to defaults</button>
+          <span id="status" class="status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+
+      <p class="note">Saved to tools/flow/settings.json. The generator reads it on every request, so changes apply right away. To start the generator, double-click <code>Start Story Studio.vbs</code> in the aiprojects folder and open Flow settings from the studio.</p>
+    </section>
+  </main>
+
+  <script src="settings.js"></script>
+</body>
+</html>

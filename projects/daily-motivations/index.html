@@ -211,18 +211,28 @@ $("#nx").onclick=()=>{
   copy(buildPrompt(i),"Day "+(i+1)+" prompt copied ✓");
   const el=$("#v"+i);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
 };
-$("#ar").onchange=e=>{S.ar=e.target.value;save();renderList()};
+$("#ar").onchange=e=>{S.ar=e.target.value;S.picked=true;save();renderList()};
 $("#model").value=S.model;$("#dur").value=S.dur;
-$("#model").onchange=e=>{S.model=e.target.value;save()};
-$("#dur").onchange=e=>{S.dur=e.target.value;save()};
+$("#model").onchange=e=>{S.model=e.target.value;S.picked=true;save()};
+$("#dur").onchange=e=>{S.dur=e.target.value;S.picked=true;save()};
 const GEN_API="http://127.0.0.1:8787";
 const isFile=location.protocol==="file:";
+// Uses the Flow defaults from tools/flow/settings.json until this page's model, aspect or duration is changed.
+async function applyFlowDefaults(){
+  if(isFile||S.picked)return;
+  try{
+    const r=await fetch("/api/flow-settings?project=daily-motivations");const j=await r.json();
+    if(!r.ok||!j.ok)return;
+    S.model=j.effective.video.model;S.ar=j.effective.video.aspect;S.dur=j.effective.video.duration;save();
+    $("#model").value=S.model;$("#dur").value=S.dur;$("#ar").value=S.ar;renderList();progress();
+  }catch(e){}
+}
 function setGen(i,msg){GEN[i]=msg;const el=$("#g"+i);if(el)el.textContent=msg}
 async function checkApi(){
   const el=$("#api");
   if(isFile){el.textContent="Generator: open via "+GEN_API+"/projects/daily-motivations/";return}
   try{const r=await fetch("/api/health");if(!r.ok)throw new Error();el.textContent="Generator: online"}
-  catch(e){el.textContent="Generator: offline (run npm start in aiprojects)"}
+  catch(e){el.textContent="Generator: offline (double-click Start Story Studio.vbs in aiprojects)"}
 }
 async function genVideo(i){
   if(isFile){toast("Open "+GEN_API+"/projects/daily-motivations/ to generate");return}
@@ -230,7 +240,7 @@ async function genVideo(i){
   if(btn)btn.disabled=true;
   setGen(i,"Generating in Flow… this can take several minutes. Keep the Flow Chrome window open.");
   try{
-    const r=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({day:i+1,prompt:buildPrompt(i),model:S.model,aspect:S.ar,duration:S.dur})});
+    const r=await fetch("/api/generate",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({project:"daily-motivations",day:i+1,prompt:buildPrompt(i),model:S.model,aspect:S.ar,duration:S.dur})});
     const j=await r.json();
     if(!r.ok||!j.ok)throw new Error(j.error||"Generation failed");
     setGen(i,"Saved to "+j.file);
@@ -239,6 +249,7 @@ async function genVideo(i){
   finally{if(btn)btn.disabled=false}
 }
 checkApi();
+applyFlowDefaults();
 $("#dl").onclick=()=>{
   const txt=VIDEOS.map((v,i)=>"=== DAY "+(i+1)+" ===\nNepali line: "+v.q+"\nMeaning: "+v.en+"\n\nCOMPLETE FLOW VIDEO + VOICE-OVER PROMPT:\n"+buildPrompt(i)+"\n\nPOST CAPTION:\n"+buildCaption(i)+"\n").join("\n\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="daily-motivations-prompts.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
@@ -249,7 +260,7 @@ $("#flow").innerHTML=`
 <h2>How each video gets made</h2>
 <div class="note">Each video is one complete 10-second Flow generation: the cinematic picture, Nepali motivational voice-over, music, and sound effects are all requested in the same prompt. No separate voice tool or editing step is needed. The prompt keeps Devanagari text out of the picture to avoid garbled on-screen writing.</div>
 <ol>
-<li><b>Generate the finished video.</b> Pick the Model (Omni 1.1 Flash by default) and Length (10s), and the Shape (9:16 for Reels/Shorts). Then tap <i>Generate video</i> on a day. This needs the local generator running: open a terminal in <code>aiprojects</code>, run <code>npm start</code>, and open <code>http://127.0.0.1:8787/projects/daily-motivations/</code>. The MP4 is saved to <code>projects/daily-motivations/videos/</code>. Manual alternative: tap <i>Copy Flow prompt</i> and paste it into Flow exactly as copied. The prompt includes that video's Nepali voice-over script and audio directions.</li>
+<li><b>Generate the finished video.</b> Pick the Model (Omni 1.1 Flash by default) and Length (10s), and the Shape (9:16 for Reels/Shorts). Then tap <i>Generate video</i> on a day. First, double-click <code>Start Story Studio.vbs</code> in the <code>aiprojects</code> folder and open Daily Motivations from the studio. The MP4 is saved to <code>projects/daily-motivations/videos/</code>. Manual alternative: tap <i>Copy Flow prompt</i> and paste it into Flow exactly as copied. The prompt includes that video's Nepali voice-over script and audio directions.</li>
 <li><b>Judge the first second.</b> If frame 1 would not stop your thumb mid-scroll, regenerate. Each take differs, so keep the best of 2 or 3.</li>
 <li><b>Check the generated audio.</b> Make sure the Nepali line is spoken clearly and the voice sits above the music. If the generator omits or garbles it, regenerate with the same complete prompt.</li>
 <li><b>Post the finished clip.</b> No separate editing step is required. Use <i>Copy post caption</i> for the social post, and tick <i>Made in Flow</i> to track progress.</li>

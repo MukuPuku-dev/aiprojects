@@ -57,6 +57,8 @@ a { color: inherit; }
 
 .brand-light { color: #a9a7b3; font-weight: 500; }
 .topbar-note { color: var(--muted); font-size: 12px; }
+.topbar-link { color: #c1acff; font-size: 12px; font-weight: 650; text-decoration: none; }
+.topbar-link:hover { text-decoration: underline; text-underline-offset: 4px; }
 
 main { max-width: 1120px; margin: auto; padding: 0 24px; }
 .hero { padding: 76px 0 48px; }

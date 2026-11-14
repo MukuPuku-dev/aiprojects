@@ -14,6 +14,7 @@
       <span>STORY<span class="brand-light">STUDIO</span></span>
     </a>
     <span class="topbar-note">AI-assisted video project workspaces</span>
+    <a class="topbar-link" href="tools/flow/settings.html">Flow settings</a>
   </header>
 
   <main>
@@ -21,6 +22,7 @@
       <p class="eyebrow">YOUR CREATIVE WORKSPACE</p>
       <h1 id="welcome-title">Every story,<br><span>one studio.</span></h1>
       <p class="hero-copy">Keep each production's clips, storyboards, prompts, and progress in its own project workspace.</p>
+      <p class="hero-copy" id="local-launch-note" hidden>To use Flow automation, double-click <strong>Start Story Studio.vbs</strong> in the aiprojects folder. It starts the generator and opens the studio for you.</p>
       <div class="hero-meta"><span class="live-dot" aria-hidden="true"></span><span id="project-count">Loading projects…</span></div>
     </section>
 
@@ -53,5 +55,6 @@
 
   <script src="platform/projects.js"></script>
   <script src="platform/platform.js"></script>
+  <script>if (location.protocol === "file:") document.getElementById("local-launch-note").hidden = false;</script>
 </body>
 </html>

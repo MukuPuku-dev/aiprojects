@@ -3,13 +3,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { generateVideo } from './flow-video.mjs';
+import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings } from './flow-settings.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
 const PORT = Number(process.env.AIPROJECTS_PORT || 8787);
-const MODELS = ['Omni 1.1 Flash', 'Omni 1.2 Flash', 'Veo 3.1 - Lite', 'Veo 3.1 - Fast', 'Veo 3.1 - Quality'];
-const DURATIONS = ['4s', '6s', '8s', '10s'];
-const ASPECTS = ['9:16', '16:9'];
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp4': 'video/mp4' };
 
 let queue = Promise.resolve();
@@ -32,11 +30,12 @@ function validate(body) {
   if (!Number.isInteger(day) || day < 1 || day > 365) throw new Error('day must be an integer from 1 to 365.');
   if (typeof body.prompt !== 'string' || body.prompt.trim().length < 20) throw new Error('prompt is required.');
   const project = body.project || 'daily-motivations';
-  if (!/^[a-z0-9-]+$/.test(project)) throw new Error('project must use lowercase letters, digits and dashes.');
-  const model = body.model || MODELS[0];
-  const aspect = body.aspect || '9:16';
-  const duration = body.duration || '10s';
-  if (!MODELS.includes(model)) throw new Error('Unknown model: ' + model);
+  if (!PROJECT_ID.test(project)) throw new Error('project must use lowercase letters, digits and dashes.');
+  const defaults = effectiveSettings(readSettings(), project).video;
+  const model = body.model || defaults.model;
+  const aspect = body.aspect || defaults.aspect;
+  const duration = body.duration || defaults.duration;
+  if (!VIDEO_MODELS.includes(model)) throw new Error('Unknown model: ' + model);
   if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
   if (!DURATIONS.includes(duration)) throw new Error('Unknown duration: ' + duration);
   const outFile = path.join(ROOT, 'projects', project, 'videos', `day-${String(day).padStart(2, '0')}.mp4`);
@@ -69,9 +68,33 @@ function serveStatic(req, res, pathname) {
   fs.createReadStream(file).pipe(res);
 }
 
+async function handleSettings(req, res, url) {
+  try {
+    if (req.method === 'GET') {
+      const settings = readSettings();
+      const body = { ok: true, settings, options: FLOW_OPTIONS, projects: listProjects() };
+      const project = url.searchParams.get('project');
+      if (project) {
+        if (!PROJECT_ID.test(project)) throw new Error('project must use lowercase letters, digits and dashes.');
+        body.project = project;
+        body.effective = effectiveSettings(settings, project);
+      }
+      return send(res, 200, body);
+    }
+    if (req.method === 'PUT') {
+      const settings = saveSettings(await readBody(req));
+      return send(res, 200, { ok: true, settings });
+    }
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+  send(res, 405, { ok: false, error: 'Use GET or PUT.' });
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
-  if (url.pathname === '/api/health') return send(res, 200, { ok: true, models: MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/flow-settings') return handleSettings(req, res, url);
   if (url.pathname === '/api/generate') {
     if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
     return handleGenerate(req, res);
