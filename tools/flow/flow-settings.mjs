@@ -12,11 +12,27 @@ export const DURATIONS = ['4s', '6s', '8s', '10s'];
 export const ASPECTS = ['9:16', '16:9'];
 export const FLOW_OPTIONS = { videoModels: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS };
 
+export const DEFAULT_TELEGRAM_BOT_TOKEN = 'PASTE_YOUR_BOTFATHER_TOKEN_HERE';
+export const DEFAULT_TELEGRAM_CHAT_ID = '7223190114';
+
 // An empty image model means "keep whatever model Flow currently has selected".
 const DEFAULTS = {
   video: { model: VIDEO_MODELS[0], aspect: '9:16', duration: '10s' },
-  image: { model: '', aspect: '9:16' }
+  image: { model: '', aspect: '9:16' },
+  tiktok: { autoPost: false },
+  facebook: { autoPost: false },
+  telegram: { autoPost: true, botToken: DEFAULT_TELEGRAM_BOT_TOKEN, chatId: DEFAULT_TELEGRAM_CHAT_ID },
+  characters: { consistency: false }
 };
+
+function cleanBooleanSection(input, key) {
+  const src = input && typeof input === 'object' ? input : {};
+  const raw = src[key];
+  if (raw === undefined || raw === null || raw === '') return {};
+  if (typeof raw === 'boolean') return { [key]: raw };
+  if (raw === 'true' || raw === 'false') return { [key]: raw === 'true' };
+  throw new Error(`${key} must be true or false.`);
+}
 
 const choice = (allowed, label) => value => {
   if (!allowed.includes(value)) throw new Error(`Unknown ${label}: ${value}`);
@@ -33,6 +49,16 @@ const IMAGE_FIELDS = {
     return value;
   },
   aspect: choice(ASPECTS, 'image aspect')
+};
+const TELEGRAM_FIELDS = {
+  botToken: value => {
+    if (value.length > 200) throw new Error('Telegram bot token must be 200 characters or fewer.');
+    return value;
+  },
+  chatId: value => {
+    if (value.length > 80) throw new Error('Telegram chat ID must be 80 characters or fewer.');
+    return value;
+  }
 };
 const FLOW_PROJECT_FIELD = {
   flowProject: value => {
@@ -58,14 +84,38 @@ export function normalizeSettings(input) {
   const src = input && typeof input === 'object' ? input : {};
   const defaults = {
     video: { ...DEFAULTS.video, ...cleanSection(src.defaults?.video, VIDEO_FIELDS) },
-    image: { ...DEFAULTS.image, ...cleanSection(src.defaults?.image, IMAGE_FIELDS) }
+    image: { ...DEFAULTS.image, ...cleanSection(src.defaults?.image, IMAGE_FIELDS) },
+    tiktok: { ...DEFAULTS.tiktok, ...cleanBooleanSection(src.defaults?.tiktok, 'autoPost') },
+    facebook: { ...DEFAULTS.facebook, ...cleanBooleanSection(src.defaults?.facebook, 'autoPost') },
+    telegram: {
+      ...DEFAULTS.telegram,
+      ...cleanBooleanSection(src.defaults?.telegram, 'autoPost'),
+      ...cleanSection(src.defaults?.telegram, TELEGRAM_FIELDS)
+    },
+    characters: { ...DEFAULTS.characters, ...cleanBooleanSection(src.defaults?.characters, 'consistency') }
   };
   const projects = {};
   for (const [id, entry] of Object.entries(src.projects || {})) {
     if (!PROJECT_ID.test(id)) throw new Error(`Invalid project id: ${id}`);
     const video = cleanSection(entry?.video, VIDEO_FIELDS);
     const image = cleanSection(entry?.image, IMAGE_FIELDS);
-    if (Object.keys(video).length || Object.keys(image).length) projects[id] = { video, image };
+    const tiktok = cleanBooleanSection(entry?.tiktok, 'autoPost');
+    const facebook = cleanBooleanSection(entry?.facebook, 'autoPost');
+    const telegram = {
+      ...cleanBooleanSection(entry?.telegram, 'autoPost'),
+      ...cleanSection(entry?.telegram, TELEGRAM_FIELDS)
+    };
+    const characters = cleanBooleanSection(entry?.characters, 'consistency');
+    if (Object.keys(video).length || Object.keys(image).length || Object.keys(tiktok).length || Object.keys(facebook).length || Object.keys(telegram).length || Object.keys(characters).length) {
+      projects[id] = {
+        video,
+        image,
+        ...(Object.keys(tiktok).length ? { tiktok } : {}),
+        ...(Object.keys(facebook).length ? { facebook } : {}),
+        ...(Object.keys(telegram).length ? { telegram } : {}),
+        ...(Object.keys(characters).length ? { characters } : {})
+      };
+    }
   }
   return { defaults, projects };
 }
@@ -90,7 +140,11 @@ export function effectiveSettings(settings, project) {
   const override = Object.hasOwn(settings.projects, project) ? settings.projects[project] : {};
   return {
     video: { ...settings.defaults.video, ...override.video },
-    image: { ...settings.defaults.image, ...override.image }
+    image: { ...settings.defaults.image, ...override.image },
+    tiktok: { ...settings.defaults.tiktok, ...override.tiktok },
+    facebook: { ...settings.defaults.facebook, ...override.facebook },
+    telegram: { ...settings.defaults.telegram, ...override.telegram },
+    characters: { ...settings.defaults.characters, ...override.characters }
   };
 }
 

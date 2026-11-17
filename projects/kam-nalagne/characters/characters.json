@@ -1,0 +1,26 @@
+{
+  "S": {
+    "code": "S",
+    "name": "Suman",
+    "refPrompt": "Character reference: full-body front three-quarter view of a lean 25-year-old Nepali man, sun-weathered face, short black hair, pale-blue shirt, dark brown trousers, worn sandals, cloth shoulder bag, quiet observant expression. Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.",
+    "updatedAt": "2026-11-16T13:14:06.887Z"
+  },
+  "D": {
+    "code": "D",
+    "name": "Dhaniram",
+    "refPrompt": "Character reference: full-body front three-quarter view of a 65-year-old Nepali farmer, weathered face, grey stubble, old topi, faded cotton clothes, wooden stick. Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.",
+    "updatedAt": "2026-11-16T13:14:20.824Z"
+  },
+  "F": {
+    "code": "F",
+    "name": "Father",
+    "refPrompt": "Character reference: full-body front three-quarter view of a 50-year-old Nepali man (Suman's late father), grey-streaked hair, thin moustache, faded brown jacket with rolled sleeves, honest intense eyes, holding a small notebook. Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.",
+    "updatedAt": "2026-11-16T14:17:26.248Z"
+  },
+  "A": {
+    "code": "A",
+    "name": "Saraswati",
+    "refPrompt": "Character reference: full-body front three-quarter view of a 50-year-old Nepali woman, green blouse and dark red shawl, hardworking hands, tired caring eyes. Plain pale background, entire body visible, natural light, photorealistic, authentic Nepali village drama costume, no text.",
+    "updatedAt": "2026-11-16T14:25:37.958Z"
+  }
+}

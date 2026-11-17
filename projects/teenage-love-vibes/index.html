@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Teenage Love Vibes &amp; Feelings – Silent Cinema Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#120f14;--card:#1c1720;--ink:#f5eff7;--mut:#b5a8bd;--acc:#ff7b89;
+  --gold:#f2c66d;--ok:#62d99a;--line:#362c3d;
+  --ne:"Noto Sans Devanagari","Mukta","Nirmala UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+header{position:sticky;top:0;background:#120f14ee;backdrop-filter:blur(8px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
+h1{margin:0;font-size:19px}
+h1 .ne{font-family:var(--ne);color:var(--acc);font-weight:700}
+h2{margin:18px 0 8px;font-size:17px;color:var(--gold)}
+h3{margin:14px 0 6px;font-size:15px;color:var(--acc)}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--gold));width:0;transition:width .3s}
+nav,.filters,.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:4px}
+button,select{background:#292130;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+button.p{background:var(--acc);color:#260910;border-color:var(--acc);font-weight:700}
+button.on{border-color:var(--acc);color:var(--acc)}
+button.tt,button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button.fb,button[data-act="facebook"]{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button.fb:hover,button[data-act="facebook"]:hover{background:#166fe5;border-color:#166fe5}
+button.tg,button[data-act="telegram"]{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button.tg:hover,button[data-act="telegram"]:hover{background:#1d8ec4;border-color:#1d8ec4}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+nav a{color:var(--gold);padding:7px 4px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+main{max-width:960px;margin:0 auto;padding:14px}
+.hide{display:none}
+.filters{margin:6px 0 12px}
+.filters button{font-size:13px;padding:5px 11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;scroll-margin-top:155px}
+.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.card.done{opacity:.74;border-color:#2e5a44}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.clip-badge{background:var(--acc);color:#260910;font-weight:800;border-radius:7px;padding:1px 9px;font-size:13px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--mut)}
+.top label{margin-left:auto;font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center;cursor:pointer}
+.title{font-size:18px;font-weight:700;margin:4px 0 2px;color:#fff}
+.arc-line{color:var(--gold);font-size:13px;font-style:italic;margin:0 0 8px}
+.scene{font-size:13.5px;margin:6px 0 8px}
+.scene b,.mood b{color:var(--acc)}
+.mood{font-size:12.5px;color:var(--mut);background:#16111a;border-left:3px solid var(--gold);padding:6px 10px;border-radius:0 8px 8px 0;margin:6px 0 8px}
+.story-box{background:#151118;border:1px solid #352b3d;border-left:3px solid var(--acc);border-radius:0 10px 10px 0;padding:8px 11px;font-size:13px;line-height:1.62;color:#ece3f0;margin:6px 0 10px}
+.story-box summary{color:var(--acc);font-weight:700;font-size:12.5px}
+.story-text{margin-top:6px;white-space:pre-line}
+.gen{font-size:13px;min-height:1em;margin-top:6px;color:var(--gold)}
+details{margin-top:10px}
+summary{cursor:pointer;color:var(--mut);font-size:13px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0c090e;border:1px solid var(--line);border-radius:10px;padding:11px;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
+.note{border-left:3px solid var(--acc);padding:8px 12px;background:#1a131c;border-radius:0 8px 8px 0;margin:10px 0}
+.grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.info-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+ul,ol{padding-left:20px}
+li{margin:5px 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#062014;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+#toast.show{opacity:1}
+@media(max-width:600px){header{position:relative}.title{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>💔 TEENAGE LOVE VIBES &amp; FEELINGS · <span class="ne">मौन प्रेम कथा</span> <span class="sub" id="st"></span></h1>
+  <div class="sub">100% Dialogueless &amp; Narrationless · 5 Emotional Acts · 30 Clips × 10s · Crush → Love → Breakup</div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav>
+    <button class="p" id="nx">Copy NEXT prompt</button>
+    <button data-t="clips" class="on">Clips (30)</button>
+    <button data-t="cast">Characters &amp; Locations</button>
+    <button data-t="rules">Visual-Only Rules &amp; Workflow</button>
+    <button id="dl">Download all prompts (.txt)</button>
+    <a href="../../index.html">← All projects</a>
+    <label class="sub">Shape <select id="ar"><option value="9:16">9:16 vertical</option><option value="16:9">16:9 wide</option></select></label>
+    <label class="sub">Model <select id="model"><option>Omni 1.1 Flash</option><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></label>
+    <label class="sub">Length <select id="dur"><option>10s</option><option>8s</option><option>6s</option><option>4s</option></select></label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send video &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Workspace setting: ensure & attach required character images in Flow"><input type="checkbox" id="charConsistencyToggle"> Character consistency</label>
+    <span class="sub" id="api"></span>
+  </nav>
+</header>
+
+<main>
+  <section id="clips">
+    <div class="filters" id="filters"></div>
+    <div id="list"></div>
+  </section>
+  <section id="cast" class="hide"></section>
+  <section id="rules" class="hide"></section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
+<script src="flow-data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PROJECT_ID = "teenage-love-vibes";
+const KEY = "teenage-love-vibes-v1";
+const JOB_KEY = "teen_love_flow_job";
+const AUTO_POST_KEY = "story_studio_auto_post_tiktok";
+const projectStorage = window.StoryStudioStorage?.createProjectStorage?.({ projectId: PROJECT_ID });
+
+const ACTS = TEEN_LOVE_ACTS;
+const CHARS = TEEN_LOVE_CHARS;
+const LOCS = TEEN_LOVE_LOCS;
+const STYLE = TEEN_LOVE_STYLE;
+const SILENT_RULE = TEEN_LOVE_SILENT_RULE;
+const CLIPS = TEEN_LOVE_CLIPS;
+
+let S = { done:{}, ar:"9:16", model:"Omni 1.1 Flash", dur:"10s", filter:"all", cur:0, tab:"clips" };
+const GEN = {};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+const pushCloud = () => {
+  const checked = { ...(S.done || {}) };
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
+    totalClips: CLIPS.length,
+    completedCount: CLIPS.filter((_, i) => checked[i + 1]).length,
+    checked,
+    state: S
+  });
+};
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} pushCloud(); };
+
+function syncFailedStudioJob() {
+  try {
+    const raw = localStorage.getItem(JOB_KEY);
+    if (!raw) return;
+    const job = JSON.parse(raw);
+    if (job && ["failed", "unknown"].includes(job.status) && !job.unchecked) {
+      delete S.done[job.day];
+      save();
+      localStorage.setItem(JOB_KEY, JSON.stringify({ ...job, unchecked: true }));
+    }
+  } catch {}
+}
+syncFailedStudioJob();
+
+let tt;
+function toast(msg) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(tt);
+  tt = setTimeout(() => el.classList.remove("show"), 1700);
+}
+
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.opacity = "0";
+    document.body.append(a); a.select();
+    try { document.execCommand("copy"); } catch {}
+    a.remove();
+  }
+  toast(msg || "Copied ✓");
+}
+
+function actInfo(id) { return ACTS.find(a => a.id === id) || ACTS[1]; }
+
+function buildPrompt(i) {
+  return teenLovePromptFor(i, S.ar, S.dur);
+}
+
+function renderFilters() {
+  $("#filters").innerHTML = ACTS.map(a =>
+    `<button data-f="${a.id}" class="${S.filter === a.id ? "on" : ""}">${esc(a.label)}</button>`
+  ).join("");
+}
+
+function renderList() {
+  $("#list").innerHTML = CLIPS.map((c, i) => ({ c, i }))
+    .filter(({ c }) => S.filter === "all" || c.act === S.filter)
+    .map(({ c, i }) => {
+      const done = !!S.done[i + 1];
+      const act = actInfo(c.act);
+      const firstPara = (c.cap || "").split(/\n\n/)[0] || "";
+      const restParas = (c.cap || "").split(/\n\n/).slice(1).join("\n\n");
+      return `<article class="card ${done ? "done" : ""} ${S.cur === i ? "cur" : ""}" id="v${i}" data-i="${i}">
+        <div class="top">
+          <span class="clip-badge">Clip ${i + 1}</span>
+          <span class="chip">${esc(act.label)}</span>
+          <span class="chip">Silent · No Dialogue</span>
+          <label><input type="checkbox" data-done="${i}" ${done ? "checked" : ""}> Made in Flow</label>
+        </div>
+        <div class="title">${esc(c.title)}</div>
+        <p class="arc-line">${esc(c.beat)}</p>
+        <p class="scene"><b>Visual Scene:</b> ${esc(c.shot)}</p>
+        <div class="mood"><b>Foley &amp; Music Mood:</b> ${esc(c.mood.replace(/^Sound:\s*/i,""))}</div>
+        <div class="story-box">
+          <div><b>कथाको निरन्तरता (Story Caption):</b> ${esc(firstPara)}</div>
+          ${restParas ? `<details><summary>पुरा मन छुने कथा पढ्नुहोस् (Read full story caption)</summary><div class="story-text">${esc(restParas)}</div></details>` : ""}
+        </div>
+        <div class="btns">
+          <button class="p" data-act="gen" data-i="${i}">Generate video</button>
+          <button data-act="tiktok" data-i="${i}" title="Post clip to TikTok">♪ Post TikTok</button>
+          <button data-act="facebook" data-i="${i}" title="Post clip to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button>
+          <button data-act="telegram" data-i="${i}" title="Send clip &amp; caption to Telegram">✈ Send Telegram</button>
+          <button data-act="prompt" data-i="${i}">Copy Flow prompt</button>
+          <button data-act="mood" data-i="${i}">Copy music/mood note</button>
+          <button data-act="cap" data-i="${i}">Copy Story Caption</button>
+        </div>
+        <div class="gen" id="g${i}">${esc(GEN[i] || "")}</div>
+        <details><summary>Show complete dialogueless Flow prompt</summary><pre>${esc(buildPrompt(i))}</pre></details>
+      </article>`;
+    }).join("");
+}
+
+function progress() {
+  const n = Object.keys(S.done).filter(k => S.done[k]).length;
+  const secs = parseInt(S.dur, 10) || 10;
+  $("#pb").style.width = (n / CLIPS.length * 100) + "%";
+  $("#st").textContent = `${n}/${CLIPS.length} made · ${n * secs}s of silent cinema`;
+}
+
+function nextIndex() {
+  for (let i = 0; i < CLIPS.length; i++) if (!S.done[i + 1]) return i;
+  return -1;
+}
+
+let castAssets = {};
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const im = new Image(), u = URL.createObjectURL(file);
+    im.onload = () => {
+      try {
+        const w = Math.min(1024, im.width || 1024), h = Math.round((im.height || w) * w / (im.width || w));
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(im, 0, 0, w, h);
+        resolve(c.toDataURL("image/jpeg", 0.85));
+      } catch (err) { reject(err); }
+      finally { URL.revokeObjectURL(u); }
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); reject(new Error("Invalid image")); };
+    im.src = u;
+  });
+}
+async function loadCastAssets() {
+  if (!projectStorage) return;
+  const keys = ["char-AARAV", "char-AANYA", ...Object.keys(LOCS).map(k => "loc-" + k)];
+  await projectStorage.listAssets(keys).catch(() => {});
+  const res = await projectStorage.getAssets(keys).catch(() => ({ assets: {} }));
+  castAssets = res?.assets || {};
+  renderCastAssetsUi();
+}
+function renderCastAssetsUi() {
+  const keys = ["char-AARAV", "char-AANYA", ...Object.keys(LOCS).map(k => "loc-" + k)];
+  keys.forEach(key => {
+    const slot = document.getElementById("tl-img-" + key);
+    if (!slot) return;
+    const url = castAssets[key];
+    slot.innerHTML = url
+      ? `<img src="${url}" alt="${esc(key)}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px">`
+      : `<div class="sub" style="margin-top:6px;padding:10px;border:1px dashed var(--line);border-radius:8px">No cloud reference image yet · Upload below to lock visual continuity</div>`;
+  });
+}
+async function saveCastAsset(key, file) {
+  if (!projectStorage || !file) return;
+  try {
+    const dataUrl = await fileToDataUrl(file);
+    await projectStorage.saveAsset(key, dataUrl);
+    castAssets[key] = dataUrl;
+    renderCastAssetsUi();
+    toast("Saved character/location reference to cloud ✓");
+  } catch (err) {
+    toast(err.message || "Could not save reference image");
+  }
+}
+
+function renderCastAndRules() {
+  const charCards = [
+    { key: "char-AARAV", title: "AARAV (Main Lead Boy)", desc: CHARS.AARAV },
+    { key: "char-AANYA", title: "AANYA (Main Lead Girl)", desc: CHARS.AANYA }
+  ];
+  $("#cast").innerHTML = `
+    <div class="grid-two">
+      <div class="info-box"><h2>Main Characters (Cloud Reference Vault)</h2>
+        ${charCards.map(c => `
+          <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+            <p style="margin:0 0 6px"><b>${esc(c.title)}:</b> ${esc(c.desc)}</p>
+            <div class="btns">
+              <button type="button" data-copy-cast="${esc(c.desc)}">Copy Character Prompt</button>
+              <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:6px 9px;background:#22212a;border:1px solid var(--line);border-radius:8px">
+                Upload Ref Image <input type="file" accept="image/*" hidden data-cast-up="${esc(c.key)}">
+              </label>
+            </div>
+            <div id="tl-img-${esc(c.key)}"></div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="info-box"><h2>Recurring Locations (Cloud Synced)</h2>
+        ${Object.entries(LOCS).map(([k, v]) => `
+          <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+            <p style="margin:0 0 6px"><b>${esc(k)}:</b> ${esc(v)}</p>
+            <div class="btns">
+              <button type="button" data-copy-cast="${esc(v)}">Copy Location Prompt</button>
+              <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:6px 9px;background:#22212a;border:1px solid var(--line);border-radius:8px">
+                Upload Ref <input type="file" accept="image/*" hidden data-cast-up="loc-${esc(k)}">
+              </label>
+            </div>
+            <div id="tl-img-loc-${esc(k)}"></div>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+  $("#cast").onclick = e => {
+    const btn = e.target.closest("button[data-copy-cast]");
+    if (btn) copy(btn.dataset.copyCast, "Reference prompt copied ✓");
+  };
+  $("#cast").onchange = e => {
+    const inp = e.target.closest("input[data-cast-up]");
+    if (inp && inp.files?.[0]) saveCastAsset(inp.dataset.castUp, inp.files[0]);
+  };
+  renderCastAssetsUi();
+  $("#rules").innerHTML = `
+    <div class="info-box">
+      <h2>Visual-Only Storytelling Rules</h2>
+      <div class="note">${esc(SILENT_RULE)}</div>
+      <ol>
+        <li><b>Zero Speech, Zero Narration:</b> Every prompt explicitly forbids spoken dialogue, lip movement, singing, voice-over, subtitles, and text overlays.</li>
+        <li><b>Recurring Emotional Props:</b> The <i>pale-pink silk hair ribbon</i>, <i>silver wristwatch</i>, <i>wired white earbuds</i>, <i>folded paper boats</i>, and <i>origami ring</i> carry the story from Act I (Crush) to Act V (Letting Go).</li>
+        <li><b>Act-by-Act Color Journey:</b> Crush uses warm morning sunbeams → Falling uses glowing golden hour → Golden Love uses saturated sunset vibrancy → Breakup shifts to cold rain-blue → Healing resolves into soft sunrise amber.</li>
+        <li><b>Flow Generation:</b> Open Story Studio via <code>Start Story Studio.vbs</code>, select your Aspect/Model/Length above, and click <b>Generate video</b> on any clip. MP4s save to <code>projects/teenage-love-vibes/videos/</code>.</li>
+      </ol>
+      <h3>Shared Style Lock</h3><pre>${esc(STYLE)}</pre>
+    </div>`;
+}
+
+function showTab(t) {
+  S.tab = t;
+  ["clips", "cast", "rules"].forEach(id => $("#" + id).classList.toggle("hide", id !== t));
+  document.querySelectorAll("nav button[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (t === "cast") loadCastAssets();
+  save();
+}
+
+$("#list").addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const i = +b.dataset.i;
+  S.cur = i; save();
+  if (b.dataset.act === "gen") { genVideo(i); return; }
+  if (b.dataset.act === "tiktok" || b.dataset.act === "facebook" || b.dataset.act === "telegram") { postSocial(b.dataset.act, i); return; }
+  if (b.dataset.act === "prompt") copy(buildPrompt(i), `Clip ${i + 1} prompt copied ✓`);
+  if (b.dataset.act === "mood") copy(CLIPS[i].mood, "Music & mood note copied ✓");
+  if (b.dataset.act === "cap") copy(CLIPS[i].cap, "Post caption copied ✓");
+  document.querySelectorAll(".card.cur").forEach(el => el.classList.remove("cur"));
+  $("#v" + i)?.classList.add("cur");
+});
+
+$("#list").addEventListener("change", e => {
+  const c = e.target.closest("input[data-done]");
+  if (!c) return;
+  const i = +c.dataset.done;
+  if (c.checked) S.done[i + 1] = true; else delete S.done[i + 1];
+  save(); progress();
+  c.closest(".card").classList.toggle("done", c.checked);
+});
+
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest("button[data-f]");
+  if (!b) return;
+  S.filter = b.dataset.f; save(); renderFilters(); renderList();
+});
+
+document.querySelectorAll("nav button[data-t]").forEach(b => b.onclick = () => showTab(b.dataset.t));
+
+$("#nx").onclick = () => {
+  const i = nextIndex();
+  if (i < 0) { toast("All 30 clips are marked made 🎉"); return; }
+  S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
+  copy(buildPrompt(i), `Clip ${i + 1} prompt copied ✓`);
+  $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+$("#ar").onchange = e => { S.ar = e.target.value; S.picked = true; save(); renderList(); };
+$("#model").onchange = e => { S.model = e.target.value; S.picked = true; save(); };
+$("#dur").onchange = e => { S.dur = e.target.value; S.picked = true; save(); progress(); renderList(); };
+
+$("#dl").onclick = () => {
+  const txt = CLIPS.map((c, i) =>
+    `=== CLIP ${i + 1}: ${c.title} (${actInfo(c.act).label}) ===\n${c.beat}\n\nFLOW PROMPT (NO DIALOGUE / NO NARRATION):\n${buildPrompt(i)}\n\nPOST CAPTION:\n${c.cap}\n`
+  ).join("\n\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+  a.download = "teenage-love-vibes-prompts.txt";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+const isFile = location.protocol === "file:";
+function setGen(i, msg) { GEN[i] = msg; const el = $("#g" + i); if (el) el.textContent = msg; }
+
+async function checkApi() {
+  const el = $("#api");
+  if (isFile) { el.textContent = "Generator: open via http://127.0.0.1:8787/projects/teenage-love-vibes/"; return; }
+  try { const r = await fetch("/api/health"); if (!r.ok) throw new Error(); el.textContent = "Generator: online"; }
+  catch { el.textContent = "Generator: offline (double-click Start Story Studio.vbs)"; }
+}
+
+async function applyFlowDefaults() {
+  if (isFile) return;
+  try {
+    const r = await fetch("/api/flow-settings?project=teenage-love-vibes");
+    const j = await r.json();
+    if (!r.ok || !j.ok) return;
+    const ccToggle = $("#charConsistencyToggle");
+    if (ccToggle) ccToggle.checked = Boolean(j.effective?.characters?.consistency);
+    if (S.picked) return;
+    S.model = j.effective.video.model; S.ar = j.effective.video.aspect; S.dur = j.effective.video.duration;
+    save();
+    $("#model").value = S.model; $("#dur").value = S.dur; $("#ar").value = S.ar;
+    renderList(); progress();
+  } catch {}
+}
+
+$("#charConsistencyToggle")?.addEventListener("change", async e => {
+  if (isFile) return;
+  const enabled = Boolean(e.target.checked);
+  try {
+    const r = await fetch("/api/flow-settings");
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not load settings.");
+    const doc = j.settings;
+    doc.projects = doc.projects || {};
+    doc.projects[PROJECT_ID] = { ...(doc.projects[PROJECT_ID] || {}), characters: { consistency: enabled } };
+    const sr = await fetch("/api/flow-settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(doc)
+    });
+    const sj = await sr.json();
+    if (!sr.ok || !sj.ok) throw new Error(sj.error || "Could not save setting.");
+    toast(`Character consistency ${enabled ? "enabled" : "disabled"} ✓`);
+  } catch (err) {
+    e.target.checked = !enabled;
+    toast("Failed to save character consistency: " + err.message);
+  }
+});
+
+function socialContextFor(i) {
+  const item = CLIPS[i];
+  return `Dialogueless cinematic Nepali teenage love clip #${i + 1}: "${item.title}" (${item.beat}).\nVisual scene: ${item.shot}\nHeart-touching continuation story direction:\n${item.cap}`.slice(0, 4800);
+}
+
+async function postSocial(platform, i) {
+  if (isFile) { toast(`Open via http://127.0.0.1:8787 to post to ${platform}`); return; }
+  const label = platform === "facebook" ? "Facebook" : platform === "telegram" ? "Telegram" : "TikTok";
+  const btn = document.querySelector(`button[data-act="${platform}"][data-i="${i}"]`);
+  if (btn) btn.disabled = true;
+  try {
+    await window.StoryStudioSocial.postMedia({
+      platform,
+      projectId: PROJECT_ID,
+      day: i + 1,
+      context: socialContextFor(i),
+      label: `Clip ${i + 1}`,
+      onStatus: m => setGen(i, m)
+    });
+    setGen(i, `Posted to ${label} ✓`);
+    toast(`Clip ${i + 1} posted to ${label} ✓`);
+  } catch (err) {
+    setGen(i, `${label} failed: ${err.message}`);
+    toast(`${label} upload failed.`);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function genVideo(i) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787/projects/teenage-love-vibes/ to generate"); return; }
+  const btn = document.querySelector(`button[data-act="gen"][data-i="${i}"]`);
+  if (btn) btn.disabled = true;
+  setGen(i, "Generating in Flow… this can take several minutes. Keep the Flow Chrome window open.");
+  try {
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: "teenage-love-vibes",
+        day: i + 1,
+        prompt: buildPrompt(i),
+        model: S.model,
+        aspect: S.ar,
+        duration: S.dur,
+        characters: teenLoveCharactersFor(i)
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Generation failed");
+    setGen(i, "Saved to " + j.file);
+    S.done[i + 1] = true; save(); progress(); renderList();
+    loadCastAssets();
+    setGen(i, "Saved to " + j.file);
+    toast(`Clip ${i + 1} video saved ✓`);
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({
+      projectId: PROJECT_ID,
+      day: i + 1,
+      context: socialContextFor(i),
+      tiktokEnabled: Boolean($("#autoPostToggle")?.checked),
+      facebookEnabled: Boolean($("#autoPostFacebookToggle")?.checked),
+      telegramEnabled: Boolean($("#autoPostTelegramToggle")?.checked),
+      label: `Clip ${i + 1}`,
+      onStatus: m => setGen(i, m),
+      onToast: toast
+    });
+  } catch (err) {
+    setGen(i, "Failed: " + err.message);
+    toast("Generation failed. See the status line.");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+window.addEventListener("storage", e => {
+  if (e.key !== KEY && e.key !== JOB_KEY) return;
+  try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+  syncFailedStudioJob();
+  renderList(); progress();
+});
+
+$("#ar").value = S.ar; $("#model").value = S.model; $("#dur").value = S.dur;
+renderFilters(); renderList(); renderCastAndRules(); progress(); showTab(S.tab || "clips");
+checkApi(); applyFlowDefaults(); loadCastAssets();
+window.StoryStudioSocial?.initAutoPostToggles?.({
+  projectId: PROJECT_ID,
+  tiktokSelector: "#autoPostToggle",
+  facebookSelector: "#autoPostFacebookToggle",
+  onToast: toast
+});
+window.StoryStudioStorage?.seedDefaultCharacters?.();
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId: PROJECT_ID,
+  totalClips: CLIPS.length,
+  readLocal: () => ({ checked: { ...(S.done || {}) }, state: S, hasLocal: Object.keys(S.done || {}).length > 0, completedCount: CLIPS.filter((_, i) => S.done[i + 1]).length }),
+  applyMerged: (checked, mergedState) => {
+    S = Object.assign(S, mergedState || {}, { done: checked || {} });
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+    renderFilters(); renderList(); progress();
+  }
+});
+</script>
+</body>
+</html>

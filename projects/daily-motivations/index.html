@@ -39,6 +39,11 @@ pre{white-space:pre-wrap;word-break:break-word;background:#0f0c0b;border:1px sol
 .filters button{font-size:13px;padding:5px 10px}.filters .ne{font-family:var(--ne)}
 ol,ul{padding-left:20px}li{margin:4px 0}
 .note{border-left:3px solid var(--acc);padding:6px 12px;background:#1a1512;border-radius:0 8px 8px 0;margin:10px 0}
+button.tt,button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button.fb,button[data-act="facebook"]{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button.fb:hover,button[data-act="facebook"]:hover{background:#166fe5;border-color:#166fe5}
+button.tg,button[data-act="telegram"]{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button.tg:hover,button[data-act="telegram"]:hover{background:#1d8ec4;border-color:#1d8ec4}
 #toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#062014;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
 #toast.show{opacity:1}
 @media(max-width:560px){.q{font-size:19px}}
@@ -57,6 +62,9 @@ ol,ul{padding-left:20px}li{margin:4px 0}
 <label class="sub">Shape <select id="ar"><option value="9:16">9:16 vertical</option><option value="16:9">16:9 wide</option></select></label>
 <label class="sub">Model <select id="model"><option>Omni 1.1 Flash</option><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></label>
 <label class="sub">Length <select id="dur"><option>4s</option><option>6s</option><option>8s</option><option>10s</option></select></label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send video &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
 <span class="sub" id="api"></span>
 </nav>
 </header>
@@ -66,17 +74,26 @@ ol,ul{padding-left:20px}li{margin:4px 0}
 <section id="guide" class="hide"></section>
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
 <script src="flow-data.js"></script>
 <script>
 /* ---------- helpers ---------- */
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const DIG="०१२३४५६७८९";const neNum=n=>String(n).split("").map(d=>DIG[+d]).join("");
+const PROJECT_ID="daily-motivations";
 const KEY="dailymotivations-v1";
+const AUTO_POST_KEY="story_studio_auto_post_tiktok";
 let S={done:{},ar:"9:16",model:"Omni 1.1 Flash",dur:"10s",filter:"all",cur:0,tab:"vids"};
 const GEN={};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function pushCloud(){
+  const checked={...(S.done||{})};
+  const completedCount=VIDEOS.filter((_,i)=>checked[i+1]).length;
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID,{totalClips:VIDEOS.length,completedCount,checked,state:S});
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}pushCloud()}
 
 function buildPrompt(i){return motivationPromptFor(i,S.ar)}
 function buildCaption(i){const v=VIDEOS[i];const tags=["#प्रेरणा","#दैनिकप्रेरणा","#नेपाल","#NepaliMotivation","#Motivation"];if(v.t===5)tags.push("#लोकसेवा","#परीक्षातयारी");
@@ -99,7 +116,7 @@ function renderList(){
 <div class="q" lang="ne">${esc(v.q)}</div>
 <p class="en">${esc(v.en)}</p>
 <p class="scene"><b>Scene:</b> ${esc(v.scene)}</p>
-<div class="btns"><button class="p" data-act="gen" data-i="${i}">Generate video</button><button data-act="prompt" data-i="${i}">Copy Flow prompt</button>
+<div class="btns"><button class="p" data-act="gen" data-i="${i}">Generate video</button><button data-act="tiktok" data-i="${i}" title="Post clip to TikTok">♪ Post TikTok</button><button data-act="facebook" data-i="${i}" title="Post clip to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button><button data-act="telegram" data-i="${i}" title="Send clip &amp; caption to Telegram">✈ Send Telegram</button><button data-act="prompt" data-i="${i}">Copy Flow prompt</button>
 <button data-act="line" data-i="${i}">Copy Nepali line</button>
 <button data-act="cap" data-i="${i}">Copy post caption</button></div>
 <div class="gen" id="g${i}">${esc(GEN[i]||"")}</div>
@@ -111,6 +128,7 @@ function nextIndex(){for(let i=0;i<VIDEOS.length;i++)if(!S.done[i+1])return i;re
 $("#list").addEventListener("click",e=>{
   const b=e.target.closest("button[data-act]");if(!b)return;const i=+b.dataset.i;S.cur=i;save();
   if(b.dataset.act==="gen"){genVideo(i);return}
+  if(b.dataset.act==="tiktok"||b.dataset.act==="facebook"||b.dataset.act==="telegram"){postSocial(b.dataset.act,i);return}
   if(b.dataset.act==="prompt")copy(buildPrompt(i),"Flow prompt copied ✓");
   if(b.dataset.act==="line")copy(VIDEOS[i].q,"Nepali line copied ✓");
   if(b.dataset.act==="cap")copy(buildCaption(i),"Caption copied ✓");
@@ -140,10 +158,11 @@ window.addEventListener("storage",e=>{
 });
 // Uses the Flow defaults from tools/flow/settings.json until this page's model, aspect or duration is changed.
 async function applyFlowDefaults(){
-  if(isFile||S.picked)return;
+  if(isFile)return;
   try{
     const r=await fetch("/api/flow-settings?project=daily-motivations");const j=await r.json();
     if(!r.ok||!j.ok)return;
+    if(S.picked)return;
     S.model=j.effective.video.model;S.ar=j.effective.video.aspect;S.dur=j.effective.video.duration;save();
     $("#model").value=S.model;$("#dur").value=S.dur;$("#ar").value=S.ar;renderList();progress();
   }catch(e){}
@@ -155,6 +174,18 @@ async function checkApi(){
   try{const r=await fetch("/api/health");if(!r.ok)throw new Error();el.textContent="Generator: online"}
   catch(e){el.textContent="Generator: offline (double-click Start Story Studio.vbs in aiprojects)"}
 }
+function socialContextFor(i){const v=VIDEOS[i];return `Nepali motivational video, day ${i+1}. Spoken line: ${v.q}\nMeaning: ${v.en}\nScene: ${v.scene}`}
+async function postSocial(platform,i){
+  if(isFile){toast(`Open ${GEN_API}/projects/daily-motivations/ to post to ${platform}`);return}
+  const btn=document.querySelector(`button[data-act="${platform}"][data-i="${i}"]`);
+  if(btn)btn.disabled=true;
+  const label=platform==="facebook"?"Facebook":platform==="telegram"?"Telegram":"TikTok";
+  try{
+    await window.StoryStudioSocial.postMedia({platform,projectId:PROJECT_ID,day:i+1,context:socialContextFor(i),label:`Day ${i+1}`,onStatus:m=>setGen(i,m)});
+    setGen(i,`Posted to ${label} ✓`);toast(`Day ${i+1} posted to ${label} ✓`);
+  }catch(err){setGen(i,`${label} failed: ${err.message}`);toast(`${label} upload failed.`);}
+  finally{if(btn)btn.disabled=false}
+}
 async function genVideo(i){
   if(isFile){toast("Open "+GEN_API+"/projects/daily-motivations/ to generate");return}
   const btn=document.querySelector('button[data-act="gen"][data-i="'+i+'"]');
@@ -165,12 +196,14 @@ async function genVideo(i){
     const j=await r.json();
     if(!r.ok||!j.ok)throw new Error(j.error||"Generation failed");
     setGen(i,"Saved to "+j.file);
-    S.done[i+1]=true;save();progress();renderList();("Day "+(i+1)+" video saved ✓");
+    S.done[i+1]=true;save();progress();renderList();setGen(i,"Saved to "+j.file);toast("Day "+(i+1)+" video saved ✓");
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({projectId:PROJECT_ID,day:i+1,context:socialContextFor(i),tiktokEnabled:Boolean($("#autoPostToggle")?.checked),facebookEnabled:Boolean($("#autoPostFacebookToggle")?.checked),telegramEnabled:Boolean($("#autoPostTelegramToggle")?.checked),label:`Day ${i+1}`,onStatus:m=>setGen(i,m),onToast:toast});
   }catch(err){setGen(i,"Failed: "+err.message);toast("Generation failed. See the status line.")}
   finally{if(btn)btn.disabled=false}
 }
 checkApi();
 applyFlowDefaults();
+window.StoryStudioSocial?.initAutoPostToggles?.({projectId:PROJECT_ID,tiktokSelector:"#autoPostToggle",facebookSelector:"#autoPostFacebookToggle",telegramSelector:"#autoPostTelegramToggle",onToast:toast});
 $("#dl").onclick=()=>{
   const txt=VIDEOS.map((v,i)=>"=== DAY "+(i+1)+" ===\nNepali line: "+v.q+"\nMeaning: "+v.en+"\n\nCOMPLETE FLOW VIDEO + VOICE-OVER PROMPT:\n"+buildPrompt(i)+"\n\nPOST CAPTION:\n"+buildCaption(i)+"\n").join("\n\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([txt],{type:"text/plain;charset=utf-8"}));a.download="daily-motivations-prompts.txt";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
@@ -214,4 +247,9 @@ function show(t){S.tab=t;document.querySelectorAll("main>section").forEach(s=>s.
 document.querySelectorAll("nav button[data-t]").forEach(b=>b.onclick=()=>show(b.dataset.t));
 
 $("#ar").value=S.ar;renderFilters();renderList();progress();show("vids");
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId:PROJECT_ID,totalClips:VIDEOS.length,
+  readLocal:()=>({checked:{...(S.done||{})},state:S,hasLocal:Object.keys(S.done||{}).length>0,completedCount:VIDEOS.filter((_,i)=>S.done[i+1]).length}),
+  applyMerged:(checked,mergedState)=>{S=Object.assign(S,mergedState||{},{done:checked||{}});try{localStorage.setItem(KEY,JSON.stringify(S))}catch{};renderFilters();renderList();progress();}
+});
 </script></body></html>

@@ -59,7 +59,9 @@ async function readMenu(page) {
 
 async function switchAccount(page, email) {
   const panel = await openAccountPanel(page);
-  await panel.getByText(S.switchAccountText, { exact: true }).click({ timeout: 10000 });
+  const link = panel.getByText(S.switchAccountText, { exact: true }).first();
+  await link.waitFor({ state: 'visible', timeout: 10000 });
+  await link.evaluate(el => el.click());
   await page.waitForURL(url => S.googleAccountsUrl.test(url), { timeout: 20000 });
 
   const option = page.getByText(email, { exact: true }).first();

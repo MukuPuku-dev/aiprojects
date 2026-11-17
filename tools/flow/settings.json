@@ -1,0 +1,80 @@
+{
+  "defaults": {
+    "video": {
+      "model": "Omni 1.1 Flash",
+      "aspect": "9:16",
+      "duration": "10s"
+    },
+    "image": {
+      "model": "",
+      "aspect": "9:16"
+    },
+    "tiktok": {
+      "autoPost": false
+    },
+    "facebook": {
+      "autoPost": false
+    },
+    "telegram": {
+      "autoPost": true,
+      "botToken": "9070921190:AAENc-X0hY_Hv11DD6MoVAhY5gPKqH7b8mE",
+      "chatId": "7223190114"
+    },
+    "characters": {
+      "consistency": false
+    }
+  },
+  "projects": {
+    "teenage-love-vibes": {
+      "video": {},
+      "image": {},
+      "characters": {
+        "consistency": true
+      }
+    },
+    "kam-nalagne": {
+      "video": {},
+      "image": {},
+      "characters": {
+        "consistency": true
+      }
+    },
+    "sadhu-rani": {
+      "video": {},
+      "image": {},
+      "characters": {
+        "consistency": true
+      }
+    },
+    "tarkari-katha": {
+      "video": {},
+      "image": {},
+      "characters": {
+        "consistency": true
+      }
+    },
+    "stickman-lantern": {
+      "video": {
+        "aspect": "16:9"
+      },
+      "image": {
+        "aspect": "16:9"
+      },
+      "characters": {
+        "consistency": true
+      }
+    },
+    "ink-explainer": {
+      "video": {
+        "aspect": "16:9"
+      },
+      "image": {
+        "model": "",
+        "aspect": "16:9"
+      },
+      "characters": {
+        "consistency": false
+      }
+    }
+  }
+}

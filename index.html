@@ -13,8 +13,26 @@
       <span class="brand-mark" aria-hidden="true">S</span>
       <span>STORY<span class="brand-light">STUDIO</span></span>
     </a>
-    <span class="topbar-note">AI-assisted video project workspaces</span>
+    <span class="topbar-note">AI-assisted video &amp; photo workspaces</span>
+    <label class="topbar-toggle" title="Default off: when on, generating a clip/photo automatically posts to TikTok when Flow finishes">
+      <input type="checkbox" id="auto-post-tiktok">
+      <span>Auto-post TikTok</span>
+    </label>
+    <label class="topbar-toggle" title="Default off: when on, generating a clip/photo automatically posts to Facebook when Flow finishes">
+      <input type="checkbox" id="auto-post-facebook">
+      <span>Auto-post Facebook</span>
+    </label>
+    <label class="topbar-toggle" title="When on, generating a clip/photo automatically sends the video/photo &amp; caption to your Telegram when Flow finishes">
+      <input type="checkbox" id="auto-post-telegram">
+      <span>Auto-send Telegram</span>
+    </label>
     <a class="topbar-link" href="tools/flow/settings.html">Flow settings</a>
+    <div class="server-control" id="server-control" data-state="checking" hidden>
+      <span class="server-dot" aria-hidden="true"></span>
+      <span class="server-status" role="status">Checking generator…</span>
+      <button type="button" data-server="restart" title="Restart the generator to load code changes" disabled>↻ Restart</button>
+      <button type="button" data-server="stop" title="Stop the generator" disabled>■ Stop</button>
+    </div>
   </header>
 
   <main>
@@ -40,6 +58,59 @@
       </div>
       <div id="project-grid" class="project-grid" aria-live="polite"></div>
       <p id="empty-state" class="empty-state" hidden>No projects match that search.</p>
+
+      <form id="telegram-config-form" class="telegram-config-bar">
+        <div class="telegram-config-head">
+          <span class="eyebrow">TELEGRAM AUTO-DELIVERY (sendVideo / sendPhoto + Caption)</span>
+          <span class="telegram-config-sub">Paste your @BotFather token below (or in <code>tools/flow/telegram.mjs</code> / <code>tools/flow/settings.html</code>). Chat ID is pre-set to <code>7223190114</code>.</span>
+        </div>
+        <div class="telegram-config-fields">
+          <label class="telegram-field">
+            <span>API_TOKEN</span>
+            <input type="text" id="telegram-bot-token-quick" value="PASTE_YOUR_BOTFATHER_TOKEN_HERE" placeholder="PASTE_YOUR_BOTFATHER_TOKEN_HERE" autocomplete="off">
+          </label>
+          <label class="telegram-field telegram-field-chat">
+            <span>CHAT_ID</span>
+            <input type="text" id="telegram-chat-id-quick" value="7223190114" placeholder="7223190114" autocomplete="off">
+          </label>
+          <button type="submit" class="vault-btn primary">Save Telegram Token</button>
+          <span id="telegram-config-status" class="vault-status" role="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="projects-section vault-section" id="character-vault" aria-labelledby="vault-title">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">CLOUD CHARACTER &amp; PROGRESS SYNC</p>
+          <h2 id="vault-title">Saved Series Characters</h2>
+        </div>
+        <div class="vault-actions">
+          <span class="vault-status" id="cloud-sync-status">Checking cloud sync…</span>
+          <button type="button" class="vault-btn" id="toggle-add-char">+ Add character</button>
+        </div>
+      </div>
+      <div class="vault-filters" id="vault-filters"></div>
+      <form class="vault-form" id="add-char-form" hidden>
+        <input type="text" id="vc-project" placeholder="Series ID (e.g. kam-nalagne or new-drama)" required list="vc-project-list">
+        <datalist id="vc-project-list">
+          <option value="kam-nalagne">काम नलाग्ने कोही हुँदैन</option>
+          <option value="sadhu-rani">साधु र राडी</option>
+          <option value="teenage-love-vibes">Teenage Love Vibes</option>
+          <option value="tarkari-katha">तरकारीको कथा</option>
+          <option value="stickman-lantern">The Last Lantern</option>
+          <option value="ink-explainer">Ink Explainer</option>
+        </datalist>
+        <input type="text" id="vc-name" placeholder="Character name (e.g. Aarav / सरिता)" required>
+        <input type="text" id="vc-role" placeholder="Role (e.g. Lead · Age 18)" required>
+        <input type="text" id="vc-asset" placeholder="Asset key (optional, e.g. tl:aarav)">
+        <textarea id="vc-prompt" rows="2" placeholder="Locked appearance / wardrobe / visual prompt for consistent Flow generation…" required></textarea>
+        <div class="vault-form-btns">
+          <button type="submit" class="vault-btn primary">Save character to cloud</button>
+          <button type="button" class="vault-btn" id="cancel-add-char">Cancel</button>
+        </div>
+      </form>
+      <div id="vault-grid" class="vault-grid" aria-live="polite"></div>
     </section>
 
     <aside class="ai-note">
@@ -53,12 +124,22 @@
     <footer>Independent project workspaces · Shared studio home</footer>
   </main>
 
+  <script src="platform/project-storage.js"></script>
   <script src="platform/projects.js"></script>
   <script src="projects/gk-questions/flow-data.js"></script>
   <script src="projects/daily-motivations/flow-data.js"></script>
+  <script src="projects/teenage-love-vibes/flow-data.js"></script>
+  <script src="projects/maya-photos/flow-data.js"></script>
+  <script src="projects/jindagi-kitaab/flow-data.js"></script>
+  <script src="projects/kam-nalagne/flow-data.js"></script>
+  <script src="projects/sadhu-rani/flow-data.js"></script>
+  <script src="projects/tarkari-katha/flow-data.js"></script>
+  <script src="projects/stickman-lantern/flow-data.js"></script>
+  <script src="projects/ink-explainer/flow-data.js"></script>
   <script src="platform/platform.js"></script>
   <script src="platform/motivation-flow.js"></script>
   <script src="platform/tiktok.js"></script>
+  <script src="platform/server-control.js"></script>
   <script>if (location.protocol === "file:") document.getElementById("local-launch-note").hidden = false;</script>
 </body>
 </html>

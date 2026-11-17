@@ -59,6 +59,17 @@ a { color: inherit; }
 .topbar-note { color: var(--muted); font-size: 12px; }
 .topbar-link { color: #c1acff; font-size: 12px; font-weight: 650; text-decoration: none; }
 .topbar-link:hover { text-decoration: underline; text-underline-offset: 4px; }
+.topbar-toggle { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border: 1px solid #353544; border-radius: 99px; background: #191a24; color: #dcd9e8; font-size: 11.5px; font-weight: 600; cursor: pointer; }
+.topbar-toggle input { accent-color: #c1acff; cursor: pointer; }
+.server-control { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #b9b3c9; flex-wrap: wrap; }
+.server-control[hidden] { display: none; }
+.server-dot { width: 8px; height: 8px; border-radius: 50%; background: #8a8499; }
+.server-control[data-state="online"] .server-dot { background: #62d99a; }
+.server-control[data-state="offline"] .server-dot { background: #ff6b6b; }
+.server-control[data-state="outdated"] .server-dot, .server-control[data-state="working"] .server-dot { background: #f2c66d; }
+.server-control button { background: #231f2e; color: #e9e4f5; border: 1px solid #3a3449; border-radius: 7px; padding: 4px 9px; font: inherit; cursor: pointer; }
+.server-control button:hover:not(:disabled) { border-color: #c1acff; }
+.server-control button:disabled { opacity: .45; cursor: not-allowed; }
 
 main { max-width: 1120px; margin: auto; padding: 0 24px; }
 .hero { padding: 76px 0 48px; }
@@ -93,18 +104,63 @@ main { max-width: 1120px; margin: auto; padding: 0 24px; }
 .generate-status a { margin-left: 8px; color: var(--accent); font-weight: 700; }
 .tiktok-videos { position: relative; z-index: 1; margin-top: 12px; color: #d3d1db; font-size: 12px; }
 .tiktok-videos:empty { display: none; }
-.tiktok-row { display: flex; align-items: center; gap: 8px; margin-top: 6px; }
+.tiktok-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
 .tiktok-row a { color: var(--accent); }
 .tiktok-row button { border: 1px solid #625a73; border-radius: 7px; color: #fff; background: #272432; cursor: pointer; }
-.tiktok-post { width: 30px; height: 30px; font-size: 20px; font-weight: 700; }
-.tiktok-post:hover { background: #433448; }
+.tiktok-post, .facebook-post, .telegram-post { width: 30px; height: 30px; font-size: 18px; font-weight: 700; display: inline-grid; place-items: center; border-radius: 7px; cursor: pointer; transition: background .15s, border-color .15s; }
+.tiktok-post { font-size: 20px; color: #fff; background: #272432; border: 1px solid #625a73; }
+.tiktok-post:hover { background: #433448; border-color: #9f8bb8; }
+.facebook-post { background: #1877f2; border: 1px solid #1877f2; color: #ffffff; }
+.facebook-post:hover { background: #166fe5; border-color: #3b82f6; }
+.facebook-post svg { display: block; width: 15px; height: 15px; fill: currentColor; }
+.telegram-post { background: #229ED9; border: 1px solid #229ED9; color: #ffffff; }
+.telegram-post:hover { background: #1d8ec4; border-color: #5bc0f8; }
+.telegram-post svg { display: block; width: 15px; height: 15px; fill: currentColor; }
+.telegram-config-bar { margin-top: 18px; padding: 14px 16px; border: 1px solid #2e3c4d; border-radius: 12px; background: #151b24; display: flex; flex-direction: column; gap: 10px; }
+.telegram-config-head { display: flex; flex-direction: column; gap: 3px; }
+.telegram-config-head .eyebrow { margin: 0; color: #5bc0f8; }
+.telegram-config-sub { font-size: 11.5px; color: #a7b4c4; }
+.telegram-config-fields { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-end; }
+.telegram-field { display: flex; flex-direction: column; gap: 4px; flex: 1 1 260px; font-size: 11px; font-weight: 700; color: #c9d5e3; }
+.telegram-field-chat { flex: 0 1 170px; }
+.telegram-field input { background: #0e131a; color: #f3f2f0; border: 1px solid #2e3d4f; border-radius: 8px; padding: 7px 10px; font: 12px ui-monospace, Menlo, Consolas, monospace; }
+.social-slot { display: inline-flex; align-items: center; gap: 6px; }
 .tiktok-message { line-height: 1.5; }
 .project-card h3 { margin: 19px 0 7px; font-size: 19px; letter-spacing: -.025em; }
 .project-description { max-width: 410px; min-height: 40px; margin: 0; color: #aaaab7; font-size: 12px; line-height: 1.65; }
-.open-project { display: inline-flex; align-items: center; gap: 9px; margin-top: 19px; color: var(--accent); font-size: 12px; font-weight: 700; text-decoration: none; }
+.project-progress { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
+.project-progress-label { display: flex; justify-content: space-between; font-size: 11px; color: #b5b3c4; }
+.project-progress-bar { height: 5px; border-radius: 99px; background: #2b2c39; overflow: hidden; }
+.project-progress-bar i { display: block; height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--accent), #9ef0c5); width: 0; transition: width .25s; }
+.open-project { display: inline-flex; align-items: center; gap: 9px; margin-top: 16px; color: var(--accent); font-size: 12px; font-weight: 700; text-decoration: none; }
 .open-project:hover { text-decoration: underline; text-underline-offset: 4px; }
 .open-project:focus-visible, .generate-next:focus-visible, .brand:focus-visible, .search:focus-within { outline: 2px solid #c1acff; outline-offset: 3px; }
 .empty-state { padding: 30px 0; color: var(--muted); text-align: center; }
+.vault-section { padding-top: 28px; }
+.vault-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.vault-status { font-size: 11.5px; color: #9ecfb8; }
+.vault-filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.vault-btn { border: 1px solid #38394a; border-radius: 8px; padding: 6px 11px; background: #1e1f2b; color: #e6e4ef; font: inherit; font-size: 11.5px; font-weight: 600; cursor: pointer; }
+.vault-btn:hover { border-color: #c1acff; }
+.vault-btn.active { background: #31294a; border-color: #b6a2ff; color: #fff; }
+.vault-btn.primary { background: #b6a2ff; color: #161322; border-color: #b6a2ff; }
+.vault-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 16px; padding: 14px; border: 1px solid #353544; border-radius: 12px; background: #171822; }
+.vault-form[hidden] { display: none; }
+.vault-form textarea, .vault-form-btns { grid-column: 1 / -1; }
+.vault-form input, .vault-form textarea { background: #10111a; color: #f3f2f0; border: 1px solid #323344; border-radius: 8px; padding: 8px 10px; font: inherit; font-size: 12px; }
+.vault-form-btns { display: flex; gap: 8px; }
+.vault-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(275px, 1fr)); gap: 12px; }
+.vault-card { display: flex; flex-direction: column; gap: 8px; padding: 14px; border: 1px solid #323342; border-radius: 12px; background: #181922; }
+.vault-card-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.vault-series { font-size: 10.5px; color: #ffd085; background: #2d251b; border: 1px solid #594426; padding: 2px 8px; border-radius: 99px; }
+.vault-key { font-size: 10.5px; color: #9c9aad; font-family: ui-monospace, Menlo, Consolas, monospace; }
+.vault-card h3 { margin: 0; font-size: 15px; }
+.vault-role { margin: 0; font-size: 11.5px; color: #b5b3c4; }
+.vault-thumb { width: 100%; height: 150px; object-fit: cover; border-radius: 8px; border: 1px solid #2e2f3d; background: #101118; }
+.vault-thumb-empty { width: 100%; height: 110px; display: grid; place-items: center; border-radius: 8px; border: 1px dashed #363748; color: #7e7d91; font-size: 11px; text-align: center; padding: 8px; }
+.vault-prompt { margin: 0; font-size: 11px; line-height: 1.5; color: #9f9db0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.vault-card-btns { display: flex; gap: 6px; flex-wrap: wrap; margin-top: auto; padding-top: 4px; }
+@media (max-width: 640px) { .vault-form { grid-template-columns: 1fr; } }
 .ai-note { display: flex; gap: 17px; align-items: start; max-width: 760px; margin: 2px 0 58px; padding: 22px; border: 1px solid #7962b23d; border-radius: 13px; background: linear-gradient(115deg, #211d31, #191922 82%); }
 .ai-icon { display: grid; flex: 0 0 34px; height: 34px; place-items: center; border-radius: 10px; color: #c1adff; background: #a68eff21; }
 .ai-note .eyebrow { margin-bottom: 7px; }

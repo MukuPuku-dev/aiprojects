@@ -75,7 +75,7 @@ test('GK workspace opens and reloads at the first unchecked day', async () => {
     assert.match(await page.locator('#prompt').textContent(), /DAY 03/);
     await page.reload();
     assert.match(await page.locator('#prompt').textContent(), /DAY 02/);
-    await page.locator('#selectedDone').check();
+    await page.locator('#selectedDone').click();
     assert.match(await page.locator('#prompt').textContent(), /DAY 05/);
     await page.locator('[data-done="0"]').uncheck();
     assert.match(await page.locator('#prompt').textContent(), /DAY 01/);
@@ -136,14 +136,14 @@ test('asks before starting when no progress exists in this browser', async () =>
   } finally { await context.close(); }
 });
 
-test('shows a failed job without losing the started day', async () => {
+test('unchecks the day automatically when a job fails', async () => {
   const { context, page, finish } = await setup({ done: [0], result: 'failure' });
   try {
     finish();
     await page.getByRole('button', { name: 'Generate next GK Questions clip with Flow' }).click();
     await page.getByText('Flow sign-in required', { exact: false }).waitFor();
-    assert.match(await page.locator('.generate-status').textContent(), /uncheck that day/);
-    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('gk_completed_days'))), [0, 1]);
+    assert.match(await page.locator('.generate-status').textContent(), /unchecked automatically/);
+    assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem('gk_completed_days'))), [0]);
   } finally { await context.close(); }
 });
 

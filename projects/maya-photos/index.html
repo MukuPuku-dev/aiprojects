@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>माया · Monochrome Red-Splash Quote Portraits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0d10;--card:#17171c;--ink:#f3f2f5;--mut:#a6a3b0;--red:#e32636;
+  --gold:#ead7b7;--ok:#62d99a;--line:#2d2c36;
+  --ne:"Noto Sans Devanagari","Mukta","Nirmala UI","Mangal",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.6 var(--ne)}
+header{position:sticky;top:0;background:#0d0d10ee;backdrop-filter:blur(8px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:6}
+h1{margin:0;font-size:19px}
+h1 span.red{color:var(--red)}
+h2{margin:16px 0 8px;font-size:17px;color:var(--gold)}
+h3{margin:12px 0 6px;font-size:15px;color:#fff}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--red),var(--gold));width:0;transition:width .3s}
+nav,.filters,.btns,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:4px}
+button,select,input,textarea{background:#22212a;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font:inherit}
+button,select{cursor:pointer}
+button.p{background:var(--red);color:#fff;border-color:var(--red);font-weight:700}
+button.gold{background:var(--gold);color:#1f160c;border-color:var(--gold);font-weight:700}
+button.on{border-color:var(--red);color:#ff8690}
+button.tt{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button.fb{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button.fb:hover{background:#166fe5;border-color:#166fe5}
+button.tg{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button.tg:hover{background:#1d8ec4;border-color:#1d8ec4}
+button:disabled{opacity:.48;cursor:wait}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+nav a{color:var(--gold);padding:6px 4px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+main{max-width:1080px;margin:0 auto;padding:14px}
+.hide{display:none}
+.filters{margin:6px 0 12px}
+.filters button{font-size:12.5px;padding:5px 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(325px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;scroll-margin-top:145px}
+.card.done{opacity:.78;border-color:#2c5842}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{background:var(--red);color:#fff;font-weight:800;border-radius:7px;padding:1px 8px;font-size:12.5px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:11.5px;color:var(--mut)}
+.top label{margin-left:auto;font-size:12.5px;color:var(--mut);display:flex;gap:5px;align-items:center;cursor:pointer}
+.quote-mock{background:linear-gradient(145deg,#25252b,#141418);border:1px solid #353540;border-radius:12px;padding:12px 14px 22px;position:relative;margin-bottom:8px}
+.quote-box{background:rgba(238,235,232,.93);color:#1d1d22;border-radius:12px;padding:10px 13px 16px;font-size:14.5px;line-height:1.55;box-shadow:0 4px 14px #0006}
+.quote-handle{font-weight:800;font-style:italic;font-size:12.5px;color:#27272e;margin-bottom:3px}
+.hl{color:#c91222;font-weight:800}
+.mini-seal{position:absolute;left:50%;bottom:4px;transform:translateX(-50%);background:#f3e6cc;color:#2b180e;border:1.5px dashed #3d2415;border-radius:99px;padding:1px 10px;font-size:10.5px;font-weight:800;box-shadow:0 2px 6px #0007}
+.scene{font-size:12.5px;color:#dad7e0;margin:0}
+.scene b{color:var(--gold)}
+.story-box{background:#121118;border:1px solid #2b2935;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:8px 10px;font-size:13px;line-height:1.62;color:#e7e4ed}
+.story-box summary{color:var(--gold);font-weight:700;font-size:12.5px}
+.story-text{margin-top:6px;white-space:pre-line}
+.btns button{font-size:12px;padding:6px 9px}
+.gen{font-size:12.5px;min-height:1em;color:var(--gold)}
+.gen a{color:var(--ok);margin-left:6px}
+details{margin-top:2px}
+summary{cursor:pointer;color:var(--mut);font-size:12px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0a0a0d;border:1px solid var(--line);border-radius:9px;padding:10px;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:6px 0 0}
+.studio{display:grid;grid-template-columns:1fr minmax(280px,360px);gap:18px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:11px}
+.panel label{font-size:12.5px;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+.panel input[type="text"],.panel textarea,.panel select{width:100%}
+.preview-wrap{background:#09090b;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;position:sticky;top:128px}
+.preview-wrap canvas{width:100%;height:auto;border-radius:10px;background:#111;display:block}
+.note{border-left:3px solid var(--red);padding:8px 12px;background:#191318;border-radius:0 8px 8px 0;margin:10px 0}
+.info-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#062014;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:12}
+#toast.show{opacity:1}
+@media(max-width:780px){.studio{grid-template-columns:1fr}.preview-wrap{position:static}}
+@media(max-width:600px){header{position:relative}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🥀 <span class="red">माया</span> · Monochrome Quote &amp; Story Portraits <span class="sub" id="st"></span></h1>
+  <div class="sub">B&amp;W Dramatic Portraits + Selective Crimson-Red Splash · 30 @माया Quote Cards · Heart-Touching Continuation Story Captions</div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav>
+    <button class="p" id="nx">Copy NEXT Photo Prompt</button>
+    <button data-t="cards" class="on">Photo Prompts (<span id="countBadge">30</span>)</button>
+    <button data-t="studio">🎨 Poster Studio (Canvas)</button>
+    <button data-t="custom">✍️ Add Custom Quote</button>
+    <button data-t="guide">Style Guide &amp; Workflow</button>
+    <button id="dl">Download all prompts (.txt)</button>
+    <a href="../../index.html">← All projects</a>
+    <label class="sub">Flow Aspect <select id="ar"><option value="9:16">9:16 Vertical (Reels/TikTok)</option><option value="16:9">16:9 Wide</option></select></label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send photo &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
+    <span class="sub" id="api"></span>
+  </nav>
+</header>
+
+<main>
+  <section id="cards">
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="studio" class="hide">
+    <div class="studio">
+      <div class="panel">
+        <h2 style="margin:0">🎨 Poster Studio — Finish Your Photo</h2>
+        <div class="sub">Upload any clean portrait generated in Google Flow/Imagen (or load a generated photo) to render the exact <b>@माया</b> rounded quote card &amp; circular emblem in crisp Devanagari.</div>
+        <div class="row">
+          <label style="flex:1">Load Card Preset
+            <select id="stPreset"></select>
+          </label>
+          <label>Output Size
+            <select id="stSize">
+              <option value="1080x1920">9:16 (1080×1920)</option>
+              <option value="1080x1350">4:5 (1080×1350)</option>
+              <option value="1080x1080">1:1 (1080×1080)</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <label style="flex:1">Upload Generated Portrait Photo
+            <input type="file" id="stFile" accept="image/*">
+          </label>
+          <button type="button" id="stUseSample" style="align-self:flex-end">Use Built-in Sample</button>
+        </div>
+        <div class="row">
+          <label style="flex:1">Color Grade Filter
+            <select id="stFilter">
+              <option value="original">Keep Photo Colors (Already B&amp;W + Red)</option>
+              <option value="redpop">Auto B&amp;W + Selective Red Pop</option>
+              <option value="bw">Full High-Contrast B&amp;W</option>
+            </select>
+          </label>
+          <label style="flex:1">Card Opacity (<span id="opVal">92%</span>)
+            <input type="range" id="stOpacity" min="65" max="98" value="92">
+          </label>
+        </div>
+        <div class="row">
+          <label style="flex:1">Handle
+            <input type="text" id="stHandle" value="@माया">
+          </label>
+          <label style="flex:1">Seal Label
+            <input type="text" id="stSeal" value="माया">
+          </label>
+        </div>
+        <label>Nepali Quote / Shayari
+          <textarea id="stQuote" rows="4"></textarea>
+        </label>
+        <div class="row">
+          <label style="flex:1">Red Highlight Phrase (exact match in quote)
+            <input type="text" id="stHighlight" placeholder="उदा. बदलिएर">
+          </label>
+          <label>Font Size (<span id="fsVal">42px</span>)
+            <input type="range" id="stFontSize" min="30" max="58" value="42">
+          </label>
+        </div>
+        <div class="row">
+          <label style="flex-direction:row;align-items:center;gap:8px">
+            <input type="checkbox" id="stShowSeal" checked> Show circular माया seal badge
+          </label>
+          <label style="flex-direction:row;align-items:center;gap:8px">
+            <input type="checkbox" id="stDarkGrad" checked> Soft vignette behind quote
+          </label>
+        </div>
+        <div class="btns">
+          <button class="p" type="button" id="stDownload">⬇ Download Finished Photo (.png)</button>
+          <button class="gold" type="button" id="stCopyCap">Copy Long Story Caption</button>
+        </div>
+      </div>
+      <div class="preview-wrap">
+        <canvas id="canvas" width="1080" height="1920"></canvas>
+      </div>
+    </div>
+  </section>
+
+  <section id="custom" class="hide">
+    <div class="info-box">
+      <h2>✍️ Add Your Own Quote, Portrait Scene &amp; Story Caption</h2>
+      <div class="sub" style="margin-bottom:10px">Write a Nepali couplet, pick the red-highlighted keyword, describe the monochrome portrait scene, and optionally add a long continuation story caption.</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <label>Mood Category
+          <select id="cuCat">
+            <option value="rang">रङ र धोका · Colors &amp; Betrayal</option>
+            <option value="adhuro">अधुरो मन · Unrequited &amp; Distance</option>
+            <option value="aansu">आँसु र मौनता · Silent Tears</option>
+            <option value="bichhod">आत्मसम्मान र बिछोड · Self-Worth</option>
+          </select>
+        </label>
+        <label>Nepali Quote (multiline)
+          <textarea id="cuQuote" rows="3" placeholder="प्रिय ..!&#10;रङ लगाउन आउनेसँग होइन,&#10;रङ जस्तै बदलिएर जानेसँग जोगिनु तिमी। 😢🖤"></textarea>
+        </label>
+        <label>Red Highlight Phrase (optional)
+          <input type="text" id="cuHl" placeholder="उदा. बदलिएर">
+        </label>
+        <label>Portrait Scene &amp; Red-Splash Detail
+          <textarea id="cuScene" rows="3" placeholder="उदा. Close-up B&amp;W portrait of a young Nepali woman looking out a rain-streaked window, resting her chin on her hand, wearing a single vivid crimson red bindi and small silver nose ring."></textarea>
+        </label>
+        <label>Heart-Touching Continuation Story Caption (optional)
+          <textarea id="cuStory" rows="5" placeholder="उक्त उद्धरणको भावलाई अगाडि बढाउने लामो, मन छुने नेपाली कथा वा सन्देश लेख्नुहोस्..."></textarea>
+        </label>
+        <div class="btns">
+          <button class="p" type="button" id="cuSave">✨ Add Quote Photo Card</button>
+          <button type="button" id="cuClearAll">Remove Custom Cards</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide" class="hide">
+    <div class="info-box">
+      <h2>📖 @माया Visual Identity &amp; Flow Workflow</h2>
+      <div class="note">
+        <b>Signature Aesthetic:</b><br>
+        1. Dramatic <b>black-and-white fine-art portrait</b> of a Nepali/South Asian subject shot on 85mm f/1.4 with windswept hair strands and raw emotion in the eyes.<br>
+        2. <b>Selective Crimson-Red Color Pop:</b> Only one or two focal elements remain vivid crimson red (red bindi/tika, Holi gulal/abir, lip tint, glass bangles, rose petal, or scarf border). Everything else stays monochrome grayscale.<br>
+        3. <b>Lower-Third Frosted Quote Card + Circular Seal:</b> Clean translucent off-white card with rounded corners, bold <code>@माया</code> header, expressive Nepali lines with one crimson-highlighted keyword, and the overlapping cream circular emblem badge.
+      </div>
+      <ol>
+        <li><b>Direct Flow Image Generation (Zero Credits Needed):</b> Click <b>Generate Photo in Flow</b> on any card (or use ▶ on the माया card in Story Studio). Because Flow image generation does not consume video credits, no credit check or account switch is needed. Generated PNGs save to <code>projects/maya-photos/videos/day-NN.png</code>.</li>
+        <li><b>Crisp Poster Studio Option:</b> Use <b>Copy Clean Portrait Prompt</b> if you prefer a text-free portrait, then click <b>🎨 Open in Poster Studio</b> on that card to render razor-sharp Devanagari typography + your circular <code>माया</code> seal onto the downloaded portrait.</li>
+        <li><b>TikTok Upload &amp; Long Story Captions:</b> Every card includes a deep, multi-paragraph Nepali continuation story. From Story Studio, click <b>♪</b> beside any generated <code>Day N</code> photo to generate/refine a long heart-touching story caption with Gemini and post directly to TikTok.</li>
+      </ol>
+      <h3>Shared Portrait Style Lock</h3>
+      <pre id="guideLock"></pre>
+    </div>
+  </section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
+<script src="flow-data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PROJECT_ID = "maya-photos";
+const STATE_KEY = "maya-photos-v1";
+const CUSTOM_KEY = "maya-custom-v1";
+const JOB_KEY = "maya_flow_job";
+const AUTO_POST_KEY = "story_studio_auto_post_tiktok";
+const isFile = location.protocol === "file:";
+
+let state = { done:{}, ar:"9:16", cat:"all" };
+let customItems = [];
+try { const r = localStorage.getItem(STATE_KEY); if (r) state = Object.assign(state, JSON.parse(r)); } catch {}
+try { const c = localStorage.getItem(CUSTOM_KEY); if (c) customItems = JSON.parse(c) || []; } catch {}
+if (!["9:16", "16:9"].includes(state.ar)) state.ar = "9:16";
+
+const allItems = () => [
+  ...MAYA_ITEMS.map((x, i) => ({ ...x, id: "b" + (i + 1), num: i + 1 })),
+  ...customItems.map((x, i) => ({ ...x, id: "c" + (i + 1), num: MAYA_ITEMS.length + i + 1, custom: true }))
+];
+function pushCloud() {
+  const items = allItems();
+  const checked = { ...(state.done || {}) };
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
+    totalClips: items.length,
+    completedCount: items.filter(it => checked[it.id]).length,
+    checked,
+    state
+  });
+}
+const saveState = () => { try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {} pushCloud(); };
+
+function syncFailedStudioJob() {
+  try {
+    const raw = localStorage.getItem(JOB_KEY);
+    if (!raw) return;
+    const job = JSON.parse(raw);
+    if (job && ["failed", "unknown"].includes(job.status) && !job.unchecked) {
+      delete state.done["b" + job.day];
+      saveState();
+      localStorage.setItem(JOB_KEY, JSON.stringify({ ...job, unchecked: true }));
+    }
+  } catch {}
+}
+syncFailedStudioJob();
+
+let tt;
+function toast(msg) {
+  const el = $("#toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(tt); tt = setTimeout(() => el.classList.remove("show"), 1800);
+}
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.opacity = "0";
+    document.body.append(a); a.select();
+    try { document.execCommand("copy"); } catch {}
+    a.remove();
+  }
+  toast(msg || "Copied ✓");
+}
+
+function renderQuoteHtml(quote, hl) {
+  const safe = esc(quote).replace(/\n/g, "<br>");
+  if (!hl || !quote.includes(hl)) return safe;
+  return safe.split(esc(hl)).join(`<span class="hl">${esc(hl)}</span>`);
+}
+
+function renderFilters() {
+  $("#filters").innerHTML = MAYA_CATS.map(c =>
+    `<button data-c="${c.id}" class="${state.cat === c.id ? "on" : ""}">${esc(c.label)}</button>`
+  ).join("");
+}
+
+const GEN = {};
+function setGen(id, htmlMsg) {
+  GEN[id] = htmlMsg;
+  const el = document.getElementById("g-" + id);
+  if (el) el.innerHTML = htmlMsg;
+}
+
+function renderGrid() {
+  const items = allItems();
+  $("#countBadge").textContent = items.length;
+  const shown = items.filter(it => state.cat === "all" || it.cat === state.cat);
+  $("#grid").innerHTML = shown.map(it => {
+    const done = !!state.done[it.id];
+    const catObj = MAYA_CATS.find(c => c.id === it.cat) || MAYA_CATS[1];
+    const firstPara = (it.story || "").split(/\n\n/)[0] || "";
+    const restParas = (it.story || "").split(/\n\n/).slice(1).join("\n\n");
+    return `<article class="card ${done ? "done" : ""}" id="card-${it.id}">
+      <div class="top">
+        <span class="badge">#${it.num}</span>
+        <span class="chip">${esc(catObj.label.split("·")[0].trim())}</span>
+        ${it.custom ? `<span class="chip">Custom</span>` : ""}
+        <label><input type="checkbox" data-done="${it.id}" ${done ? "checked" : ""}> Made</label>
+      </div>
+      <div class="quote-mock">
+        <div class="quote-box">
+          <div class="quote-handle">${esc(it.handle || "@माया")}</div>
+          <div>${renderQuoteHtml(it.quote, it.hl)}</div>
+        </div>
+        <div class="mini-seal">माया</div>
+      </div>
+      <p class="scene"><b>Portrait Scene:</b> ${esc(it.scene)}</p>
+      ${it.story ? `<div class="story-box">
+        <div><b>कथाको निरन्तरता:</b> ${esc(firstPara)}</div>
+        ${restParas ? `<details><summary>पुरा मन छुने कथा पढ्नुहोस् (Read full story caption)</summary><div class="story-text">${esc(restParas)}</div></details>` : ""}
+      </div>` : ""}
+      <div class="btns">
+        <button class="p" data-act="gen" data-id="${it.id}">Generate Photo in Flow</button>
+        <button class="tt" data-act="tiktok" data-id="${it.id}" title="Post photo to TikTok">♪ Post to TikTok</button>
+        <button class="fb" data-act="facebook" data-id="${it.id}" title="Post photo to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post to Facebook</button>
+        <button class="tg" data-act="telegram" data-id="${it.id}" title="Send photo &amp; caption to Telegram">✈ Send to Telegram</button>
+        <button data-act="clean" data-id="${it.id}">Copy Clean Portrait Prompt</button>
+        <button data-act="full" data-id="${it.id}">Copy Full Poster Prompt</button>
+        <button class="gold" data-act="studio" data-id="${it.id}">🎨 Open in Poster Studio</button>
+        <button data-act="cap" data-id="${it.id}">Copy Long Story Caption</button>
+      </div>
+      <div class="gen" id="g-${it.id}">${GEN[it.id] || ""}</div>
+      <details><summary>Preview Clean &amp; Full Flow Prompts</summary><pre>${esc(mayaPosterPromptFor(it, state.ar))}</pre></details>
+    </article>`;
+  }).join("");
+  progress();
+}
+
+function progress() {
+  const items = allItems();
+  const n = items.filter(it => state.done[it.id]).length;
+  $("#pb").style.width = (items.length ? n / items.length * 100 : 0) + "%";
+  $("#st").textContent = `${n}/${items.length} photos completed`;
+}
+
+function showTab(t) {
+  ["cards", "studio", "custom", "guide"].forEach(id => $("#" + id).classList.toggle("hide", id !== t));
+  document.querySelectorAll("nav button[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (t === "studio") drawStudio();
+}
+
+async function checkApi() {
+  const el = $("#api");
+  if (isFile) { el.textContent = "Generator: open via http://127.0.0.1:8787/projects/maya-photos/"; return; }
+  try { const r = await fetch("/api/health"); if (!r.ok) throw new Error(); el.textContent = "Generator: online (no credits needed for images)"; }
+  catch { el.textContent = "Generator: offline (double-click Start Story Studio.vbs)"; }
+}
+
+async function postItemToSocial(platform, item) {
+  if (isFile) { toast(`Open via http://127.0.0.1:8787 to post to ${platform}`); return; }
+  const label = platform === "facebook" ? "Facebook" : platform === "telegram" ? "Telegram" : "TikTok";
+  const btn = document.querySelector(`button[data-act="${platform}"][data-id="${item.id}"]`);
+  if (btn) btn.disabled = true;
+  try {
+    await window.StoryStudioSocial.postMedia({
+      platform,
+      projectId: PROJECT_ID,
+      day: item.num,
+      context: mayaCaptionFor(item).slice(0, 4800),
+      label: `#${item.num}`,
+      onStatus: m => setGen(item.id, esc(m))
+    });
+    setGen(item.id, `Posted to ${label} ✓`);
+    toast(`#${item.num} posted to ${label} ✓`);
+  } catch (err) {
+    setGen(item.id, `${label} failed: ${esc(err.message)}`);
+    toast(`${label} upload failed. See card status.`);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function genPhoto(item) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787/projects/maya-photos/ to generate"); return; }
+  const btn = document.querySelector(`button[data-act="gen"][data-id="${item.id}"]`);
+  if (btn) btn.disabled = true;
+  setGen(item.id, "Generating image in Flow (no credit check needed)… Keep the Flow Chrome window open.");
+  try {
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: "maya-photos",
+        mode: "image",
+        day: item.num,
+        prompt: mayaPosterPromptFor(item, state.ar),
+        aspect: state.ar
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Image generation failed");
+    const link = `<a href="/${esc(j.file)}" target="_blank" rel="noopener">Open photo ↗</a>`;
+    setGen(item.id, `Saved to ${esc(j.file)} ${link}`);
+    state.done[item.id] = true;
+    saveState(); progress(); renderGrid();
+    setGen(item.id, `Saved to ${esc(j.file)} ${link}`);
+    toast(`#${item.num} photo saved ✓`);
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({
+      projectId: PROJECT_ID,
+      day: item.num,
+      context: mayaCaptionFor(item).slice(0, 4800),
+      tiktokEnabled: Boolean($("#autoPostToggle")?.checked),
+      facebookEnabled: Boolean($("#autoPostFacebookToggle")?.checked),
+      telegramEnabled: Boolean($("#autoPostTelegramToggle")?.checked),
+      label: `#${item.num}`,
+      onStatus: m => setGen(item.id, esc(m)),
+      onToast: toast
+    });
+  } catch (err) {
+    setGen(item.id, `Failed: ${esc(err.message)}`);
+    toast("Image generation failed. See the status line.");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+/* ---------- Poster Studio (HTML5 Canvas Compositor) ---------- */
+let uploadedImage = null;
+let manualUpload = false;
+let sampleKind = "holi";
+
+function buildSamplePortrait(w, h, kind) {
+  const off = document.createElement("canvas");
+  off.width = w; off.height = h;
+  const g = off.getContext("2d");
+  const bg = g.createRadialGradient(w * 0.5, h * 0.34, w * 0.08, w * 0.5, h * 0.42, w * 0.85);
+  bg.addColorStop(0, "#4a4a52");
+  bg.addColorStop(0.55, "#232328");
+  bg.addColorStop(1, "#0d0d10");
+  g.fillStyle = bg; g.fillRect(0, 0, w, h);
+
+  g.save();
+  for (let i = 0; i < 14; i++) {
+    const bx = ((i * 193) % 100) / 100 * w;
+    const by = ((i * 137) % 85) / 100 * h;
+    const br = (35 + (i * 23) % 85) * (w / 1080);
+    g.fillStyle = `rgba(255,255,255,${0.03 + (i % 4) * 0.015})`;
+    g.beginPath(); g.arc(bx, by, br, 0, Math.PI * 2); g.fill();
+  }
+  g.restore();
+
+  const cx = w * 0.5, cy = h * 0.35, sc = w / 1080;
+  g.save();
+  g.fillStyle = "#16161a";
+  g.beginPath();
+  g.ellipse(cx, cy + 430 * sc, 310 * sc, 250 * sc, 0, Math.PI, Math.PI * 2);
+  g.fill();
+
+  const skin = g.createRadialGradient(cx - 25 * sc, cy - 20 * sc, 30 * sc, cx, cy, 240 * sc);
+  skin.addColorStop(0, "#c8c8ce"); skin.addColorStop(0.65, "#87878f"); skin.addColorStop(1, "#383840");
+  g.fillStyle = skin;
+  g.beginPath(); g.ellipse(cx, cy, 165 * sc, 210 * sc, 0, 0, Math.PI * 2); g.fill();
+
+  g.fillStyle = "#121216";
+  g.beginPath(); g.ellipse(cx, cy - 65 * sc, 185 * sc, 175 * sc, 0, Math.PI * 0.95, Math.PI * 2.05); g.fill();
+  g.strokeStyle = "rgba(18,18,22,0.75)"; g.lineWidth = 4 * sc;
+  for (let s = -3; s <= 3; s++) {
+    g.beginPath();
+    g.moveTo(cx + s * 42 * sc, cy - 170 * sc);
+    g.quadraticCurveTo(cx + s * 22 * sc - 25 * sc, cy - 10 * sc, cx + s * 36 * sc + 15 * sc, cy + 165 * sc);
+    g.stroke();
+  }
+
+  g.fillStyle = "#1c1c22";
+  g.beginPath(); g.ellipse(cx - 56 * sc, cy - 18 * sc, 22 * sc, 11 * sc, 0, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.ellipse(cx + 56 * sc, cy - 18 * sc, 22 * sc, 11 * sc, 0, 0, Math.PI * 2); g.fill();
+  g.fillStyle = "#f2f2f5";
+  g.beginPath(); g.arc(cx - 53 * sc, cy - 20 * sc, 4 * sc, 0, Math.PI * 2); g.fill();
+  g.beginPath(); g.arc(cx + 59 * sc, cy - 20 * sc, 4 * sc, 0, Math.PI * 2); g.fill();
+
+  if (kind === "holi") {
+    const gulal = g.createRadialGradient(cx, cy - 102 * sc, 4 * sc, cx, cy - 102 * sc, 56 * sc);
+    gulal.addColorStop(0, "rgba(224,22,36,0.95)"); gulal.addColorStop(0.6, "rgba(210,20,34,0.65)"); gulal.addColorStop(1, "rgba(210,20,34,0)");
+    g.fillStyle = gulal; g.beginPath(); g.arc(cx, cy - 102 * sc, 56 * sc, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "rgba(224,24,38,0.6)";
+    g.beginPath(); g.arc(cx - 65 * sc, cy + 32 * sc, 14 * sc, 0, Math.PI * 2); g.fill();
+    g.beginPath(); g.arc(cx + 72 * sc, cy + 40 * sc, 10 * sc, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#b92534";
+  } else {
+    g.fillStyle = "#d91626";
+    g.beginPath(); g.arc(cx, cy - 95 * sc, 20 * sc, 0, Math.PI * 2); g.fill();
+    g.fillStyle = "#62626b";
+  }
+  g.beginPath(); g.ellipse(cx, cy + 98 * sc, 40 * sc, 13 * sc, 0, 0, Math.PI * 2); g.fill();
+  g.restore();
+
+  g.fillStyle = "rgba(255,255,255,0.42)";
+  g.font = `600 ${Math.round(24 * sc)}px system-ui, sans-serif`;
+  g.textAlign = "center";
+  g.fillText("Preview Silhouette — Upload Your Flow Portrait Photo Above", w / 2, 54 * sc);
+  return off;
+}
+
+function applySelectiveFilter(ctx, w, h, mode) {
+  if (mode === "original") return;
+  const imgData = ctx.getImageData(0, 0, w, h);
+  const d = imgData.data;
+  for (let i = 0; i < d.length; i += 4) {
+    const r = d[i], gr = d[i + 1], b = d[i + 2];
+    const luma = 0.299 * r + 0.587 * gr + 0.114 * b;
+    const contrast = Math.max(0, Math.min(255, (luma - 128) * 1.15 + 128));
+    if (mode === "redpop" && r > 110 && r - gr > 38 && r - b > 38) {
+      d[i] = Math.min(255, r * 1.08);
+      d[i + 1] = gr * 0.72;
+      d[i + 2] = b * 0.72;
+    } else {
+      d[i] = d[i + 1] = d[i + 2] = contrast;
+    }
+  }
+  ctx.putImageData(imgData, 0, 0);
+}
+
+function tokenizeLine(line, hl) {
+  if (!hl || !line.includes(hl)) return [{ text: line, red: false }];
+  const parts = line.split(hl);
+  const out = [];
+  parts.forEach((p, idx) => {
+    if (p) out.push({ text: p, red: false });
+    if (idx < parts.length - 1) out.push({ text: hl, red: true });
+  });
+  return out;
+}
+
+function drawRoundedRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+
+function wrapQuoteLines(ctx, text, hl, maxWidth, fontSize) {
+  const fontNormal = `600 ${fontSize}px "Noto Sans Devanagari","Mukta","Nirmala UI",system-ui,sans-serif`;
+  const fontBold = `800 ${fontSize}px "Noto Sans Devanagari","Mukta","Nirmala UI",system-ui,sans-serif`;
+  const rows = [];
+  for (const rawLine of text.split(/\r?\n/)) {
+    if (!rawLine.trim()) { rows.push([]); continue; }
+    const tokens = tokenizeLine(rawLine, hl);
+    const words = [];
+    tokens.forEach(tok => {
+      tok.text.split(/(\s+)/).forEach(piece => {
+        if (piece) words.push({ text: piece, red: tok.red });
+      });
+    });
+    let current = [], curW = 0;
+    for (const w of words) {
+      ctx.font = w.red ? fontBold : fontNormal;
+      const ww = ctx.measureText(w.text).width;
+      if (current.length && curW + ww > maxWidth && w.text.trim()) {
+        rows.push(current);
+        current = []; curW = 0;
+        if (!w.text.trim()) continue;
+      }
+      current.push({ ...w, width: ww });
+      curW += ww;
+    }
+    if (current.length) rows.push(current);
+  }
+  return { rows, fontNormal, fontBold };
+}
+
+function drawSealBadge(ctx, cx, cy, r, label) {
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.45)";
+  ctx.shadowBlur = r * 0.25;
+  ctx.shadowOffsetY = r * 0.08;
+  ctx.fillStyle = "#f1e3c4";
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = "#2b190f";
+  ctx.lineWidth = r * 0.055;
+  ctx.setLineDash([r * 0.09, r * 0.09]);
+  ctx.beginPath(); ctx.arc(cx, cy, r * 0.91, 0, Math.PI * 2); ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.strokeStyle = "#361e10"; ctx.fillStyle = "#361e10";
+  ctx.lineWidth = r * 0.055; ctx.lineCap = "round"; ctx.lineJoin = "round";
+  const by = cy - r * 0.02;
+  ctx.beginPath();
+  ctx.moveTo(cx, by + r * 0.14);
+  ctx.quadraticCurveTo(cx - r * 0.28, by + r * 0.05, cx - r * 0.45, by + r * 0.14);
+  ctx.lineTo(cx - r * 0.45, by - r * 0.24);
+  ctx.quadraticCurveTo(cx - r * 0.22, by - r * 0.30, cx, by - r * 0.18);
+  ctx.quadraticCurveTo(cx + r * 0.22, by - r * 0.30, cx + r * 0.45, by - r * 0.24);
+  ctx.lineTo(cx + r * 0.45, by + r * 0.14);
+  ctx.quadraticCurveTo(cx + r * 0.28, by + r * 0.05, cx, by + r * 0.14);
+  ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(cx, by - r * 0.18); ctx.lineTo(cx, by + r * 0.14); ctx.stroke();
+  drawRoundedRect(ctx, cx - r * 0.09, cy - r * 0.50, r * 0.18, r * 0.29, r * 0.09);
+  ctx.fill();
+  [-0.55, -0.28, 0.28, 0.55].forEach(ang => {
+    const rx = Math.sin(ang) * r * 0.36, ry = -Math.cos(ang) * r * 0.34 - r * 0.25;
+    ctx.beginPath(); ctx.arc(cx + rx, cy + ry, r * 0.032, 0, Math.PI * 2); ctx.fill();
+  });
+  ctx.font = `800 ${Math.round(r * 0.31)}px "Noto Sans Devanagari","Mukta",system-ui,sans-serif`;
+  ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  ctx.fillText(label || "माया", cx, cy + r * 0.46);
+  ctx.restore();
+}
+
+function drawStudio() {
+  const canvas = $("#canvas");
+  const [W, H] = $("#stSize").value.split("x").map(Number);
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext("2d");
+  const sc = W / 1080;
+
+  if (uploadedImage) {
+    const scale = Math.max(W / uploadedImage.width, H / uploadedImage.height);
+    const dw = uploadedImage.width * scale, dh = uploadedImage.height * scale;
+    ctx.drawImage(uploadedImage, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  } else {
+    ctx.drawImage(buildSamplePortrait(W, H, sampleKind), 0, 0);
+  }
+
+  applySelectiveFilter(ctx, W, H, $("#stFilter").value);
+
+  if ($("#stDarkGrad").checked) {
+    const grad = ctx.createLinearGradient(0, H * 0.55, 0, H);
+    grad.addColorStop(0, "rgba(0,0,0,0)");
+    grad.addColorStop(1, "rgba(0,0,0,0.58)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H * 0.55, W, H * 0.45);
+  }
+
+  const handle = $("#stHandle").value.trim();
+  const quote = $("#stQuote").value;
+  const hl = $("#stHighlight").value.trim();
+  const showSeal = $("#stShowSeal").checked;
+  const sealLabel = $("#stSeal").value.trim();
+  const fontSize = Math.round(Number($("#stFontSize").value) * sc);
+  const opacity = Number($("#stOpacity").value) / 100;
+  $("#opVal").textContent = Math.round(opacity * 100) + "%";
+  $("#fsVal").textContent = $("#stFontSize").value + "px";
+
+  const padX = 46 * sc;
+  const padTop = 36 * sc;
+  const padBot = (showSeal ? 68 : 38) * sc;
+  const cardW = W - 84 * sc;
+  const cardX = 42 * sc;
+  const maxTextW = cardW - padX * 2;
+  const handleSize = Math.round(fontSize * 0.80);
+  const lineH = Math.round(fontSize * 1.42);
+  const { rows, fontNormal, fontBold } = wrapQuoteLines(ctx, quote, hl, maxTextW, fontSize);
+  const handleH = handle ? Math.round(handleSize * 1.55) : 0;
+  const cardH = padTop + handleH + Math.max(1, rows.length) * lineH + padBot;
+  const bottomMargin = (showSeal ? 120 : 54) * sc;
+  const cardY = H - bottomMargin - cardH;
+
+  ctx.save();
+  ctx.shadowColor = "rgba(0,0,0,0.42)";
+  ctx.shadowBlur = 24 * sc;
+  ctx.shadowOffsetY = 8 * sc;
+  drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 34 * sc);
+  ctx.fillStyle = `rgba(235,232,230,${opacity})`;
+  ctx.fill();
+  ctx.restore();
+
+  ctx.save();
+  drawRoundedRect(ctx, cardX, cardY, cardW, cardH, 34 * sc);
+  ctx.strokeStyle = "rgba(20,20,24,0.42)";
+  ctx.lineWidth = 3 * sc;
+  ctx.stroke();
+  ctx.restore();
+
+  let ty = cardY + padTop;
+  ctx.textAlign = "left"; ctx.textBaseline = "top";
+  if (handle) {
+    ctx.fillStyle = "#1d1d22";
+    ctx.font = `italic 800 ${handleSize}px "Noto Sans Devanagari","Mukta",system-ui,sans-serif`;
+    ctx.fillText(handle, cardX + padX, ty);
+    ty += handleH;
+  }
+
+  for (const row of rows) {
+    let tx = cardX + padX;
+    for (const seg of row) {
+      ctx.font = seg.red ? fontBold : fontNormal;
+      ctx.fillStyle = seg.red ? "#c91222" : "#18181d";
+      ctx.fillText(seg.text, tx, ty);
+      tx += seg.width;
+    }
+    ty += lineH;
+  }
+
+  if (showSeal) {
+    const sealR = 112 * sc;
+    drawSealBadge(ctx, W / 2, cardY + cardH + sealR * 0.20, sealR, sealLabel);
+  }
+}
+
+function populatePresets() {
+  const items = allItems();
+  $("#stPreset").innerHTML = items.map(it =>
+    `<option value="${it.id}">#${it.num} — ${esc(it.quote.split(/\r?\n/)[0].slice(0, 38))}</option>`
+  ).join("");
+}
+
+function loadPreset(id) {
+  const item = allItems().find(x => x.id === id) || allItems()[0];
+  if (!item) return;
+  $("#stPreset").value = item.id;
+  $("#stHandle").value = item.handle || "@माया";
+  $("#stQuote").value = item.quote;
+  $("#stHighlight").value = item.hl || "";
+  sampleKind = item.sample || "bindi";
+  if (!manualUpload) {
+    uploadedImage = null;
+    drawStudio();
+    if (!isFile && item.num <= MAYA_ITEMS.length) {
+      fetch("/api/tiktok/videos?project=maya-photos", { cache: "no-store" })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (manualUpload || $("#stPreset").value !== item.id) return;
+          if (!data?.videos?.some(v => v.day === item.num)) return;
+          const generated = new Image();
+          generated.onload = () => {
+            if (!manualUpload && $("#stPreset").value === item.id) { uploadedImage = generated; drawStudio(); }
+          };
+          generated.src = `videos/day-${String(item.num).padStart(2, "0")}.png?t=${Date.now()}`;
+        })
+        .catch(() => {});
+      return;
+    }
+  }
+  drawStudio();
+}
+
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest("button[data-c]");
+  if (!b) return;
+  state.cat = b.dataset.c; saveState(); renderFilters(); renderGrid();
+});
+
+$("#grid").addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const item = allItems().find(x => x.id === b.dataset.id);
+  if (!item) return;
+  if (b.dataset.act === "gen") { genPhoto(item); return; }
+  if (b.dataset.act === "tiktok" || b.dataset.act === "facebook" || b.dataset.act === "telegram") { postItemToSocial(b.dataset.act, item); return; }
+  if (b.dataset.act === "clean") copy(mayaCleanPromptFor(item, state.ar), `#${item.num} Clean portrait prompt copied ✓`);
+  if (b.dataset.act === "full") copy(mayaPosterPromptFor(item, state.ar), `#${item.num} Full poster prompt copied ✓`);
+  if (b.dataset.act === "cap") copy(mayaCaptionFor(item), `#${item.num} Long continuation story caption copied ✓`);
+  if (b.dataset.act === "studio") { showTab("studio"); loadPreset(item.id); }
+});
+
+$("#grid").addEventListener("change", e => {
+  const c = e.target.closest("input[data-done]");
+  if (!c) return;
+  if (c.checked) state.done[c.dataset.done] = true; else delete state.done[c.dataset.done];
+  saveState(); progress();
+  c.closest(".card").classList.toggle("done", c.checked);
+});
+
+document.querySelectorAll("nav button[data-t]").forEach(b => b.onclick = () => showTab(b.dataset.t));
+
+$("#nx").onclick = () => {
+  const next = allItems().find(it => !state.done[it.id]);
+  if (!next) { toast("All photos are marked done 🎉"); return; }
+  state.cat = "all"; saveState(); showTab("cards"); renderFilters(); renderGrid();
+  copy(mayaPosterPromptFor(next, state.ar), `#${next.num} Poster prompt copied ✓`);
+  $("#card-" + next.id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+$("#ar").value = state.ar;
+$("#ar").onchange = e => {
+  state.ar = e.target.value; saveState(); renderGrid();
+  if (state.ar === "9:16") { $("#stSize").value = "1080x1920"; drawStudio(); }
+};
+
+$("#dl").onclick = () => {
+  const txt = allItems().map(it =>
+    `=== PHOTO #${it.num} ===\nQUOTE:\n${it.quote}\n\nLONG STORY CAPTION:\n${mayaCaptionFor(it)}\n\nCLEAN PORTRAIT PROMPT (NO TEXT):\n${mayaCleanPromptFor(it, state.ar)}\n\nFULL POSTER PROMPT:\n${mayaPosterPromptFor(it, state.ar)}\n`
+  ).join("\n\n" + "=".repeat(60) + "\n\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+  a.download = "maya-photo-prompts.txt";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+$("#stPreset").onchange = e => loadPreset(e.target.value);
+$("#stFile").onchange = e => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  const img = new Image();
+  img.onload = () => { manualUpload = true; uploadedImage = img; drawStudio(); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f);
+};
+$("#stUseSample").onclick = () => { manualUpload = false; uploadedImage = null; $("#stFile").value = ""; drawStudio(); };
+["#stSize","#stFilter","#stOpacity","#stHandle","#stSeal","#stQuote","#stHighlight","#stFontSize","#stShowSeal","#stDarkGrad"]
+  .forEach(sel => $(sel).addEventListener("input", drawStudio));
+
+$("#stDownload").onclick = () => {
+  drawStudio();
+  const a = document.createElement("a");
+  a.href = $("#canvas").toDataURL("image/png");
+  a.download = `maya-${$("#stPreset").value || "quote"}.png`;
+  document.body.append(a); a.click(); a.remove();
+  toast("Finished PNG downloaded ✓");
+};
+$("#stCopyCap").onclick = () => {
+  const currentItem = allItems().find(x => x.id === $("#stPreset").value);
+  const text = currentItem && currentItem.quote === $("#stQuote").value
+    ? mayaCaptionFor({ ...currentItem, handle: $("#stHandle").value.trim() || "@माया" })
+    : `${$("#stQuote").value}\n\n— ${$("#stHandle").value}\n\n#माया #Maya #NepaliQuotes #NepaliStory #NepaliShayari`;
+  copy(text, "Long story caption copied ✓");
+};
+
+$("#cuSave").onclick = () => {
+  const quote = $("#cuQuote").value.trim();
+  const scene = $("#cuScene").value.trim();
+  const story = $("#cuStory").value.trim();
+  if (!quote || !scene) { toast("कृपया उद्धरण र फोटो दृश्य दुवै लेख्नुहोस्।"); return; }
+  customItems.push({
+    cat: $("#cuCat").value,
+    sample: "bindi",
+    handle: "@माया",
+    quote,
+    hl: $("#cuHl").value.trim(),
+    scene,
+    story
+  });
+  saveCustom();
+  $("#cuQuote").value = ""; $("#cuHl").value = ""; $("#cuScene").value = ""; $("#cuStory").value = "";
+  populatePresets(); renderGrid(); showTab("cards");
+  toast("New custom quote card added ✓");
+};
+$("#cuClearAll").onclick = () => {
+  if (!customItems.length) { toast("No custom cards to remove."); return; }
+  if (!confirm("Remove all custom added quote cards?")) return;
+  customItems = []; saveCustom(); populatePresets(); renderGrid();
+  toast("Custom cards cleared.");
+};
+
+window.addEventListener("storage", e => {
+  if (e.key === STATE_KEY || e.key === JOB_KEY) {
+    try { const r = localStorage.getItem(STATE_KEY); if (r) state = Object.assign(state, JSON.parse(r)); } catch {}
+    syncFailedStudioJob();
+    renderFilters(); renderGrid();
+  }
+});
+
+$("#guideLock").textContent = MAYA_STYLE_LOCK;
+renderFilters(); renderGrid(); populatePresets(); loadPreset("b1"); checkApi();
+window.StoryStudioSocial?.initAutoPostToggles?.({
+  projectId: PROJECT_ID,
+  tiktokSelector: "#autoPostToggle",
+  facebookSelector: "#autoPostFacebookToggle",
+  onToast: toast
+});
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId: PROJECT_ID,
+  totalClips: allItems().length,
+  readLocal: () => ({ checked: { ...(state.done || {}) }, state, hasLocal: Object.keys(state.done || {}).length > 0, completedCount: allItems().filter(it => state.done[it.id]).length }),
+  applyMerged: (checked, mergedState) => {
+    state = Object.assign(state, mergedState || {}, { done: checked || {} });
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+    renderFilters(); renderGrid();
+  }
+});
+if (document.fonts?.ready) document.fonts.ready.then(drawStudio);
+</script>
+</body>
+</html>

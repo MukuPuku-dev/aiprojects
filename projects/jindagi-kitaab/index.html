@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>जिन्दगीको किताब · Golden-Hour Sunset Quote Portraits</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&family=Noto+Serif+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#120d0a;--card:#1c140f;--ink:#f7efe6;--mut:#c4ad98;--amber:#e67e22;
+  --burnt:#c2410c;--gold:#fbbf24;--ok:#62d99a;--line:#38281e;
+  --ne:"Noto Serif Devanagari","Noto Sans Devanagari","Mukta","Nirmala UI","Mangal",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top right,#29180f 0%,var(--bg) 55%);color:var(--ink);font:15px/1.6 var(--ne)}
+header{position:sticky;top:0;background:#120d0aee;backdrop-filter:blur(8px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:6}
+h1{margin:0;font-size:19px}
+h1 span.amber{color:var(--gold)}
+h2{margin:16px 0 8px;font-size:17px;color:var(--gold)}
+h3{margin:12px 0 6px;font-size:15px;color:#fff}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--burnt),var(--gold));width:0;transition:width .3s}
+nav,.filters,.btns,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:4px}
+button,select,input,textarea{background:#271d17;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 11px;font:inherit}
+button,select{cursor:pointer}
+button.p{background:var(--burnt);color:#fff;border-color:var(--burnt);font-weight:700}
+button.gold{background:var(--gold);color:#221307;border-color:var(--gold);font-weight:700}
+button.tt{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button.fb{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button.fb:hover{background:#166fe5;border-color:#166fe5}
+button.tg{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button.tg:hover{background:#1d8ec4;border-color:#1d8ec4}
+button.on{border-color:var(--gold);color:var(--gold)}
+button:disabled{opacity:.48;cursor:wait}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+nav a{color:var(--gold);padding:6px 4px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+.auto-pill{display:inline-flex;align-items:center;gap:6px;background:#241913;border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:12px;color:var(--ink);cursor:pointer}
+.auto-pill input{accent-color:var(--gold);cursor:pointer}
+main{max-width:1080px;margin:0 auto;padding:14px}
+.hide{display:none}
+.filters{margin:6px 0 12px}
+.filters button{font-size:12.5px;padding:5px 10px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:9px;scroll-margin-top:145px}
+.card.done{opacity:.82;border-color:#2c5842}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.badge{background:var(--burnt);color:#fff;font-weight:800;border-radius:7px;padding:1px 8px;font-size:12.5px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:1px 9px;font-size:11.5px;color:var(--mut)}
+.top label{margin-left:auto;font-size:12.5px;color:var(--mut);display:flex;gap:5px;align-items:center;cursor:pointer}
+.sunset-mock{
+  background:radial-gradient(circle at 86% 84%,#fff0aa 0%,#fb923c 28%,#7c5e56 68%,#2b201d 100%);
+  border:1px solid #593b29;border-radius:12px;padding:16px 16px 18px;position:relative;overflow:hidden;
+  box-shadow:inset 0 -18px 34px rgba(32,16,8,.42);min-height:118px;display:flex;align-items:center;justify-content:flex-end;
+}
+.sky-quote{
+  text-align:center;color:#1d140e;font-size:16px;font-weight:700;line-height:1.58;
+  text-shadow:0 1px 10px rgba(255,232,175,.55);max-width:92%;
+}
+.sky-quote .hl{color:#9a3412;font-weight:800}
+.sky-quote .ul{
+  display:inline-block;position:relative;padding-bottom:3px;
+  background-image:linear-gradient(transparent calc(100% - 3px),#1d140e calc(100% - 3px));
+  background-repeat:no-repeat;background-size:100% 3px;
+}
+.scene{font-size:12.5px;color:#ead9c9;margin:0}
+.scene b{color:var(--gold)}
+.caption-pill{background:#16100c;border:1px solid #35261c;border-radius:9px;padding:7px 10px;font-size:12px;color:#d6beaa}
+.story-box{background:#150f0c;border:1px solid #33241b;border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:8px 10px;font-size:13px;line-height:1.65;color:#ede2d7}
+.story-box summary{color:var(--gold);font-weight:700;font-size:12.5px}
+.story-text{margin-top:6px;white-space:pre-line}
+.btns button{font-size:12px;padding:6px 9px}
+.gen{font-size:12.5px;min-height:1em;color:var(--gold)}
+.gen a{color:var(--ok);margin-left:6px}
+details{margin-top:2px}
+summary{cursor:pointer;color:var(--mut);font-size:12px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0d0907;border:1px solid var(--line);border-radius:9px;padding:10px;font:12px/1.5 ui-monospace,Menlo,Consolas,monospace;margin:6px 0 0}
+.studio{display:grid;grid-template-columns:1fr minmax(280px,370px);gap:18px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:11px}
+.panel label{font-size:12.5px;color:var(--mut);display:flex;flex-direction:column;gap:4px}
+.panel input[type="text"],.panel textarea,.panel select{width:100%}
+.preview-wrap{background:#090705;border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center;position:sticky;top:128px}
+.preview-wrap canvas{width:100%;height:auto;border-radius:10px;background:#1a120d;display:block}
+.note{border-left:3px solid var(--burnt);padding:8px 12px;background:#1c140e;border-radius:0 8px 8px 0;margin:10px 0}
+.info-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#062014;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:12}
+#toast.show{opacity:1}
+@media(max-width:780px){.studio{grid-template-columns:1fr}.preview-wrap{position:static}}
+@media(max-width:600px){header{position:relative}}
+</style>
+</head>
+<body>
+<header>
+  <h1>📖 <span class="amber">जिन्दगीको किताब</span> · Golden-Hour Sunset Quote Portraits <span class="sub" id="st"></span></h1>
+  <div class="sub">Warm Sunset Hills + Open Book + Sky Devanagari Typography · 30 Heart-Touching Quotes · Short Viral Captions + Full Reflection Stories</div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav>
+    <button class="p" id="nx">Copy NEXT Photo Prompt</button>
+    <button data-t="cards" class="on">Photo Prompts (<span id="countBadge">30</span>)</button>
+    <button data-t="studio">🎨 Poster Studio (Canvas)</button>
+    <button data-t="custom">✍️ Add Custom Quote</button>
+    <button data-t="guide">Style Guide &amp; Workflow</button>
+    <button id="dl">Download all prompts (.txt)</button>
+    <a href="../../index.html">← All projects</a>
+    <label class="sub">Flow Aspect <select id="ar"><option value="9:16">9:16 Vertical (TikTok)</option><option value="16:9">16:9 Wide</option></select></label>
+    <label class="auto-pill" title="When ON, generating a photo automatically submits it to TikTok as soon as Flow finishes">
+      <input type="checkbox" id="autoPostToggle">
+      <span>Auto-post TikTok after Flow</span>
+    </label>
+    <label class="auto-pill" title="When ON, generating a photo automatically submits it to Facebook as soon as Flow finishes">
+      <input type="checkbox" id="autoPostFacebookToggle">
+      <span>Auto-post Facebook after Flow</span>
+    </label>
+    <label class="auto-pill" title="When ON, generating a photo automatically sends the photo &amp; caption to Telegram as soon as Flow finishes">
+      <input type="checkbox" id="autoPostTelegramToggle">
+      <span>Auto-send Telegram after Flow</span>
+    </label>
+    <span class="sub" id="api"></span>
+  </nav>
+</header>
+
+<main>
+  <section id="cards">
+    <div class="filters" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section id="studio" class="hide">
+    <div class="studio">
+      <div class="panel">
+        <h2 style="margin:0">🎨 Sunset Sky Poster Studio — जिन्दगीको किताब</h2>
+        <div class="sub">Overlays Nepali sky typography with burnt-orange highlight &amp; curved brush underline onto any Flow image or sample sunset veranda portrait.</div>
+        <label>Load Preset Card (#1–#30 + Custom)
+          <select id="stPreset"></select>
+        </label>
+        <label>Background Sunset Photo (auto-loads generated day PNG if available, or upload your own)
+          <input type="file" id="stFile" accept="image/*">
+        </label>
+        <div class="row">
+          <button type="button" id="stUseSample">Use Golden-Hour Sunset Painting</button>
+          <label style="flex:1;min-width:140px">Aspect / Size
+            <select id="stSize">
+              <option value="1080x1920">1080×1920 (9:16 TikTok)</option>
+              <option value="1080x1350">1080×1350 (4:5 Portrait)</option>
+              <option value="1080x1080">1080×1080 (1:1 Square)</option>
+            </select>
+          </label>
+        </div>
+        <div class="row">
+          <label style="flex:1;min-width:140px">Sky Text Ink
+            <select id="stInk">
+              <option value="dark">Deep Espresso Ink (Best on Bright Sky)</option>
+              <option value="light">Warm Ivory Ink (Best on Dusk Sky)</option>
+            </select>
+          </label>
+          <label style="flex:1;min-width:140px">Sunset Glow Scrim (<span id="scrimVal">28%</span>)
+            <input type="range" id="stScrim" min="0" max="80" value="28">
+          </label>
+        </div>
+        <label>Nepali Quote Text (sky overlay)
+          <textarea id="stQuote" rows="3"></textarea>
+        </label>
+        <div class="row">
+          <label style="flex:1;min-width:160px">Highlight Phrase (burnt orange)
+            <input type="text" id="stHighlight" value="जिन्दगीको किताब">
+          </label>
+          <label style="flex:1;min-width:160px">Brush Underline Phrase
+            <input type="text" id="stUnderline" value="जरुरी छैन">
+          </label>
+        </div>
+        <label>Quote Font Size (<span id="fontVal">52px</span>)
+          <input type="range" id="stFontSize" min="34" max="76" value="52">
+        </label>
+        <div class="row">
+          <button type="button" class="gold" id="stDownload">⬇️ Download Final Poster PNG</button>
+          <button type="button" id="stCopyCap">Copy Short TikTok Caption</button>
+        </div>
+      </div>
+      <div class="preview-wrap">
+        <canvas id="canvas" width="1080" height="1920"></canvas>
+        <div class="sub" style="margin-top:8px">Live 1080px preview · High-res PNG export ready for TikTok</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="custom" class="hide">
+    <div class="info-box" style="max-width:720px">
+      <h2 style="margin-top:0">✍️ Add Custom "जिन्दगीको किताब" Quote Card</h2>
+      <p class="sub">Write your own Nepali lines and scene idea. It gets saved locally and synced with your progress.</p>
+      <div style="display:flex;flex-direction:column;gap:11px;margin-top:10px">
+        <label>Category
+          <select id="cCat">
+            <option value="kitab">जिन्दगीको किताब · Quiet Privacy</option>
+            <option value="ekant">मौनता र शान्ति · Solitude &amp; Peace</option>
+            <option value="samjhana">अधुरो सम्झना · Unspoken Memories</option>
+            <option value="aash">आत्मबल र आशा · Healing &amp; Dawn</option>
+          </select>
+        </label>
+        <label>Nepali Quote (2–3 balanced lines work best in the sunset sky)
+          <textarea id="cQuote" rows="3" placeholder="केही पानाहरू बन्द नै रहन देऊ,&#10;यो जिन्दगीको किताब सबैले&#10;बुझ्न जरुरी छैन ।"></textarea>
+        </label>
+        <div class="row">
+          <label style="flex:1;min-width:180px">Highlight Phrase (burnt orange)
+            <input type="text" id="cHl" placeholder="जिन्दगीको किताब">
+          </label>
+          <label style="flex:1;min-width:180px">Brush Underline Phrase
+            <input type="text" id="cUl" placeholder="जरुरी छैन">
+          </label>
+        </div>
+        <label>Sunset / Hill Scene Description (English prompt for Flow)
+          <textarea id="cScene" rows="3" placeholder="Warm golden-hour sunset from a quiet balcony overlooking misty hills, cream knit sweater, open book, ceramic tea mug, clean warm peach sky in upper right..."></textarea>
+        </label>
+        <label>Hashtags
+          <input type="text" id="cTags" value="#LifeIsABook #UnspokenFeelings #KeepSomeThingsPrivate #JindagiKoKitaab #NepaliQuotes">
+        </label>
+        <label>Long Story Reflection (optional Nepali caption for deeper reading)
+          <textarea id="cStory" rows="4" placeholder="Write a soulful Nepali paragraph about this quote..."></textarea>
+        </label>
+        <div class="row">
+          <button type="button" class="p" id="cSave">Save Custom Quote Card</button>
+          <button type="button" id="cClear">Clear</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="guide" class="hide">
+    <div class="info-box">
+      <h2 style="margin-top:0">Golden-Hour Viral Aesthetic Guide · जिन्दगीको किताब</h2>
+      <div class="note"><b>Exact Viral Signature:</b> Warm sunset veranda over misty hills, quiet reader seen from behind in a cozy cable-knit sweater holding an open hardcover book, plus ceramic chiya mug and closed book beside them — with 3 lines of clean dark Devanagari sky text, one burnt-orange phrase, and a hand-drawn curved black brush underline on the closing punchline.</div>
+      <h3>Two Ways to Generate</h3>
+      <ul>
+        <li><b>Method A — Direct One-Click Flow:</b> Click <b>Generate Photo in Flow</b> on any card. Turn <b>Auto-post TikTok after Flow</b> ON if you want Flow to immediately upload the finished photo + short hashtag caption straight to TikTok without waiting for another click.</li>
+        <li><b>Method B — Clean Background + Poster Studio:</b> Copy the <b>Clean Portrait Prompt</b> (zero AI typos in Devanagari), generate in Flow, upload/open in <b>Poster Studio</b>, and export razor-sharp vector Devanagari + curved underline at 1080×1920.</li>
+      </ul>
+      <h3>Shared Style Lock</h3>
+      <pre id="slk"></pre>
+    </div>
+  </section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
+<script src="flow-data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PROJECT_ID = "jindagi-kitaab";
+const STATE_KEY = "jindagi-kitaab-v1";
+const CUSTOM_KEY = "jindagi-kitaab-custom-v1";
+const JOB_KEY = "kitaab_flow_job";
+const AUTO_POST_KEY = "story_studio_auto_post_tiktok";
+const isFile = location.protocol === "file:";
+
+let state = { done:{}, ar:"9:16", cat:"all" };
+let customItems = [];
+try { const r = localStorage.getItem(STATE_KEY); if (r) state = Object.assign(state, JSON.parse(r)); } catch {}
+try { const c = localStorage.getItem(CUSTOM_KEY); if (c) customItems = JSON.parse(c) || []; } catch {}
+if (!["9:16", "16:9"].includes(state.ar)) state.ar = "9:16";
+
+const allItems = () => [
+  ...KITAAB_ITEMS.map((x, i) => ({ ...x, id: "b" + (i + 1), num: i + 1 })),
+  ...customItems.map((x, i) => ({ ...x, id: "c" + (i + 1), num: KITAAB_ITEMS.length + i + 1, custom: true }))
+];
+
+function pushCloudProgress() {
+  const items = allItems();
+  const checked = { ...(state.done || {}) };
+  const completedCount = items.filter(it => checked[it.id]).length;
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
+    totalClips: items.length,
+    completedCount,
+    checked,
+    state
+  });
+}
+
+const saveState = () => {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+  pushCloudProgress();
+};
+const saveCustom = () => { try { localStorage.setItem(CUSTOM_KEY, JSON.stringify(customItems)); } catch {} };
+
+function syncFailedStudioJob() {
+  try {
+    const raw = localStorage.getItem(JOB_KEY);
+    if (!raw) return;
+    const job = JSON.parse(raw);
+    if (job && ["failed", "unknown"].includes(job.status) && !job.unchecked) {
+      delete state.done["b" + job.day];
+      try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+      localStorage.setItem(JOB_KEY, JSON.stringify({ ...job, unchecked: true }));
+    }
+  } catch {}
+}
+syncFailedStudioJob();
+
+let tt;
+function toast(msg) {
+  const el = $("#toast");
+  el.textContent = msg; el.classList.add("show");
+  clearTimeout(tt); tt = setTimeout(() => el.classList.remove("show"), 2000);
+}
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.opacity = "0";
+    document.body.append(a); a.select();
+    try { document.execCommand("copy"); } catch {}
+    a.remove();
+  }
+  toast(msg || "Copied ✓");
+}
+
+function getAutoPost(platform = "tiktok") {
+  return Boolean(window.StoryStudioSocial?.isEnabled?.(platform));
+}
+
+function renderQuoteHtml(quote, hl, ul) {
+  let html = esc(quote).replace(/\n/g, "<br>");
+  if (hl && quote.includes(hl)) {
+    html = html.split(esc(hl)).join(`<span class="hl">${esc(hl)}</span>`);
+  }
+  if (ul && quote.includes(ul)) {
+    html = html.split(esc(ul)).join(`<span class="ul">${esc(ul)}</span>`);
+  }
+  return html;
+}
+
+function renderFilters() {
+  $("#filters").innerHTML = KITAAB_CATS.map(c =>
+    `<button data-c="${c.id}" class="${state.cat === c.id ? "on" : ""}">${esc(c.label)}</button>`
+  ).join("");
+}
+
+const GEN = {};
+function setGen(id, htmlMsg) {
+  GEN[id] = htmlMsg;
+  const el = document.getElementById("g-" + id);
+  if (el) el.innerHTML = htmlMsg;
+}
+
+function renderGrid() {
+  const items = allItems();
+  $("#countBadge").textContent = items.length;
+  const shown = items.filter(it => state.cat === "all" || it.cat === it.cat && (state.cat === "all" || it.cat === state.cat));
+  $("#grid").innerHTML = shown.map(it => {
+    const done = !!state.done[it.id];
+    const catObj = KITAAB_CATS.find(c => c.id === it.cat) || KITAAB_CATS[1];
+    const firstPara = (it.story || "").split(/\n\n/)[0] || "";
+    const restParas = (it.story || "").split(/\n\n/).slice(1).join("\n\n");
+    return `<article class="card ${done ? "done" : ""}" id="card-${it.id}">
+      <div class="top">
+        <span class="badge">#${it.num}</span>
+        <span class="chip">${esc(catObj.label.split("·")[0].trim())}</span>
+        ${it.custom ? `<span class="chip">Custom</span>` : ""}
+        <label><input type="checkbox" data-done="${it.id}" ${done ? "checked" : ""}> Made</label>
+      </div>
+      <div class="sunset-mock">
+        <div class="sky-quote">${renderQuoteHtml(it.quote, it.hl, it.ul)}</div>
+      </div>
+      <p class="scene"><b>Sunset Scene:</b> ${esc(it.scene)}</p>
+      <div class="caption-pill"><b>TikTok Caption:</b> ${esc(kitaabShortCaptionFor(it).replace(/\n/g, " · "))}</div>
+      ${it.story ? `<div class="story-box">
+        <div><b>मन छुने कथा:</b> ${esc(firstPara)}</div>
+        ${restParas ? `<details><summary>पुरा कथा पढ्नुहोस् (Read full story reflection)</summary><div class="story-text">${esc(restParas)}</div></details>` : ""}
+      </div>` : ""}
+      <div class="btns">
+        <button class="p" data-act="gen" data-id="${it.id}">Generate Photo in Flow</button>
+        <button class="tt" data-act="tiktok" data-id="${it.id}" title="Post photo to TikTok">♪ Post to TikTok</button>
+        <button class="fb" data-act="facebook" data-id="${it.id}" title="Post photo to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post to Facebook</button>
+        <button class="tg" data-act="telegram" data-id="${it.id}" title="Send photo &amp; caption to Telegram">✈ Send to Telegram</button>
+        <button data-act="clean" data-id="${it.id}">Copy Clean Scene Prompt</button>
+        <button data-act="full" data-id="${it.id}">Copy Full Poster Prompt</button>
+        <button class="gold" data-act="studio" data-id="${it.id}">🎨 Poster Studio</button>
+        <button data-act="shortcap" data-id="${it.id}">Copy Short TikTok Caption</button>
+        <button data-act="cap" data-id="${it.id}">Copy Long Story</button>
+      </div>
+      <div class="gen" id="g-${it.id}">${GEN[it.id] || ""}</div>
+      <details><summary>Preview Flow Prompt</summary><pre>${esc(kitaabPosterPromptFor(it, state.ar))}</pre></details>
+    </article>`;
+  }).join("");
+  progress();
+}
+
+function progress() {
+  const items = allItems();
+  const n = items.filter(it => state.done[it.id]).length;
+  $("#pb").style.width = (items.length ? n / items.length * 100 : 0) + "%";
+  $("#st").textContent = `${n}/${items.length} photos completed`;
+}
+
+function showTab(t) {
+  ["cards", "studio", "custom", "guide"].forEach(id => $("#" + id).classList.toggle("hide", id !== t));
+  document.querySelectorAll("nav button[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (t === "studio") drawStudio();
+}
+
+async function checkApi() {
+  const el = $("#api");
+  if (isFile) { el.textContent = "Generator: open via http://127.0.0.1:8787/projects/jindagi-kitaab/"; return; }
+  try { const r = await fetch("/api/health"); if (!r.ok) throw new Error(); el.textContent = "Generator: online · Cloud sync active"; }
+  catch { el.textContent = "Generator: offline (double-click Start Story Studio.vbs)"; }
+}
+
+async function postItemToSocial(platform, item) {
+  if (isFile) { toast(`Open via http://127.0.0.1:8787 to post to ${platform}`); return; }
+  const label = platform === "facebook" ? "Facebook" : platform === "telegram" ? "Telegram" : "TikTok";
+  const btn = document.querySelector(`button[data-act="${platform}"][data-id="${item.id}"]`);
+  if (btn) btn.disabled = true;
+  try {
+    await window.StoryStudioSocial.postMedia({
+      platform,
+      projectId: PROJECT_ID,
+      day: item.num,
+      context: kitaabShortCaptionFor(item),
+      label: `#${item.num}`,
+      onStatus: msg => setGen(item.id, esc(msg))
+    });
+    setGen(item.id, `Posted to ${label} ✓`);
+    toast(`#${item.num} posted to ${label} ✓`);
+  } catch (err) {
+    setGen(item.id, `${label} failed: ${esc(err.message)}`);
+    toast(`${label} upload failed. See card status.`);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function genPhoto(item) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787/projects/jindagi-kitaab/ to generate"); return; }
+  const btn = document.querySelector(`button[data-act="gen"][data-id="${item.id}"]`);
+  if (btn) btn.disabled = true;
+  setGen(item.id, "Generating sunset quote image in Flow… Keep the Flow Chrome window open.");
+  try {
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        mode: "image",
+        day: item.num,
+        prompt: kitaabPosterPromptFor(item, state.ar),
+        aspect: state.ar
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Image generation failed");
+    const link = `<a href="/${esc(j.file)}" target="_blank" rel="noopener">Open photo ↗</a>`;
+    setGen(item.id, `Saved to ${esc(j.file)} ${link}`);
+    state.done[item.id] = true;
+    saveState(); progress(); renderGrid();
+    setGen(item.id, `Saved to ${esc(j.file)} ${link}`);
+    toast(`#${item.num} photo saved ✓`);
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({
+      projectId: PROJECT_ID,
+      day: item.num,
+      context: kitaabShortCaptionFor(item),
+      tiktokEnabled: Boolean($("#autoPostToggle")?.checked),
+      facebookEnabled: Boolean($("#autoPostFacebookToggle")?.checked),
+      telegramEnabled: Boolean($("#autoPostTelegramToggle")?.checked),
+      label: `#${item.num}`,
+      onStatus: msg => setGen(item.id, esc(msg)),
+      onToast: toast
+    });
+  } catch (err) {
+    setGen(item.id, `Failed: ${esc(err.message)}`);
+    toast("Image generation failed. See the status line.");
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+/* ---------- Sunset Poster Studio (HTML5 Canvas) ---------- */
+let uploadedImage = null;
+let manualUpload = false;
+
+function buildSunsetSample(w, h) {
+  const off = document.createElement("canvas");
+  off.width = w; off.height = h;
+  const g = off.getContext("2d");
+
+  const sky = g.createLinearGradient(0, 0, w, h * 0.72);
+  sky.addColorStop(0, "#5e575c");
+  sky.addColorStop(0.28, "#8c7061");
+  sky.addColorStop(0.6, "#ef9641");
+  sky.addColorStop(1, "#ffdb70");
+  g.fillStyle = sky;
+  g.fillRect(0, 0, w, h);
+
+  // Glowing sunset sun on the right horizon
+  const sunX = w * 0.84, sunY = h * 0.56;
+  const halo = g.createRadialGradient(sunX, sunY, w * 0.015, sunX, sunY, w * 0.44);
+  halo.addColorStop(0, "rgba(255,253,228,1)");
+  halo.addColorStop(0.18, "rgba(255,212,102,0.92)");
+  halo.addColorStop(0.55, "rgba(249,115,22,0.36)");
+  halo.addColorStop(1, "rgba(249,115,22,0)");
+  g.fillStyle = halo;
+  g.fillRect(0, 0, w, h);
+
+  // Layered misty hills
+  const ridgeColors = ["#6c6e80", "#4d5368", "#2d3545"];
+  ridgeColors.forEach((col, idx) => {
+    g.fillStyle = col;
+    g.beginPath();
+    const base = h * (0.48 + idx * 0.065);
+    g.moveTo(0, h);
+    g.lineTo(0, base);
+    g.quadraticCurveTo(w * 0.25, base - h * (0.05 - idx * 0.01), w * 0.54, base + h * 0.02);
+    g.quadraticCurveTo(w * 0.78, base - h * 0.04, w, base + h * 0.03);
+    g.lineTo(w, h);
+    g.closePath();
+    g.fill();
+  });
+
+  // Veranda stone railing + foliage silhouette
+  g.fillStyle = "#2b1d17";
+  g.fillRect(w * 0.42, h * 0.66, w * 0.58, h * 0.34);
+  g.fillStyle = "#412a1e";
+  g.fillRect(w * 0.62, h * 0.82, w * 0.38, h * 0.18);
+
+  // Reader silhouette in cozy cream cable-knit sweater holding an open book
+  g.fillStyle = "#161110";
+  g.beginPath();
+  g.ellipse(w * 0.17, h * 0.24, w * 0.11, h * 0.16, -0.08, 0, Math.PI * 2);
+  g.fill();
+  const sweater = g.createLinearGradient(0, h * 0.44, w * 0.46, h * 0.96);
+  sweater.addColorStop(0, "#d8c2a6");
+  sweater.addColorStop(1, "#7b6048");
+  g.fillStyle = sweater;
+  g.beginPath();
+  g.moveTo(0, h * 0.48);
+  g.quadraticCurveTo(w * 0.34, h * 0.52, w * 0.44, h * 0.76);
+  g.lineTo(w * 0.36, h);
+  g.lineTo(0, h);
+  g.closePath();
+  g.fill();
+
+  // Open book in hands
+  g.fillStyle = "#efe0ca";
+  g.beginPath();
+  g.moveTo(w * 0.28, h * 0.50);
+  g.lineTo(w * 0.46, h * 0.57);
+  g.lineTo(w * 0.41, h * 0.74);
+  g.lineTo(w * 0.23, h * 0.67);
+  g.closePath();
+  g.fill();
+  g.fillStyle = "#f7ecda";
+  g.beginPath();
+  g.moveTo(w * 0.46, h * 0.57);
+  g.lineTo(w * 0.63, h * 0.59);
+  g.lineTo(w * 0.53, h * 0.75);
+  g.lineTo(w * 0.41, h * 0.74);
+  g.closePath();
+  g.fill();
+
+  // Closed book + green sprig + ceramic chiya mug on wooden table
+  g.fillStyle = "#6c4932";
+  g.fillRect(w * 0.66, h * 0.85, w * 0.26, h * 0.08);
+  g.fillStyle = "#e7d8c5";
+  g.fillRect(w * 0.88, h * 0.71, w * 0.09, h * 0.13);
+  g.fillStyle = "#4d7c3f";
+  g.beginPath();
+  g.ellipse(w * 0.76, h * 0.83, w * 0.04, h * 0.015, -0.3, 0, Math.PI * 2);
+  g.fill();
+
+  return off;
+}
+
+function drawBrushUnderline(ctx, x, y, width, color) {
+  ctx.save();
+  ctx.strokeStyle = color;
+  ctx.lineCap = "round";
+  ctx.lineWidth = Math.max(4, Math.round(width * 0.028));
+  ctx.beginPath();
+  ctx.moveTo(x - 6, y + 8);
+  ctx.quadraticCurveTo(x + width * 0.48, y - 2, x + width + 8, y + 6);
+  ctx.stroke();
+  ctx.restore();
+}
+
+function tokenizeLine(line, hl, ul) {
+  const markers = [];
+  if (hl) {
+    let idx = line.indexOf(hl);
+    while (idx !== -1) {
+      markers.push({ start: idx, end: idx + hl.length, kind: "hl" });
+      idx = line.indexOf(hl, idx + hl.length);
+    }
+  }
+  if (ul) {
+    let idx = line.indexOf(ul);
+    while (idx !== -1) {
+      markers.push({ start: idx, end: idx + ul.length, kind: "ul" });
+      idx = line.indexOf(ul, idx + ul.length);
+    }
+  }
+  markers.sort((a, b) => a.start - b.start);
+  const runs = [];
+  let pos = 0;
+  for (const m of markers) {
+    if (m.start < pos) continue;
+    if (m.start > pos) runs.push({ text: line.slice(pos, m.start), kind: "norm" });
+    runs.push({ text: line.slice(m.start, m.end), kind: m.kind });
+    pos = m.end;
+  }
+  if (pos < line.length) runs.push({ text: line.slice(pos), kind: "norm" });
+  return runs.length ? runs : [{ text: line, kind: "norm" }];
+}
+
+function drawStudio() {
+  const cv = $("#canvas");
+  const [W, H] = $("#stSize").value.split("x").map(Number);
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const ctx = cv.getContext("2d");
+
+  const src = uploadedImage || buildSunsetSample(W, H);
+  const sw = src.naturalWidth || src.width, sh = src.naturalHeight || src.height;
+  const scale = Math.max(W / sw, H / sh);
+  const dw = sw * scale, dh = sh * scale;
+  ctx.clearRect(0, 0, W, H);
+  ctx.drawImage(src, (W - dw) / 2, (H - dh) / 2, dw, dh);
+
+  const scrim = Number($("#stScrim").value) / 100;
+  $("#scrimVal").textContent = Math.round(scrim * 100) + "%";
+  if (scrim > 0) {
+    const wash = ctx.createRadialGradient(W * 0.68, H * 0.24, 10, W * 0.68, H * 0.24, W * 0.62);
+    wash.addColorStop(0, `rgba(255,234,194,${scrim * 0.85})`);
+    wash.addColorStop(1, "rgba(255,234,194,0)");
+    ctx.fillStyle = wash;
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  const darkMode = $("#stInk").value === "dark";
+  const baseInk = darkMode ? "#1c130d" : "#fff7ed";
+  const hlInk = darkMode ? "#9a3412" : "#fb923c";
+  const ulColor = darkMode ? "#1c130d" : "#fed7aa";
+
+  const quote = $("#stQuote").value.trim();
+  const hl = $("#stHighlight").value.trim();
+  const ul = $("#stUnderline").value.trim();
+  const fs = Math.round(Number($("#stFontSize").value) * (W / 1080));
+  $("#fontVal").textContent = $("#stFontSize").value + "px";
+
+  if (!quote) return;
+  const lines = quote.split(/\n/).filter(Boolean);
+  ctx.font = `700 ${fs}px "Noto Serif Devanagari","Noto Sans Devanagari",sans-serif`;
+  ctx.textBaseline = "top";
+  const lh = Math.round(fs * 1.48);
+  const centerX = W * 0.63;
+  const startY = Math.round(H * 0.14);
+
+  lines.forEach((line, idx) => {
+    const runs = tokenizeLine(line, hl, ul);
+    const totalW = runs.reduce((acc, r) => acc + ctx.measureText(r.text).width, 0);
+    let rx = Math.max(Math.round(W * 0.34), Math.round(centerX - totalW / 2));
+    if (rx + totalW > W - 36) rx = Math.max(32, W - 36 - totalW);
+    const ry = startY + idx * lh;
+    for (const r of runs) {
+      ctx.fillStyle = r.kind === "hl" ? hlInk : baseInk;
+      if (!darkMode) {
+        ctx.shadowColor = "rgba(0,0,0,0.45)";
+        ctx.shadowBlur = 10;
+      } else {
+        ctx.shadowColor = "rgba(255,244,214,0.6)";
+        ctx.shadowBlur = 6;
+      }
+      ctx.fillText(r.text, rx, ry);
+      const rw = ctx.measureText(r.text).width;
+      ctx.shadowBlur = 0;
+      if (r.kind === "ul") {
+        drawBrushUnderline(ctx, rx, ry + fs * 1.06, rw, ulColor);
+      }
+      rx += rw;
+    }
+  });
+}
+
+function populatePresets() {
+  $("#stPreset").innerHTML = allItems().map(it =>
+    `<option value="${it.id}">#${it.num} — ${esc(it.quote.replace(/\n/g, " "))}</option>`
+  ).join("");
+}
+
+function loadPreset(id) {
+  const item = allItems().find(x => x.id === id) || allItems()[0];
+  if (!item) return;
+  $("#stPreset").value = item.id;
+  $("#stQuote").value = item.quote;
+  $("#stHighlight").value = item.hl || "";
+  $("#stUnderline").value = item.ul || "";
+  if (!manualUpload) {
+    uploadedImage = null;
+    drawStudio();
+    if (!isFile && item.num <= KITAAB_ITEMS.length) {
+      fetch("/api/tiktok/videos?project=" + PROJECT_ID, { cache: "no-store" })
+        .then(r => r.ok ? r.json() : null)
+        .then(data => {
+          if (manualUpload || $("#stPreset").value !== item.id) return;
+          if (!data?.videos?.some(v => v.day === item.num)) return;
+          const generated = new Image();
+          generated.onload = () => {
+            if (!manualUpload && $("#stPreset").value === item.id) { uploadedImage = generated; drawStudio(); }
+          };
+          generated.src = `videos/day-${String(item.num).padStart(2, "0")}.png?t=${Date.now()}`;
+        })
+        .catch(() => {});
+      return;
+    }
+  }
+  drawStudio();
+}
+
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest("button[data-c]");
+  if (!b) return;
+  state.cat = b.dataset.c; saveState(); renderFilters(); renderGrid();
+});
+
+$("#grid").addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const item = allItems().find(x => x.id === b.dataset.id);
+  if (!item) return;
+  if (b.dataset.act === "gen") { genPhoto(item); return; }
+  if (b.dataset.act === "tiktok") { postItemToSocial("tiktok", item); return; }
+  if (b.dataset.act === "facebook") { postItemToSocial("facebook", item); return; }
+  if (b.dataset.act === "telegram") { postItemToSocial("telegram", item); return; }
+  if (b.dataset.act === "clean") copy(kitaabCleanPromptFor(item, state.ar), `#${item.num} Clean scene prompt copied ✓`);
+  if (b.dataset.act === "full") copy(kitaabPosterPromptFor(item, state.ar), `#${item.num} Full poster prompt copied ✓`);
+  if (b.dataset.act === "shortcap") copy(kitaabShortCaptionFor(item), `#${item.num} Short TikTok caption copied ✓`);
+  if (b.dataset.act === "cap") copy(kitaabCaptionFor(item), `#${item.num} Long continuation story copied ✓`);
+  if (b.dataset.act === "studio") { showTab("studio"); loadPreset(item.id); }
+});
+
+$("#grid").addEventListener("change", e => {
+  const c = e.target.closest("input[data-done]");
+  if (!c) return;
+  if (c.checked) state.done[c.dataset.done] = true; else delete state.done[c.dataset.done];
+  saveState(); progress();
+  c.closest(".card").classList.toggle("done", c.checked);
+});
+
+document.querySelectorAll("nav button[data-t]").forEach(b => b.onclick = () => showTab(b.dataset.t));
+
+$("#nx").onclick = () => {
+  const next = allItems().find(it => !state.done[it.id]);
+  if (!next) { toast("All photos are marked done 🎉"); return; }
+  state.cat = "all"; saveState(); showTab("cards"); renderFilters(); renderGrid();
+  copy(kitaabPosterPromptFor(next, state.ar), `#${next.num} Poster prompt copied ✓`);
+  $("#card-" + next.id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+};
+
+$("#ar").value = state.ar;
+$("#ar").onchange = e => {
+  state.ar = e.target.value; saveState(); renderGrid();
+  if (state.ar === "9:16") { $("#stSize").value = "1080x1920"; drawStudio(); }
+};
+
+$("#dl").onclick = () => {
+  const txt = allItems().map(it =>
+    `=== PHOTO #${it.num} ===\nQUOTE:\n${it.quote}\n\nSHORT TIKTOK CAPTION:\n${kitaabShortCaptionFor(it)}\n\nLONG REFLECTION STORY:\n${kitaabCaptionFor(it)}\n\nCLEAN SCENE PROMPT (NO TEXT):\n${kitaabCleanPromptFor(it, state.ar)}\n\nFULL POSTER PROMPT:\n${kitaabPosterPromptFor(it, state.ar)}\n`
+  ).join("\n\n" + "=".repeat(60) + "\n\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+  a.download = "jindagi-kitaab-prompts.txt";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+$("#stPreset").onchange = e => loadPreset(e.target.value);
+$("#stFile").onchange = e => {
+  const f = e.target.files?.[0];
+  if (!f) return;
+  const img = new Image();
+  img.onload = () => { manualUpload = true; uploadedImage = img; drawStudio(); URL.revokeObjectURL(img.src); };
+  img.src = URL.createObjectURL(f);
+};
+$("#stUseSample").onclick = () => { manualUpload = false; uploadedImage = null; $("#stFile").value = ""; drawStudio(); };
+["#stSize","#stInk","#stScrim","#stQuote","#stHighlight","#stUnderline","#stFontSize"]
+  .forEach(sel => $(sel).addEventListener("input", drawStudio));
+
+$("#stDownload").onclick = () => {
+  drawStudio();
+  const id = $("#stPreset").value || "custom";
+  const a = document.createElement("a");
+  a.href = $("#canvas").toDataURL("image/png");
+  a.download = `jindagi-kitaab-${id}.png`;
+  document.body.append(a); a.click(); a.remove();
+  toast("Poster PNG downloaded ✓");
+};
+
+$("#stCopyCap").onclick = () => {
+  const item = allItems().find(x => x.id === $("#stPreset").value) || allItems()[0];
+  if (item) copy(kitaabShortCaptionFor(item), `#${item.num} Short TikTok caption copied ✓`);
+};
+
+$("#cSave").onclick = () => {
+  const quote = $("#cQuote").value.trim();
+  const scene = $("#cScene").value.trim();
+  if (!quote) { toast("Please write a Nepali quote first"); return; }
+  customItems.push({
+    cat: $("#cCat").value,
+    mood: "sunset",
+    quote,
+    hl: $("#cHl").value.trim(),
+    ul: $("#cUl").value.trim(),
+    scene: scene || "Warm golden-hour sunset veranda overlooking misty Nepali hills, cozy cream sweater, open hardcover book, ceramic tea mug, clean sky in upper right.",
+    tags: $("#cTags").value.trim() || "#LifeIsABook #UnspokenFeelings #KeepSomeThingsPrivate #NepaliQuotes",
+    story: $("#cStory").value.trim()
+  });
+  saveCustom(); populatePresets(); renderGrid(); pushCloudProgress();
+  toast("Custom quote card added ✓");
+  showTab("cards");
+};
+$("#cClear").onclick = () => { ["#cQuote","#cHl","#cUl","#cScene","#cStory"].forEach(s => $(s).value = ""); };
+
+$("#slk").textContent = KITAAB_STYLE_LOCK;
+renderFilters(); renderGrid(); populatePresets(); loadPreset("b1"); checkApi();
+window.StoryStudioSocial?.initAutoPostToggles?.({
+  projectId: PROJECT_ID,
+  tiktokSelector: "#autoPostToggle",
+  facebookSelector: "#autoPostFacebookToggle",
+  onToast: toast
+});
+
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId: PROJECT_ID,
+  totalClips: allItems().length,
+  readLocal: () => ({
+    checked: { ...(state.done || {}) },
+    state,
+    hasLocal: Object.keys(state.done || {}).length > 0,
+    completedCount: allItems().filter(it => state.done[it.id]).length
+  }),
+  applyMerged: (mergedChecked, mergedState) => {
+    state = Object.assign({ done:{}, ar:"9:16", cat:"all" }, state, mergedState || {}, { done: mergedChecked || {} });
+    try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+    renderFilters(); renderGrid();
+  }
+});
+
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(() => { if (!$("#studio").classList.contains("hide")) drawStudio(); });
+}
+</script>
+</body>
+</html>

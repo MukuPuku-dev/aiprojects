@@ -68,6 +68,46 @@
           <div class="field"><label for="image-aspect">Aspect ratio</label><select id="image-aspect"></select></div>
         </div>
 
+        <h3>TIKTOK</h3>
+        <div class="grid two">
+          <div class="field">
+            <label for="tiktok-auto-post">Auto-post after Flow generation</label>
+            <select id="tiktok-auto-post"></select>
+          </div>
+        </div>
+
+        <h3>FACEBOOK</h3>
+        <div class="grid two">
+          <div class="field">
+            <label for="facebook-auto-post">Auto-post after Flow generation</label>
+            <select id="facebook-auto-post"></select>
+          </div>
+        </div>
+
+        <h3>TELEGRAM</h3>
+        <div class="grid">
+          <div class="field">
+            <label for="telegram-auto-post">Auto-send after Flow generation</label>
+            <select id="telegram-auto-post"></select>
+          </div>
+          <div class="field">
+            <label for="telegram-bot-token">Bot Token (API_TOKEN from @BotFather)</label>
+            <input id="telegram-bot-token" type="text" maxlength="200" placeholder="PASTE_YOUR_BOTFATHER_TOKEN_HERE" autocomplete="off">
+          </div>
+          <div class="field">
+            <label for="telegram-chat-id">Chat ID (CHAT_ID)</label>
+            <input id="telegram-chat-id" type="text" maxlength="80" placeholder="7223190114" autocomplete="off">
+          </div>
+        </div>
+
+        <h3>CHARACTER CONSISTENCY</h3>
+        <div class="grid two">
+          <div class="field">
+            <label for="character-consistency">Workspace character consistency in Flow</label>
+            <select id="character-consistency"></select>
+          </div>
+        </div>
+
         <div class="actions">
           <button type="submit" class="primary">Save settings</button>
           <button type="button" id="reset">Reset this project to defaults</button>

@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ink Explainer · Rapid-Beat Multi-Episode Studio (1.5–2.5s Cuts)</title>
+<style>
+:root{
+  --bg:#0d1016;--card:#151923;--card2:#1c212e;--ink:#f4f1ea;--mut:#9ba3b4;
+  --gold:#f59e0b;--amber:#fbbf24;--blue:#38bdf8;--ok:#34d399;--err:#f87171;--line:#272e3f;
+  --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top right,#1c2131 0%,var(--bg) 60%);color:var(--ink);font:14px/1.5 var(--sans)}
+header{position:sticky;top:0;background:#0d1016f2;backdrop-filter:blur(10px);padding:11px 16px;border-bottom:1px solid var(--line);z-index:25}
+h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h1 .gold{color:var(--amber)}
+h2{margin:0 0 6px;font-size:15.5px;color:var(--amber)}
+h3{margin:0;font-size:14.5px;color:#fff}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:5px;background:var(--line);border-radius:9px;margin:7px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--blue));width:0;transition:width .25s}
+nav,.row,.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:6px}
+nav a{color:var(--amber);text-decoration:none;font-weight:700;padding:4px 6px}
+nav a:hover{text-decoration:underline}
+button,select,input,textarea{background:#1f2433;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font:inherit}
+button,select{cursor:pointer}
+button.primary{background:var(--gold);color:#1a1102;border-color:var(--gold);font-weight:700}
+button.blue{background:#0284c7;color:#fff;border-color:#0284c7;font-weight:700}
+button.ok{background:#059669;color:#fff;border-color:#059669;font-weight:700}
+button.danger{background:#b91c1c;color:#fff;border-color:#b91c1c;font-weight:700}
+button:disabled{opacity:.48;cursor:wait}
+button:focus-visible,select:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.pill-lbl{display:inline-flex;align-items:center;gap:6px;background:#191e2a;border:1px solid var(--line);border-radius:99px;padding:4px 10px;font-size:12px;color:var(--ink)}
+.pill-lbl input{accent-color:var(--amber);cursor:pointer}
+main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:column;gap:14px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px}
+.hide{display:none!important}
+.formula-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.formula-card{background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px}
+.formula-card b{color:var(--amber);display:block;margin-bottom:3px}
+.stage-wrap{position:relative;background:#07080c;border:1px solid #30384e;border-radius:12px;overflow:hidden;display:flex;justify-content:center;align-items:center;min-height:260px}
+#player-canvas{width:100%;max-height:540px;height:auto;display:block;background:#fff}
+.player-bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between;background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:9px 12px;margin-top:10px}
+.beat-strip-nav{display:flex;gap:5px;flex-wrap:wrap;margin-top:10px}
+.beat-pill{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:99px;font-size:11.5px;background:#1a1e2a;border:1px solid var(--line);color:var(--mut)}
+.beat-pill.active{border-color:var(--amber);color:var(--amber);font-weight:700;background:#261f12}
+.dot{width:6px;height:6px;border-radius:50%;background:#4b5563;display:inline-block}
+.dot.img{background:var(--blue)}
+.dot.aud{background:var(--ok)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip-btn{font-size:12px;padding:4px 10px;border-radius:99px;background:#1d2230;border:1px solid #31384b;color:#d6deeb}
+.chip-btn:hover{border-color:var(--amber);color:var(--amber)}
+.block-section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.block-head{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.block-audio{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.block-audio audio{height:32px;min-width:220px}
+.beat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(275px,1fr));gap:11px}
+.beat-card{background:var(--card2);border:1px solid var(--line);border-radius:11px;padding:10px;display:flex;flex-direction:column;gap:7px}
+.beat-card.ready{border-color:#265947}
+.beat-card.playing-now{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber)}
+.top{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.badge{background:var(--gold);color:#1b1102;font-weight:800;border-radius:6px;padding:1px 7px;font-size:11.5px}
+.ctype{border:1px solid #364159;border-radius:99px;padding:1px 8px;font-size:11px;color:#cbd5e1}
+.timing-pill{margin-left:auto;font-size:11px;color:var(--ok);font-weight:600}
+.thumb-box{position:relative;aspect-ratio:16/9;background:#0a0c12;border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:var(--mut);font-size:11.5px;text-align:center;padding:6px}
+.thumb-box.ar-916{aspect-ratio:9/16;max-height:220px}
+.thumb-box img{width:100%;height:100%;object-fit:cover;display:block}
+.field-lbl{font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:3px}
+.field-lbl textarea,.field-lbl input{width:100%;font-size:12.5px;background:#11141c;padding:5px 8px}
+.inline-row{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.inline-row select,.inline-row input{font-size:11.5px;padding:4px 7px;width:100%}
+.gen-status{font-size:11.5px;color:var(--amber);min-height:1em}
+.gen-status a{color:var(--ok);margin-left:5px}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#042117;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+#toast.show{opacity:1}
+@media(max-width:640px){header{position:relative}.beat-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header>
+  <h1>
+    <span>🖋️ <span class="gold">Ink Explainer</span> · Rapid-Beat Episode Studio</span>
+    <span class="sub" id="st"></span>
+  </h1>
+  <div class="sub" id="story-sub">1 Image per 1.5–2.5s Spoken Beat · Continuous Block Voiceover · Matching Reference Video Style</div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav>
+    <a href="../../index.html">← All Projects</a>
+    <label class="pill-lbl">Episode:
+      <select id="episode-sel" style="max-width:290px"></select>
+    </label>
+    <button type="button" id="btn-toggle-new">＋ New Episode (Gemini)</button>
+    <button type="button" id="btn-del-ep" class="hide" title="Delete custom episode">🗑 Delete Episode</button>
+    <button type="button" class="blue" id="btn-gen-all-audio">🎙 Step 1: Full Episode Voiceover</button>
+    <button type="button" class="primary" id="btn-batch-flow">🎨 Step 2: Batch Flow Images</button>
+    <button type="button" class="danger hide" id="btn-stop-flow">⏹ Stop Batch</button>
+    <label class="pill-lbl">Aspect:
+      <select id="ar-sel">
+        <option value="16:9">16:9 YouTube</option>
+        <option value="9:16">9:16 Shorts</option>
+      </select>
+    </label>
+    <label class="pill-lbl">Voice:
+      <select id="voice-sel">
+        <option value="Kore">Kore</option>
+        <option value="Puck">Puck</option>
+        <option value="Charon">Charon</option>
+        <option value="Fenrir">Fenrir</option>
+        <option value="Aoede">Aoede</option>
+        <option value="Zephyr">Zephyr</option>
+      </select>
+    </label>
+    <span class="sub" id="api" style="margin-left:auto">Checking studio…</span>
+  </nav>
+</header>
+
+<main>
+  <!-- Reference Analysis Summary -->
+  <section class="panel">
+    <details>
+      <summary><b>🔬 Reference Breakdown (Why 49_Ph2q6uIM Cuts Every 1.5–2.5s Across 5 Card Types)</b></summary>
+      <div class="formula-grid" id="formula-grid"></div>
+    </details>
+  </section>
+
+  <!-- Step 2 Option: Create New Episode via Gemini -->
+  <section class="panel hide" id="new-episode-panel">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <div>
+        <h2>✨ Create New Rapid-Beat Episode with Gemini</h2>
+        <div class="sub">Writes a complete multi-block script split into 5–10 word spoken clauses (1 illustration every 1.5–2.5s) in its own isolated episode folder.</div>
+      </div>
+      <button type="button" id="btn-close-new">✕ Close</button>
+    </div>
+    <div class="chips" id="topic-chips" style="margin-bottom:8px">
+      <button type="button" class="chip-btn">Why Medieval Peasants Had More Vacation Days Than You</button>
+      <button type="button" class="chip-btn">How Humans Survived the Worst Year in History (536 AD)</button>
+      <button type="button" class="chip-btn">Why Roman Gladiators Rarely Fought to the Death</button>
+      <button type="button" class="chip-btn">Why People Before 1850 Slept in Two Separate Shifts</button>
+    </div>
+    <div class="row">
+      <input type="text" id="topic-input" style="flex:1;min-width:240px" placeholder="Enter your English explainer topic...">
+      <select id="block-count-sel" title="Narration Blocks">
+        <option value="3">3 Blocks × 6 beats (18 images · ~45s)</option>
+        <option value="4" selected>4 Blocks × 8 beats (32 images · ~1m 20s)</option>
+        <option value="6">6 Blocks × 8 beats (48 images · ~2m)</option>
+        <option value="8">8 Blocks × 10 beats (80 images · ~3m 20s)</option>
+      </select>
+      <button type="button" class="primary" id="btn-create-episode">✨ Generate Episode Script</button>
+    </div>
+    <div class="sub" id="ep-gen-status" style="margin-top:6px"></div>
+  </section>
+
+  <!-- Synchronized Rapid-Cut Episode Player -->
+  <section class="panel">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <div>
+        <h2>🎬 Step 3 &amp; 4: Rapid-Cut Episode Player &amp; Video Export <span class="sub" id="player-ep-title"></span></h2>
+        <div class="sub">Continuous WAV narration per block with exact word-timestamp cuts every 1.5–2.5 seconds. Generates instant Ink-Explainer vector previews before Flow images exist.</div>
+      </div>
+      <div class="row">
+        <span class="sub" id="player-timecode" style="font-weight:700;color:var(--amber)">00:00.0 / 00:00.0</span>
+        <span class="sub" id="player-beat-label">Beat 1 / 32</span>
+      </div>
+    </div>
+
+    <div class="stage-wrap">
+      <canvas id="player-canvas" width="1280" height="720"></canvas>
+      <audio id="player-audio" crossorigin="anonymous" preload="auto" hidden></audio>
+    </div>
+
+    <div class="player-bar">
+      <div class="btns">
+        <button type="button" class="ok" id="p-play">▶ Play Full Episode</button>
+        <button type="button" id="p-pause">⏸ Pause</button>
+        <button type="button" id="p-prev">⏮ Prev Beat</button>
+        <button type="button" id="p-next">⏭ Next Beat</button>
+        <button type="button" id="p-restart">↻ Restart</button>
+        <label class="pill-lbl"><input type="checkbox" id="p-captions"> Live Captions</label>
+      </div>
+      <div class="btns">
+        <button type="button" class="primary" id="p-export">🎥 Export Full Episode (.webm)</button>
+        <button type="button" id="p-manifest">📋 CapCut Beat Timeline (.json)</button>
+        <button type="button" id="btn-refresh">🔄 Refresh</button>
+      </div>
+    </div>
+    <div class="beat-strip-nav" id="player-pills"></div>
+    <div class="sub" id="player-status" style="margin-top:6px">Ready. Press Play Full Episode to preview rapid 1.5–2.5s visual switching right now.</div>
+    <div class="sub" id="batch-status" style="margin-top:4px;color:var(--blue)"></div>
+  </section>
+
+  <!-- Narration Blocks + Rapid Beats -->
+  <section id="blocks-container" style="display:flex;flex-direction:column;gap:14px"></section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../../platform/project-storage.js"></script>
+<script src="flow-data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PROJECT_ID = "ink-explainer";
+const STATE_KEY = "ink-explainer-v1";
+const isFile = location.protocol === "file:";
+
+let state = loadState();
+let assets = {
+  activeEpisodeId: state.episodeId || "ancient-humans-day",
+  episodes: [],
+  episode: null,
+  beatImages: {},
+  blockAudio: {}
+};
+let activeBatchJobId = null;
+let audioBatchBusy = false;
+let flowBatchBusy = false;
+
+function loadState() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STATE_KEY) || "{}");
+    return Object.assign({ episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", done: {} }, parsed || {});
+  } catch {
+    return { episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", done: {} };
+  }
+}
+
+function saveState() {
+  try { localStorage.setItem(STATE_KEY, JSON.stringify(state)); } catch {}
+  pushCloudProgress();
+}
+
+function pushCloudProgress() {
+  const beats = inkExplainerActiveBeats();
+  const checked = {};
+  beats.forEach(b => {
+    if (assets.beatImages[b.beat] || state.done?.[b.beat]) checked[b.beat] = true;
+  });
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
+    totalClips: beats.length,
+    completedCount: Object.keys(checked).length,
+    checked,
+    state
+  });
+}
+
+let toastTimer;
+function toast(msg) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2600);
+}
+
+function fmtSec(s) {
+  const v = Math.max(0, Number(s) || 0);
+  const m = Math.floor(v / 60);
+  const rem = (v % 60).toFixed(1).padStart(4, "0");
+  return `${String(m).padStart(2, "0")}:${rem}`;
+}
+
+/* ---------- Beat Timing Calculation (Exact TTS Timestamps or Word-Weighted Fallback) ---------- */
+function getBlockTimings(block) {
+  const blkAudio = assets.blockAudio[block.blockId];
+  if (blkAudio && Array.isArray(blkAudio.beatTimings) && blkAudio.beatTimings.length === block.beats.length) {
+    return blkAudio.beatTimings;
+  }
+  const counts = block.beats.map(b => Math.max(1, String(b.narration || "").trim().split(/\s+/).filter(Boolean).length));
+  const totalWords = counts.reduce((a, b) => a + b, 0);
+  const totalDur = blkAudio?.duration > 0 ? blkAudio.duration : Math.max(block.beats.length * 1.9, totalWords * 0.42);
+  let cursor = 0;
+  return block.beats.map((b, i) => {
+    const startSec = cursor;
+    const dur = Math.max(1.1, (counts[i] / Math.max(1, totalWords)) * totalDur);
+    const endSec = i === block.beats.length - 1 ? totalDur : startSec + dur;
+    cursor = endSec;
+    return {
+      beat: b.beat,
+      startSec: Math.round(startSec * 100) / 100,
+      endSec: Math.round(endSec * 100) / 100,
+      durationSec: Math.round((endSec - startSec) * 100) / 100
+    };
+  });
+}
+
+function totalEpisodeDuration() {
+  const ep = inkExplainerActiveEpisode();
+  return (ep.blocks || []).reduce((sum, blk) => {
+    const t = getBlockTimings(blk);
+    return sum + (t.length ? t[t.length - 1].endSec : 0);
+  }, 0);
+}
+
+/* ---------- Render Header, Episode Selector & Blocks ---------- */
+function renderViralFormula() {
+  $("#formula-grid").innerHTML = INK_EXPLAINER_META.viralFormula.map(f =>
+    `<div class="formula-card"><b>${esc(f.title)}</b><span>${esc(f.detail)}</span></div>`
+  ).join("");
+}
+
+function renderEpisodeSelector() {
+  const list = assets.episodes.length ? assets.episodes : [{ id: "ancient-humans-day", title: INK_EXPLAINER_DEFAULT_EPISODE.title, totalBeats: 32, isDefault: true }];
+  $("#episode-sel").innerHTML = list.map(ep =>
+    `<option value="${esc(ep.id)}">${esc(ep.title)} (${ep.totalBeats || "?"} beats)</option>`
+  ).join("");
+  $("#episode-sel").value = state.episodeId;
+  $("#btn-del-ep").classList.toggle("hide", state.episodeId === "ancient-humans-day");
+}
+
+function renderAll() {
+  const ep = inkExplainerActiveEpisode();
+  const beats = inkExplainerActiveBeats();
+  const doneCount = beats.filter(b => Boolean(assets.beatImages[b.beat])).length;
+  const audioCount = (ep.blocks || []).filter(blk => Boolean(assets.blockAudio[blk.blockId])).length;
+  const pct = beats.length ? Math.round((doneCount / beats.length) * 100) : 0;
+
+  $("#pb").style.width = `${pct}%`;
+  $("#st").textContent = `${doneCount}/${beats.length} beat images · ${audioCount}/${(ep.blocks || []).length} audio blocks`;
+  $("#story-sub").textContent = `${ep.title} · ${beats.length} rapid visual beats (~${fmtSec(totalEpisodeDuration())} runtime)`;
+  $("#player-ep-title").textContent = `— ${ep.title}`;
+
+  renderEpisodeSelector();
+  renderPlayerPills();
+  renderBlocks();
+  updatePlayerChrome();
+}
+
+function renderPlayerPills() {
+  const beats = inkExplainerActiveBeats();
+  const currentBeat = activeGlobalBeatNum();
+  $("#player-pills").innerHTML = beats.map(b => {
+    const hasImg = Boolean(assets.beatImages[b.beat]);
+    const hasAud = Boolean(assets.blockAudio[b.blockId]);
+    return `<button type="button" class="beat-pill ${b.beat === currentBeat ? "active" : ""}" data-jump-beat="${b.beat}" title="Beat ${b.beat}: ${esc(b.narration)}">
+      <span class="dot ${hasImg ? "img" : ""}"></span>
+      <span class="dot ${hasAud ? "aud" : ""}"></span>
+      ${b.beat}
+    </button>`;
+  }).join("");
+}
+
+function renderBlocks() {
+  const ep = inkExplainerActiveEpisode();
+  const container = $("#blocks-container");
+  const currentBeat = activeGlobalBeatNum();
+
+  container.innerHTML = (ep.blocks || []).map((blk, blkIdx) => {
+    const aud = assets.blockAudio[blk.blockId];
+    const timings = getBlockTimings(blk);
+    const totalBlkDur = timings.length ? timings[timings.length - 1].endSec : 0;
+    const readyCount = blk.beats.filter(b => Boolean(assets.beatImages[b.beat])).length;
+
+    const beatsHtml = blk.beats.map((b, localIdx) => {
+      const t = timings[localIdx];
+      const img = assets.beatImages[b.beat];
+      const thumbCls = state.ar === "9:16" ? "thumb-box ar-916" : "thumb-box";
+      return `<article class="beat-card ${img ? "ready" : ""} ${b.beat === currentBeat ? "playing-now" : ""}" data-beat="${b.beat}">
+        <div class="top">
+          <span class="badge">Beat ${b.beat}</span>
+          <span class="ctype">${esc(b.cardType)}</span>
+          <span class="timing-pill">${t.startSec.toFixed(1)}s–${t.endSec.toFixed(1)}s (${t.durationSec.toFixed(1)}s)</span>
+        </div>
+        <div class="${thumbCls}">
+          ${img
+            ? `<img src="${esc(img.url)}" alt="Beat ${b.beat}" loading="lazy">`
+            : `<span><b>${esc(b.cardType)}</b>${b.label ? `<br>Label: "${esc(b.label)}"` : ""}<br>Click Flow Image or Batch Generate</span>`}
+        </div>
+        <label class="field-lbl">Spoken Clause (~1.5–2.5s)
+          <textarea rows="2" class="edit-narr" data-blk="${blkIdx}" data-idx="${localIdx}">${esc(b.narration)}</textarea>
+        </label>
+        <div class="inline-row">
+          <select class="edit-ctype" data-blk="${blkIdx}" data-idx="${localIdx}" title="Card Type">
+            ${Object.keys(INK_EXPLAINER_CARD_STYLES).map(ct => `<option value="${ct}" ${ct === b.cardType ? "selected" : ""}>${ct}</option>`).join("")}
+          </select>
+          <input type="text" class="edit-label" data-blk="${blkIdx}" data-idx="${localIdx}" value="${esc(b.label || "")}" placeholder="On-card label (optional)">
+        </div>
+        <label class="field-lbl">Visual Frame Description
+          <textarea rows="2" class="edit-vis" data-blk="${blkIdx}" data-idx="${localIdx}">${esc(b.visual)}</textarea>
+        </label>
+        <div class="btns">
+          <button type="button" class="primary" data-act="flow-beat" data-beat="${b.beat}">🖼 Flow Image</button>
+          <button type="button" class="ok" data-act="play-beat" data-beat="${b.beat}">▶ Play Beat</button>
+          <button type="button" data-act="copy-beat" data-beat="${b.beat}">Copy</button>
+        </div>
+        <div class="gen-status" data-beat-status="${b.beat}"></div>
+      </article>`;
+    }).join("");
+
+    return `<section class="block-section" data-block="${blk.blockId}">
+      <div class="block-head">
+        <div>
+          <h3>${esc(blk.title)} <span class="sub">(${blk.beats.length} beats · ${readyCount}/${blk.beats.length} images · ${totalBlkDur.toFixed(1)}s)</span></h3>
+          <div class="sub">${esc(blk.beats.map(b => b.narration).join(" "))}</div>
+        </div>
+        <div class="block-audio">
+          ${aud
+            ? `<span class="sub" style="color:var(--ok)">✓ ${aud.duration.toFixed(1)}s · ${aud.timestamps?.length || 0} word cues</span>
+               <audio controls src="${esc(aud.url)}" preload="none"></audio>`
+            : `<span class="sub">No voiceover generated yet</span>`}
+          <button type="button" class="blue" data-act="gen-block-tts" data-block="${blk.blockId}">🎙 Generate Block Voiceover</button>
+        </div>
+      </div>
+      <div class="beat-grid">${beatsHtml}</div>
+    </section>`;
+  }).join("");
+}
+
+/* ---------- Server Asset Sync & Episode Persistence ---------- */
+async function refreshAssets(silent = false) {
+  if (isFile) return;
+  try {
+    const r = await fetch(`/api/explainer/assets?project=${PROJECT_ID}&episode=${encodeURIComponent(state.episodeId)}`, { cache: "no-store" });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Failed to load assets");
+    assets = j;
+    if (j.episode && Array.isArray(j.episode.blocks)) {
+      window.__INK_ACTIVE_EPISODE = j.episode;
+    } else if (state.episodeId === "ancient-humans-day") {
+      window.__INK_ACTIVE_EPISODE = null;
+    }
+    state.done = {};
+    Object.keys(j.beatImages || {}).forEach(k => { state.done[k] = true; });
+    saveState();
+    preloadBeatImages();
+    renderAll();
+    drawCurrentFrame();
+    if (!silent) toast("Episode assets refreshed ✓");
+  } catch (err) {
+    if (!silent) toast(`Refresh failed: ${err.message}`);
+  }
+}
+
+async function persistActiveEpisode() {
+  if (isFile) return;
+  const ep = JSON.parse(JSON.stringify(inkExplainerActiveEpisode()));
+  const r = await fetch("/api/explainer/episode", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ project: PROJECT_ID, episode: ep })
+  });
+  const j = await r.json();
+  if (r.ok && j.ok && j.episode) {
+    window.__INK_ACTIVE_EPISODE = j.episode;
+    assets.episode = j.episode;
+  }
+}
+
+/* ---------- Step 1: Block Continuous Voiceover (Gemini TTS + Word Timestamps) ---------- */
+async function generateBlockVoiceover(blockId, silent = false) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to generate TTS"); return false; }
+  const ep = inkExplainerActiveEpisode();
+  const blk = (ep.blocks || []).find(b => Number(b.blockId) === Number(blockId));
+  if (!blk) return false;
+  const btn = document.querySelector(`button[data-act="gen-block-tts"][data-block="${blockId}"]`);
+  if (btn) btn.disabled = true;
+  $("#batch-status").textContent = `Synthesizing Block ${blockId} continuous voiceover (${state.voice})…`;
+  try {
+    const prompt = blk.beats.map(b => b.narration).join(" ");
+    const r = await fetch("/api/explainer/block-tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        episode: ep.id,
+        blockId: blk.blockId,
+        beats: blk.beats,
+        prompt,
+        voice: state.voice,
+        language: "en"
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Gemini TTS failed");
+    assets.blockAudio[blk.blockId] = {
+      url: `${j.audioUrl}?t=${Date.now()}`,
+      duration: j.duration,
+      timestamps: j.timestamps || [],
+      beatTimings: j.beatTimings || [],
+      voice: j.voice
+    };
+    renderAll();
+    $("#batch-status").textContent = `✓ Block ${blockId} aligned (${j.duration.toFixed(1)}s across ${blk.beats.length} rapid beats).`;
+    if (!silent) toast(`Block ${blockId} voiceover ready ✓`);
+    return true;
+  } catch (err) {
+    $("#batch-status").textContent = `Block ${blockId} TTS error: ${err.message}`;
+    return false;
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function generateAllVoiceovers() {
+  if (audioBatchBusy) return;
+  audioBatchBusy = true;
+  $("#btn-gen-all-audio").disabled = true;
+  try {
+    const ep = inkExplainerActiveEpisode();
+    for (const blk of ep.blocks || []) {
+      const ok = await generateBlockVoiceover(blk.blockId, true);
+      if (!ok) break;
+    }
+    toast("Full episode voiceover ready ✓");
+  } finally {
+    audioBatchBusy = false;
+    $("#btn-gen-all-audio").disabled = false;
+  }
+}
+
+/* ---------- Step 2: Single Beat or Batch Flow Image Generation ---------- */
+async function generateFlowBeatImage(beatNum) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to run Google Flow"); return false; }
+  const beats = inkExplainerActiveBeats();
+  const idx = beats.findIndex(b => b.beat === Number(beatNum));
+  if (idx < 0) return false;
+  const ep = inkExplainerActiveEpisode();
+  const btn = document.querySelector(`button[data-act="flow-beat"][data-beat="${beatNum}"]`);
+  const stEl = document.querySelector(`[data-beat-status="${beatNum}"]`);
+  if (btn) btn.disabled = true;
+  if (stEl) stEl.textContent = "Generating image in Google Flow…";
+  try {
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        episode: ep.id,
+        mode: "image",
+        day: beatNum,
+        prompt: inkExplainerPromptFor(idx, state.ar),
+        aspect: state.ar
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Flow image generation failed");
+    await refreshAssets(true);
+    const updatedSt = document.querySelector(`[data-beat-status="${beatNum}"]`);
+    if (updatedSt) updatedSt.innerHTML = `<span style="color:var(--ok)">Saved ✓</span> <a href="/${esc(j.file)}" target="_blank" rel="noopener">Open ↗</a>`;
+    return true;
+  } catch (err) {
+    if (stEl) stEl.innerHTML = `<span style="color:var(--err)">${esc(err.message)}</span>`;
+    return false;
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function runFlowImageBatch() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to run Flow batch"); return; }
+  if (flowBatchBusy) return;
+  flowBatchBusy = true;
+  $("#btn-batch-flow").disabled = true;
+  $("#btn-stop-flow").classList.remove("hide");
+  try {
+    const ep = inkExplainerActiveEpisode();
+    const beats = inkExplainerActiveBeats();
+    const missing = beats.filter(b => !assets.beatImages[b.beat]);
+    if (!missing.length) {
+      toast("All beat images for this episode already exist ✓");
+      return;
+    }
+
+    const items = beats.map((b, idx) => ({
+      day: b.beat,
+      prompt: inkExplainerPromptFor(idx, state.ar)
+    }));
+
+    const jobId = crypto.randomUUID();
+    activeBatchJobId = jobId;
+    $("#batch-status").textContent = `Launching 5× parallel Flow batch for ${missing.length} remaining beats…`;
+
+    const r = await fetch("/api/explainer/generate-batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: jobId,
+        project: PROJECT_ID,
+        episode: ep.id,
+        aspect: state.ar,
+        concurrency: 5,
+        items
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not start parallel batch");
+    if (j.alreadyComplete) {
+      await refreshAssets(true);
+      toast("All beat images already exist ✓");
+      return;
+    }
+
+    let lastSavedLen = 0;
+    while (true) {
+      await new Promise(res => setTimeout(res, 2200));
+      const sr = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+      const sj = await sr.json();
+      if (!sr.ok || !sj.ok) throw new Error(sj.error || "Lost connection to batch job");
+
+      const p = sj.progress || {};
+      const savedDays = Array.isArray(p.savedDays) ? p.savedDays : [];
+      const savedTotal = (p.skipped || 0) + savedDays.length;
+      $("#batch-status").textContent = `⚡ 5× Parallel Flow: ${savedTotal} / ${p.total || beats.length} images saved (${p.inFlight || 0} generating now, ${p.remaining || 0} queued)…`;
+
+      if (savedDays.length > lastSavedLen) {
+        lastSavedLen = savedDays.length;
+        await refreshAssets(true);
+      }
+
+      if (sj.status === "completed") {
+        await refreshAssets(true);
+        $("#batch-status").textContent = `All ${p.total || beats.length} episode beat images saved ✓ Ready to Play & Export!`;
+        toast("All episode images generated ✓");
+        break;
+      }
+      if (sj.status === "failed") {
+        throw new Error(sj.error || "Parallel Flow batch failed");
+      }
+    }
+  } catch (err) {
+    $("#batch-status").textContent = `Batch error: ${err.message}`;
+    toast(`Batch error: ${err.message}`);
+  } finally {
+    activeBatchJobId = null;
+    flowBatchBusy = false;
+    $("#btn-batch-flow").disabled = false;
+    $("#btn-stop-flow").classList.add("hide");
+  }
+}
+
+/* ---------- New Episode Generator (Gemini) ---------- */
+function parseGeminiJson(text) {
+  const stripped = String(text || "").replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```\s*$/i, "").trim();
+  try { return JSON.parse(stripped); } catch {}
+  const first = stripped.indexOf("{");
+  const last = stripped.lastIndexOf("}");
+  if (first >= 0 && last > first) return JSON.parse(stripped.slice(first, last + 1));
+  throw new Error("Could not parse JSON episode from Gemini response.");
+}
+
+async function createGeminiEpisode() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
+  const topic = ($("#topic-input").value || "").trim();
+  if (!topic) { toast("Enter a topic or click a preset chip first"); return; }
+  const totalSel = Number($("#block-count-sel").value || 4);
+  const perBlock = totalSel === 3 ? 6 : totalSel === 8 ? 10 : 8;
+  $("#btn-create-episode").disabled = true;
+  $("#ep-gen-status").textContent = `Writing ${totalSel * perBlock} rapid visual beats with Gemini…`;
+  try {
+    const r = await fetch("/api/explainer/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: buildInkEpisodeGeneratorPrompt(topic, totalSel, perBlock) })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Gemini failed");
+    const parsed = parseGeminiJson(j.text);
+    const sr = await fetch("/api/explainer/episode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ project: PROJECT_ID, episode: parsed })
+    });
+    const sj = await sr.json();
+    if (!sr.ok || !sj.ok || !sj.episode) throw new Error(sj.error || "Could not save episode");
+    state.episodeId = sj.episode.id;
+    saveState();
+    stopPlayback();
+    await refreshAssets(true);
+    $("#ep-gen-status").textContent = `✓ Created episode "${sj.episode.title}" (${inkExplainerActiveBeats().length} beats).`;
+    $("#new-episode-panel").classList.add("hide");
+    toast("New episode created ✓");
+  } catch (err) {
+    $("#ep-gen-status").textContent = `Error: ${err.message}`;
+  } finally {
+    $("#btn-create-episode").disabled = false;
+  }
+}
+
+async function deleteActiveEpisode() {
+  if (state.episodeId === "ancient-humans-day") return;
+  if (!confirm(`Delete episode "${inkExplainerActiveEpisode().title}" and its generated images/audio?`)) return;
+  await fetch("/api/explainer/episode", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ project: PROJECT_ID, delete: true, id: state.episodeId })
+  });
+  state.episodeId = "ancient-humans-day";
+  saveState();
+  stopPlayback();
+  await refreshAssets(true);
+  toast("Episode deleted ✓");
+}
+
+/* ---------- Rapid-Cut Synchronized Player & Procedural Ink-Explainer Preview ---------- */
+const canvas = $("#player-canvas");
+const ctx = canvas.getContext("2d");
+const audioEl = $("#player-audio");
+const imageCache = new Map();
+let audioCtx = null;
+let mediaSource = null;
+let streamDest = null;
+
+const player = {
+  playing: false,
+  blkIdx: 0,
+  localBeatIdx: 0,
+  rafId: 0,
+  timerStartMs: 0,
+  exporting: false,
+  recorder: null,
+  chunks: []
+};
+
+function activeGlobalBeatNum() {
+  const ep = inkExplainerActiveEpisode();
+  const blk = ep.blocks?.[player.blkIdx] || ep.blocks?.[0];
+  const b = blk?.beats?.[player.localBeatIdx] || blk?.beats?.[0];
+  return b ? b.beat : 1;
+}
+
+function preloadBeatImages() {
+  const beats = inkExplainerActiveBeats();
+  beats.forEach(b => {
+    const info = assets.beatImages[b.beat];
+    if (!info) return;
+    const key = `${state.episodeId}:${b.beat}`;
+    const prev = imageCache.get(key);
+    if (prev && prev.srcUrl === info.url) return;
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.src = info.url;
+    img.onload = () => { if (!player.playing && activeGlobalBeatNum() === b.beat) drawCurrentFrame(); };
+    imageCache.set(key, { srcUrl: info.url, img });
+  });
+}
+
+function ensureCanvasSize() {
+  const w = state.ar === "9:16" ? 720 : 1280;
+  const h = state.ar === "9:16" ? 1280 : 720;
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+  }
+}
+
+function drawStickFigure(c, cx, cy, scale, opts = {}) {
+  c.save();
+  c.translate(cx, cy);
+  c.scale(scale, scale);
+  c.strokeStyle = "#141414";
+  c.lineWidth = 4.5;
+  c.lineCap = "round";
+  c.lineJoin = "round";
+
+  // Body & limbs
+  if (opts.caveman) {
+    // Ragged brown fur pelt tunic
+    c.fillStyle = "#8a5a36";
+    c.beginPath();
+    c.moveTo(-22, -25); c.lineTo(22, -25); c.lineTo(28, 38); c.lineTo(10, 28);
+    c.lineTo(0, 40); c.lineTo(-12, 29); c.lineTo(-27, 37); c.closePath();
+    c.fill(); c.stroke();
+  } else {
+    c.beginPath(); c.moveTo(0, -25); c.lineTo(0, 35); c.stroke();
+  }
+  // Legs
+  c.beginPath();
+  c.moveTo(-10, 34); c.lineTo(-18, 92);
+  c.moveTo(10, 34); c.lineTo(18, 92);
+  c.stroke();
+  // Arms
+  c.beginPath();
+  if (opts.raiseHand) {
+    c.moveTo(-18, -14); c.lineTo(-42, 22);
+    c.moveTo(18, -14); c.lineTo(44, -44);
+  } else {
+    c.moveTo(-20, -14); c.lineTo(-44, 24);
+    c.moveTo(20, -14); c.lineTo(44, 24);
+  }
+  c.stroke();
+
+  // Messy caveman hair
+  if (opts.caveman) {
+    c.fillStyle = "#4b2e1b";
+    c.beginPath();
+    c.arc(0, -64, 34, Math.PI * 0.9, Math.PI * 2.1);
+    c.fill(); c.stroke();
+  }
+  // White circular head
+  c.fillStyle = "#ffffff";
+  c.beginPath();
+  c.arc(0, -56, 30, 0, Math.PI * 2);
+  c.fill(); c.stroke();
+  // Eyes & mouth
+  c.fillStyle = "#141414";
+  c.beginPath(); c.arc(-9, -60, 3.2, 0, Math.PI * 2); c.arc(9, -60, 3.2, 0, Math.PI * 2); c.fill();
+  c.lineWidth = 3;
+  c.beginPath();
+  if (opts.sad) c.arc(0, -41, 8, Math.PI * 1.15, Math.PI * 1.85);
+  else c.arc(0, -49, 8, 0.15 * Math.PI, 0.85 * Math.PI);
+  c.stroke();
+  c.restore();
+}
+
+function drawProceduralInkFrame(beat) {
+  const W = canvas.width;
+  const H = canvas.height;
+  const ct = beat.cardType || "flat-scene";
+
+  if (ct === "flat-scene" || ct === "red-x") {
+    ctx.fillStyle = ct === "red-x" ? "#f1e3cf" : "#c6e7f5";
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = ct === "red-x" ? "#b08463" : "#d5b485";
+    ctx.fillRect(0, H * 0.64, W, H * 0.36);
+    ctx.strokeStyle = "#1c1917";
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(0, H * 0.64); ctx.lineTo(W, H * 0.64); ctx.stroke();
+    drawStickFigure(ctx, W * 0.48, H * 0.52, Math.min(W, H) / 480, { caveman: /caveman|hunter|ancient|gatherer|farmer|tribe/i.test(beat.visual) });
+    if (beat.label) {
+      ctx.fillStyle = "#141414";
+      ctx.font = `800 ${Math.round(H * 0.065)}px "Comic Sans MS", "Segoe Print", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.fillText(beat.label, W * 0.5, H * 0.17);
+      ctx.textAlign = "left";
+    }
+    if (ct === "red-x") {
+      ctx.strokeStyle = "#dc2626";
+      ctx.lineWidth = 24;
+      ctx.beginPath();
+      ctx.moveTo(W * 0.06, H * 0.06); ctx.lineTo(W * 0.94, H * 0.94);
+      ctx.moveTo(W * 0.94, H * 0.06); ctx.lineTo(W * 0.06, H * 0.94);
+      ctx.stroke();
+    }
+  } else if (ct === "split-compare") {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
+    ctx.save();
+    ctx.strokeStyle = "#141414";
+    ctx.lineWidth = 4;
+    ctx.setLineDash([14, 10]);
+    ctx.beginPath(); ctx.moveTo(W * 0.5, H * 0.08); ctx.lineTo(W * 0.5, H * 0.92); ctx.stroke();
+    ctx.restore();
+    const parts = (beat.label || "LEFT | RIGHT").split("|").map(s => s.trim());
+    ctx.fillStyle = "#141414";
+    ctx.font = `800 ${Math.round(H * 0.065)}px "Comic Sans MS", "Segoe Print", sans-serif`;
+    ctx.textAlign = "center";
+    ctx.fillText(parts[0] || "OPTION A", W * 0.25, H * 0.16);
+    ctx.fillText(parts[1] || "OPTION B", W * 0.75, H * 0.16);
+    ctx.textAlign = "left";
+    drawStickFigure(ctx, W * 0.25, H * 0.56, Math.min(W, H) / 520, { sad: true });
+    drawStickFigure(ctx, W * 0.75, H * 0.56, Math.min(W, H) / 520, { caveman: true });
+  } else {
+    // whiteboard-prop or map-diagram
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, W, H);
+    if (ct === "map-diagram") {
+      ctx.strokeStyle = "#141414";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(W * 0.16, H * 0.52); ctx.lineTo(W * 0.84, H * 0.52);
+      ctx.lineTo(W * 0.80, H * 0.48); ctx.moveTo(W * 0.84, H * 0.52); ctx.lineTo(W * 0.80, H * 0.56);
+      ctx.stroke();
+      [0.3, 0.7].forEach(rx => {
+        ctx.fillStyle = "#dc2626";
+        ctx.beginPath(); ctx.arc(W * rx, H * 0.44, 18, 0, Math.PI * 2); ctx.fill();
+      });
+    } else {
+      drawStickFigure(ctx, W * 0.5, H * 0.58, Math.min(W, H) / 520, { raiseHand: true });
+    }
+    ctx.fillStyle = "#141414";
+    ctx.font = `800 ${Math.round(H * 0.072)}px "Comic Sans MS", "Segoe Print", sans-serif`;
+    ctx.textAlign = "center";
+    ctx.fillText(beat.label || `BEAT ${beat.beat}`, W * 0.5, H * 0.24);
+    ctx.textAlign = "left";
+  }
+
+  // Subtle corner preview notice showing flow image pending + clause preview
+  ctx.fillStyle = "rgba(15, 23, 42, 0.78)";
+  ctx.fillRect(16, H - 54, W - 32, 38);
+  ctx.fillStyle = "#f8fafc";
+  ctx.font = "600 17px system-ui, sans-serif";
+  ctx.fillText(`Storyboard Preview [Beat ${beat.beat} · ${ct}]: "${beat.narration}"`, 28, H - 29);
+}
+
+function drawCurrentFrame(elapsedBlockSec = 0) {
+  ensureCanvasSize();
+  const ep = inkExplainerActiveEpisode();
+  const blk = ep.blocks?.[player.blkIdx] || ep.blocks?.[0];
+  const beat = blk?.beats?.[player.localBeatIdx] || blk?.beats?.[0];
+  if (!beat) return;
+
+  const W = canvas.width;
+  const H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  const cached = imageCache.get(`${state.episodeId}:${beat.beat}`);
+  const img = cached?.img;
+  if (img && img.complete && img.naturalWidth > 0) {
+    // Crisp cover fill matching Ink Explainer style (minimal subtle zoom only, instant beat cuts)
+    const ir = img.naturalWidth / img.naturalHeight;
+    const cr = W / H;
+    let dw = W, dh = H;
+    if (ir > cr) { dh = H; dw = H * ir; }
+    else { dw = W; dh = W / ir; }
+    ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+  } else {
+    drawProceduralInkFrame(beat);
+  }
+
+  if ($("#p-captions").checked) {
+    const grad = ctx.createLinearGradient(0, H * 0.78, 0, H);
+    grad.addColorStop(0, "rgba(0,0,0,0)");
+    grad.addColorStop(1, "rgba(0,0,0,0.78)");
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, H * 0.78, W, H * 0.22);
+
+    ctx.font = `800 ${Math.round(H * 0.044)}px system-ui, sans-serif`;
+    ctx.textAlign = "center";
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = "rgba(0,0,0,0.9)";
+    ctx.strokeText(beat.narration, W * 0.5, H * 0.91);
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText(beat.narration, W * 0.5, H * 0.91);
+    ctx.textAlign = "left";
+  }
+}
+
+function updatePlayerChrome(elapsedInBlk = 0) {
+  const ep = inkExplainerActiveEpisode();
+  const blk = ep.blocks?.[player.blkIdx];
+  const beat = blk?.beats?.[player.localBeatIdx];
+  const totalBeats = inkExplainerActiveBeats().length;
+
+  let priorSec = 0;
+  for (let i = 0; i < player.blkIdx; i++) {
+    const t = getBlockTimings(ep.blocks[i]);
+    priorSec += t.length ? t[t.length - 1].endSec : 0;
+  }
+  const totalDur = totalEpisodeDuration();
+  $("#player-timecode").textContent = `${fmtSec(priorSec + elapsedInBlk)} / ${fmtSec(totalDur)}`;
+  $("#player-beat-label").textContent = beat ? `Block ${blk.blockId} · Beat ${beat.beat} / ${totalBeats} (${beat.cardType})` : "Done";
+
+  const curNum = beat ? beat.beat : -1;
+  document.querySelectorAll(".beat-pill").forEach(el => {
+    el.classList.toggle("active", Number(el.dataset.jumpBeat) === curNum);
+  });
+  document.querySelectorAll(".beat-card").forEach(el => {
+    el.classList.toggle("playing-now", Number(el.dataset.beat) === curNum);
+  });
+}
+
+function initAudioGraphOnce() {
+  if (!audioCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    audioCtx = new AC();
+    mediaSource = audioCtx.createMediaElementSource(audioEl);
+    streamDest = audioCtx.createMediaStreamDestination();
+    mediaSource.connect(audioCtx.destination);
+    mediaSource.connect(streamDest);
+  }
+  if (audioCtx.state === "suspended") return audioCtx.resume();
+  return Promise.resolve();
+}
+
+async function startBlockPlayback(blkIdx, startLocalBeatIdx = 0) {
+  const ep = inkExplainerActiveEpisode();
+  const blocks = ep.blocks || [];
+  if (blkIdx >= blocks.length) {
+    finishEpisodePlayback();
+    return;
+  }
+  player.blkIdx = Math.max(0, blkIdx);
+  player.localBeatIdx = Math.max(0, startLocalBeatIdx);
+  player.playing = true;
+
+  const blk = blocks[player.blkIdx];
+  const timings = getBlockTimings(blk);
+  const offsetSec = timings[player.localBeatIdx]?.startSec || 0;
+  const aud = assets.blockAudio[blk.blockId];
+
+  if (aud && aud.url) {
+    await initAudioGraphOnce().catch(() => {});
+    audioEl.src = aud.url;
+    audioEl.currentTime = offsetSec;
+    await audioEl.play().catch(() => {
+      player.timerStartMs = performance.now() - offsetSec * 1000;
+    });
+  } else {
+    audioEl.pause();
+    audioEl.removeAttribute("src");
+    player.timerStartMs = performance.now() - offsetSec * 1000;
+  }
+
+  $("#player-status").textContent = `Playing Block ${blk.blockId}${aud ? "" : " (timed storyboard preview — generate Voiceover for spoken narration)"}`;
+  tickPlayerLoop();
+}
+
+function tickPlayerLoop() {
+  cancelAnimationFrame(player.rafId);
+  const loop = () => {
+    if (!player.playing) return;
+    const ep = inkExplainerActiveEpisode();
+    const blk = ep.blocks?.[player.blkIdx];
+    if (!blk) { finishEpisodePlayback(); return; }
+
+    const timings = getBlockTimings(blk);
+    const totalBlkDur = timings.length ? timings[timings.length - 1].endSec : 0;
+    const hasAudio = Boolean(assets.blockAudio[blk.blockId]?.url && !audioEl.paused && audioEl.currentSrc);
+    const elapsed = hasAudio ? audioEl.currentTime : (performance.now() - player.timerStartMs) / 1000;
+
+    // Pick exact beat active at elapsed timestamp inside block
+    let foundIdx = timings.findIndex(t => elapsed >= t.startSec && elapsed < t.endSec);
+    if (foundIdx < 0) foundIdx = elapsed >= totalBlkDur ? timings.length - 1 : 0;
+
+    if (foundIdx !== player.localBeatIdx) {
+      player.localBeatIdx = foundIdx;
+    }
+    drawCurrentFrame(elapsed);
+    updatePlayerChrome(elapsed);
+
+    if (!hasAudio && elapsed >= totalBlkDur) {
+      startBlockPlayback(player.blkIdx + 1, 0);
+      return;
+    }
+    player.rafId = requestAnimationFrame(loop);
+  };
+  player.rafId = requestAnimationFrame(loop);
+}
+
+audioEl.addEventListener("ended", () => {
+  if (!player.playing) return;
+  startBlockPlayback(player.blkIdx + 1, 0);
+});
+
+function finishEpisodePlayback() {
+  player.playing = false;
+  cancelAnimationFrame(player.rafId);
+  if (player.exporting && player.recorder && player.recorder.state === "recording") {
+    player.recorder.stop();
+  }
+  $("#player-status").textContent = "Episode playback complete ✓";
+  updatePlayerChrome(0);
+}
+
+function pausePlayback() {
+  player.playing = false;
+  cancelAnimationFrame(player.rafId);
+  if (!audioEl.paused) audioEl.pause();
+  $("#player-status").textContent = "Paused.";
+}
+
+function stopPlayback() {
+  pausePlayback();
+  player.blkIdx = 0;
+  player.localBeatIdx = 0;
+  audioEl.removeAttribute("src");
+  drawCurrentFrame(0);
+  updatePlayerChrome(0);
+}
+
+function jumpToBeatNumber(beatNum, autoplay = false) {
+  const ep = inkExplainerActiveEpisode();
+  for (let bi = 0; bi < (ep.blocks || []).length; bi++) {
+    const li = ep.blocks[bi].beats.findIndex(b => b.beat === Number(beatNum));
+    if (li >= 0) {
+      if (autoplay || player.playing) {
+        startBlockPlayback(bi, li);
+      } else {
+        player.blkIdx = bi;
+        player.localBeatIdx = li;
+        const timings = getBlockTimings(ep.blocks[bi]);
+        drawCurrentFrame(timings[li]?.startSec || 0);
+        updatePlayerChrome(timings[li]?.startSec || 0);
+      }
+      return;
+    }
+  }
+}
+
+async function exportWebmVideo() {
+  if (typeof MediaRecorder === "undefined" || !canvas.captureStream) {
+    toast("Your browser does not support canvas MediaRecorder export");
+    return;
+  }
+  if (player.exporting) return;
+  await initAudioGraphOnce();
+  ensureCanvasSize();
+  const canvasStream = canvas.captureStream(30);
+  const tracks = [...canvasStream.getVideoTracks(), ...streamDest.stream.getAudioTracks()];
+  const combined = new MediaStream(tracks);
+  const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") ? "video/webm;codecs=vp9,opus" : "video/webm";
+  player.chunks = [];
+  player.exporting = true;
+  player.recorder = new MediaRecorder(combined, { mimeType: mime, videoBitsPerSecond: 4_500_000 });
+  player.recorder.ondataavailable = e => { if (e.data && e.data.size > 0) player.chunks.push(e.data); };
+  player.recorder.onstop = () => {
+    player.exporting = false;
+    $("#p-export").disabled = false;
+    $("#p-export").textContent = "🎥 Export Full Episode (.webm)";
+    const blob = new Blob(player.chunks, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${state.episodeId}-${Date.now()}.webm`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 5000);
+    toast("Exported full episode WebM ✓");
+  };
+  $("#p-export").disabled = true;
+  $("#p-export").textContent = "⏺ Recording Full Episode…";
+  player.recorder.start(250);
+  await startBlockPlayback(0, 0);
+}
+
+function downloadCapCutTimeline() {
+  const ep = inkExplainerActiveEpisode();
+  let globalOffset = 0;
+  const tracks = [];
+  const audioTracks = [];
+  for (const blk of ep.blocks || []) {
+    const timings = getBlockTimings(blk);
+    const blkDur = timings.length ? timings[timings.length - 1].endSec : 0;
+    audioTracks.push({
+      blockId: blk.blockId,
+      audioFile: `episodes/${ep.id}/audio/block-${String(blk.blockId).padStart(2, "0")}.wav`,
+      startSec: Math.round(globalOffset * 1000) / 1000,
+      durationSec: blkDur
+    });
+    blk.beats.forEach((b, i) => {
+      const t = timings[i];
+      tracks.push({
+        beat: b.beat,
+        cardType: b.cardType,
+        imageFile: `episodes/${ep.id}/images/beat-${String(b.beat).padStart(2, "0")}.png`,
+        startSec: Math.round((globalOffset + t.startSec) * 1000) / 1000,
+        endSec: Math.round((globalOffset + t.endSec) * 1000) / 1000,
+        durationSec: t.durationSec,
+        narration: b.narration
+      });
+    });
+    globalOffset += blkDur;
+  }
+  const blob = new Blob([JSON.stringify({ episodeId: ep.id, title: ep.title, totalDurationSec: Math.round(globalOffset * 100) / 100, audioTracks, beatCuts: tracks }, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${ep.id}-capcut-timeline.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+}
+
+/* ---------- DOM Event Wiring ---------- */
+$("#ar-sel").value = state.ar;
+$("#ar-sel").addEventListener("change", () => { state.ar = $("#ar-sel").value; saveState(); renderAll(); drawCurrentFrame(); });
+
+$("#voice-sel").value = state.voice;
+$("#voice-sel").addEventListener("change", () => { state.voice = $("#voice-sel").value; saveState(); });
+
+$("#episode-sel").addEventListener("change", async () => {
+  state.episodeId = $("#episode-sel").value;
+  saveState();
+  stopPlayback();
+  await refreshAssets(true);
+});
+
+$("#btn-toggle-new").addEventListener("click", () => $("#new-episode-panel").classList.toggle("hide"));
+$("#btn-close-new").addEventListener("click", () => $("#new-episode-panel").classList.add("hide"));
+$("#btn-del-ep").addEventListener("click", deleteActiveEpisode);
+$("#topic-chips").addEventListener("click", e => {
+  const b = e.target.closest(".chip-btn");
+  if (b) $("#topic-input").value = b.textContent.trim();
+});
+$("#btn-create-episode").addEventListener("click", createGeminiEpisode);
+$("#btn-gen-all-audio").addEventListener("click", generateAllVoiceovers);
+$("#btn-batch-flow").addEventListener("click", runFlowImageBatch);
+$("#btn-stop-flow").addEventListener("click", async () => {
+  if (!activeBatchJobId) return;
+  $("#batch-status").textContent = "Stopping after current in-flight Flow images finish…";
+  await fetch("/api/explainer/stop-batch", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: activeBatchJobId })
+  }).catch(() => {});
+});
+$("#btn-refresh").addEventListener("click", () => refreshAssets(false));
+
+$("#p-play").addEventListener("click", () => startBlockPlayback(player.blkIdx, player.localBeatIdx));
+$("#p-pause").addEventListener("click", pausePlayback);
+$("#p-restart").addEventListener("click", () => startBlockPlayback(0, 0));
+$("#p-prev").addEventListener("click", () => jumpToBeatNumber(Math.max(1, activeGlobalBeatNum() - 1), false));
+$("#p-next").addEventListener("click", () => jumpToBeatNumber(Math.min(inkExplainerActiveBeats().length, activeGlobalBeatNum() + 1), false));
+$("#p-captions").addEventListener("change", () => { if (!player.playing) drawCurrentFrame(); });
+$("#p-export").addEventListener("click", exportWebmVideo);
+$("#p-manifest").addEventListener("click", downloadCapCutTimeline);
+$("#player-pills").addEventListener("click", e => {
+  const btn = e.target.closest("[data-jump-beat]");
+  if (btn) jumpToBeatNumber(Number(btn.dataset.jumpBeat), player.playing);
+});
+
+$("#blocks-container").addEventListener("click", async e => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const act = btn.dataset.act;
+  if (act === "gen-block-tts") {
+    await generateBlockVoiceover(Number(btn.dataset.block));
+  } else if (act === "flow-beat") {
+    await generateFlowBeatImage(Number(btn.dataset.beat));
+  } else if (act === "play-beat") {
+    window.scrollTo({ top: 120, behavior: "smooth" });
+    jumpToBeatNumber(Number(btn.dataset.beat), true);
+  } else if (act === "copy-beat") {
+    const bNum = Number(btn.dataset.beat);
+    const idx = inkExplainerActiveBeats().findIndex(b => b.beat === bNum);
+    try { await navigator.clipboard.writeText(inkExplainerPromptFor(idx, state.ar)); } catch {}
+    toast(`Beat ${bNum} prompt copied ✓`);
+  }
+});
+
+$("#blocks-container").addEventListener("change", async e => {
+  const t = e.target;
+  const blkIdx = Number(t.dataset.blk);
+  const idx = Number(t.dataset.idx);
+  if (!Number.isInteger(blkIdx) || !Number.isInteger(idx)) return;
+  const ep = inkExplainerActiveEpisode();
+  const beat = ep.blocks?.[blkIdx]?.beats?.[idx];
+  if (!beat) return;
+  if (t.classList.contains("edit-narr")) beat.narration = t.value.trim();
+  else if (t.classList.contains("edit-vis")) beat.visual = t.value.trim();
+  else if (t.classList.contains("edit-ctype")) beat.cardType = t.value;
+  else if (t.classList.contains("edit-label")) beat.label = t.value.trim();
+  else return;
+  window.__INK_ACTIVE_EPISODE = ep;
+  await persistActiveEpisode().catch(() => {});
+  renderPlayerPills();
+  if (!player.playing) drawCurrentFrame();
+});
+
+async function checkApi() {
+  if (isFile) { $("#api").textContent = "Open via http://127.0.0.1:8787/projects/ink-explainer/"; return; }
+  try {
+    const r = await fetch("/api/health");
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error();
+    $("#api").textContent = j.explainerApi ? "Studio Online · Rapid-Beat Engine Ready" : "Restart Studio for latest API";
+  } catch {
+    $("#api").textContent = "Studio Offline (run Start Story Studio.vbs)";
+  }
+}
+
+renderViralFormula();
+renderAll();
+drawCurrentFrame(0);
+checkApi();
+refreshAssets(true);
+</script>
+</body>
+</html>

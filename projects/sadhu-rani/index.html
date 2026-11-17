@@ -15,6 +15,11 @@ h2{margin:18px 0 6px;font-size:17px}h3{margin:14px 0 4px;font-size:15px}
 nav,.eps{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.eps{margin-top:8px}
 button,select{background:#22302a;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
 button.p{background:var(--acc);color:#07210f;border-color:var(--acc);font-weight:700}
+button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button[data-act="facebook"]{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button[data-act="facebook"]:hover{background:#166fe5;border-color:#166fe5}
+button[data-act="telegram"]{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button[data-act="telegram"]:hover{background:#1d8ec4;border-color:#1d8ec4}
 button.on{border-color:var(--acc)}.eps button{padding:4px 10px;font-size:13px;font-family:var(--ne)}.eps button.fin{color:var(--acc)}
 button:focus-visible,select:focus-visible,summary:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
 nav a{color:var(--acc);padding:7px 4px}
@@ -53,12 +58,20 @@ button.missing{color:#ffd38a;border-style:dashed}
 <div class="bar"><i id="pb"></i></div>
 <nav>
 <button class="p" id="nx">Copy NEXT prompt</button>
+<button class="p" id="gnx">▶ Generate next clip with Flow</button>
 <button data-t="clips" class="on">Clips</button>
 <button data-t="cast">Storyboard &amp; Images</button>
 <button data-t="flow">Workflow &amp; Rules</button>
 <button id="dle">Download all prompts (.txt)</button>
 <a href="../../index.html">← All projects</a>
 <label class="sub">Shape <select id="ar"><option value="16:9">16:9 wide</option><option value="9:16">9:16 vertical</option></select></label>
+<label class="sub">Model <select id="model"><option>Omni 1.1 Flash</option><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></label>
+<label class="sub">Length <select id="dur"><option>10s</option><option>8s</option><option>6s</option><option>4s</option></select></label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send video &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
+<label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Workspace setting: ensure &amp; attach required character images in Flow"><input type="checkbox" id="charConsistencyToggle"> Character consistency</label>
+<span class="sub" id="api"></span>
 </nav>
 <div class="eps" id="eps"></div>
 </header>
@@ -66,6 +79,8 @@ button.missing{color:#ffd38a;border-style:dashed}
 <section id="clips"></section><section id="cast" class="hide"></section><section id="flow" class="hide"></section>
 </main>
 <div id="toast" role="status" aria-live="polite"></div>
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
 <script>
 /* ---------- Shared blocks ---------- */
 const STYLE="STYLE LOCK — grounded, photorealistic live-action Nepali rural folk tale shot on a cinema camera with natural lenses: warm dusk and kerosene-lamp light, soft morning river light, earthy palette of ochre, mud brown, faded saffron and harvest gold, gentle film grain, real skin texture and lived-in hand-spun costumes, authentic hill-village Nepal (mud-and-stone farmhouses, terraced paddy fields, a river bend with a pipal tree). Handheld but steady, intimate framing, shallow depth of field. Quiet, spiritual and humane, not glossy, not cartoon, not stock footage. Characters must match their reference images exactly in face, build and clothing in every clip.";
@@ -120,12 +135,37 @@ const EPS=[
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const DIG="०१२३४५६७८९";const neNum=n=>String(n).split("").map(d=>DIG[+d]).join("");
+const PROJECT_ID="sadhu-rani";
 const KEY="sadhu-rani-v1";
-let S={done:{},ar:"16:9",ep:0,cur:"0-0",tab:"clips"};
+const JOB_KEY="sadhu_rani_flow_job";
+const GEN={};
+const cloudStorage=window.StoryStudioStorage?.createProjectStorage?.({projectId:PROJECT_ID});
+let S={done:{},ar:"16:9",model:"Omni 1.1 Flash",dur:"10s",ep:0,cur:"0-0",tab:"clips"};
 try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r))}catch(e){}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function pushCloud(){
+  const checked={...(S.done||{})};
+  const T=total();
+  const completedCount=Object.values(checked).filter(Boolean).length;
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID,{totalClips:T,completedCount,checked,state:S});
+}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}pushCloud()}
 const id=(e,c)=>e+"-"+c;
 const total=()=>EPS.reduce((n,e)=>n+e.clips.length,0);
+function flatDayFor(e,c){let d=1;for(let i=0;i<e;i++)d+=EPS[i].clips.length;return d+c;}
+function posForDay(day){let rem=day-1;for(let e=0;e<EPS.length;e++){if(rem<EPS[e].clips.length)return[e,rem];rem-=EPS[e].clips.length;}return null;}
+function syncFailedStudioJob(){
+  try{
+    const raw=localStorage.getItem(JOB_KEY);if(!raw)return;
+    const job=JSON.parse(raw);
+    if(job&&["failed","unknown"].includes(job.status)&&!job.unchecked){
+      const p=posForDay(job.day);
+      if(p)delete S.done[id(p[0],p[1])];
+      save();
+      localStorage.setItem(JOB_KEY,JSON.stringify({...job,unchecked:true}));
+    }
+  }catch(_){}
+}
+syncFailedStudioJob();
 
 const TIMEWORD=/^(Night|Dusk|Morning|Dawn|Evening|Midnight|Late|Before|Back home|Days later|Flashback|Cold open|Afternoon|Quiet establishing)/i;
 function contOf(e,c){
@@ -162,7 +202,8 @@ function renderClips(){
 <p class="scene"><b>Scene:</b> ${esc(k[2])}</p>
 ${contBadge(e,c)}
 ${lines.length?`<div class="dl" lang="ne">${lines.map(l=>{const i=l.indexOf(":");return `<div><b>${esc(l.slice(0,i))}:</b>${esc(l.slice(i+1))}</div>`}).join("")}</div>`:`<p class="sub">No dialogue: ambient sound only.</p>`}
-<div class="btns"><button class="p" data-act="prompt" data-e="${e}" data-c="${c}">Copy Flow prompt</button><button data-act="line" data-e="${e}" data-c="${c}">Copy dialogue</button></div>
+<div class="btns"><button class="p" data-act="gen" data-e="${e}" data-c="${c}">▶ Generate in Flow</button><button data-act="tiktok" data-e="${e}" data-c="${c}" title="Post clip to TikTok">♪ Post TikTok</button><button data-act="facebook" data-e="${e}" data-c="${c}" title="Post clip to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button><button data-act="telegram" data-e="${e}" data-c="${c}" title="Send clip &amp; caption to Telegram">✈ Send Telegram</button><button class="p" data-act="prompt" data-e="${e}" data-c="${c}">Copy Flow prompt</button><button data-act="line" data-e="${e}" data-c="${c}">Copy dialogue</button></div>
+<div class="sub" id="g${e}-${c}">${esc(GEN[id(e,c)]||"")}</div>
 ${assetRow(e,c,k)}
 <details><summary>Show the complete prompt</summary><pre>${esc(buildPrompt(e,c))}</pre></details></article>`}).join("");
   loadEnds();
@@ -182,7 +223,13 @@ del(k){return this.run("readwrite",s=>{s.delete(k)})},
 keys(){return this.run("readonly",(s,o)=>{const r=s.getAllKeys();r.onsuccess=()=>o(r.result)})}};
 const endKey=(e,c)=>"end-"+(e+1)+"-"+(c+1);
 const labelOf=k=>k.startsWith("char-")?NAMES[k.slice(5)]:k.startsWith("loc-")?LN[k.slice(4)]:"clip end frame";
-async function ensure(key){if(AS[key])return AS[key];if(!SAVED.has(key))return null;try{AS[key]=await IDB.get(key)}catch(_){}return AS[key]||null}
+async function ensure(key){
+  if(AS[key])return AS[key];
+  if(!SAVED.has(key))return null;
+  if(cloudStorage){try{const res=await cloudStorage.getAssets([key]);if(res?.assets?.[key]){AS[key]=res.assets[key];return AS[key]}}catch(_){}}
+  try{AS[key]=await IDB.get(key)}catch(_){}
+  return AS[key]||null;
+}
 function shrink(f){return new Promise((resolve,reject)=>{const im=new Image(),url=URL.createObjectURL(f);im.onload=()=>{try{const w=Math.min(1024,im.width),h=im.height*w/im.width,c=document.createElement("canvas");c.width=w;c.height=h;c.getContext("2d").drawImage(im,0,0,w,h);resolve(c.toDataURL("image/jpeg",.85))}catch(e){reject(e)}finally{URL.revokeObjectURL(url)}};im.onerror=()=>{URL.revokeObjectURL(url);reject(new Error("Could not read that image."))};im.src=url})}
 function toPng(dataUrl){return new Promise((resolve,reject)=>{const im=new Image();im.onload=()=>{const c=document.createElement("canvas");c.width=im.naturalWidth;c.height=im.naturalHeight;c.getContext("2d").drawImage(im,0,0);c.toBlob(b=>b?resolve(b):reject(new Error("Could not convert the image.")),"image/png")};im.onerror=()=>reject(new Error("Could not decode the image."));im.src=dataUrl})}
 async function copyImage(key){
@@ -195,14 +242,52 @@ async function copyImage(key){
 async function saveAsset(key,file){
   try{
     const data=await shrink(file);AS[key]=data;SAVED.add(key);activePasteKey=null;
-    try{await IDB.put(key,data)}catch(e){idbBroken=true;toast("Saved for this tab only: your browser blocked local storage.",3600)}
-    renderBoard();renderClips();toast("Image saved ✓");
+    try{await IDB.put(key,data)}catch(e){}
+    if(cloudStorage){try{await cloudStorage.saveAsset(key,data)}catch(e){toast("Saved locally; cloud sync pending.",2600)}}
+    renderBoard();renderClips();toast("Image saved to cloud ✓");
   }catch(err){toast(err.message||"Could not save the image",3200)}
 }
-async function removeAsset(key){if(!confirm("Remove the saved "+labelOf(key)+" image?"))return;delete AS[key];SAVED.delete(key);try{await IDB.del(key)}catch(_){}renderBoard();renderClips()}
+async function removeAsset(key){
+  if(!confirm("Remove the saved "+labelOf(key)+" image?"))return;
+  delete AS[key];SAVED.delete(key);
+  try{await IDB.del(key)}catch(_){}
+  if(cloudStorage){try{await cloudStorage.deleteAssets([key])}catch(_){}}
+  renderBoard();renderClips();
+}
 function startPaste(key){activePasteKey=key;document.querySelectorAll("[data-paste]").forEach(b=>{const on=b.dataset.paste===key;b.textContent=on?"Press Ctrl+V":b.dataset.label;b.classList.toggle("on",on)})}
-async function initAssets(){try{const ks=await IDB.keys();ks.forEach(k=>SAVED.add(k));await Promise.all(ks.filter(k=>!k.startsWith("end-")).map(async k=>{AS[k]=await IDB.get(k)}))}catch(_){idbBroken=true}renderBoard();renderClips()}
-async function loadEnds(){const need=EPS[S.ep].clips.map((_,c)=>endKey(S.ep,c)).filter(x=>SAVED.has(x)&&!AS[x]&&!LOADING.has(x));if(!need.length)return;need.forEach(x=>LOADING.add(x));await Promise.all(need.map(async x=>{try{AS[x]=await IDB.get(x)}catch(_){}}));renderClips()}
+function allAssetKeys(){
+  const endKs=[];EPS.forEach((E,e)=>E.clips.forEach((_,c)=>endKs.push(endKey(e,c))));
+  return [...Object.keys(REFS).map(k=>"char-"+k),...Object.keys(LREF).map(k=>"loc-"+k),...endKs];
+}
+async function initAssets(){
+  let localKeys=[];
+  try{localKeys=await IDB.keys();localKeys.forEach(k=>SAVED.add(k));await Promise.all(localKeys.filter(k=>!k.startsWith("end-")).map(async k=>{AS[k]=await IDB.get(k)}))}catch(_){idbBroken=true}
+  if(cloudStorage){
+    try{
+      const allKeys=allAssetKeys();
+      const listed=await cloudStorage.listAssets(allKeys);
+      listed?.keys?.forEach(k=>SAVED.add(k));
+      for(const k of localKeys){
+        if(!listed?.keys?.has(k)){
+          const d=AS[k]||(await IDB.get(k).catch(()=>null));
+          if(d)await cloudStorage.saveAsset(k,d).catch(()=>{});
+        }
+      }
+      const refKeys=allKeys.filter(k=>!k.startsWith("end-"));
+      const fetched=await cloudStorage.getAssets(refKeys);
+      Object.entries(fetched?.assets||{}).forEach(([k,v])=>{if(v){AS[k]=v;SAVED.add(k)}});
+    }catch(_){}
+  }
+  renderBoard();renderClips();
+}
+async function loadEnds(){
+  const need=EPS[S.ep].clips.map((_,c)=>endKey(S.ep,c)).filter(x=>SAVED.has(x)&&!AS[x]&&!LOADING.has(x));
+  if(!need.length)return;
+  need.forEach(x=>LOADING.add(x));
+  if(cloudStorage){try{const res=await cloudStorage.getAssets(need);Object.entries(res?.assets||{}).forEach(([k,v])=>{if(v)AS[k]=v})}catch(_){}}
+  await Promise.all(need.filter(x=>!AS[x]).map(async x=>{try{AS[x]=await IDB.get(x)}catch(_){}}));
+  renderClips();
+}
 function assetRow(e,c,k){
   const keys=[...[...k[1]].map(x=>"char-"+x),"loc-"+k[0]],eKey=endKey(e,c),ct=contOf(e,c),pKey=ct.cont?endKey(e,c-1):null;
   const btn=x=>`<button data-ci="${x}" class="${SAVED.has(x)?"":"missing"}">Copy ${esc(labelOf(x))} image</button>`;
@@ -216,11 +301,13 @@ function boardCard(x){const t=x.startsWith("char-")?NAMES[x.slice(5)]:LN[x.slice
 function renderBoard(){
   if(!REFKEYS.length)REFKEYS.push(...Object.keys(REFS).map(k=>"char-"+k),...Object.keys(LREF).map(k=>"loc-"+k));
   const n=REFKEYS.filter(x=>SAVED.has(x)).length;
-  $("#cast").innerHTML=`<h2>Storyboard &amp; reference images</h2><div class="note"><b>${n}/${REFKEYS.length} references saved.</b> Make each image once (copy its prompt into Flow, Whisk or any image tool), then press <i>Paste image</i> and Ctrl+V, or choose a file. On every clip card you can copy the right character and place images and paste them into Flow as Ingredients, so faces and places stay consistent. Images are stored only in this browser; clearing site data removes them.${idbBroken?" <b>Local storage is blocked here, so images last only until you close this tab.</b>":""}</div><h3 class="board-h">Characters</h3>${Object.keys(REFS).map(k=>boardCard("char-"+k)).join("")}<h3 class="board-h">Places</h3>${Object.keys(LREF).map(k=>boardCard("loc-"+k)).join("")}`;
+  $("#cast").innerHTML=`<h2>Storyboard &amp; reference images</h2><div class="note"><b>${n}/${REFKEYS.length} references saved.</b> Make each image once (copy its prompt into Flow, Whisk or any image tool), then press <i>Paste image</i> and Ctrl+V, or choose a file. On every clip card you can copy the right character and place images and paste them into Flow as Ingredients, so faces and places stay consistent. Images and characters automatically sync to your Turso cloud database across computers and browsers.${idbBroken?" <b>Local browser cache unavailable; using cloud sync directly.</b>":""}</div><h3 class="board-h">Characters</h3>${Object.keys(REFS).map(k=>boardCard("char-"+k)).join("")}<h3 class="board-h">Places</h3>${Object.keys(LREF).map(k=>boardCard("loc-"+k)).join("")}`;
 }
 
 /* ---------- events ---------- */
 $("#clips").addEventListener("click",ev=>{const b=ev.target.closest("button[data-act]");if(!b)return;const e=+b.dataset.e,c=+b.dataset.c;S.cur=id(e,c);save();
+  if(b.dataset.act==="gen"){genClip(e,c);return}
+  if(b.dataset.act==="tiktok"||b.dataset.act==="facebook"||b.dataset.act==="telegram"){postSocial(b.dataset.act,e,c);return}
   if(b.dataset.act==="prompt")copy(buildPrompt(e,c),"Flow prompt copied ✓");
   if(b.dataset.act==="line")copy((EPS[e].clips[c][4]||"").split("|").join("\n"),"Dialogue copied ✓");
   document.querySelectorAll(".card.cur").forEach(x=>x.classList.remove("cur"));const el=$("#k"+e+"-"+c);el&&el.classList.add("cur")});
@@ -229,7 +316,13 @@ $("#eps").addEventListener("click",ev=>{const b=ev.target.closest("button[data-e
 $("#nx").onclick=()=>{const p=nextPos();if(!p){toast("All clips are marked made 🎉");return}
   S.ep=p[0];S.cur=id(p[0],p[1]);save();show("clips");renderEps();renderClips();copy(buildPrompt(p[0],p[1]),"Ep "+(p[0]+1)+" clip "+(p[1]+1)+" prompt copied ✓");
   const el=$("#k"+p[0]+"-"+p[1]);if(el)el.scrollIntoView({behavior:"smooth",block:"start"})};
-$("#ar").onchange=ev=>{S.ar=ev.target.value;save();renderClips()};
+$("#gnx").onclick=()=>{const p=nextPos();if(!p){toast("All clips are marked made 🎉");return}
+  S.ep=p[0];S.cur=id(p[0],p[1]);save();show("clips");renderEps();renderClips();
+  const el=$("#k"+p[0]+"-"+p[1]);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});
+  genClip(p[0],p[1])};
+$("#ar").onchange=ev=>{S.ar=ev.target.value;S.picked=true;save();renderClips()};
+$("#model").onchange=ev=>{S.model=ev.target.value;S.picked=true;save()};
+$("#dur").onchange=ev=>{S.dur=ev.target.value;S.picked=true;save();renderClips()};
 $("#dle").onclick=()=>download("sadhu-rani-prompts.txt",fileText(0));
 
 /* ---------- Cast + Workflow ---------- */
@@ -258,8 +351,135 @@ function hoverPreview(btn){if(btn.dataset.pv==="1")return;btn.dataset.pv="1";let
 document.addEventListener("pointerover",ev=>{const b=ev.target.closest("#clips button[data-ci]");if(b&&!b.contains(ev.relatedTarget))hoverPreview(b)});
 document.addEventListener("focusin",ev=>{const b=ev.target.closest&&ev.target.closest("#clips button[data-ci]");if(b)hoverPreview(b)});
 
-/* ---------- tabs ---------- */
-function show(t){S.tab=t;document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("hide",s.id!==t));document.querySelectorAll("nav button[data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t))}
+/* ---------- tabs & Flow API ---------- */
+const isFile=location.protocol==="file:";
+function setGen(e,c,msg){GEN[id(e,c)]=msg;const el=$("#g"+e+"-"+c);if(el)el.textContent=msg;}
+async function checkApi(){
+  const el=$("#api");
+  if(isFile){el.textContent="Generator: open via http://127.0.0.1:8787/projects/sadhu-rani/";return;}
+  try{const r=await fetch("/api/health");if(!r.ok)throw new Error();el.textContent="Generator: online";}
+  catch{el.textContent="Generator: offline (double-click Start Story Studio.vbs)";}
+}
+async function applyFlowDefaults(){
+  if(isFile)return;
+  try{
+    const r=await fetch("/api/flow-settings?project="+PROJECT_ID);
+    if(!r.ok)return;
+    const j=await r.json();
+    const ccToggle=$("#charConsistencyToggle");
+    if(ccToggle)ccToggle.checked=Boolean(j.effective?.characters?.consistency);
+    if(!j.effective?.video||S.picked)return;
+    S.model=j.effective.video.model;S.ar=j.effective.video.aspect;S.dur=j.effective.video.duration;
+    $("#ar").value=S.ar;$("#model").value=S.model;$("#dur").value=S.dur;
+    renderClips();progress();
+  }catch(_){}
+}
+$("#charConsistencyToggle")?.addEventListener("change",async ev=>{
+  const enabled=ev.target.checked;
+  if(isFile){toast("Open via http://127.0.0.1:8787 to save settings");return;}
+  try{
+    const r=await fetch("/api/flow-settings");const j=await r.json();
+    if(!r.ok||!j.ok)throw new Error(j.error||"Could not load settings.");
+    const doc=j.settings||{defaults:{},projects:{}};
+    doc.projects=doc.projects||{};
+    doc.projects[PROJECT_ID]={...(doc.projects[PROJECT_ID]||{}),characters:{consistency:enabled}};
+    const sr=await fetch("/api/flow-settings",{method:"PUT",headers:{"Content-Type":"application/json"},body:JSON.stringify(doc)});
+    const sj=await sr.json();if(!sr.ok||!sj.ok)throw new Error(sj.error||"Could not save setting.");
+    toast(`Character consistency ${enabled?"enabled":"disabled"} ✓`);
+  }catch(err){ev.target.checked=!enabled;toast("Failed to save character consistency: "+err.message);}
+});
+function clipCharacters(e,c){
+  const codes=[...(EPS[e]?.clips?.[c]?.[1]||"")];
+  return codes.map(code=>({code,name:NAMES[code]||code,refPrompt:refPrompt("char-"+code)}));
+}
+function socialContextFor(e,c){
+  const k=EPS[e]?.clips?.[c]||[];
+  return `Nepali folk tale "साधु र राडी" — Clip ${c+1}: ${k[2]||""}.\nScene: ${k[3]||""}\nDialogue:\n${(k[4]||"").split("|").join("\n")}`.slice(0,4800);
+}
+async function postSocial(platform,e,c){
+  if(isFile){toast(`Open via http://127.0.0.1:8787 to post to ${platform}`);return;}
+  const label=platform==="facebook"?"Facebook":platform==="telegram"?"Telegram":"TikTok";
+  const btn=document.querySelector(`button[data-act="${platform}"][data-e="${e}"][data-c="${c}"]`);
+  if(btn)btn.disabled=true;
+  try{
+    await window.StoryStudioSocial.postMedia({
+      platform,
+      projectId:PROJECT_ID,
+      day:flatDayFor(e,c),
+      context:socialContextFor(e,c),
+      label:`Clip ${c+1}`,
+      onStatus:m=>setGen(e,c,m)
+    });
+    setGen(e,c,`Posted to ${label} ✓`);
+    toast(`Clip ${c+1} posted to ${label} ✓`);
+  }catch(err){
+    setGen(e,c,`${label} failed: ${err.message}`);
+    toast(`${label} upload failed.`);
+  }finally{
+    if(btn)btn.disabled=false;
+  }
+}
+async function genClip(e,c){
+  if(isFile){toast("Open via http://127.0.0.1:8787/projects/sadhu-rani/ to generate");return;}
+  const btn=document.querySelector(`button[data-act="gen"][data-e="${e}"][data-c="${c}"]`);
+  const gnxBtn=$("#gnx");
+  if(btn)btn.disabled=true;if(gnxBtn)gnxBtn.disabled=true;
+  setGen(e,c,"Generating in Flow… this can take several minutes. Keep the Flow Chrome window open.");
+  try{
+    const r=await fetch("/api/generate",{
+      method:"POST",headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+        project:PROJECT_ID,
+        day:flatDayFor(e,c),
+        prompt:buildPrompt(e,c),
+        model:S.model,
+        aspect:S.ar,
+        duration:S.dur,
+        characters:clipCharacters(e,c)
+      })
+    });
+    const j=await r.json();
+    if(!r.ok||!j.ok)throw new Error(j.error||"Generation failed");
+    S.done[id(e,c)]=true;save();progress();renderEps();renderClips();initAssets();
+    setGen(e,c,"Saved to "+j.file);
+    toast(`Clip ${c+1} video saved ✓`);
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({
+      projectId:PROJECT_ID,
+      day:flatDayFor(e,c),
+      context:socialContextFor(e,c),
+      tiktokEnabled:Boolean($("#autoPostToggle")?.checked),
+      facebookEnabled:Boolean($("#autoPostFacebookToggle")?.checked),
+      telegramEnabled:Boolean($("#autoPostTelegramToggle")?.checked),
+      label:`Clip ${c+1}`,
+      onStatus:m=>setGen(e,c,m),
+      onToast:toast
+    });
+  }catch(err){
+    setGen(e,c,"Failed: "+err.message);
+    toast("Generation failed. See the status line.");
+  }finally{
+    if(btn)btn.disabled=false;if(gnxBtn)gnxBtn.disabled=false;
+  }
+}
+window.addEventListener("storage",ev=>{
+  if(ev.key!==KEY&&ev.key!==JOB_KEY)return;
+  try{const r=localStorage.getItem(KEY);if(r)S=Object.assign(S,JSON.parse(r));}catch(_){}
+  syncFailedStudioJob();renderEps();renderClips();progress();
+});
+function show(t){S.tab=t;document.querySelectorAll("main>section").forEach(s=>s.classList.toggle("hide",s.id!==t));document.querySelectorAll("nav button[data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t));if(t==="cast")initAssets();}
 document.querySelectorAll("nav button[data-t]").forEach(b=>b.onclick=()=>show(b.dataset.t));
-$("#ar").value=S.ar;renderEps();renderClips();renderBoard();progress();show("clips");initAssets();
+$("#ar").value=S.ar;$("#model").value=S.model;$("#dur").value=S.dur;
+renderEps();renderClips();renderBoard();progress();show("clips");checkApi();applyFlowDefaults();initAssets();
+window.StoryStudioSocial?.initAutoPostToggles?.({
+  projectId:PROJECT_ID,
+  tiktokSelector:"#autoPostToggle",
+  facebookSelector:"#autoPostFacebookToggle",
+  onToast:toast
+});
+window.StoryStudioStorage?.seedDefaultCharacters?.();
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId:PROJECT_ID,totalClips:total(),
+  readLocal:()=>({checked:{...(S.done||{})},state:S,hasLocal:Object.keys(S.done||{}).length>0,completedCount:Object.values(S.done||{}).filter(Boolean).length}),
+  applyMerged:(checked,mergedState)=>{S=Object.assign(S,mergedState||{},{done:checked||{}});try{localStorage.setItem(KEY,JSON.stringify(S))}catch{};renderEps();renderClips();progress();}
+});
 </script></body></html>

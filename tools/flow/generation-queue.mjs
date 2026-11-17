@@ -1,13 +1,16 @@
 export function createGenerationQueue(generate) {
   let tail = Promise.resolve();
   const jobs = new Map();
+  let pending = 0;
 
   function enqueue(input, onStart = () => {}) {
+    pending++;
     const run = tail.then(() => {
       onStart();
       return generate(input);
     });
     tail = run.catch(() => {});
+    run.then(() => { pending--; }, () => { pending--; });
     return run;
   }
 
@@ -22,5 +25,5 @@ export function createGenerationQueue(generate) {
     return job;
   }
 
-  return { enqueue, submit, get: id => jobs.get(id) };
+  return { enqueue, submit, get: id => jobs.get(id), busy: () => pending > 0 };
 }

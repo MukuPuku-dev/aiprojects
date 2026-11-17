@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Last Lantern (अन्तिम लालटिन) – 10m+ 16:9 Stickman Cinema Workspace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0c10;--card:#13161d;--ink:#eff2f7;--mut:#9ba4b5;--acc:#f5a623;
+  --crimson:#e84a5f;--ok:#56d39a;--line:#252a36;
+  --ne:"Noto Sans Devanagari","Mukta","Nirmala UI",system-ui,sans-serif;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,sans-serif}
+header{position:sticky;top:0;background:#0b0c10ee;backdrop-filter:blur(8px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
+h1{margin:0;font-size:19px}
+h1 .ne{font-family:var(--ne);color:var(--acc);font-weight:700}
+h2{margin:18px 0 8px;font-size:17px;color:var(--acc)}
+h3{margin:14px 0 6px;font-size:15px;color:var(--crimson)}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--crimson),var(--acc));width:0;transition:width .3s}
+nav,.filters,.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:4px}
+button,select{background:#1b202b;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;cursor:pointer;font:inherit}
+button.p{background:var(--acc);color:#1d1202;border-color:var(--acc);font-weight:700}
+button.on{border-color:var(--acc);color:var(--acc)}
+button.tt,button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button.fb,button[data-act="facebook"]{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button.fb:hover,button[data-act="facebook"]:hover{background:#166fe5;border-color:#166fe5}
+button.tg,button[data-act="telegram"]{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button.tg:hover,button[data-act="telegram"]:hover{background:#1d8ec4;border-color:#1d8ec4}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+nav a{color:var(--acc);padding:7px 4px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+main{max-width:980px;margin:0 auto;padding:14px}
+.hide{display:none}
+.filters{margin:6px 0 12px}
+.filters button{font-size:13px;padding:5px 11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;scroll-margin-top:165px}
+.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc)}
+.card.done{opacity:.74;border-color:#2e5a44}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.clip-badge{background:var(--acc);color:#1d1202;font-weight:800;border-radius:7px;padding:1px 9px;font-size:13px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--mut)}
+.top label{margin-left:auto;font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center;cursor:pointer}
+.title{font-size:18px;font-weight:700;margin:4px 0 2px;color:#fff}
+.arc-line{color:var(--acc);font-size:13px;font-style:italic;margin:0 0 8px}
+.scene{font-size:13.5px;margin:5px 0}
+.scene b,.mood b{color:var(--acc)}
+.mood{font-size:12.5px;color:var(--mut);background:#101218;border-left:3px solid var(--crimson);padding:6px 10px;border-radius:0 8px 8px 0;margin:6px 0 8px}
+.gen{font-size:13px;min-height:1em;margin-top:6px;color:var(--acc)}
+details{margin-top:8px}
+summary{cursor:pointer;color:var(--mut);font-size:13px}
+pre{white-space:pre-wrap;word-break:break-word;background:#08090c;border:1px solid var(--line);border-radius:10px;padding:11px;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
+.note{border-left:3px solid var(--acc);padding:8px 12px;background:#151821;border-radius:0 8px 8px 0;margin:10px 0}
+.grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.info-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;font-size:12.5px;margin-top:8px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:#181c25;color:var(--acc)}
+ul,ol{padding-left:20px}
+li{margin:5px 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--ok);color:#062014;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+#toast.show{opacity:1}
+@media(max-width:600px){header{position:relative}.title{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏮 THE LAST LANTERN · <span class="ne">अन्तिम लालटिन</span> <span class="sub" id="st"></span></h1>
+  <div class="sub">16:9 YouTube Stickman Saga · Visual-Only (Narration = No) · 6 Acts · 64 Scenes × 10s = 10m 40s · CapCut Assembly Ready</div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav>
+    <button class="p" id="nx">Copy NEXT prompt</button>
+    <button class="p" id="gnx">▶ Generate next clip with Flow</button>
+    <button data-t="clips" class="on">Scenes (64)</button>
+    <button data-t="cast">Characters &amp; Storyboard</button>
+    <button data-t="rules">Master Blueprint &amp; CapCut Guide</button>
+    <button id="dl">Download all prompts (.txt)</button>
+    <a href="../../index.html">← All projects</a>
+    <label class="sub">Shape <select id="ar"><option value="16:9">16:9 wide</option><option value="9:16">9:16 vertical</option></select></label>
+    <label class="sub">Model <select id="model"><option>Omni 1.1 Flash</option><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></label>
+    <label class="sub">Length <select id="dur"><option>10s</option><option>8s</option><option>6s</option><option>4s</option></select></label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send video &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Workspace setting: ensure &amp; attach required character images in Flow"><input type="checkbox" id="charConsistencyToggle"> Character consistency</label>
+    <span class="sub" id="api"></span>
+  </nav>
+</header>
+
+<main>
+  <section id="clips">
+    <div class="filters" id="filters"></div>
+    <div id="list"></div>
+  </section>
+  <section id="cast" class="hide"></section>
+  <section id="rules" class="hide"></section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
+<script src="flow-data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PROJECT_ID = "stickman-lantern";
+const KEY = "stickman-lantern-v1";
+const JOB_KEY = "stickman_lantern_flow_job";
+const projectStorage = window.StoryStudioStorage?.createProjectStorage?.({ projectId: PROJECT_ID });
+
+const META = STICKMAN_META;
+const ACTS = STICKMAN_ACTS;
+const CHARS = STICKMAN_CHARS;
+const CHAR_NAMES = STICKMAN_CHAR_NAMES;
+const LOCS = STICKMAN_LOCS;
+const MASTER_STYLE = STICKMAN_MASTER_STYLE;
+const SILENT_RULE = STICKMAN_SILENT_RULE;
+const CLIPS = STICKMAN_CLIPS;
+const CAPCUT = STICKMAN_CAPCUT_GUIDE;
+
+let S = { done:{}, ar:"16:9", model:"Omni 1.1 Flash", dur:"10s", filter:"all", cur:0, tab:"clips" };
+const GEN = {};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+const pushCloud = () => {
+  const checked = { ...(S.done || {}) };
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
+    totalClips: CLIPS.length,
+    completedCount: CLIPS.filter((_, i) => checked[i + 1]).length,
+    checked,
+    state: S
+  });
+};
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} pushCloud(); };
+
+function syncFailedStudioJob() {
+  try {
+    const raw = localStorage.getItem(JOB_KEY);
+    if (!raw) return;
+    const job = JSON.parse(raw);
+    if (job && ["failed", "unknown"].includes(job.status) && !job.unchecked) {
+      delete S.done[job.day];
+      save();
+      localStorage.setItem(JOB_KEY, JSON.stringify({ ...job, unchecked: true }));
+    }
+  } catch {}
+}
+syncFailedStudioJob();
+
+let tt;
+function toast(msg) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(tt);
+  tt = setTimeout(() => el.classList.remove("show"), 1700);
+}
+
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.opacity = "0";
+    document.body.append(a); a.select();
+    try { document.execCommand("copy"); } catch {}
+    a.remove();
+  }
+  toast(msg || "Copied ✓");
+}
+
+function actInfo(id) { return ACTS.find(a => a.id === id) || ACTS[1]; }
+function buildPrompt(i) { return stickmanPromptFor(i, S.ar, S.dur); }
+
+function renderFilters() {
+  $("#filters").innerHTML = ACTS.map(a =>
+    `<button data-f="${a.id}" class="${S.filter === a.id ? "on" : ""}">${esc(a.label)}</button>`
+  ).join("");
+}
+
+function renderList() {
+  $("#list").innerHTML = CLIPS.map((c, i) => ({ c, i }))
+    .filter(({ c }) => S.filter === "all" || c.act === S.filter)
+    .map(({ c, i }) => {
+      const done = !!S.done[i + 1];
+      const act = actInfo(c.act);
+      const castList = c.who.map(code => CHAR_NAMES[code] || code).join(", ");
+      return `<article class="card ${done ? "done" : ""} ${S.cur === i ? "cur" : ""}" id="v${i}" data-i="${i}">
+        <div class="top">
+          <span class="clip-badge">Scene ${i + 1}/64</span>
+          <span class="chip">${esc(act.label)}</span>
+          <span class="chip">${esc(castList)}</span>
+          <span class="chip">${esc(c.pacing)} · ${esc(c.intensity)} · ${esc(c.camMove)}</span>
+          <label><input type="checkbox" data-done="${i}" ${done ? "checked" : ""}> Made in Flow</label>
+        </div>
+        <div class="title">${esc(c.title)}</div>
+        <p class="arc-line">${esc(c.beat)}</p>
+        <p class="scene"><b>Storyboard Frame (Stage 7):</b> ${esc(c.visual)}</p>
+        <p class="scene"><b>Animation Motion (Stage 8):</b> ${esc(c.animAction)}</p>
+        <p class="scene"><b>Continuity &amp; Cut:</b> ${esc(c.prevLink)} → <i>${esc(c.transition)}</i></p>
+        <div class="mood"><b>Sound &amp; Foley:</b> ${esc(c.foley.replace(/^Foley:\s*/i,""))}</div>
+        <div class="btns">
+          <button class="p" data-act="gen" data-i="${i}">Generate video</button>
+          <button data-act="tiktok" data-i="${i}" title="Post scene to TikTok">♪ Post TikTok</button>
+          <button data-act="facebook" data-i="${i}" title="Post scene to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button>
+          <button data-act="telegram" data-i="${i}" title="Send scene to Telegram">✈ Send Telegram</button>
+          <button data-act="prompt" data-i="${i}">Copy Animation Prompt</button>
+          <button data-act="sb" data-i="${i}">Copy Storyboard Prompt</button>
+          <button data-act="mood" data-i="${i}">Copy Sound Note</button>
+        </div>
+        <div class="gen" id="g${i}">${esc(GEN[i] || "")}</div>
+        <details><summary>Show Stage 7 Storyboard Image Prompt</summary><pre>${esc(c.storyboardPrompt)}</pre></details>
+        <details><summary>Show Stage 8 Image-to-Video Animation Prompt (16:9)</summary><pre>${esc(buildPrompt(i))}</pre></details>
+      </article>`;
+    }).join("");
+}
+
+function progress() {
+  const n = Object.keys(S.done).filter(k => S.done[k]).length;
+  const secs = (parseInt(S.dur, 10) || 10) * n;
+  const mins = Math.floor(secs / 60);
+  const rem = secs % 60;
+  $("#pb").style.width = (n / CLIPS.length * 100) + "%";
+  $("#st").textContent = `${n}/${CLIPS.length} scenes · ${mins}m ${rem}s / 10m 40s`;
+}
+
+function nextIndex() {
+  for (let i = 0; i < CLIPS.length; i++) if (!S.done[i + 1]) return i;
+  return -1;
+}
+
+let castAssets = {};
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const im = new Image(), u = URL.createObjectURL(file);
+    im.onload = () => {
+      try {
+        const w = Math.min(1024, im.width || 1024), h = Math.round((im.height || w) * w / (im.width || w));
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(im, 0, 0, w, h);
+        resolve(c.toDataURL("image/jpeg", 0.85));
+      } catch (err) { reject(err); }
+      finally { URL.revokeObjectURL(u); }
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); reject(new Error("Invalid image")); };
+    im.src = u;
+  });
+}
+
+async function loadCastAssets() {
+  if (!projectStorage) return;
+  const keys = [...Object.keys(CHARS).map(k => "char-" + k), ...Object.keys(LOCS).map(k => "loc-" + k)];
+  await projectStorage.listAssets(keys).catch(() => {});
+  const res = await projectStorage.getAssets(keys).catch(() => ({ assets: {} }));
+  castAssets = res?.assets || {};
+  renderCastAssetsUi();
+}
+
+function renderCastAssetsUi() {
+  const keys = [...Object.keys(CHARS).map(k => "char-" + k), ...Object.keys(LOCS).map(k => "loc-" + k)];
+  keys.forEach(key => {
+    const slot = document.getElementById("tl-img-" + key);
+    if (!slot) return;
+    const url = castAssets[key];
+    slot.innerHTML = url
+      ? `<img src="${url}" alt="${esc(key)}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px">`
+      : `<div class="sub" style="margin-top:6px;padding:10px;border:1px dashed var(--line);border-radius:8px">No cloud reference image yet · Auto-generated on first Flow run or upload below</div>`;
+  });
+}
+
+async function saveCastAsset(key, file) {
+  if (!projectStorage || !file) return;
+  try {
+    const dataUrl = await fileToDataUrl(file);
+    await projectStorage.saveAsset(key, dataUrl);
+    castAssets[key] = dataUrl;
+    renderCastAssetsUi();
+    toast("Saved character/environment reference to cloud ✓");
+  } catch (err) {
+    toast(err.message || "Could not save reference image");
+  }
+}
+
+function renderCastAndRules() {
+  const charCards = Object.entries(CHARS).map(([code, desc]) => ({
+    key: "char-" + code,
+    title: `${CHAR_NAMES[code] || code} (${code})`,
+    desc,
+    sheetPrompt: `Character reference: clean full-body 2D stickman cartoon turnaround character sheet of ${desc} Plain clean white/light neutral background for easy referencing, ultra-sharp black ink outlines, clear silhouette, expression range chart, no text.`
+  }));
+  $("#cast").innerHTML = `
+    <div class="grid-two">
+      <div class="info-box"><h2>Stage 6 · Stickman Characters (Cloud Reference Vault)</h2>
+        ${charCards.map(c => `
+          <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+            <p style="margin:0 0 6px"><b>${esc(c.title)}:</b> ${esc(c.desc)}</p>
+            <div class="btns">
+              <button type="button" data-copy-cast="${esc(c.sheetPrompt)}">Copy Character Sheet Prompt</button>
+              <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:6px 9px;background:#1b202b;border:1px solid var(--line);border-radius:8px">
+                Upload Ref Image <input type="file" accept="image/*" hidden data-cast-up="${esc(c.key)}">
+              </label>
+            </div>
+            <div id="tl-img-${esc(c.key)}"></div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="info-box"><h2>Stage 7 · Storyboard Environments (16:9 Cloud Synced)</h2>
+        ${Object.entries(LOCS).map(([k, v]) => `
+          <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+            <p style="margin:0 0 6px"><b>${esc(k)}:</b> ${esc(v)}</p>
+            <div class="btns">
+              <button type="button" data-copy-cast="${esc(v)}">Copy Location Prompt</button>
+              <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:6px 9px;background:#1b202b;border:1px solid var(--line);border-radius:8px">
+                Upload Ref <input type="file" accept="image/*" hidden data-cast-up="loc-${esc(k)}">
+              </label>
+            </div>
+            <div id="tl-img-loc-${esc(k)}"></div>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+  $("#cast").onclick = e => {
+    const btn = e.target.closest("button[data-copy-cast]");
+    if (btn) copy(btn.dataset.copyCast, "Reference prompt copied ✓");
+  };
+  $("#cast").onchange = e => {
+    const inp = e.target.closest("input[data-cast-up]");
+    if (inp && inp.files?.[0]) saveCastAsset(inp.dataset.castUp, inp.files[0]);
+  };
+  renderCastAssetsUi();
+
+  const timelineRows = CLIPS.map((c, idx) => {
+    const startSec = idx * 10;
+    const endSec = (idx + 1) * 10;
+    const fmt = s => `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+    return `<tr><td>${c.num}</td><td>${fmt(startSec)}–${fmt(endSec)}</td><td>${esc(c.title)}</td><td>${esc(c.pacing)} / ${esc(c.intensity)}</td><td>${esc(c.transition)}</td></tr>`;
+  }).join("");
+
+  $("#rules").innerHTML = `
+    <div class="info-box">
+      <h2>Stages 1–4 · Master Production Decisions</h2>
+      <ul>
+        <li><b>Stage 1 — Niche:</b> ${esc(META.niche)}</li>
+        <li><b>Stage 2 — Title:</b> ${esc(META.title)} (${esc(META.nepaliTitle)})</li>
+        <li><b>Stage 3 — Settings:</b> Duration <b>${esc(META.durationLabel)}</b> · Aspect Ratio <b>${esc(META.aspect)}</b> · Narration <b>${esc(META.narration)}</b> · Style <b>${esc(META.styleName)}</b></li>
+        <li><b>Stage 4 — Story Concept:</b> A lone 2D stickman (Kiran) with a bright crimson scarf and a flickering golden oil lantern rescues a child (Pip) and a Clockwork Owl across the Whispering Ash Forest, a broken canyon bridge, a lightning-lashed Clockwork Spire, and a sunken Glass City to free the Sun Core from the Shadow King and restore dawn to his stone-frozen village.</li>
+        <li><b>Stages 5 &amp; 9 (Narration / Voiceover):</b> Skipped intentionally (Narration = No, 100% visual storytelling).</li>
+      </ul>
+      <div class="note">${esc(SILENT_RULE)}</div>
+      <h3>Stage 7 · Master Storyboard Style Prompt</h3>
+      <pre>${esc(MASTER_STYLE)}</pre>
+    </div>
+    <div class="info-box">
+      <h2>Stage 10 · Final CapCut Assembly Guide (16:9 YouTube)</h2>
+      <h3>A. Import Order</h3>
+      <ol>${CAPCUT.importOrder.map(x => `<li>${esc(x)}</li>`).join("")}</ol>
+      <h3>D. Transitions</h3>
+      <ul>${CAPCUT.transitions.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      <h3>F. Text Overlays</h3>
+      <ul>${CAPCUT.textOverlays.map(x => `<li>${esc(x)}</li>`).join("")}</ul>
+      <h3>G. Final Export Settings (16:9 YouTube)</h3>
+      <ul>
+        <li><b>Resolution:</b> ${esc(CAPCUT.exportSettings.resolution)}</li>
+        <li><b>Frame Rate:</b> ${esc(CAPCUT.exportSettings.frameRate)}</li>
+        <li><b>Bitrate:</b> ${esc(CAPCUT.exportSettings.bitrate)}</li>
+        <li><b>Format:</b> ${esc(CAPCUT.exportSettings.format)}</li>
+      </ul>
+      <h3>B. Complete 64-Scene Timeline Order (10m 40s Base Runtime)</h3>
+      <table>
+        <thead><tr><th>#</th><th>Time</th><th>Scene Title</th><th>Pacing / Intensity</th><th>Cut / Transition Out</th></tr></thead>
+        <tbody>${timelineRows}</tbody>
+      </table>
+    </div>`;
+}
+
+function showTab(t) {
+  S.tab = t;
+  ["clips", "cast", "rules"].forEach(id => $("#" + id).classList.toggle("hide", id !== t));
+  document.querySelectorAll("nav button[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (t === "cast") loadCastAssets();
+  save();
+}
+
+$("#list").addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const i = +b.dataset.i;
+  S.cur = i; save();
+  if (b.dataset.act === "gen") { genVideo(i); return; }
+  if (b.dataset.act === "tiktok" || b.dataset.act === "facebook" || b.dataset.act === "telegram") { postSocial(b.dataset.act, i); return; }
+  if (b.dataset.act === "prompt") copy(buildPrompt(i), `Scene ${i + 1} animation prompt copied ✓`);
+  if (b.dataset.act === "sb") copy(CLIPS[i].storyboardPrompt, `Scene ${i + 1} storyboard prompt copied ✓`);
+  if (b.dataset.act === "mood") copy(CLIPS[i].foley, "Sound & foley note copied ✓");
+  document.querySelectorAll(".card.cur").forEach(el => el.classList.remove("cur"));
+  $("#v" + i)?.classList.add("cur");
+});
+
+$("#list").addEventListener("change", e => {
+  const c = e.target.closest("input[data-done]");
+  if (!c) return;
+  const i = +c.dataset.done;
+  if (c.checked) S.done[i + 1] = true; else delete S.done[i + 1];
+  save(); progress();
+  c.closest(".card").classList.toggle("done", c.checked);
+});
+
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest("button[data-f]");
+  if (!b) return;
+  S.filter = b.dataset.f; save(); renderFilters(); renderList();
+});
+
+document.querySelectorAll("nav button[data-t]").forEach(b => b.onclick = () => showTab(b.dataset.t));
+
+$("#nx").onclick = () => {
+  const i = nextIndex();
+  if (i < 0) { toast("All 64 scenes are marked made 🎉"); return; }
+  S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
+  copy(buildPrompt(i), `Scene ${i + 1} animation prompt copied ✓`);
+  $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+$("#gnx").onclick = () => {
+  const i = nextIndex();
+  if (i < 0) { toast("All 64 scenes are marked made 🎉"); return; }
+  S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
+  $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  genVideo(i);
+};
+
+$("#ar").onchange = e => { S.ar = e.target.value; S.picked = true; save(); renderList(); };
+$("#model").onchange = e => { S.model = e.target.value; S.picked = true; save(); };
+$("#dur").onchange = e => { S.dur = e.target.value; S.picked = true; save(); progress(); renderList(); };
+
+$("#dl").onclick = () => {
+  const txt = CLIPS.map((c, i) =>
+    `=== SCENE ${i + 1}: ${c.title} (${actInfo(c.act).label}) ===\n${c.beat}\n\nSTORYBOARD IMAGE PROMPT:\n${c.storyboardPrompt}\n\nANIMATION PROMPT:\n${buildPrompt(i)}\n`
+  ).join("\n\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+  a.download = "the-last-lantern-stickman-prompts.txt";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+const isFile = location.protocol === "file:";
+function setGen(i, msg) { GEN[i] = msg; const el = $("#g" + i); if (el) el.textContent = msg; }
+
+async function checkApi() {
+  const el = $("#api");
+  if (isFile) { el.textContent = "Generator: open via http://127.0.0.1:8787/projects/stickman-lantern/"; return; }
+  try { const r = await fetch("/api/health"); if (!r.ok) throw new Error(); el.textContent = "Generator: online"; }
+  catch { el.textContent = "Generator: offline (double-click Start Story Studio.vbs)"; }
+}
+
+async function applyFlowDefaults() {
+  if (isFile) return;
+  try {
+    const r = await fetch("/api/flow-settings?project=" + PROJECT_ID);
+    const j = await r.json();
+    if (!r.ok || !j.ok) return;
+    const ccToggle = $("#charConsistencyToggle");
+    if (ccToggle) ccToggle.checked = Boolean(j.effective?.characters?.consistency);
+    if (S.picked) return;
+    S.model = j.effective.video.model; S.ar = j.effective.video.aspect; S.dur = j.effective.video.duration;
+    save();
+    $("#model").value = S.model; $("#dur").value = S.dur; $("#ar").value = S.ar;
+    renderList(); progress();
+  } catch {}
+}
+
+$("#charConsistencyToggle")?.addEventListener("change", async e => {
+  if (isFile) return;
+  const enabled = Boolean(e.target.checked);
+  try {
+    const r = await fetch("/api/flow-settings");
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not load settings.");
+    const doc = j.settings;
+    doc.projects = doc.projects || {};
+    doc.projects[PROJECT_ID] = { ...(doc.projects[PROJECT_ID] || {}), characters: { consistency: enabled } };
+    const sr = await fetch("/api/flow-settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(doc)
+    });
+    const sj = await sr.json();
+    if (!sr.ok || !sj.ok) throw new Error(sj.error || "Could not save setting.");
+    toast(`Character consistency ${enabled ? "enabled" : "disabled"} ✓`);
+  } catch (err) {
+    e.target.checked = !enabled;
+    toast("Failed to save character consistency: " + err.message);
+  }
+});
+
+function socialContextFor(i) {
+  const item = CLIPS[i];
+  return `Visual-only 16:9 2D stickman survival adventure "The Last Lantern" Scene #${i + 1}: "${item.title}" (${item.beat}).\nVisual scene: ${item.visual}\nAnimation action: ${item.animAction}`.slice(0, 4800);
+}
+
+async function postSocial(platform, i) {
+  if (isFile) { toast(`Open via http://127.0.0.1:8787 to post to ${platform}`); return; }
+  const label = platform === "facebook" ? "Facebook" : platform === "telegram" ? "Telegram" : "TikTok";
+  const btn = document.querySelector(`button[data-act="${platform}"][data-i="${i}"]`);
+  if (btn) btn.disabled = true;
+  try {
+    await window.StoryStudioSocial.postMedia({
+      platform,
+      projectId: PROJECT_ID,
+      day: i + 1,
+      context: socialContextFor(i),
+      label: `Scene ${i + 1}`,
+      onStatus: m => setGen(i, m)
+    });
+    setGen(i, `Posted to ${label} ✓`);
+    toast(`Scene ${i + 1} posted to ${label} ✓`);
+  } catch (err) {
+    setGen(i, `${label} failed: ${err.message}`);
+    toast(`${label} upload failed.`);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function genVideo(i) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787/projects/stickman-lantern/ to generate"); return; }
+  const btn = document.querySelector(`button[data-act="gen"][data-i="${i}"]`);
+  const gnxBtn = $("#gnx");
+  if (btn) btn.disabled = true;
+  if (gnxBtn) gnxBtn.disabled = true;
+  setGen(i, "Generating in Flow… this can take several minutes. Keep the Flow Chrome window open.");
+  try {
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        day: i + 1,
+        prompt: buildPrompt(i),
+        model: S.model,
+        aspect: S.ar,
+        duration: S.dur,
+        characters: stickmanCharactersFor(i)
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Generation failed");
+    setGen(i, "Saved to " + j.file);
+    S.done[i + 1] = true; save(); progress(); renderList();
+    loadCastAssets();
+    setGen(i, "Saved to " + j.file);
+    toast(`Scene ${i + 1} video saved ✓`);
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({
+      projectId: PROJECT_ID,
+      day: i + 1,
+      context: socialContextFor(i),
+      tiktokEnabled: Boolean($("#autoPostToggle")?.checked),
+      facebookEnabled: Boolean($("#autoPostFacebookToggle")?.checked),
+      telegramEnabled: Boolean($("#autoPostTelegramToggle")?.checked),
+      label: `Scene ${i + 1}`,
+      onStatus: m => setGen(i, m),
+      onToast: toast
+    });
+  } catch (err) {
+    setGen(i, "Failed: " + err.message);
+    toast("Generation failed. See the status line.");
+  } finally {
+    if (btn) btn.disabled = false;
+    if (gnxBtn) gnxBtn.disabled = false;
+  }
+}
+
+window.addEventListener("storage", e => {
+  if (e.key !== KEY && e.key !== JOB_KEY) return;
+  try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+  syncFailedStudioJob();
+  renderList(); progress();
+});
+
+$("#ar").value = S.ar; $("#model").value = S.model; $("#dur").value = S.dur;
+renderFilters(); renderList(); renderCastAndRules(); progress(); showTab(S.tab || "clips");
+checkApi(); applyFlowDefaults(); loadCastAssets();
+window.StoryStudioSocial?.initAutoPostToggles?.({
+  projectId: PROJECT_ID,
+  tiktokSelector: "#autoPostToggle",
+  facebookSelector: "#autoPostFacebookToggle",
+  onToast: toast
+});
+window.StoryStudioStorage?.seedDefaultCharacters?.();
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId: PROJECT_ID,
+  totalClips: CLIPS.length,
+  readLocal: () => ({ checked: { ...(S.done || {}) }, state: S, hasLocal: Object.keys(S.done || {}).length > 0, completedCount: CLIPS.filter((_, i) => S.done[i + 1]).length }),
+  applyMerged: (checked, mergedState) => {
+    S = Object.assign(S, mergedState || {}, { done: checked || {} });
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+    renderFilters(); renderList(); progress();
+  }
+});
+</script>
+</body>
+</html>

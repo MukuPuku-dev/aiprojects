@@ -1,0 +1,512 @@
+{
+  "episodeId": "ancient-humans-day",
+  "blockId": 1,
+  "voice": "Kore",
+  "language": "en",
+  "mimeType": "audio/wav",
+  "duration": 30.68,
+  "timestamps": [
+    {
+      "word": "Your",
+      "start": 0.3,
+      "end": 0.5,
+      "status": "exact"
+    },
+    {
+      "word": "alarm",
+      "start": 0.5,
+      "end": 1.1,
+      "status": "exact"
+    },
+    {
+      "word": "screams",
+      "start": 1.1,
+      "end": 1.9,
+      "status": "exact"
+    },
+    {
+      "word": "at",
+      "start": 1.9,
+      "end": 2.1,
+      "status": "exact"
+    },
+    {
+      "word": "seven",
+      "start": 2.1,
+      "end": 2.4,
+      "status": "exact"
+    },
+    {
+      "word": "in",
+      "start": 2.4,
+      "end": 2.5,
+      "status": "exact"
+    },
+    {
+      "word": "the",
+      "start": 2.5,
+      "end": 2.6,
+      "status": "exact"
+    },
+    {
+      "word": "morning.",
+      "start": 2.6,
+      "end": 3.3,
+      "status": "exact"
+    },
+    {
+      "word": "You",
+      "start": 3.4,
+      "end": 3.5,
+      "status": "exact"
+    },
+    {
+      "word": "drag",
+      "start": 3.5,
+      "end": 4,
+      "status": "exact"
+    },
+    {
+      "word": "yourself",
+      "start": 4,
+      "end": 4.4,
+      "status": "exact"
+    },
+    {
+      "word": "out",
+      "start": 4.4,
+      "end": 4.5,
+      "status": "exact"
+    },
+    {
+      "word": "of",
+      "start": 4.5,
+      "end": 4.6,
+      "status": "exact"
+    },
+    {
+      "word": "bed",
+      "start": 4.6,
+      "end": 4.9,
+      "status": "exact"
+    },
+    {
+      "word": "for",
+      "start": 4.9,
+      "end": 5.1,
+      "status": "exact"
+    },
+    {
+      "word": "another",
+      "start": 5.1,
+      "end": 5.5,
+      "status": "exact"
+    },
+    {
+      "word": "shift,",
+      "start": 5.5,
+      "end": 6.3,
+      "status": "exact"
+    },
+    {
+      "word": "and",
+      "start": 6.4,
+      "end": 6.5,
+      "status": "exact"
+    },
+    {
+      "word": "tonight",
+      "start": 6.5,
+      "end": 7.2,
+      "status": "exact"
+    },
+    {
+      "word": "you'll",
+      "start": 7.3,
+      "end": 7.4,
+      "status": "exact"
+    },
+    {
+      "word": "collapse",
+      "start": 7.4,
+      "end": 8.3,
+      "status": "exact"
+    },
+    {
+      "word": "just",
+      "start": 8.4,
+      "end": 8.7,
+      "status": "exact"
+    },
+    {
+      "word": "to",
+      "start": 8.7,
+      "end": 8.7,
+      "status": "exact"
+    },
+    {
+      "word": "repeat",
+      "start": 8.7,
+      "end": 9.2,
+      "status": "exact"
+    },
+    {
+      "word": "it",
+      "start": 9.2,
+      "end": 9.3,
+      "status": "exact"
+    },
+    {
+      "word": "all",
+      "start": 9.3,
+      "end": 9.5,
+      "status": "exact"
+    },
+    {
+      "word": "again.",
+      "start": 9.5,
+      "end": 9.9,
+      "status": "exact"
+    },
+    {
+      "word": "Now",
+      "start": 10.8,
+      "end": 11.3,
+      "status": "exact"
+    },
+    {
+      "word": "rewind",
+      "start": 11.5,
+      "end": 12.3,
+      "status": "exact"
+    },
+    {
+      "word": "fifty",
+      "start": 12.3,
+      "end": 12.8,
+      "status": "estimated"
+    },
+    {
+      "word": "thousand",
+      "start": 12.8,
+      "end": 13.6,
+      "status": "estimated"
+    },
+    {
+      "word": "years",
+      "start": 13.6,
+      "end": 14.1,
+      "status": "exact"
+    },
+    {
+      "word": "into",
+      "start": 14.2,
+      "end": 14.4,
+      "status": "exact"
+    },
+    {
+      "word": "the",
+      "start": 14.4,
+      "end": 14.5,
+      "status": "exact"
+    },
+    {
+      "word": "Stone",
+      "start": 14.5,
+      "end": 15,
+      "status": "exact"
+    },
+    {
+      "word": "Age.",
+      "start": 15,
+      "end": 15.3,
+      "status": "exact"
+    },
+    {
+      "word": "Your",
+      "start": 16,
+      "end": 16.2,
+      "status": "exact"
+    },
+    {
+      "word": "only",
+      "start": 16.2,
+      "end": 16.5,
+      "status": "exact"
+    },
+    {
+      "word": "tool",
+      "start": 16.5,
+      "end": 16.9,
+      "status": "exact"
+    },
+    {
+      "word": "is",
+      "start": 16.9,
+      "end": 17.1,
+      "status": "exact"
+    },
+    {
+      "word": "a",
+      "start": 17.1,
+      "end": 17.2,
+      "status": "exact"
+    },
+    {
+      "word": "sharpened",
+      "start": 17.2,
+      "end": 17.8,
+      "status": "exact"
+    },
+    {
+      "word": "wooden",
+      "start": 17.8,
+      "end": 18.2,
+      "status": "exact"
+    },
+    {
+      "word": "spear,",
+      "start": 18.2,
+      "end": 18.8,
+      "status": "exact"
+    },
+    {
+      "word": "and",
+      "start": 19.2,
+      "end": 19.3,
+      "status": "exact"
+    },
+    {
+      "word": "you",
+      "start": 19.3,
+      "end": 19.4,
+      "status": "exact"
+    },
+    {
+      "word": "wake",
+      "start": 19.4,
+      "end": 19.7,
+      "status": "exact"
+    },
+    {
+      "word": "up",
+      "start": 19.7,
+      "end": 19.8,
+      "status": "exact"
+    },
+    {
+      "word": "beside",
+      "start": 19.8,
+      "end": 20.2,
+      "status": "exact"
+    },
+    {
+      "word": "a",
+      "start": 20.2,
+      "end": 20.2,
+      "status": "exact"
+    },
+    {
+      "word": "small",
+      "start": 20.2,
+      "end": 20.7,
+      "status": "exact"
+    },
+    {
+      "word": "fire",
+      "start": 20.7,
+      "end": 21.2,
+      "status": "exact"
+    },
+    {
+      "word": "on",
+      "start": 21.3,
+      "end": 21.4,
+      "status": "exact"
+    },
+    {
+      "word": "open",
+      "start": 21.5,
+      "end": 21.8,
+      "status": "exact"
+    },
+    {
+      "word": "dirt.",
+      "start": 21.8,
+      "end": 22.2,
+      "status": "exact"
+    },
+    {
+      "word": "We",
+      "start": 23.2,
+      "end": 23.4,
+      "status": "exact"
+    },
+    {
+      "word": "were",
+      "start": 23.4,
+      "end": 23.5,
+      "status": "exact"
+    },
+    {
+      "word": "taught",
+      "start": 23.5,
+      "end": 24,
+      "status": "exact"
+    },
+    {
+      "word": "ancient",
+      "start": 24,
+      "end": 24.4,
+      "status": "exact"
+    },
+    {
+      "word": "life",
+      "start": 24.4,
+      "end": 24.7,
+      "status": "exact"
+    },
+    {
+      "word": "was",
+      "start": 24.7,
+      "end": 24.9,
+      "status": "exact"
+    },
+    {
+      "word": "a",
+      "start": 24.9,
+      "end": 25,
+      "status": "exact"
+    },
+    {
+      "word": "grim,",
+      "start": 25,
+      "end": 25.6,
+      "status": "exact"
+    },
+    {
+      "word": "nonstop",
+      "start": 25.7,
+      "end": 26.6,
+      "status": "exact"
+    },
+    {
+      "word": "struggle,",
+      "start": 26.6,
+      "end": 27.2,
+      "status": "exact"
+    },
+    {
+      "word": "at",
+      "start": 27.6,
+      "end": 27.7,
+      "status": "exact"
+    },
+    {
+      "word": "least",
+      "start": 27.7,
+      "end": 27.9,
+      "status": "exact"
+    },
+    {
+      "word": "according",
+      "start": 27.9,
+      "end": 28.4,
+      "status": "exact"
+    },
+    {
+      "word": "to",
+      "start": 28.4,
+      "end": 28.5,
+      "status": "exact"
+    },
+    {
+      "word": "every",
+      "start": 28.5,
+      "end": 28.9,
+      "status": "exact"
+    },
+    {
+      "word": "textbook",
+      "start": 28.9,
+      "end": 29.5,
+      "status": "exact"
+    },
+    {
+      "word": "we",
+      "start": 29.5,
+      "end": 29.6,
+      "status": "exact"
+    },
+    {
+      "word": "read",
+      "start": 29.6,
+      "end": 29.8,
+      "status": "exact"
+    },
+    {
+      "word": "in",
+      "start": 29.8,
+      "end": 29.9,
+      "status": "exact"
+    },
+    {
+      "word": "school.",
+      "start": 29.9,
+      "end": 30.4,
+      "status": "exact"
+    }
+  ],
+  "beatTimings": [
+    {
+      "beat": 1,
+      "startSec": 0,
+      "endSec": 3.35,
+      "durationSec": 3.35
+    },
+    {
+      "beat": 2,
+      "startSec": 3.35,
+      "endSec": 6.35,
+      "durationSec": 3
+    },
+    {
+      "beat": 3,
+      "startSec": 6.35,
+      "endSec": 10.35,
+      "durationSec": 4
+    },
+    {
+      "beat": 4,
+      "startSec": 10.35,
+      "endSec": 15.65,
+      "durationSec": 5.3
+    },
+    {
+      "beat": 5,
+      "startSec": 15.65,
+      "endSec": 19,
+      "durationSec": 3.35
+    },
+    {
+      "beat": 6,
+      "startSec": 19,
+      "endSec": 22.7,
+      "durationSec": 3.7
+    },
+    {
+      "beat": 7,
+      "startSec": 22.7,
+      "endSec": 27.4,
+      "durationSec": 4.7
+    },
+    {
+      "beat": 8,
+      "startSec": 27.4,
+      "endSec": 30.68,
+      "durationSec": 3.28
+    }
+  ],
+  "prompt": "Your alarm screams at seven in the morning. You drag yourself out of bed for another shift, and tonight you'll collapse just to repeat it all again. Now rewind fifty thousand years into the Stone Age. Your only tool is a sharpened wooden spear, and you wake up beside a small fire on open dirt. We were taught ancient life was a grim, nonstop struggle, at least according to every textbook we read in school.",
+  "updatedAt": "2026-11-17T09:36:17.118Z"
+}

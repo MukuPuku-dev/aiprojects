@@ -1,0 +1,32 @@
+{
+  "ALU": {
+    "code": "ALU",
+    "name": "Aalu",
+    "refPrompt": "Character reference: full-body 3D macro Pixar-style character turnaround sheet of AALU (Potato, 20s): Plump, endearing Pahadi brown potato with textured soil-flecked matte skin, two tiny bright-green sprout leaves on top of his head like messy hair, big soulful warm-brown eyes, stubby root hands and feet, and a tiny crisscross bandage on his left cheek. Humble, self-conscious about being round and 'ordinary', but fiercely loyal. Plain soft neutral studio background, natural macro rim lighting, ultra-detailed tactile vegetable skin texture, expressive eyes, no text.",
+    "updatedAt": "2026-11-16T14:57:16.799Z"
+  },
+  "GOLBHEDA": {
+    "code": "GOLBHEDA",
+    "name": "Golbheda",
+    "refPrompt": "Character reference: full-body 3D macro Pixar-style character turnaround sheet of GOLBHEDA (Tomato, 20s): Glossy, plump ruby-red tomato with translucent dewy skin, a jaunty five-pointed green calyx stem worn like a French beret on her head, big expressive sparkling eyes with long lashes, and tiny vine-tendril hands. Dramatic, perfectionist diva terrified of getting squished or wrinkled, with a secretly tender heart. Plain soft neutral studio background, natural macro rim lighting, ultra-detailed tactile vegetable skin texture, expressive eyes, no text.",
+    "updatedAt": "2026-11-16T14:58:05.356Z"
+  },
+  "PYAAJ": {
+    "code": "PYAAJ",
+    "name": "Pyaaj",
+    "refPrompt": "Character reference: full-body 3D macro Pixar-style character turnaround sheet of PYAAJ (Onion, 30s): Round purple-pink onion wearing a slightly peeling papery outer tunic, a neat pointed dry-stem top-knot, tiny round wire-rim spectacles perched on his nose, and watery empathetic eyes. Gentle poet who accidentally makes everyone cry whenever he gets emotional or peels a layer. Plain soft neutral studio background, natural macro rim lighting, ultra-detailed tactile vegetable skin texture, expressive eyes, no text.",
+    "updatedAt": "2026-11-16T15:03:35.474Z"
+  },
+  "KHURSANI": {
+    "code": "KHURSANI",
+    "name": "Khursani",
+    "refPrompt": "Character reference: full-body 3D macro Pixar-style character turnaround sheet of KHURSANI (Chili, teen): Sleek, curved, glossy emerald-green Nepali Akabare/hariyo chili pepper with a curved green stem ponytail, sharp determined eyebrows, and tiny puffs of white steam whistling from his ears when angry. Short-tempered, fearless protector. Plain soft neutral studio background, natural macro rim lighting, ultra-detailed tactile vegetable skin texture, expressive eyes, no text.",
+    "updatedAt": "2026-11-16T15:22:58.149Z"
+  },
+  "LASUN": {
+    "code": "LASUN",
+    "name": "Lasun",
+    "refPrompt": "Character reference: full-body 3D macro Pixar-style character turnaround sheet of LASUN (Garlic Baaje, 60s): Weathered ivory-white garlic bulb elder with a wispy dried-root white beard, kind crinkled eyes, papery shawl layers, holding a tiny cinnamon-stick walking staff. Calm, philosophical mentor. Plain soft neutral studio background, natural macro rim lighting, ultra-detailed tactile vegetable skin texture, expressive eyes, no text.",
+    "updatedAt": "2026-11-16T15:25:28.717Z"
+  }
+}

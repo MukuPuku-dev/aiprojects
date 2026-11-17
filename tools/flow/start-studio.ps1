@@ -17,7 +17,7 @@ function Test-OurStudio($health) {
 
 try {
     $health = Get-StudioHealth
-    if ((Test-OurStudio $health) -and ($health.jobApi -ne 1 -or $health.tiktokApi -ne 1)) {
+    if ((Test-OurStudio $health) -and ($health.jobApi -ne 1 -or $health.tiktokApi -ne 1 -or $health.flowProjectApi -ne 1 -or $health.serverApi -ne 1)) {
         Add-Type -AssemblyName System.Windows.Forms
         $answer = [System.Windows.Forms.MessageBox]::Show(
             'Story Studio needs to restart to enable the latest Flow and TikTok features. Restarting will interrupt any active generation or upload. Restart now?',
@@ -52,11 +52,11 @@ try {
         do {
             Start-Sleep -Milliseconds 300
             $health = Get-StudioHealth
-            if ((Test-OurStudio $health) -and $health.jobApi -eq 1 -and $health.tiktokApi -eq 1) { break }
+            if ((Test-OurStudio $health) -and $health.jobApi -eq 1 -and $health.tiktokApi -eq 1 -and $health.flowProjectApi -eq 1 -and $health.serverApi -eq 1) { break }
             $server.Refresh()
         } while (-not $server.HasExited -and (Get-Date) -lt $deadline)
 
-        if (-not (Test-OurStudio $health) -or $health.jobApi -ne 1 -or $health.tiktokApi -ne 1) {
+        if (-not (Test-OurStudio $health) -or $health.jobApi -ne 1 -or $health.tiktokApi -ne 1 -or $health.flowProjectApi -ne 1 -or $health.serverApi -ne 1) {
             if (-not $server.HasExited) { Stop-Process -Id $server.Id }
             throw 'The generator could not start. Port 8787 may already be in use, or the server may have failed to start.'
         }
