@@ -392,6 +392,7 @@ function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 1
     "1. NEVER put a long multi-clause sentence on one single beat! Split every action into its own beat of ONLY 4 to 8 words (e.g. 'He placed a wooden box in her hands,' = Beat 1; 'Open it on the train,' = Beat 2; 'and watched the van disappear.' = Beat 3).",
     "2. Keep 'visual' descriptions in clear English for Google Flow 2D ink-cartoon generation even when 'narration' is in Nepali.",
     "3. Mix the 5 Ink Explainer visual card types across beats ('whiteboard-prop', 'split-compare', 'red-x', 'map-diagram', 'flat-scene').",
+    "4. For roughly 15–25% of key consecutive beat transitions (especially early opening hooks and major action/turning-point moments, WITHOUT overlapping the same beat in two adjacent transitions), set \"dynamic\": true and \"motionPrompt\": \"short English camera & character motion bridging this frame to the next beat\" on the starting beat of the pair.",
     "",
     "Return ONLY valid raw JSON (no markdown fences, no commentary) using this exact schema:",
     "{",
@@ -416,7 +417,9 @@ function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 1
     '          "emotion": "warmly",',
     '          "characters": ["HERO"],',
     '          "narration": "Short 4 to 8 word spoken clause,",',
-    '          "visual": "Concrete 2D stickman explainer frame description."',
+    '          "visual": "Concrete 2D stickman explainer frame description.",',
+    '          "dynamic": true,',
+    '          "motionPrompt": "Optional short transition motion from Beat 1 to Beat 2"',
     "        }",
     "      ]",
     "    }",
@@ -436,10 +439,34 @@ function buildInkStoryToEpisodePrompt(storyText, language = "en") {
     "1. Group chapters/sections into narration 'blocks' (~70-110 words per block so Gemini TTS stays fast and never hits output limits).",
     "2. Break every sentence into short 4 to 8 word visual beats (~1 image every 1.5s) — NEVER put a full multi-action sentence on one image (e.g., placing a box, saying open it on the train, and watching the van disappear MUST be 3 separate beats!).",
     "3. Write 'visual' prompts in English for Google Flow, keeping 'narration' in the story's language (" + (isNepali ? "Nepali Devanagari" : "English") + ").",
-    "4. Return ONLY valid raw JSON (no markdown fences) matching this exact schema (define 2-4 recurring characters with 'refPrompt' and tag each beat's 'characters' array + optional 'emotion' delivery cue):",
-    `{ "id": "kebab-case-slug", "title": "Story Title", "subtitle": "Story Subtitle", "language": "${isNepali ? "ne" : "en"}", "hook": "One-sentence hook", "niche": "Story Genre", "characters": [{ "code": "LEAD1", "name": "Name", "role": "Lead", "refPrompt": "2D flat stickman explainer character full-body on pure white background..." }], "blocks": [{ "blockId": 1, "title": "Chapter 1", "beats": [{ "beat": 1, "cardType": "flat-scene", "label": "", "emotion": "warmly", "characters": ["LEAD1"], "narration": "4-8 word spoken clause", "visual": "..." }] }] }`,
+    "4. For roughly 15–25% of high-impact non-overlapping consecutive beat pairs (early hooks, dramatic action, key emotional shifts), include \"dynamic\": true and \"motionPrompt\": \"short English motion prompt bridging to the next beat\" on the first beat of the pair.",
+    "5. Return ONLY valid raw JSON (no markdown fences) matching this exact schema (define 2-4 recurring characters with 'refPrompt' and tag each beat's 'characters' array + optional 'emotion' delivery cue):",
+    `{ "id": "kebab-case-slug", "title": "Story Title", "subtitle": "Story Subtitle", "language": "${isNepali ? "ne" : "en"}", "hook": "One-sentence hook", "niche": "Story Genre", "characters": [{ "code": "LEAD1", "name": "Name", "role": "Lead", "refPrompt": "2D flat stickman explainer character full-body on pure white background..." }], "blocks": [{ "blockId": 1, "title": "Chapter 1", "beats": [{ "beat": 1, "cardType": "flat-scene", "label": "", "emotion": "warmly", "characters": ["LEAD1"], "narration": "4-8 word spoken clause", "visual": "...", "dynamic": true, "motionPrompt": "Smooth camera push as character reacts" }] }] }`,
     "",
     "USER STORY:",
     cleanStory.slice(0, 24000)
+  ].join("\n");
+}
+
+function buildDynamicPairsSuggestPrompt(episode) {
+  const beats = [];
+  (episode?.blocks || []).forEach(blk => {
+    (blk.beats || []).forEach(b => {
+      beats.push({ beat: b.beat, cardType: b.cardType, narration: b.narration, visual: b.visual });
+    });
+  });
+  const targetCount = Math.max(3, Math.min(12, Math.round(beats.length * 0.18)));
+  return [
+    `You are an animation director for an Ink Explainer rapid-beat video ("${episode?.title || "Episode"}").`,
+    `Below are ${beats.length} consecutive visual beats. Most beats should remain static images, while ONLY the ${targetCount} highest-impact consecutive beat pairs (e.g., early opening hooks, dramatic actions, scene transformations, key emotional turns) should be animated using Google Flow Frames mode (Start Frame = Beat N, End Frame = Beat N+1).`,
+    "",
+    "RULES:",
+    `1. Pick about ${targetCount} consecutive beat pairs (fromBeat -> fromBeat + 1).`,
+    "2. Do NOT pick overlapping pairs (if you pick 1->2, do not pick 2->3; pick e.g. 5->6 next).",
+    "3. For each pair, write a concise English 'motionPrompt' (12-25 words) describing the smooth 2D animation connecting Start Frame (Beat N) to End Frame (Beat N+1), matching both visuals.",
+    '4. Return ONLY valid raw JSON: { "pairs": [ { "fromBeat": 1, "toBeat": 2, "motionPrompt": "..." } ] }',
+    "",
+    "BEATS:",
+    JSON.stringify(beats)
   ].join("\n");
 }

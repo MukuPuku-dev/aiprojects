@@ -424,7 +424,9 @@ export function saveEpisode(root, project = 'ink-explainer', episode) {
         emotion: String(b?.emotion || '').trim(),
         characters: Array.isArray(b?.characters) ? b.characters.map(c => String(c || '').trim().toUpperCase()).filter(Boolean) : [],
         narration: String(b?.narration || '').trim(),
-        visual: String(b?.visual || '').trim()
+        visual: String(b?.visual || '').trim(),
+        dynamic: Boolean(b?.dynamic),
+        motionPrompt: String(b?.motionPrompt || '').trim()
       };
     });
     return {
@@ -582,6 +584,28 @@ export function deleteBeatImage(root, project = 'ink-explainer', episodeId = 'an
   return { ok: true, deleted, beat: num };
 }
 
+/** Deletes a generated Flow Frames transition video starting at fromBeat. */
+export function deleteBeatTransition(root, project = 'ink-explainer', episodeId = 'ancient-humans-day', fromBeat) {
+  const proj = validateId(project, 'project identifier');
+  const epId = validateId(episodeId, 'episode identifier');
+  const num = Number(fromBeat);
+  if (!Number.isInteger(num) || num < 1 || num > 365) {
+    throw new Error('fromBeat must be an integer from 1 to 365.');
+  }
+  const dir = path.join(root, 'projects', proj, 'episodes', epId, 'transitions');
+  const prefix = `pair-${pad2(num)}-`;
+  let deleted = false;
+  if (fs.existsSync(dir)) {
+    for (const entry of fs.readdirSync(dir)) {
+      if (entry.toLowerCase().startsWith(prefix)) {
+        fs.unlinkSync(path.join(dir, entry));
+        deleted = true;
+      }
+    }
+  }
+  return { ok: true, deleted, fromBeat: num };
+}
+
 /** Saves a manually pasted/uploaded beat image to disk so it is used immediately and skipped by Batch Flow. */
 export function saveBeatImage(root, project = 'ink-explainer', episodeId = 'ancient-humans-day', beatNum, imageBuffer, ext = '.png') {
   const proj = validateId(project, 'project identifier');
@@ -621,10 +645,12 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
   const audioDir = path.join(root, 'projects', proj, 'audio');
   const epImagesDir = path.join(root, 'projects', proj, 'episodes', epId, 'images');
   const epAudioDir = path.join(root, 'projects', proj, 'episodes', epId, 'audio');
+  const epTransitionsDir = path.join(root, 'projects', proj, 'episodes', epId, 'transitions');
 
   const images = {};
   const audio = {};
   const beatImages = {};
+  const beatTransitions = {};
   const blockAudio = {};
 
   if (fs.existsSync(videosDir)) {
@@ -692,6 +718,23 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
     }
   }
 
+  if (fs.existsSync(epTransitionsDir)) {
+    for (const entry of fs.readdirSync(epTransitionsDir)) {
+      const m = entry.match(/^pair-(\d+)-(\d+)\.(mp4|webm)$/i);
+      if (m) {
+        const fromBeat = Number(m[1]);
+        const toBeat = Number(m[2]);
+        const stat = fs.statSync(path.join(epTransitionsDir, entry));
+        beatTransitions[fromBeat] = {
+          fromBeat,
+          toBeat,
+          url: `/projects/${proj}/episodes/${epId}/transitions/${entry}?t=${Math.floor(stat.mtimeMs)}`,
+          file: entry
+        };
+      }
+    }
+  }
+
   const charScope = `${proj}/episodes/${epId}`;
   const storedChars = loadWorkspaceCharacters(root, charScope);
   const episodeCharacters = {};
@@ -730,6 +773,7 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
     episode: loadEpisode(root, proj, epId),
     episodeCharacters,
     beatImages,
+    beatTransitions,
     blockAudio,
     images,
     audio,

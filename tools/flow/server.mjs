@@ -4,14 +4,14 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { generateCharactersInFlow, generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
+import { generateCharactersInFlow, generateFrameVideo, generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
 import { resolveRequiredCharacters } from './flow-characters.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
 import { createFacebookService } from './facebook.mjs';
 import { createTelegramService, uploadToTelegram } from './telegram.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
-import { callGeminiText, deleteBeatImage, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode } from './explainer-service.mjs';
+import { callGeminiText, deleteBeatImage, deleteBeatTransition, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode } from './explainer-service.mjs';
 import { compressImageToJpeg, csvImagesDir, deleteCsvImage, listCsvImages, mapAspectToFlow, sanitizeFileName, sanitizeFolderName } from './csv-images-service.mjs';
 import { searchAndSaveImageBatchInBrowser, searchAndSaveImageInBrowser } from './csv-web-search.mjs';
 import { uploadToYouTube } from './youtube.mjs';
@@ -25,6 +25,8 @@ const queue = createGenerationQueue(job => {
   if (job.mode === 'youtube') return uploadToYouTube(job);
   if (job.mode === 'characters') return generateCharactersInFlow(job);
   if (job.mode === 'image-batch') return generateImageBatch(job);
+  if (job.mode === 'frames') return generateFrameVideo(job);
+  if (job.mode === 'frames-batch') return job.run();
   if (job.mode === 'csv-image-batch') return job.run();
   return job.mode === 'image' ? generateImage(job) : generateVideo(job);
 });
@@ -447,6 +449,174 @@ async function handleExplainerRoute(req, res, url) {
         body.beat
       );
       return send(res, 200, resDel);
+    }
+    if (url.pathname === '/api/explainer/delete-frame-pair') {
+      const resDel = deleteBeatTransition(
+        ROOT,
+        body.project || 'ink-explainer',
+        body.episode || 'ancient-humans-day',
+        body.fromBeat
+      );
+      return send(res, 200, resDel);
+    }
+    if (url.pathname === '/api/explainer/generate-frame-pair') {
+      const project = body.project || 'ink-explainer';
+      if (!PROJECT_ID.test(project)) throw new Error('Invalid project.');
+      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      if (!PROJECT_ID.test(episode)) throw new Error('Invalid episode.');
+      const fromBeat = Number(body.fromBeat);
+      const toBeat = Number(body.toBeat || (fromBeat + 1));
+      if (!Number.isInteger(fromBeat) || fromBeat < 1 || toBeat !== fromBeat + 1) {
+        throw new Error('Requires two consecutive beats (fromBeat and toBeat = fromBeat + 1).');
+      }
+      const imgDir = path.join(ROOT, 'projects', project, 'episodes', episode, 'images');
+      const findBeatImg = num => {
+        const stem = `beat-${String(num).padStart(2, '0')}`;
+        for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
+          const p = path.join(imgDir, `${stem}${ext}`);
+          if (fs.existsSync(p)) return p;
+        }
+        return '';
+      };
+      const startFile = findBeatImg(fromBeat);
+      const endFile = findBeatImg(toBeat);
+      if (!startFile || !endFile) {
+        throw new Error(`Generate or upload both Beat ${fromBeat} and Beat ${toBeat} images first.`);
+      }
+      const baseFlowProject = studioProjectName(project);
+      if (!baseFlowProject) throw new Error(`No studio card name found for project ${project}.`);
+      const flowProject = episodeFlowProjectName(ROOT, project, episode, baseFlowProject);
+      const effective = effectiveSettings(readSettings(), project);
+      const model = body.model || effective.video.model || 'Omni 1.1 Flash';
+      const aspect = body.aspect || effective.image.aspect || '16:9';
+      const duration = body.duration || '4s';
+      if (!VIDEO_MODELS.includes(model)) throw new Error('Unknown model: ' + model);
+      if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
+      if (!DURATIONS.includes(duration)) throw new Error('Unknown duration: ' + duration);
+      const prompt = String(body.prompt || `Smooth continuous 2D ink-explainer animation transitioning naturally from the first frame to the end frame.`).trim();
+      const outFile = path.join(ROOT, 'projects', project, 'episodes', episode, 'transitions', `pair-${String(fromBeat).padStart(2, '0')}-${String(toBeat).padStart(2, '0')}.mp4`);
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'frames',
+        day: fromBeat,
+        prompt,
+        outFile,
+        model,
+        aspect,
+        duration,
+        startFile,
+        endFile,
+        flowProject,
+        log: m => console.log(`[ink-frames ${episode} ${fromBeat}->${toBeat}] ${m}`)
+      });
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status });
+    }
+    if (url.pathname === '/api/explainer/generate-frames-batch') {
+      const project = body.project || 'ink-explainer';
+      if (!PROJECT_ID.test(project)) throw new Error('Invalid project.');
+      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      if (!PROJECT_ID.test(episode)) throw new Error('Invalid episode.');
+      const rawPairs = Array.isArray(body.pairs) ? body.pairs : [];
+      if (!rawPairs.length) throw new Error('pairs array is required.');
+      const baseFlowProject = studioProjectName(project);
+      if (!baseFlowProject) throw new Error(`No studio card name found for project ${project}.`);
+      const flowProject = episodeFlowProjectName(ROOT, project, episode, baseFlowProject);
+      const effective = effectiveSettings(readSettings(), project);
+      const model = body.model || effective.video.model || 'Omni 1.1 Flash';
+      const aspect = body.aspect || effective.image.aspect || '16:9';
+      const duration = body.duration || '4s';
+      if (!VIDEO_MODELS.includes(model)) throw new Error('Unknown model: ' + model);
+      if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
+      if (!DURATIONS.includes(duration)) throw new Error('Unknown duration: ' + duration);
+      const imgDir = path.join(ROOT, 'projects', project, 'episodes', episode, 'images');
+      const transDir = path.join(ROOT, 'projects', project, 'episodes', episode, 'transitions');
+      const findBeatImg = num => {
+        const stem = `beat-${String(num).padStart(2, '0')}`;
+        for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
+          const p = path.join(imgDir, `${stem}${ext}`);
+          if (fs.existsSync(p)) return p;
+        }
+        return '';
+      };
+      const items = rawPairs.map(p => {
+        const fromBeat = Number(p.fromBeat);
+        const toBeat = Number(p.toBeat || (fromBeat + 1));
+        if (!Number.isInteger(fromBeat) || fromBeat < 1 || toBeat !== fromBeat + 1) {
+          throw new Error(`Invalid beat pair: ${p.fromBeat}->${p.toBeat}`);
+        }
+        const startFile = findBeatImg(fromBeat);
+        const endFile = findBeatImg(toBeat);
+        const outFile = path.join(transDir, `pair-${String(fromBeat).padStart(2, '0')}-${String(toBeat).padStart(2, '0')}.mp4`);
+        return {
+          fromBeat,
+          toBeat,
+          startFile,
+          endFile,
+          outFile,
+          prompt: String(p.prompt || 'Smooth continuous 2D ink-explainer animation transitioning naturally from the first frame to the end frame.').trim()
+        };
+      });
+      const pending = items.filter(it => it.startFile && it.endFile && !fs.existsSync(it.outFile));
+      const missingImages = items.filter(it => !it.startFile || !it.endFile).map(it => `${it.fromBeat}→${it.toBeat}`);
+      if (!pending.length) {
+        return send(res, 200, { ok: true, alreadyComplete: true, total: items.length, skipped: items.length - missingImages.length, missingImages });
+      }
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      let tracked;
+      tracked = queue.submit(jobId, {
+        mode: 'frames-batch',
+        day: pending[0].fromBeat,
+        run: async () => {
+          const savedPairs = [];
+          for (let i = 0; i < pending.length; i++) {
+            if (tracked.stopRequested) break;
+            const item = pending[i];
+            tracked.progress = {
+              total: items.length,
+              skipped: items.length - pending.length - missingImages.length,
+              completedCount: savedPairs.length,
+              currentPair: `${item.fromBeat}→${item.toBeat}`,
+              remaining: pending.length - i,
+              savedPairs: [...savedPairs],
+              missingImages
+            };
+            await generateFrameVideo({
+              prompt: item.prompt,
+              outFile: item.outFile,
+              model,
+              aspect,
+              duration,
+              startFile: item.startFile,
+              endFile: item.endFile,
+              flowProject,
+              log: m => console.log(`[ink-frames-batch ${episode} ${item.fromBeat}->${item.toBeat}] ${m}`)
+            });
+            savedPairs.push(item.fromBeat);
+            tracked.progress = {
+              total: items.length,
+              skipped: items.length - pending.length - missingImages.length,
+              completedCount: savedPairs.length,
+              currentPair: '',
+              remaining: pending.length - i - 1,
+              savedPairs: [...savedPairs],
+              missingImages
+            };
+          }
+          return { savedPairs, stopped: Boolean(tracked.stopRequested) };
+        }
+      });
+      tracked.progress = {
+        total: items.length,
+        skipped: items.length - pending.length - missingImages.length,
+        completedCount: 0,
+        currentPair: `${pending[0].fromBeat}→${pending[0].toBeat}`,
+        remaining: pending.length,
+        savedPairs: [],
+        missingImages
+      };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
     }
     if (url.pathname === '/api/explainer/upload-youtube') {
       const project = body.project || 'ink-explainer';

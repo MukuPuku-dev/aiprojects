@@ -301,10 +301,20 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
       </div>
       <span class="sub" id="tts-plan-badge" style="color:var(--amber);font-weight:700">TTS Plan: calculating…</span>
     </div>
+    <div class="row" style="margin-top:8px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:9px;justify-content:space-between">
+      <div class="row">
+        <span class="sub"><b>🎞 Dynamic Beat-Pair Videos (Flow Frames):</b></span>
+        <button type="button" id="btn-ai-dyn" title="Let Gemini pick key consecutive beat pairs to animate">✨ AI Suggest Pairs</button>
+        <button type="button" class="primary" id="btn-batch-dyn" title="Generate Flow Frames videos for all selected pairs whose Start & End images exist">🎬 Generate Selected Pair Videos</button>
+        <button type="button" class="danger hide" id="btn-stop-dyn">⏹ Stop</button>
+      </div>
+      <span class="sub" id="dyn-summary" style="color:var(--ok);font-weight:700">0 pairs selected · 0 videos ready</span>
+    </div>
     <div class="beat-strip-nav" id="player-pills"></div>
     <div class="sub" id="player-status" style="margin-top:6px">Ready. Press Play Full Episode to preview rapid 1.5–2.5s visual switching right now.</div>
     <div class="sub" id="export-status" style="margin-top:4px"></div>
     <div class="sub" id="batch-status" style="margin-top:4px;color:var(--blue)"></div>
+    <div class="sub" id="dyn-status" style="margin-top:4px;color:var(--amber)"></div>
   </section>
 
   <!-- Step 5: Publish Pack (Captions, Chapters, SRT Subtitles & YouTube Upload) -->
@@ -503,6 +513,7 @@ function renderAll() {
   }
   updateTtsPlanSummary();
   updateExportRangeSummary();
+  updateDynamicSummary();
   renderCast();
   renderPlayerPills();
   renderBlocks();
@@ -563,6 +574,7 @@ function renderBlocks() {
   const ep = inkExplainerActiveEpisode();
   const container = $("#blocks-container");
   const currentBeat = activeGlobalBeatNum();
+  const totalEpBeats = inkExplainerActiveBeats().length;
 
   container.innerHTML = (ep.blocks || []).map((blk, blkIdx) => {
     const aud = assets.blockAudio[blk.blockId];
@@ -573,11 +585,16 @@ function renderBlocks() {
     const beatsHtml = blk.beats.map((b, localIdx) => {
       const t = timings[localIdx];
       const img = assets.beatImages[b.beat];
+      const nextImg = assets.beatImages[b.beat + 1];
+      const trans = (assets.beatTransitions || {})[b.beat];
+      const hasNext = b.beat < totalEpBeats;
+      const showDynBox = hasNext && (b.dynamic || trans);
       const thumbCls = state.ar === "9:16" ? "thumb-box ar-916" : "thumb-box";
       return `<article class="beat-card ${img ? "ready" : ""} ${b.beat === currentBeat ? "playing-now" : ""}" data-beat="${b.beat}">
         <div class="top">
           <span class="badge">Beat ${b.beat}</span>
           <span class="ctype">${esc(b.cardType)}</span>
+          ${trans ? `<span class="ctype" style="color:var(--ok);border-color:#1c4d32" title="Dynamic transition video ready (${b.beat}→${b.beat + 1})">🎞 ${b.beat}→${b.beat + 1}</span>` : (b.dynamic ? `<span class="ctype" style="color:var(--amber);border-color:#574118" title="Selected for Flow Frames transition (${b.beat}→${b.beat + 1})">🎞 ${b.beat}→${b.beat + 1}</span>` : "")}
           ${b.characters?.length ? `<span class="ctype" style="color:var(--amber);border-color:#574118" title="Attached character references">🎭 ${esc(b.characters.join(", "))}</span>` : ""}
           <span class="timing-pill">${t.startSec.toFixed(1)}s–${t.endSec.toFixed(1)}s (${t.durationSec.toFixed(1)}s)</span>
         </div>
@@ -606,6 +623,22 @@ function renderBlocks() {
           <button type="button" data-act="copy-beat" data-beat="${b.beat}">Copy</button>
           ${img ? `<button type="button" class="danger" data-act="del-beat" data-beat="${b.beat}" title="Delete this image so Batch Flow regenerates it">🗑 Delete</button>` : ""}
         </div>
+        ${hasNext ? `<div style="margin-top:6px;padding:6px 8px;background:#11141c;border:1px solid var(--line);border-radius:7px">
+          <div class="row" style="justify-content:space-between">
+            <label class="pill-lbl" style="font-size:11.5px;border:none;padding:0;background:transparent">
+              <input type="checkbox" class="edit-dyn" data-blk="${blkIdx}" data-idx="${localIdx}" ${b.dynamic ? "checked" : ""}>
+              <span>🎞 Animate Beat ${b.beat} → ${b.beat + 1} (Flow Frames)</span>
+            </label>
+            ${trans ? `<a href="${esc(trans.url)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--ok);font-weight:700">✓ Clip ready ↗</a>` : ""}
+          </div>
+          ${showDynBox ? `<div style="margin-top:5px;display:flex;flex-direction:column;gap:5px">
+            <input type="text" class="edit-motion" data-blk="${blkIdx}" data-idx="${localIdx}" value="${esc(b.motionPrompt || "")}" placeholder="Motion prompt connecting Beat ${b.beat} (Start) → Beat ${b.beat + 1} (End)" style="font-size:11.5px;padding:4px 7px">
+            <div class="btns">
+              <button type="button" class="blue" data-act="gen-dyn-pair" data-beat="${b.beat}" ${(!img || !nextImg) ? `title="Need both Beat ${b.beat} and Beat ${b.beat + 1} images first"` : ""}>🎬 ${trans ? "Regenerate Clip" : "Generate Frame Video"}</button>
+              ${trans ? `<button type="button" class="danger" data-act="del-dyn-pair" data-beat="${b.beat}" title="Remove transition video and revert to static images">🗑 Remove Clip</button>` : ""}
+            </div>
+          </div>` : ""}
+        </div>` : ""}
         <div class="gen-status" data-beat-status="${b.beat}"></div>
       </article>`;
     }).join("");
@@ -647,6 +680,7 @@ async function refreshAssets(silent = false) {
     Object.keys(j.beatImages || {}).forEach(k => { state.done[k] = true; });
     saveState();
     preloadBeatImages();
+    preloadTransitionVideos();
     renderAll();
     drawCurrentFrame();
     if (!silent) toast("Episode assets refreshed ✓");
@@ -1078,6 +1112,7 @@ const canvas = $("#player-canvas");
 const ctx = canvas.getContext("2d");
 const audioEl = $("#player-audio");
 const imageCache = new Map();
+const transitionVideoCache = new Map();
 let audioCtx = null;
 let mediaSource = null;
 let streamDest = null;
@@ -1117,6 +1152,61 @@ function preloadBeatImages() {
     img.onload = () => { if (!player.playing && activeGlobalBeatNum() === b.beat) drawCurrentFrame(); };
     imageCache.set(key, { srcUrl: info.url, img });
   });
+}
+
+function preloadTransitionVideos() {
+  const map = assets.beatTransitions || {};
+  Object.values(map).forEach(info => {
+    if (!info?.url) return;
+    const key = `${state.episodeId}:${info.fromBeat}`;
+    const prev = transitionVideoCache.get(key);
+    if (prev && prev.srcUrl === info.url) return;
+    if (prev?.video) {
+      try { prev.video.pause(); prev.video.removeAttribute("src"); } catch {}
+    }
+    const video = document.createElement("video");
+    video.crossOrigin = "anonymous";
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "auto";
+    video.src = info.url;
+    video.addEventListener("loadeddata", () => {
+      if (!player.playing) drawCurrentFrame();
+    });
+    transitionVideoCache.set(key, { srcUrl: info.url, video, fromBeat: info.fromBeat, toBeat: info.toBeat });
+  });
+}
+
+function globalTimeRangeForBeat(beatNum) {
+  const ep = inkExplainerActiveEpisode();
+  let prior = 0;
+  for (const blk of (ep.blocks || [])) {
+    const timings = getBlockTimings(blk);
+    const idx = blk.beats.findIndex(b => b.beat === beatNum);
+    if (idx >= 0 && timings[idx]) {
+      return { startSec: prior + timings[idx].startSec, endSec: prior + timings[idx].endSec };
+    }
+    prior += timings.length ? timings[timings.length - 1].endSec : 0;
+  }
+  return null;
+}
+
+function pauseAllTransitionVideos(exceptKey = "") {
+  for (const [k, entry] of transitionVideoCache.entries()) {
+    if (k === exceptKey) continue;
+    if (entry?.video && !entry.video.paused) {
+      try { entry.video.pause(); } catch {}
+    }
+  }
+}
+
+function updateDynamicSummary() {
+  const el = $("#dyn-summary");
+  if (!el) return;
+  const beats = inkExplainerActiveBeats();
+  const selected = beats.filter(b => Boolean(b.dynamic) && b.beat < beats.length);
+  const ready = Object.keys(assets.beatTransitions || {}).length;
+  el.textContent = `${selected.length} pair${selected.length === 1 ? "" : "s"} selected · ${ready} clip${ready === 1 ? "" : "s"} ready`;
 }
 
 function ensureCanvasSize() {
@@ -1334,18 +1424,60 @@ function drawCurrentFrame(elapsedBlockSec = 0) {
   const H = canvas.height;
   ctx.clearRect(0, 0, W, H);
 
-  const cached = imageCache.get(`${state.episodeId}:${beat.beat}`);
-  const img = cached?.img;
-  if (img && img.complete && img.naturalWidth > 0) {
-    // Crisp cover fill matching Ink Explainer style (minimal subtle zoom only, instant beat cuts)
-    const ir = img.naturalWidth / img.naturalHeight;
-    const cr = W / H;
-    let dw = W, dh = H;
-    if (ir > cr) { dh = H; dw = H * ir; }
-    else { dw = W; dh = W / ir; }
-    ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
-  } else {
-    drawProceduralInkFrame(beat);
+  let drewVideo = false;
+  const transMap = assets.beatTransitions || {};
+  const activeFromBeat = transMap[beat.beat] ? beat.beat : (transMap[beat.beat - 1] ? beat.beat - 1 : null);
+  const transKey = activeFromBeat ? `${state.episodeId}:${activeFromBeat}` : "";
+  const transEntry = transKey ? transitionVideoCache.get(transKey) : null;
+  const vid = transEntry?.video;
+  pauseAllTransitionVideos(transKey);
+
+  if (vid && vid.readyState >= 2 && vid.videoWidth > 0 && vid.duration > 0) {
+    let priorSec = 0;
+    for (let i = 0; i < player.blkIdx; i++) {
+      const t = getBlockTimings(ep.blocks[i]);
+      priorSec += t.length ? t[t.length - 1].endSec : 0;
+    }
+    const curGlobalSec = priorSec + elapsedBlockSec;
+    const r1 = globalTimeRangeForBeat(activeFromBeat);
+    const r2 = globalTimeRangeForBeat(activeFromBeat + 1);
+    if (r1 && r2) {
+      const pairSpan = Math.max(0.5, r2.endSec - r1.startSec);
+      const pairRel = Math.max(0, curGlobalSec - r1.startSec);
+      const targetVidTime = Math.min(Math.max(0, vid.duration - 0.04), (pairRel / pairSpan) * vid.duration);
+      if (player.playing) {
+        const rate = Math.max(0.5, Math.min(2.0, (vid.duration / pairSpan) * activeSpeed()));
+        if (Math.abs(vid.playbackRate - rate) > 0.05) vid.playbackRate = rate;
+        if (Math.abs(vid.currentTime - targetVidTime) > 0.28) vid.currentTime = targetVidTime;
+        if (vid.paused) vid.play().catch(() => {});
+      } else {
+        if (!vid.paused) vid.pause();
+        if (Math.abs(vid.currentTime - targetVidTime) > 0.08) vid.currentTime = targetVidTime;
+      }
+      const vr = vid.videoWidth / vid.videoHeight;
+      const cr = W / H;
+      let dw = W, dh = H;
+      if (vr > cr) { dh = H; dw = H * vr; }
+      else { dw = W; dh = W / vr; }
+      ctx.drawImage(vid, (W - dw) / 2, (H - dh) / 2, dw, dh);
+      drewVideo = true;
+    }
+  }
+
+  if (!drewVideo) {
+    const cached = imageCache.get(`${state.episodeId}:${beat.beat}`);
+    const img = cached?.img;
+    if (img && img.complete && img.naturalWidth > 0) {
+      // Crisp cover fill matching Ink Explainer style (minimal subtle zoom only, instant beat cuts)
+      const ir = img.naturalWidth / img.naturalHeight;
+      const cr = W / H;
+      let dw = W, dh = H;
+      if (ir > cr) { dh = H; dw = H * ir; }
+      else { dw = W; dh = W / ir; }
+      ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+    } else {
+      drawProceduralInkFrame(beat);
+    }
   }
 
   if ($("#p-captions").checked) {
@@ -1537,6 +1669,7 @@ function pausePlayback() {
   cancelAnimationFrame(player.rafId);
   clearInterval(player.bgTimer);
   if (!audioEl.paused) audioEl.pause();
+  pauseAllTransitionVideos();
   $("#player-status").textContent = "Paused.";
 }
 
@@ -2047,6 +2180,210 @@ $("#btn-stop-flow").addEventListener("click", async () => {
     body: JSON.stringify({ id: activeBatchJobId })
   }).catch(() => {});
 });
+let activeDynBatchJobId = null;
+
+async function aiSuggestDynamicPairs() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
+  const btn = $("#btn-ai-dyn");
+  btn.disabled = true;
+  $("#dyn-status").textContent = "Asking Gemini to pick the best consecutive beat pairs to animate…";
+  try {
+    const ep = JSON.parse(JSON.stringify(inkExplainerActiveEpisode()));
+    const r = await fetch("/api/explainer/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: buildDynamicPairsSuggestPrompt(ep) })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Gemini failed");
+    const parsed = parseGeminiJson(j.text);
+    const pairMap = new Map();
+    for (const p of (parsed?.pairs || [])) {
+      const fb = Number(p.fromBeat);
+      const tb = Number(p.toBeat || (fb + 1));
+      if (Number.isInteger(fb) && fb >= 1 && tb === fb + 1 && !pairMap.has(fb - 1)) {
+        pairMap.set(fb, String(p.motionPrompt || "").trim());
+      }
+    }
+    for (const blk of (ep.blocks || [])) {
+      for (const b of (blk.beats || [])) {
+        if (pairMap.has(b.beat)) {
+          b.dynamic = true;
+          b.motionPrompt = pairMap.get(b.beat) || b.motionPrompt || "";
+        } else {
+          b.dynamic = false;
+        }
+      }
+    }
+    window.__INK_ACTIVE_EPISODE = ep;
+    await persistActiveEpisode();
+    renderAll();
+    $("#dyn-status").textContent = `✓ AI suggested ${pairMap.size} non-overlapping beat pairs. Check/uncheck any pair below before generating.`;
+    toast(`Suggested ${pairMap.size} dynamic pairs ✓`);
+  } catch (err) {
+    $("#dyn-status").textContent = `AI Suggest error: ${err.message}`;
+    toast(`AI Suggest error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function generateSingleFramePair(fromBeat) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to generate Flow Frames videos"); return; }
+  const ep = inkExplainerActiveEpisode();
+  const beat = inkExplainerActiveBeats().find(b => b.beat === fromBeat);
+  if (!beat) return;
+  const stEl = document.querySelector(`[data-beat-status="${fromBeat}"]`);
+  if (!assets.beatImages[fromBeat] || !assets.beatImages[fromBeat + 1]) {
+    const msg = `Need both Beat ${fromBeat} and Beat ${fromBeat + 1} images first.`;
+    if (stEl) stEl.textContent = msg;
+    toast(msg);
+    return;
+  }
+  if (stEl) stEl.textContent = `Generating Flow Frames video (${fromBeat} → ${fromBeat + 1})…`;
+  $("#dyn-status").textContent = `Generating Flow Frames clip for Beat ${fromBeat} → ${fromBeat + 1}…`;
+  try {
+    const jobId = crypto.randomUUID();
+    const r = await fetch("/api/explainer/generate-frame-pair", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: jobId,
+        project: PROJECT_ID,
+        episode: ep.id,
+        fromBeat,
+        toBeat: fromBeat + 1,
+        aspect: state.ar,
+        duration: "4s",
+        prompt: beat.motionPrompt || `Smooth continuous 2D ink-explainer animation transitioning naturally from (${beat.visual}) to the end frame.`
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not start Flow Frames job");
+    while (true) {
+      await new Promise(res => setTimeout(res, 2500));
+      const sr = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+      const sj = await sr.json();
+      if (!sr.ok || !sj.ok) throw new Error(sj.error || "Lost connection to Flow Frames job");
+      if (sj.status === "completed") {
+        await refreshAssets(true);
+        if (stEl) stEl.textContent = `✓ Transition clip (${fromBeat} → ${fromBeat + 1}) saved!`;
+        $("#dyn-status").textContent = `✓ Transition clip (${fromBeat} → ${fromBeat + 1}) ready!`;
+        toast(`Clip ${fromBeat} → ${fromBeat + 1} ready ✓`);
+        break;
+      }
+      if (sj.status === "failed") throw new Error(sj.error || "Flow Frames generation failed");
+    }
+  } catch (err) {
+    if (stEl) stEl.textContent = `Clip error: ${err.message}`;
+    $("#dyn-status").textContent = `Clip error: ${err.message}`;
+    toast(`Clip error: ${err.message}`);
+  }
+}
+
+async function generateBatchDynamicPairs() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to generate Flow Frames videos"); return; }
+  if (activeDynBatchJobId) return;
+  const ep = inkExplainerActiveEpisode();
+  const beats = inkExplainerActiveBeats();
+  const pairs = beats
+    .filter(b => b.dynamic && b.beat < beats.length)
+    .map(b => ({
+      fromBeat: b.beat,
+      toBeat: b.beat + 1,
+      prompt: b.motionPrompt || `Smooth continuous 2D ink-explainer animation transitioning naturally from (${b.visual}) to the end frame.`
+    }));
+  if (!pairs.length) {
+    toast("Select at least one beat pair (or click AI Suggest Pairs) first");
+    return;
+  }
+  $("#btn-batch-dyn").disabled = true;
+  $("#btn-stop-dyn").classList.remove("hide");
+  $("#dyn-status").textContent = `Starting Flow Frames batch for ${pairs.length} selected pairs…`;
+  try {
+    const jobId = crypto.randomUUID();
+    activeDynBatchJobId = jobId;
+    const r = await fetch("/api/explainer/generate-frames-batch", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: jobId,
+        project: PROJECT_ID,
+        episode: ep.id,
+        aspect: state.ar,
+        duration: "4s",
+        pairs
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not start dynamic batch");
+    if (j.alreadyComplete) {
+      const miss = j.missingImages?.length ? ` (Missing images for: ${j.missingImages.join(", ")})` : "";
+      $("#dyn-status").textContent = `All ready pairs already have clips.${miss}`;
+      toast("Dynamic clips up to date");
+      return;
+    }
+    let lastCount = 0;
+    while (true) {
+      await new Promise(res => setTimeout(res, 2500));
+      const sr = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+      const sj = await sr.json();
+      if (!sr.ok || !sj.ok) throw new Error(sj.error || "Lost connection to dynamic batch");
+      const p = sj.progress || {};
+      const doneCount = (p.skipped || 0) + (p.completedCount || 0);
+      $("#dyn-status").textContent = `🎞 Flow Frames: ${doneCount} / ${p.total || pairs.length} clips ready${p.currentPair ? ` (generating ${p.currentPair}…)` : ""}`;
+      if ((p.completedCount || 0) > lastCount) {
+        lastCount = p.completedCount;
+        await refreshAssets(true);
+      }
+      if (sj.status === "completed") {
+        await refreshAssets(true);
+        const miss = p.missingImages?.length ? ` · Skipped missing images: ${p.missingImages.join(", ")}` : "";
+        $("#dyn-status").textContent = `✓ Dynamic transitions complete (${doneCount}/${p.total || pairs.length} clips ready)${miss}`;
+        toast("Dynamic beat-pair videos ready ✓");
+        break;
+      }
+      if (sj.status === "failed") throw new Error(sj.error || "Dynamic batch failed");
+    }
+  } catch (err) {
+    $("#dyn-status").textContent = `Dynamic batch error: ${err.message}`;
+    toast(`Dynamic batch error: ${err.message}`);
+  } finally {
+    activeDynBatchJobId = null;
+    $("#btn-batch-dyn").disabled = false;
+    $("#btn-stop-dyn").classList.add("hide");
+  }
+}
+
+async function deleteFramePair(fromBeat) {
+  if (isFile) return;
+  const ep = inkExplainerActiveEpisode();
+  const r = await fetch("/api/explainer/delete-frame-pair", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ project: PROJECT_ID, episode: ep.id, fromBeat })
+  });
+  const j = await r.json();
+  if (!r.ok || !j.ok) throw new Error(j.error || "Could not remove transition clip");
+  const key = `${state.episodeId}:${fromBeat}`;
+  const prev = transitionVideoCache.get(key);
+  if (prev?.video) { try { prev.video.pause(); prev.video.removeAttribute("src"); } catch {} }
+  transitionVideoCache.delete(key);
+  await refreshAssets(true);
+  toast(`Transition clip ${fromBeat} → ${fromBeat + 1} removed ✓`);
+}
+
+$("#btn-ai-dyn").addEventListener("click", aiSuggestDynamicPairs);
+$("#btn-batch-dyn").addEventListener("click", generateBatchDynamicPairs);
+$("#btn-stop-dyn").addEventListener("click", async () => {
+  if (!activeDynBatchJobId) return;
+  $("#dyn-status").textContent = "Stopping after current Flow Frames video finishes…";
+  await fetch("/api/explainer/stop-batch", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ id: activeDynBatchJobId })
+  }).catch(() => {});
+});
 $("#btn-refresh").addEventListener("click", () => refreshAssets(false));
 
 $("#p-play").addEventListener("click", () => startBlockPlayback(player.blkIdx, player.localBeatIdx));
@@ -2166,6 +2503,12 @@ $("#blocks-container").addEventListener("click", async e => {
     const idx = inkExplainerActiveBeats().findIndex(b => b.beat === bNum);
     try { await navigator.clipboard.writeText(inkExplainerPromptFor(idx, state.ar)); } catch {}
     toast(`Beat ${bNum} prompt copied ✓`);
+  } else if (act === "gen-dyn-pair") {
+    btn.disabled = true;
+    await generateSingleFramePair(Number(btn.dataset.beat)).finally(() => { btn.disabled = false; });
+  } else if (act === "del-dyn-pair") {
+    btn.disabled = true;
+    await deleteFramePair(Number(btn.dataset.beat)).catch(err => toast(err.message)).finally(() => { btn.disabled = false; });
   } else if (act === "del-beat") {
     if (isFile) return;
     const bNum = Number(btn.dataset.beat);
@@ -2227,6 +2570,15 @@ $("#blocks-container").addEventListener("change", async e => {
   else if (t.classList.contains("edit-vis")) beat.visual = t.value.trim();
   else if (t.classList.contains("edit-ctype")) beat.cardType = t.value;
   else if (t.classList.contains("edit-label")) beat.label = t.value.trim();
+  else if (t.classList.contains("edit-dyn")) {
+    beat.dynamic = t.checked;
+    window.__INK_ACTIVE_EPISODE = ep;
+    await persistActiveEpisode().catch(() => {});
+    renderBlocks();
+    updateDynamicSummary();
+    return;
+  }
+  else if (t.classList.contains("edit-motion")) beat.motionPrompt = t.value.trim();
   else return;
   window.__INK_ACTIVE_EPISODE = ep;
   await persistActiveEpisode().catch(() => {});
