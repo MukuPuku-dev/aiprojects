@@ -1672,53 +1672,85 @@ function fmtMmSs(sec) {
     : `${String(m).padStart(2, "0")}:${String(rem).padStart(2, "0")}`;
 }
 
+function selectedBeatRange() {
+  const totalBeats = Math.max(1, inkExplainerActiveBeats().length);
+  const fromB = Math.max(1, Math.min(totalBeats, Number($("#export-from-beat")?.value || 1)));
+  const toB = Math.max(fromB, Math.min(totalBeats, Number($("#export-to-beat")?.value || totalBeats)));
+  return { fromB, toB, totalBeats, isSubset: fromB > 1 || toB < totalBeats };
+}
+
 function buildChapterListText() {
   const ep = inkExplainerActiveEpisode();
   const spd = activeSpeed();
+  const { fromB, toB } = selectedBeatRange();
   let t = 0;
-  return (ep.blocks || []).map(blk => {
-    const line = `${fmtMmSs(t)} ${blk.title}`;
+  const lines = [];
+  for (const blk of ep.blocks || []) {
     const timings = getBlockTimings(blk);
-    t += (timings.length ? timings[timings.length - 1].endSec : 0) / spd;
-    return line;
-  }).join("\n");
+    let blkSelectedSec = 0;
+    let hasSelected = false;
+    blk.beats.forEach((b, idx) => {
+      if (b.beat >= fromB && b.beat <= toB) {
+        hasSelected = true;
+        blkSelectedSec += timings[idx]?.durationSec || 0;
+      }
+    });
+    if (!hasSelected) continue;
+    lines.push(`${fmtMmSs(t)} ${blk.title}`);
+    t += blkSelectedSec / spd;
+  }
+  return lines.join("\n");
 }
 
-function populatePublishDefaults() {
+function populatePublishDefaults(forceChaptersRefresh = false) {
   const ep = inkExplainerActiveEpisode();
+  const { fromB, toB, isSubset } = selectedBeatRange();
+  const rangeTag = isSubset ? ` · Beats ${fromB}–${toB}` : "";
   if (assets.exportedVideoUrl) {
-    $("#pub-video-badge").innerHTML = `· <a href="${esc(assets.exportedVideoUrl)}" target="_blank" rel="noopener" style="color:var(--ok)">episode.webm ready ↗</a>`;
+    $("#pub-video-badge").innerHTML = `· <a href="${esc(assets.exportedVideoUrl)}" target="_blank" rel="noopener" style="color:var(--ok)">episode.webm ready ↗</a>${rangeTag}`;
   } else {
-    $("#pub-video-badge").textContent = "· Export .webm above before uploading";
+    $("#pub-video-badge").textContent = `· Export .webm above before uploading${rangeTag}`;
   }
-  if (!$("#pub-yt-title").value.trim() || $("#pub-yt-title").dataset.ep !== ep.id) {
-    $("#pub-yt-title").value = ep.title;
+  if (!$("#pub-yt-title").value.trim() || $("#pub-yt-title").dataset.ep !== ep.id || forceChaptersRefresh) {
+    $("#pub-yt-title").value = isSubset ? `${ep.title} (Beats ${fromB}–${toB})` : ep.title;
     $("#pub-yt-title").dataset.ep = ep.id;
     $("#pub-yt-desc").value = `${ep.hook || ep.subtitle}\n\nChapters:\n${buildChapterListText()}\n\n#InkExplainer #Storytelling #Animation`;
     $("#pub-yt-tags").value = "ink explainer, animated story, storytelling, narration, youtube story";
-    $("#pub-social-cap").value = `${ep.title}\n\n${ep.hook || ""}\n\n#InkExplainer #StoryTime #ViralStory`;
+    $("#pub-social-cap").value = `${ep.title}${rangeTag}\n\n${ep.hook || ""}\n\n#InkExplainer #StoryTime #ViralStory`;
   }
 }
 
 async function generatePublishPack() {
   if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
   const ep = inkExplainerActiveEpisode();
+  const { fromB, toB, isSubset } = selectedBeatRange();
   const chapters = buildChapterListText();
-  const summary = (ep.blocks || []).map(b => `${b.title}: ${b.beats.map(x => x.narration).join(" ")}`).join("\n").slice(0, 6000);
+  const summary = (ep.blocks || [])
+    .map(b => {
+      const selBeats = b.beats.filter(x => x.beat >= fromB && x.beat <= toB);
+      return selBeats.length ? `${b.title}: ${selBeats.map(x => x.narration).join(" ")}` : "";
+    })
+    .filter(Boolean)
+    .join("\n")
+    .slice(0, 6000);
   const btn = $("#btn-gen-publish");
   btn.disabled = true;
-  $("#yt-status").textContent = "Generating YouTube Title, Description, Tags & Social Captions with Gemini…";
+  $("#yt-status").textContent = `Generating YouTube Title, Description & Captions${isSubset ? ` for Beats ${fromB}–${toB}` : ""}…`;
   try {
     const langLabel = activeLanguage() === "ne" ? "Nepali (Devanagari)" : "English";
+    const scopeNote = isSubset
+      ? `NOTE: This video covers ONLY Beats ${fromB} to ${toB} (a part/clip of "${ep.title}"). Write metadata specifically for the events in this part.`
+      : "";
     const prompt = [
       "You are a YouTube growth strategist and social copywriter.",
       `Given this ${langLabel} episode titled "${ep.title}" (${ep.niche || "Storytelling"}), generate viral metadata in ${langLabel}.`,
+      scopeNote,
       "Return ONLY raw JSON (no markdown fences) with keys:",
       '{ "ytTitle": "Curiosity-driven YouTube title under 90 chars", "ytDescription": "2-3 engaging paragraphs + CTA (do NOT repeat chapters, I will append them)", "ytTags": "comma, separated, 12, tags", "socialCaption": "Punchy TikTok/Facebook/Telegram caption with 5 hashtags" }',
       "",
-      "Episode summary:",
+      "Selected episode content:",
       summary
-    ].join("\n");
+    ].filter(Boolean).join("\n");
     const r = await fetch("/api/explainer/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -1752,41 +1784,54 @@ function fmtSrtTime(sec) {
 function downloadSrtSubtitles() {
   const ep = inkExplainerActiveEpisode();
   const spd = activeSpeed();
+  const { fromB, toB, isSubset } = selectedBeatRange();
   let offset = 0;
   const cues = [];
   let cueNum = 1;
   for (const blk of ep.blocks || []) {
     const aud = assets.blockAudio[blk.blockId];
     const timings = getBlockTimings(blk);
-    const blkDur = timings.length ? timings[timings.length - 1].endSec : 0;
+    const selIndices = [];
+    blk.beats.forEach((b, idx) => {
+      if (b.beat >= fromB && b.beat <= toB) selIndices.push(idx);
+    });
+    if (!selIndices.length) continue;
+
+    const clipStartSec = timings[selIndices[0]]?.startSec || 0;
+    const clipEndSec = timings[selIndices[selIndices.length - 1]]?.endSec || clipStartSec;
+    const clipSpan = Math.max(0, clipEndSec - clipStartSec);
+
     const rawTs = Array.isArray(aud?.timestamps) ? aud.timestamps : [];
-    const words = filterSpokenTimestampWords(rawTs);
+    const words = filterSpokenTimestampWords(rawTs).filter(t =>
+      Number(t.start) >= clipStartSec - 0.05 && Number(t.start) < clipEndSec
+    );
     if (words.length > 0) {
       for (let i = 0; i < words.length; i += 5) {
         const chunk = words.slice(i, i + 5);
-        const st = offset + Number(chunk[0].start) / spd;
-        const en = offset + Number(chunk[chunk.length - 1].end) / spd;
+        const st = offset + Math.max(0, Number(chunk[0].start) - clipStartSec) / spd;
+        const en = offset + Math.max(0, Math.min(clipEndSec, Number(chunk[chunk.length - 1].end)) - clipStartSec) / spd;
         const text = chunk.map(w => String(w.word ?? w.expected).trim()).join(" ");
         cues.push(`${cueNum++}\n${fmtSrtTime(st)} --> ${fmtSrtTime(Math.max(st + 0.2, en))}\n${text}\n`);
       }
     } else {
-      blk.beats.forEach((b, idx) => {
+      selIndices.forEach(idx => {
+        const b = blk.beats[idx];
         const t = timings[idx];
-        const st = offset + t.startSec / spd;
-        const en = offset + t.endSec / spd;
+        const st = offset + (t.startSec - clipStartSec) / spd;
+        const en = offset + (t.endSec - clipStartSec) / spd;
         cues.push(`${cueNum++}\n${fmtSrtTime(st)} --> ${fmtSrtTime(Math.max(st + 0.2, en))}\n${b.narration}\n`);
       });
     }
-    offset += blkDur / spd;
+    offset += clipSpan / spd;
   }
   const blob = new Blob([cues.join("\n")], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${ep.id}.srt`;
+  a.download = isSubset ? `${ep.id}-beats-${String(fromB).padStart(2, "0")}-${String(toB).padStart(2, "0")}.srt` : `${ep.id}.srt`;
   a.click();
   setTimeout(() => URL.revokeObjectURL(url), 4000);
-  toast("Downloaded .srt subtitles ✓");
+  toast(`Downloaded .srt subtitles${isSubset ? ` (Beats ${fromB}–${toB})` : ""} ✓`);
 }
 
 async function uploadEpisodeToYouTube() {
@@ -1982,8 +2027,8 @@ $("#btn-gen-publish").addEventListener("click", generatePublishPack);
 $("#btn-dl-srt").addEventListener("click", downloadSrtSubtitles);
 $("#btn-upload-yt").addEventListener("click", uploadEpisodeToYouTube);
 $("#btn-send-tg").addEventListener("click", sendEpisodeToTelegram);
-$("#export-from-beat").addEventListener("input", updateExportRangeSummary);
-$("#export-to-beat").addEventListener("input", updateExportRangeSummary);
+$("#export-from-beat").addEventListener("input", () => { updateExportRangeSummary(); populatePublishDefaults(true); });
+$("#export-to-beat").addEventListener("input", () => { updateExportRangeSummary(); populatePublishDefaults(true); });
 $("#tts-from-blk").addEventListener("input", updateTtsPlanSummary);
 $("#tts-to-blk").addEventListener("input", updateTtsPlanSummary);
 $("#tts-only-missing").addEventListener("change", updateTtsPlanSummary);
