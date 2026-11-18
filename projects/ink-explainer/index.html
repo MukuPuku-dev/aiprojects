@@ -12,8 +12,23 @@
 }
 *{box-sizing:border-box}
 body{margin:0;background:radial-gradient(circle at top right,#1c2131 0%,var(--bg) 60%);color:var(--ink);font:14px/1.5 var(--sans)}
-header{position:sticky;top:0;background:#0d1016f2;backdrop-filter:blur(10px);padding:11px 16px;border-bottom:1px solid var(--line);z-index:25}
-h1{margin:0;font-size:18px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+header{position:sticky;top:0;background:#0d1016f2;backdrop-filter:blur(10px);padding:8px 14px;border-bottom:1px solid var(--line);z-index:25}
+.header-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.hamburger-btn{font-size:18px;line-height:1;padding:6px 10px;background:#1c212e;border:1px solid var(--line);border-radius:8px;color:var(--amber);font-weight:700}
+.hamburger-btn:hover{border-color:var(--amber)}
+#drawer-backdrop{position:fixed;inset:0;background:rgba(4,6,10,.65);backdrop-filter:blur(2px);z-index:55}
+#studio-drawer{position:fixed;top:0;left:0;bottom:0;width:340px;max-width:90vw;background:#121620;border-right:1px solid var(--line);z-index:60;transform:translateX(-100%);transition:transform .22s ease;display:flex;flex-direction:column;gap:14px;padding:16px;overflow-y:auto;box-shadow:8px 0 32px rgba(0,0,0,.55)}
+#studio-drawer.open{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:10px;border-bottom:1px solid var(--line)}
+.drawer-sec{display:flex;flex-direction:column;gap:8px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.drawer-sec h3{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin:0 0 2px}
+.drawer-sec select,.drawer-sec button{width:100%;text-align:left}
+.drawer-sec .pill-lbl{border-radius:9px;padding:6px 10px;justify-content:space-between;width:100%}
+.drawer-sec .pill-lbl select{width:auto;min-width:140px}
+.drawer-links{display:flex;flex-direction:column;gap:6px}
+.drawer-links a{color:var(--ink);text-decoration:none;padding:6px 9px;border-radius:8px;background:var(--card2);border:1px solid var(--line);font-size:13px}
+.drawer-links a:hover{border-color:var(--amber);color:var(--amber)}
+h1{margin:0;font-size:17px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 h1 .gold{color:var(--amber)}
 h2{margin:0 0 6px;font-size:15.5px;color:var(--amber)}
 h3{margin:0;font-size:14.5px;color:#fff}
@@ -80,22 +95,44 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
 </head>
 <body>
 <header>
-  <h1>
-    <span>🖋️ <span class="gold">Ink Explainer</span> · Rapid-Beat Episode Studio</span>
-    <span class="sub" id="st"></span>
-  </h1>
-  <div class="sub" id="story-sub">1 Image per 1.5–2.5s Spoken Beat · Continuous Block Voiceover · Matching Reference Video Style</div>
-  <div class="bar"><i id="pb"></i></div>
-  <nav>
-    <a href="../../index.html">← All Projects</a>
-    <label class="pill-lbl">Episode:
-      <select id="episode-sel" style="max-width:290px"></select>
+  <div class="header-top">
+    <button type="button" class="hamburger-btn" id="btn-drawer" aria-label="Open Studio Controls" title="Open Studio Controls (Menu)">☰</button>
+    <h1>
+      <span>🖋️ <span class="gold">Ink Explainer</span></span>
+      <span class="sub" id="st"></span>
+    </h1>
+    <div class="sub" id="story-sub" style="flex:1;min-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">1 Image per 1.5–2.5s Spoken Beat · Continuous Block Voiceover</div>
+    <a href="../../index.html" style="color:var(--amber);text-decoration:none;font-weight:700;font-size:13px">← All Projects</a>
+    <span class="sub" id="api">Checking studio…</span>
+  </div>
+  <div class="bar" style="margin:6px 0 0"><i id="pb"></i></div>
+</header>
+
+<div id="drawer-backdrop" class="hide"></div>
+<aside id="studio-drawer" aria-label="Studio Controls">
+  <div class="drawer-head">
+    <b style="font-size:15px;color:var(--amber)">🎛️ Studio Controls</b>
+    <button type="button" id="btn-close-drawer" aria-label="Close Studio Controls" style="padding:4px 9px">✕</button>
+  </div>
+
+  <div class="drawer-sec">
+    <h3>Episodes</h3>
+    <label class="field-lbl">Active Episode
+      <select id="episode-sel"></select>
     </label>
     <button type="button" id="btn-toggle-new">＋ New Episode (Gemini)</button>
     <button type="button" id="btn-del-ep" class="hide" title="Delete custom episode">🗑 Delete Episode</button>
+  </div>
+
+  <div class="drawer-sec">
+    <h3>Production Actions</h3>
     <button type="button" class="blue" id="btn-gen-all-audio">🎙 Step 1: Full Episode Voiceover</button>
     <button type="button" class="primary" id="btn-batch-flow">🎨 Step 2: Batch Flow Images</button>
     <button type="button" class="danger hide" id="btn-stop-flow">⏹ Stop Batch</button>
+  </div>
+
+  <div class="drawer-sec">
+    <h3>Settings</h3>
     <label class="pill-lbl">Aspect:
       <select id="ar-sel">
         <option value="16:9">16:9 YouTube</option>
@@ -127,9 +164,19 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         <option value="none">Plain (No Tags)</option>
       </select>
     </label>
-    <span class="sub" id="api" style="margin-left:auto">Checking studio…</span>
-  </nav>
-</header>
+  </div>
+
+  <div class="drawer-sec">
+    <h3>Quick Jump</h3>
+    <div class="drawer-links">
+      <a href="#cast-panel" data-drawer-jump>🎭 Step 0 · Cast &amp; References</a>
+      <a href="#player-canvas" data-drawer-jump>🎬 Step 3 &amp; 4 · Player &amp; Export</a>
+      <a href="#publish-panel" data-drawer-jump>📢 Step 5 · Captions &amp; YouTube</a>
+      <a href="#blocks-container" data-drawer-jump>🎞 Storyboard Blocks &amp; Beats</a>
+      <a href="../../index.html">← All Story Studio Projects</a>
+    </div>
+  </div>
+</aside>
 
 <main>
   <!-- Reference Analysis Summary -->
@@ -190,20 +237,19 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
 
   <!-- Synchronized Rapid-Cut Episode Player -->
   <section class="panel">
-    <div class="row" style="justify-content:space-between;margin-bottom:8px">
-      <div>
-        <h2>🎬 Step 3 &amp; 4: Rapid-Cut Episode Player &amp; Video Export <span class="sub" id="player-ep-title"></span></h2>
-        <div class="sub">Continuous WAV narration per block with exact word-timestamp cuts every 1.5–2.5 seconds. Generates instant Ink-Explainer vector previews before Flow images exist.</div>
-      </div>
-      <div class="row">
-        <span class="sub" id="player-timecode" style="font-weight:700;color:var(--amber)">00:00.0 / 00:00.0</span>
-        <span class="sub" id="player-beat-label">Beat 1 / 32</span>
-      </div>
+    <div style="margin-bottom:8px">
+      <h2>🎬 Step 3 &amp; 4: Rapid-Cut Episode Player &amp; Video Export <span class="sub" id="player-ep-title"></span></h2>
+      <div class="sub">Continuous WAV narration per block with exact word-timestamp cuts every 1.5–2.5 seconds. Generates instant Ink-Explainer vector previews before Flow images exist.</div>
     </div>
 
     <div class="stage-wrap">
       <canvas id="player-canvas" width="1280" height="720"></canvas>
       <audio id="player-audio" crossorigin="anonymous" preload="auto" hidden></audio>
+    </div>
+
+    <div class="row" style="justify-content:space-between;margin-top:8px;padding:6px 10px;background:#11141c;border:1px solid var(--line);border-radius:8px">
+      <span class="sub" id="player-timecode" style="font-weight:700;font-size:13.5px;color:var(--amber)">00:00.0 / 00:00.0</span>
+      <span class="sub" id="player-beat-label" style="font-weight:600;color:#cbd5e1">Beat 1 / 32</span>
     </div>
 
     <div class="player-bar">
@@ -229,6 +275,7 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
           <input type="number" id="export-from-beat" min="1" value="1" style="width:58px;padding:3px 6px">
           <span>to</span>
           <input type="number" id="export-to-beat" min="1" value="32" style="width:58px;padding:3px 6px">
+          <span id="export-range-badge" style="color:var(--amber);font-weight:700;margin-left:4px"></span>
         </label>
         <button type="button" class="primary" id="p-export">🎥 Export Video (.webm)</button>
         <button type="button" class="danger hide" id="p-stop-export">⏹ Finish &amp; Save Now</button>
@@ -449,6 +496,7 @@ function renderAll() {
     $("#tts-to-blk").dataset.ep = ep.id;
   }
   updateTtsPlanSummary();
+  updateExportRangeSummary();
   renderCast();
   renderPlayerPills();
   renderBlocks();
@@ -681,6 +729,42 @@ function plannedTtsBlocks() {
   });
 }
 
+function selectedBlockRangeDuration() {
+  const ep = inkExplainerActiveEpisode();
+  const blocks = ep.blocks || [];
+  const fromB = Math.max(1, Number($("#tts-from-blk")?.value || 1));
+  const toB = Math.max(fromB, Math.min(blocks.length || 1, Number($("#tts-to-blk")?.value || blocks.length || 1)));
+  let totalSec = 0;
+  for (const blk of blocks) {
+    const id = Number(blk.blockId);
+    if (id < fromB || id > toB) continue;
+    const t = getBlockTimings(blk);
+    totalSec += t.length ? t[t.length - 1].endSec : 0;
+  }
+  return totalSec / activeSpeed();
+}
+
+function updateExportRangeSummary() {
+  const badge = $("#export-range-badge");
+  if (!badge) return;
+  const ep = inkExplainerActiveEpisode();
+  const totalBeats = inkExplainerActiveBeats().length;
+  const fromB = Math.max(1, Math.min(totalBeats, Number($("#export-from-beat")?.value || 1)));
+  const toB = Math.max(fromB, Math.min(totalBeats, Number($("#export-to-beat")?.value || totalBeats)));
+  let sec = 0;
+  for (const blk of ep.blocks || []) {
+    const timings = getBlockTimings(blk);
+    blk.beats.forEach((b, idx) => {
+      if (b.beat >= fromB && b.beat <= toB) {
+        sec += timings[idx]?.durationSec || 0;
+      }
+    });
+  }
+  const spd = activeSpeed();
+  const count = Math.max(0, toB - fromB + 1);
+  badge.textContent = `⏱ ${fmtSec(sec / spd)} (${count} beats · ${spd}x)`;
+}
+
 function updateTtsPlanSummary() {
   const ep = inkExplainerActiveEpisode();
   const blocks = ep.blocks || [];
@@ -688,13 +772,16 @@ function updateTtsPlanSummary() {
   const totalWords = planned.reduce((sum, blk) =>
     sum + blk.beats.reduce((w, b) => w + String(b.narration || "").trim().split(/\s+/).filter(Boolean).length, 0)
   , 0);
+  const rangeDur = fmtSec(selectedBlockRangeDuration());
+  const fromB = Math.max(1, Number($("#tts-from-blk")?.value || 1));
+  const toB = Math.max(fromB, Math.min(blocks.length || 1, Number($("#tts-to-blk")?.value || blocks.length || 1)));
   const badge = $("#tts-plan-badge");
   if (!badge) return;
   if (!planned.length) {
-    badge.textContent = `TTS Plan: 0 Gemini TTS requests needed (all selected blocks already have audio ✓)`;
+    badge.textContent = `TTS Plan: 0 requests needed · Blocks ${fromB}–${toB} length: ${rangeDur}`;
   } else {
     const ids = planned.map(b => b.blockId).join(", ");
-    badge.textContent = `TTS Plan: ${planned.length} Gemini TTS request${planned.length === 1 ? "" : "s"} (Blocks ${ids} · ~${totalWords} words)`;
+    badge.textContent = `TTS Plan: ${planned.length} Gemini TTS request${planned.length === 1 ? "" : "s"} (Blocks ${ids} · ~${totalWords} words) · Blocks ${fromB}–${toB} length: ${rangeDur}`;
   }
 }
 
@@ -1888,11 +1975,15 @@ $("#p-speed").addEventListener("change", () => {
     audioEl.playbackRate = activeSpeed();
   }
   populatePublishDefaults();
+  updateExportRangeSummary();
+  updateTtsPlanSummary();
 });
 $("#btn-gen-publish").addEventListener("click", generatePublishPack);
 $("#btn-dl-srt").addEventListener("click", downloadSrtSubtitles);
 $("#btn-upload-yt").addEventListener("click", uploadEpisodeToYouTube);
 $("#btn-send-tg").addEventListener("click", sendEpisodeToTelegram);
+$("#export-from-beat").addEventListener("input", updateExportRangeSummary);
+$("#export-to-beat").addEventListener("input", updateExportRangeSummary);
 $("#tts-from-blk").addEventListener("input", updateTtsPlanSummary);
 $("#tts-to-blk").addEventListener("input", updateTtsPlanSummary);
 $("#tts-only-missing").addEventListener("change", updateTtsPlanSummary);
@@ -2065,6 +2156,22 @@ async function checkApi() {
     $("#api").textContent = "Studio Offline (run Start Story Studio.vbs)";
   }
 }
+
+function openDrawer() {
+  $("#studio-drawer")?.classList.add("open");
+  $("#drawer-backdrop")?.classList.remove("hide");
+}
+function closeDrawer() {
+  $("#studio-drawer")?.classList.remove("open");
+  $("#drawer-backdrop")?.classList.add("hide");
+}
+$("#btn-drawer")?.addEventListener("click", openDrawer);
+$("#btn-close-drawer")?.addEventListener("click", closeDrawer);
+$("#drawer-backdrop")?.addEventListener("click", closeDrawer);
+document.addEventListener("keydown", e => { if (e.key === "Escape") closeDrawer(); });
+document.querySelectorAll("[data-drawer-jump], #btn-toggle-new").forEach(el => {
+  el.addEventListener("click", closeDrawer);
+});
 
 renderViralFormula();
 renderAll();

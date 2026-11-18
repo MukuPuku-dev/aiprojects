@@ -73,6 +73,7 @@
     telegram: { lists: new Map(), messages: new Map(), busy: new Set() }
   };
   let refreshPromise = null;
+  const expandedProjects = new Set();
 
   function isPresetCaptionProject(project) {
     return project === "maya-photos" || project === "jindagi-kitaab";
@@ -303,6 +304,27 @@
     for (const id of fbMap.keys()) if (!orderedIds.includes(id)) orderedIds.push(id);
     for (const id of tgMap.keys()) if (!orderedIds.includes(id)) orderedIds.push(id);
 
+    if (!orderedIds.length) return;
+
+    const ttDone = orderedIds.filter(id => ttMap.get(id)?.status === "posted").length;
+    const fbDone = orderedIds.filter(id => fbMap.get(id)?.status === "posted").length;
+    const tgDone = orderedIds.filter(id => tgMap.get(id)?.status === "posted").length;
+
+    const details = document.createElement("details");
+    details.className = "tiktok-expander";
+    details.open = expandedProjects.has(project);
+    details.addEventListener("toggle", () => {
+      if (details.open) expandedProjects.add(project);
+      else expandedProjects.delete(project);
+    });
+
+    const summary = document.createElement("summary");
+    summary.textContent = `${orderedIds.length} ready · ♪ ${ttDone} · f ${fbDone} · ✈ ${tgDone}`;
+    details.append(summary);
+
+    const rowsWrap = document.createElement("div");
+    rowsWrap.className = "tiktok-rows";
+
     for (const id of orderedIds) {
       const known = ttMap.get(id) || fbMap.get(id) || tgMap.get(id);
       const ttVideo = ttMap.get(id) || { day: known.day, file: known.file, ext: known.ext, status: 'unposted', active: false };
@@ -324,8 +346,11 @@
       if (fbSlot) row.append(fbSlot);
       const tgSlot = renderPlatformAction("telegram", project, tgVideo);
       if (tgSlot) row.append(tgSlot);
-      panel.append(row);
+      rowsWrap.append(row);
     }
+
+    details.append(rowsWrap);
+    panel.append(details);
   }
 
   async function fetchPlatformVideos(platformId, project, suppressMissing = false) {
