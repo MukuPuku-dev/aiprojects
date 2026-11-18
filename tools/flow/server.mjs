@@ -4,8 +4,7 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { generateCharactersInFlow, generateFrameVideo, generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
-import { handleFramesRoute } from './frames-routes.mjs';
+import { generateCharactersInFlow, generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
 import { resolveRequiredCharacters } from './flow-characters.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
@@ -24,7 +23,6 @@ const queue = createGenerationQueue(job => {
   if (job.mode === 'youtube') return uploadToYouTube(job);
   if (job.mode === 'characters') return generateCharactersInFlow(job);
   if (job.mode === 'image-batch') return generateImageBatch(job);
-  if (job.mode === 'frames-video') return generateFrameVideo(job);
   return job.mode === 'image' ? generateImage(job) : generateVideo(job);
 });
 const tiktok = createTikTokService(ROOT);
@@ -477,7 +475,6 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
   if (url.pathname === '/api/server') return handleServerControl(req, res);
   if (url.pathname.startsWith('/api/explainer/')) return handleExplainerRoute(req, res, url);
-  if (url.pathname.startsWith('/api/frames/')) return handleFramesRoute(req, res, url, { root: ROOT, port: PORT, queue, send, readBody });
   if (url.pathname.startsWith('/api/tiktok/')) return handleSocialRoute(req, res, url, '/api/tiktok', tiktok, 'TikTok');
   if (url.pathname.startsWith('/api/facebook/')) return handleSocialRoute(req, res, url, '/api/facebook', facebook, 'Facebook');
   if (url.pathname.startsWith('/api/telegram/')) return handleSocialRoute(req, res, url, '/api/telegram', telegram, 'Telegram');
