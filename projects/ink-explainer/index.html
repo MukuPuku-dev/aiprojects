@@ -225,11 +225,28 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         </label>
       </div>
       <div class="btns">
-        <button type="button" class="primary" id="p-export">🎥 Export Full Episode (.webm)</button>
+        <label class="pill-lbl" title="Export only a specific beat range (e.g. 1 to 50)">Beats:
+          <input type="number" id="export-from-beat" min="1" value="1" style="width:58px;padding:3px 6px">
+          <span>to</span>
+          <input type="number" id="export-to-beat" min="1" value="32" style="width:58px;padding:3px 6px">
+        </label>
+        <button type="button" class="primary" id="p-export">🎥 Export Video (.webm)</button>
         <button type="button" class="danger hide" id="p-stop-export">⏹ Finish &amp; Save Now</button>
         <button type="button" id="p-manifest">📋 CapCut Beat Timeline (.json)</button>
         <button type="button" id="btn-refresh">🔄 Refresh</button>
       </div>
+    </div>
+    <div class="row" style="margin-top:8px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:9px;justify-content:space-between">
+      <div class="row">
+        <span class="sub"><b>🎙 Voiceover Request Planner:</b></span>
+        <label class="pill-lbl">Blocks:
+          <input type="number" id="tts-from-blk" min="1" value="1" style="width:54px;padding:2px 6px">
+          <span>to</span>
+          <input type="number" id="tts-to-blk" min="1" value="4" style="width:54px;padding:2px 6px">
+        </label>
+        <label class="pill-lbl"><input type="checkbox" id="tts-only-missing" checked> Skip already generated</label>
+      </div>
+      <span class="sub" id="tts-plan-badge" style="color:var(--amber);font-weight:700">TTS Plan: calculating…</span>
     </div>
     <div class="beat-strip-nav" id="player-pills"></div>
     <div class="sub" id="player-status" style="margin-top:6px">Ready. Press Play Full Episode to preview rapid 1.5–2.5s visual switching right now.</div>
@@ -273,6 +290,7 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
           </select>
         </label>
         <button type="button" class="ok" id="btn-upload-yt">▶ Upload Exported Video to YouTube Studio</button>
+        <button type="button" style="background:#229ED9;color:#fff;border-color:#229ED9;font-weight:700" id="btn-send-tg">✈ Send Exported Video to Telegram</button>
       </div>
       <span class="sub" id="yt-status"></span>
     </div>
@@ -412,6 +430,25 @@ function renderAll() {
 
   renderEpisodeSelector();
   if ($("#lang-sel")) $("#lang-sel").value = activeLanguage();
+  const maxB = Math.max(1, beats.length);
+  const maxBlk = Math.max(1, (ep.blocks || []).length);
+  if ($("#export-from-beat") && $("#export-from-beat").dataset.ep !== ep.id) {
+    $("#export-from-beat").value = "1";
+    $("#export-from-beat").max = String(maxB);
+    $("#export-from-beat").dataset.ep = ep.id;
+    $("#export-to-beat").value = String(maxB);
+    $("#export-to-beat").max = String(maxB);
+    $("#export-to-beat").dataset.ep = ep.id;
+  }
+  if ($("#tts-from-blk") && $("#tts-from-blk").dataset.ep !== ep.id) {
+    $("#tts-from-blk").value = "1";
+    $("#tts-from-blk").max = String(maxBlk);
+    $("#tts-from-blk").dataset.ep = ep.id;
+    $("#tts-to-blk").value = String(maxBlk);
+    $("#tts-to-blk").max = String(maxBlk);
+    $("#tts-to-blk").dataset.ep = ep.id;
+  }
+  updateTtsPlanSummary();
   renderCast();
   renderPlayerPills();
   renderBlocks();
@@ -628,20 +665,64 @@ async function generateBlockVoiceover(blockId, silent = false) {
   }
 }
 
+function plannedTtsBlocks() {
+  const ep = inkExplainerActiveEpisode();
+  const blocks = ep.blocks || [];
+  const fromEl = $("#tts-from-blk");
+  const toEl = $("#tts-to-blk");
+  const onlyMissing = $("#tts-only-missing")?.checked !== false;
+  const fromB = Math.max(1, Number(fromEl?.value || 1));
+  const toB = Math.max(fromB, Math.min(blocks.length || 1, Number(toEl?.value || blocks.length || 1)));
+  return blocks.filter(b => {
+    const id = Number(b.blockId);
+    if (id < fromB || id > toB) return false;
+    if (onlyMissing && assets.blockAudio[b.blockId]) return false;
+    return true;
+  });
+}
+
+function updateTtsPlanSummary() {
+  const ep = inkExplainerActiveEpisode();
+  const blocks = ep.blocks || [];
+  const planned = plannedTtsBlocks();
+  const totalWords = planned.reduce((sum, blk) =>
+    sum + blk.beats.reduce((w, b) => w + String(b.narration || "").trim().split(/\s+/).filter(Boolean).length, 0)
+  , 0);
+  const badge = $("#tts-plan-badge");
+  if (!badge) return;
+  if (!planned.length) {
+    badge.textContent = `TTS Plan: 0 Gemini TTS requests needed (all selected blocks already have audio ✓)`;
+  } else {
+    const ids = planned.map(b => b.blockId).join(", ");
+    badge.textContent = `TTS Plan: ${planned.length} Gemini TTS request${planned.length === 1 ? "" : "s"} (Blocks ${ids} · ~${totalWords} words)`;
+  }
+}
+
 async function generateAllVoiceovers() {
   if (audioBatchBusy) return;
+  const planned = plannedTtsBlocks();
+  if (!planned.length) {
+    toast("All selected blocks already have voiceovers ✓");
+    return;
+  }
+  const totalWords = planned.reduce((sum, blk) =>
+    sum + blk.beats.reduce((w, b) => w + String(b.narration || "").trim().split(/\s+/).filter(Boolean).length, 0)
+  , 0);
+  if (!confirm(`This will make ${planned.length} Gemini TTS request(s) (Blocks ${planned.map(b => b.blockId).join(", ")}, ~${totalWords} words total).\n\nProceed?`)) {
+    return;
+  }
   audioBatchBusy = true;
   $("#btn-gen-all-audio").disabled = true;
   try {
-    const ep = inkExplainerActiveEpisode();
-    for (const blk of ep.blocks || []) {
+    for (const blk of planned) {
       const ok = await generateBlockVoiceover(blk.blockId, true);
       if (!ok) break;
     }
-    toast("Full episode voiceover ready ✓");
+    toast("Planned voiceovers complete ✓");
   } finally {
     audioBatchBusy = false;
     $("#btn-gen-all-audio").disabled = false;
+    updateTtsPlanSummary();
   }
 }
 
@@ -916,6 +997,8 @@ const player = {
   timerStartMs: 0,
   exporting: false,
   clipEndBlkIdx: null,
+  clipEndSec: null,
+  lastSavedFileName: "episode.webm",
   recorder: null,
   chunks: []
 };
@@ -1317,6 +1400,11 @@ function tickPlayerLoop() {
     drawCurrentFrame(elapsed);
     updatePlayerChrome(elapsed);
 
+    if (player.clipEndBlkIdx !== null && player.blkIdx === player.clipEndBlkIdx && player.clipEndSec !== null && elapsed >= player.clipEndSec) {
+      finishEpisodePlayback();
+      return;
+    }
+
     if (!hasAudio && elapsed >= totalBlkDur) {
       startBlockPlayback(player.blkIdx + 1, 0);
       return;
@@ -1387,7 +1475,7 @@ function jumpToBeatNumber(beatNum, autoplay = false) {
   }
 }
 
-async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null) {
+async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null, startLocalIdx = 0, endSecCutoff = null, customFileName = "") {
   if (typeof MediaRecorder === "undefined" || !canvas.captureStream) {
     toast("Your browser does not support canvas MediaRecorder export");
     return;
@@ -1401,6 +1489,7 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null) {
   const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") ? "video/webm;codecs=vp9,opus" : "video/webm";
   const isClip = endBlkIdx !== null && Number.isInteger(endBlkIdx);
   player.clipEndBlkIdx = isClip ? endBlkIdx : null;
+  player.clipEndSec = endSecCutoff;
   player.chunks = [];
   player.exporting = true;
   player.recorder = new MediaRecorder(combined, { mimeType: mime, videoBitsPerSecond: 4_500_000 });
@@ -1408,8 +1497,9 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null) {
   player.recorder.onstop = async () => {
     player.exporting = false;
     player.clipEndBlkIdx = null;
+    player.clipEndSec = null;
     $("#p-export").disabled = false;
-    $("#p-export").textContent = "🎥 Export Full Episode (.webm)";
+    $("#p-export").textContent = "🎥 Export Video (.webm)";
     $("#p-stop-export").classList.add("hide");
     if (!player.chunks.length) {
       $("#export-status").textContent = "Export produced 0 bytes. Make sure at least one frame played.";
@@ -1420,38 +1510,68 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null) {
     if (player.lastExportUrl) URL.revokeObjectURL(player.lastExportUrl);
     const url = URL.createObjectURL(blob);
     player.lastExportUrl = url;
-    const fname = isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.webm` : `${state.episodeId}.webm`;
+    const serverFile = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.webm` : "episode.webm");
+    const dlName = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.webm` : `${state.episodeId}.webm`);
 
     let savedNote = "";
-    if (!isFile && !isClip) {
+    if (!isFile) {
       try {
         $("#export-status").textContent = `Saving ${sizeMb} MB video to workspace…`;
-        const sr = await fetch(`/api/explainer/save-export?project=${PROJECT_ID}&episode=${encodeURIComponent(state.episodeId)}`, {
+        const sr = await fetch(`/api/explainer/save-export?project=${PROJECT_ID}&episode=${encodeURIComponent(state.episodeId)}&file=${encodeURIComponent(serverFile)}`, {
           method: "POST",
           headers: { "Content-Type": "video/webm" },
           body: blob
         });
         const sj = await sr.json();
-        if (sr.ok && sj.ok) savedNote = ` · Saved on disk: <a href="${esc(sj.url)}" target="_blank" rel="noopener" style="color:var(--ok)">Open saved video ↗</a>`;
+        if (sr.ok && sj.ok) {
+          player.lastSavedFileName = sj.fileName || serverFile;
+          savedNote = ` · Saved on disk: <a href="${esc(sj.url)}" target="_blank" rel="noopener" style="color:var(--ok)">Open saved video ↗</a>`;
+        }
       } catch {}
     }
 
-    $("#export-status").innerHTML = `<span style="color:var(--ok)">✓ Export ready (${sizeMb} MB):</span> <a href="${esc(url)}" download="${esc(fname)}" style="color:var(--amber);font-weight:700">⬇ Download ${esc(fname)}</a>${savedNote}`;
+    $("#export-status").innerHTML = `<span style="color:var(--ok)">✓ Export ready (${sizeMb} MB):</span> <a href="${esc(url)}" download="${esc(dlName)}" style="color:var(--amber);font-weight:700">⬇ Download ${esc(dlName)}</a>${savedNote}`;
     const a = document.createElement("a");
     a.href = url;
-    a.download = fname;
+    a.download = dlName;
     a.click();
-    toast(isClip ? `Exported Block ${startBlkIdx + 1} clip ✓` : "Exported full episode WebM ✓");
+    toast(isClip ? `Exported clip (${dlName}) ✓` : "Exported full episode WebM ✓");
   };
   $("#p-export").disabled = true;
   $("#p-stop-export").classList.remove("hide");
-  $("#p-export").textContent = isClip ? `⏺ Recording Block ${startBlkIdx + 1} Clip…` : "⏺ Recording 0%…";
+  $("#p-export").textContent = isClip ? `⏺ Recording Selection…` : "⏺ Recording 0%…";
   const spd = activeSpeed();
   $("#export-status").textContent = isClip
-    ? `Recording Block ${startBlkIdx + 1} clip at ${spd}x…`
+    ? `Recording selected range at ${spd}x…`
     : `Recording at ${spd}x (~${fmtSec(totalEpisodeDuration() / spd)} real time). Click "Finish & Save Now" anytime to save early.`;
   player.recorder.start(1000);
-  await startBlockPlayback(startBlkIdx, 0);
+  await startBlockPlayback(startBlkIdx, startLocalIdx);
+}
+
+async function exportBeatRange() {
+  const ep = inkExplainerActiveEpisode();
+  const blocks = ep.blocks || [];
+  const totalBeats = inkExplainerActiveBeats().length;
+  const fromB = Math.max(1, Math.min(totalBeats, Number($("#export-from-beat")?.value || 1)));
+  const toB = Math.max(fromB, Math.min(totalBeats, Number($("#export-to-beat")?.value || totalBeats)));
+
+  if (fromB === 1 && toB === totalBeats) {
+    await exportWebmVideo(0, null, 0, null, "episode.webm");
+    return;
+  }
+  let startPos = null;
+  let endPos = null;
+  for (let bi = 0; bi < blocks.length; bi++) {
+    const blk = blocks[bi];
+    const timings = getBlockTimings(blk);
+    blk.beats.forEach((b, li) => {
+      if (b.beat === fromB) startPos = { bi, li };
+      if (b.beat === toB) endPos = { bi, li, endSec: timings[li]?.endSec || null };
+    });
+  }
+  if (!startPos || !endPos) { toast("Invalid beat range"); return; }
+  const customName = `episode-beats-${String(fromB).padStart(2, "0")}-${String(toB).padStart(2, "0")}.webm`;
+  await exportWebmVideo(startPos.bi, endPos.bi, startPos.li, endPos.endSec, customName);
 }
 
 /* ---------- Step 5: Publish Pack (Chapters, SRT Subtitles, Gemini SEO & YouTube Upload) ---------- */
@@ -1597,6 +1717,7 @@ async function uploadEpisodeToYouTube() {
         id: jobId,
         project: PROJECT_ID,
         episode: ep.id,
+        fileName: player.lastSavedFileName || "episode.webm",
         title: $("#pub-yt-title").value.trim() || ep.title,
         description: $("#pub-yt-desc").value.trim(),
         visibility: $("#yt-visibility").value || "unlisted"
@@ -1619,6 +1740,36 @@ async function uploadEpisodeToYouTube() {
   } catch (err) {
     $("#yt-status").textContent = `YouTube error: ${err.message}`;
     toast(`YouTube error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function sendEpisodeToTelegram() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to send to Telegram"); return; }
+  const ep = inkExplainerActiveEpisode();
+  const btn = $("#btn-send-tg");
+  btn.disabled = true;
+  const fileName = player.lastSavedFileName || "episode.webm";
+  $("#yt-status").textContent = `Sending ${fileName} to Telegram…`;
+  try {
+    const r = await fetch("/api/explainer/send-telegram", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        episode: ep.id,
+        fileName,
+        caption: $("#pub-social-cap").value.trim() || `${ep.title}\n\n${ep.hook || ""}`
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Telegram send failed");
+    $("#yt-status").textContent = `✓ Sent ${fileName} to Telegram!`;
+    toast("Sent to Telegram ✓");
+  } catch (err) {
+    $("#yt-status").textContent = `Telegram error: ${err.message}`;
+    toast(`Telegram error: ${err.message}`);
   } finally {
     btn.disabled = false;
   }
@@ -1741,6 +1892,10 @@ $("#p-speed").addEventListener("change", () => {
 $("#btn-gen-publish").addEventListener("click", generatePublishPack);
 $("#btn-dl-srt").addEventListener("click", downloadSrtSubtitles);
 $("#btn-upload-yt").addEventListener("click", uploadEpisodeToYouTube);
+$("#btn-send-tg").addEventListener("click", sendEpisodeToTelegram);
+$("#tts-from-blk").addEventListener("input", updateTtsPlanSummary);
+$("#tts-to-blk").addEventListener("input", updateTtsPlanSummary);
+$("#tts-only-missing").addEventListener("change", updateTtsPlanSummary);
 $("#publish-panel").addEventListener("click", async e => {
   const b = e.target.closest("button[data-copy-target]");
   if (!b) return;
@@ -1749,7 +1904,7 @@ $("#publish-panel").addEventListener("click", async e => {
   try { await navigator.clipboard.writeText(el.value); } catch {}
   toast("Copied ✓");
 });
-$("#p-export").addEventListener("click", () => exportWebmVideo(0, null));
+$("#p-export").addEventListener("click", exportBeatRange);
 $("#p-stop-export").addEventListener("click", finishEpisodePlayback);
 $("#p-manifest").addEventListener("click", downloadCapCutTimeline);
 $("#player-pills").addEventListener("click", e => {

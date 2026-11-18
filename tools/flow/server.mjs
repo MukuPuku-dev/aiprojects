@@ -9,7 +9,7 @@ import { resolveRequiredCharacters } from './flow-characters.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
 import { createFacebookService } from './facebook.mjs';
-import { createTelegramService } from './telegram.mjs';
+import { createTelegramService, uploadToTelegram } from './telegram.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
 import { callGeminiText, deleteBeatImage, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode } from './explainer-service.mjs';
 import { uploadToYouTube } from './youtube.mjs';
@@ -240,8 +240,10 @@ async function handleExplainerRoute(req, res, url) {
     try {
       const project = url.searchParams.get('project') || 'ink-explainer';
       const episode = url.searchParams.get('episode') || 'ancient-humans-day';
+      const rawFile = url.searchParams.get('file') || 'episode.webm';
       if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
-      const outPath = path.join(ROOT, 'projects', project, 'episodes', episode, 'episode.webm');
+      if (!/^[a-z0-9._-]+\.webm$/i.test(rawFile)) throw new Error('Invalid export filename.');
+      const outPath = path.join(ROOT, 'projects', project, 'episodes', episode, rawFile);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       const tmpPath = `${outPath}.${process.pid}.${Date.now()}.tmp`;
       const ws = fs.createWriteStream(tmpPath);
@@ -252,7 +254,7 @@ async function handleExplainerRoute(req, res, url) {
         req.on('error', reject);
       });
       fs.renameSync(tmpPath, outPath);
-      return send(res, 200, { ok: true, url: `/projects/${project}/episodes/${episode}/episode.webm` });
+      return send(res, 200, { ok: true, fileName: rawFile, url: `/projects/${project}/episodes/${episode}/${rawFile}` });
     } catch (err) {
       return send(res, 400, { ok: false, error: err.message });
     }
@@ -446,10 +448,13 @@ async function handleExplainerRoute(req, res, url) {
     if (url.pathname === '/api/explainer/upload-youtube') {
       const project = body.project || 'ink-explainer';
       const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      const fileName = typeof body.fileName === 'string' && /^[a-z0-9._-]+\.(webm|mp4)$/i.test(body.fileName.trim())
+        ? body.fileName.trim()
+        : 'episode.webm';
       if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
-      const filePath = path.join(ROOT, 'projects', project, 'episodes', episode, 'episode.webm');
+      const filePath = path.join(ROOT, 'projects', project, 'episodes', episode, fileName);
       if (!fs.existsSync(filePath)) {
-        throw new Error('Exported episode.webm not found. Click "Export Full Episode (.webm)" first.');
+        throw new Error(`Exported ${fileName} not found. Export the video first.`);
       }
       const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
       if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
@@ -463,6 +468,23 @@ async function handleExplainerRoute(req, res, url) {
         log: m => console.log(`[youtube ${episode}] ${m}`)
       });
       return send(res, 202, { ok: true, id: tracked.id, status: tracked.status });
+    }
+    if (url.pathname === '/api/explainer/send-telegram') {
+      const project = body.project || 'ink-explainer';
+      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      const fileName = typeof body.fileName === 'string' && /^[a-z0-9._-]+\.(webm|mp4)$/i.test(body.fileName.trim())
+        ? body.fileName.trim()
+        : 'episode.webm';
+      if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
+      const filePath = path.join(ROOT, 'projects', project, 'episodes', episode, fileName);
+      if (!fs.existsSync(filePath)) {
+        throw new Error(`Exported ${fileName} not found. Export the video first.`);
+      }
+      await uploadToTelegram({
+        file: filePath,
+        caption: typeof body.caption === 'string' ? body.caption : ''
+      });
+      return send(res, 200, { ok: true, fileName });
     }
     return send(res, 404, { ok: false, error: 'Not found.' });
   } catch (err) {

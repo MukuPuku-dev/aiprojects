@@ -1,0 +1,996 @@
+{
+  "id": "anglo-nepal-war-start-to-end-impacts",
+  "title": "कसरी एक सानो पहाडी राज्यले ब्रिटिस साम्राज्यलाई हल्लायो?",
+  "subtitle": "Rapid-Beat Explainer",
+  "hook": "एउटा सानो हिमाली राज्यले विश्वकै शक्तिशाली ब्रिटिस सेनालाई कसरी घुँडा टेकायो?",
+  "niche": "History & Human Curiosity",
+  "language": "ne",
+  "characters": [
+    {
+      "code": "SOLDIER",
+      "name": "गोर्खा सिपाही",
+      "role": "Lead",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, wearing a traditional Nepali Dhaka topi and khaki uniform, holding a khukuri knife."
+    },
+    {
+      "code": "BRITISH",
+      "name": "ब्रिटिस जनरल",
+      "role": "Antagonist",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, wearing a red British colonial officer uniform with a large tricorn hat."
+    }
+  ],
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "Block 1 · The Expansion Spark",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "map-diagram",
+          "label": "एशियाको नक्सा",
+          "emotion": "curious",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "अठारौँ शताब्दीको उत्तरार्धतिर,",
+          "visual": "A simple black ink outline map of South Asia on white background with a growing ink blot."
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "विस्तार",
+          "emotion": "energetic",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "नेपाल एकीकरणको लहर चलिरहेको थियो।",
+          "visual": "Stickman soldier marching forward with a flag, leaving small black footprints behind."
+        },
+        {
+          "beat": 3,
+          "cardType": "map-diagram",
+          "label": "सिमाना",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "पहाडी राज्यहरूको तीव्र विस्तारले,",
+          "visual": "Map showing small mountain territories merging into one large shaded region."
+        },
+        {
+          "beat": 4,
+          "cardType": "split-compare",
+          "label": "भेट",
+          "emotion": "tense",
+          "characters": [
+            "SOLDIER",
+            "BRITISH"
+          ],
+          "narration": "ब्रिटिस इस्ट इन्डिया कम्पनीलाई भेट्टायो।",
+          "visual": "Split screen comparing a Nepali hill soldier on left and a British redcoat soldier on right."
+        },
+        {
+          "beat": 5,
+          "cardType": "flat-scene",
+          "label": "तनाव",
+          "emotion": "anxious",
+          "characters": [],
+          "narration": "दुवै शक्तिहरू आमनेसामने आए।",
+          "visual": "Two opposing stick figures staring intensely across a dashed line on the ground."
+        },
+        {
+          "beat": 6,
+          "cardType": "red-x",
+          "label": "टकराव",
+          "emotion": "shocked",
+          "characters": [],
+          "narration": "सिमानाको यो विवादले,",
+          "visual": "A red X mark flashing over a disputed border line on a parchment map."
+        },
+        {
+          "beat": 7,
+          "cardType": "whiteboard-prop",
+          "label": "युद्धघोषणा",
+          "emotion": "dramatic",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "ठوलो युद्धको बीजारोपण गर्यो।",
+          "visual": "A wooden scroll unrolling on screen with bold ink text 'WAR 1814'."
+        },
+        {
+          "beat": 8,
+          "cardType": "flat-scene",
+          "label": "तयारी",
+          "emotion": "serious",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "नेपाली सेना युद्धका लागि तयार भयो।",
+          "visual": "Stickman warrior sharpening a traditional curved khukuri blade against a whetstone."
+        },
+        {
+          "beat": 9,
+          "cardType": "map-diagram",
+          "label": "मोर्चाहरू",
+          "emotion": "urgent",
+          "characters": [],
+          "narration": "चारवटा भिन्न मोर्चाहरूमा,",
+          "visual": "Map of Nepal with four blinking red arrows pointing inward from the southern plains."
+        },
+        {
+          "beat": 10,
+          "cardType": "whiteboard-prop",
+          "label": "सैन्य शक्ति",
+          "emotion": "neutral",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "ब्रिटिस सेना संख्यामा निकै ठूलो थियो।",
+          "visual": "Icon of a massive army of stickmen neatly lined up with muskets."
+        },
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "आत्मविश्वास",
+          "emotion": "confident",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "तर नेपालीहरूको साहस अदम्य थियो।",
+          "visual": "A single stick figure standing tall and fearless against a giant wall."
+        },
+        {
+          "beat": 12,
+          "cardType": "flat-scene",
+          "label": "आरम्भ",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "इतिहासको ठूलो युद्ध सुरु भयो।",
+          "visual": "Ink splashes dramatically across the screen forming the title '1814 AD'."
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "Block 2 · The Brutal Frontlines",
+      "beats": [
+        {
+          "beat": 13,
+          "cardType": "flat-scene",
+          "label": "नालापानी",
+          "emotion": "tense",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "सन् १८१४ को नोभेम्बरमा,",
+          "visual": "Stickman defender standing atop a rugged hill fortress holding a spear."
+        },
+        {
+          "beat": 14,
+          "cardType": "whiteboard-prop",
+          "label": "बलभद्र",
+          "emotion": "admiring",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "कप्तान बलभद्र कुँवरले मोर्चा सम्हाले।",
+          "visual": "Nameplate graphic 'Kapilbhadra Kunwar' with an ink sketch of a fort."
+        },
+        {
+          "beat": 15,
+          "cardType": "flat-scene",
+          "label": "घेराबन्दी",
+          "emotion": "serious",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "हजारौँ ब्रिटिस सैनिकले किल्ला घेरे।",
+          "visual": "Multiple enemy stick figures surrounding a small stone fort with cannons."
+        },
+        {
+          "beat": 16,
+          "cardType": "red-x",
+          "label": "पानी काटियो",
+          "emotion": "shocked",
+          "characters": [],
+          "narration": "किल्लाको पानीको मूल सुकाइयो।",
+          "visual": "A water spring icon blocked by a large red X mark."
+        },
+        {
+          "beat": 17,
+          "cardType": "flat-scene",
+          "label": "संकट",
+          "emotion": "desperate",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "पानी बिना नै लडाइँ जारी रह्यो।",
+          "visual": "Thirsty stickman soldier fighting with cracked lips under a blazing sun."
+        },
+        {
+          "beat": 18,
+          "cardType": "whiteboard-prop",
+          "label": "तोडफोड",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "ब्रिटिस तोपले पर्खाल भत्काए।",
+          "visual": "Animated cannonball crashing into a brick wall drawing."
+        },
+        {
+          "beat": 19,
+          "cardType": "flat-scene",
+          "label": "नत्र झुक्दैनौँ",
+          "emotion": "heroic",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "आत्मसमर्पण गर्न अस्वीकार गरियो।",
+          "visual": "Stickman waving a broken Nepali flag defiantly amidst smoke."
+        },
+        {
+          "beat": 20,
+          "cardType": "flat-scene",
+          "label": "जैथगढ",
+          "emotion": "tense",
+          "characters": [],
+          "narration": "उता जैथगढमा पनि उस्तै दृश्य थियो।",
+          "visual": "Another steep mountain fort sketch with defenders preparing rocks."
+        },
+        {
+          "beat": 21,
+          "cardType": "whiteboard-prop",
+          "label": "भक्ति थापा",
+          "emotion": "inspired",
+          "characters": [],
+          "narration": "वृद्ध सरदार भक्ति थापा लडे।",
+          "visual": "Portrait sketch of an elderly bearded warrior with a turban."
+        },
+        {
+          "beat": 22,
+          "cardType": "flat-scene",
+          "label": "बलिदान",
+          "emotion": "moureful",
+          "characters": [],
+          "narration": "वीरगति प्राप्त गरे, तर झुकेनन्।",
+          "visual": "Stickman falling gently under a shower of falling autumn leaves."
+        },
+        {
+          "beat": 23,
+          "cardType": "split-compare",
+          "label": "आश्चर्य",
+          "emotion": "shocked",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "ब्रिटिस सेनापतिहरू चकित भए।",
+          "visual": "British commander stick figure dropping his monocle in absolute disbelief."
+        },
+        {
+          "beat": 24,
+          "cardType": "flat-scene",
+          "label": "कठिन युद्ध",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "सोचेभन्दा धेरै कडा प्रतिरोध थियो।",
+          "visual": "Crossed muskets and khukuri over a dark charcoal background."
+        }
+      ]
+    },
+    {
+      "blockId": 3,
+      "title": "Block 3 · The Heroism at Malaugi",
+      "beats": [
+        {
+          "beat": 25,
+          "cardType": "map-diagram",
+          "label": "मलाउ",
+          "emotion": "curious",
+          "characters": [],
+          "narration": "मलाउँ किल्लाको युद्ध मैदान,",
+          "visual": "Map zooming in on a high altitude ridge named Malaugi."
+        },
+        {
+          "beat": 26,
+          "cardType": "flat-scene",
+          "label": "अमरसिंह",
+          "emotion": "proud",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "अमरसिंह थापाले नेतृत्व गरे।",
+          "visual": "Commander stick figure pointing forward with a long sword on a hill."
+        },
+        {
+          "beat": 27,
+          "cardType": "whiteboard-prop",
+          "label": "घेरा",
+          "emotion": "tense",
+          "characters": [],
+          "narration": "चारैतिरबाट शत्रुले घेरेका थिए।",
+          "visual": "Concentric circles of enemy troops closing in on a central fort."
+        },
+        {
+          "beat": 28,
+          "cardType": "flat-scene",
+          "label": "रसदपानी",
+          "emotion": "anxious",
+          "characters": [],
+          "narration": "खाना र गोलाबारूद सकिँदै थियो।",
+          "visual": "An empty wooden supply crate with dust blowing out of it."
+        },
+        {
+          "beat": 29,
+          "cardType": "split-compare",
+          "label": "पत्र",
+          "emotion": "neutral",
+          "characters": [
+            "BRITISH",
+            "SOLDIER"
+          ],
+          "narration": "अक्टरलोनीले आत्मसमर्पणको प्रस्ताव पठाए।",
+          "visual": "A letter sliding across the screen between a British officer and Nepali leader."
+        },
+        {
+          "beat": 30,
+          "cardType": "whiteboard-prop",
+          "label": "सम्मान",
+          "emotion": "admiring",
+          "characters": [],
+          "narration": "तर ब्रिटिसहरूले पनि तारिफ गरे।",
+          "visual": "A glowing medal icon with ribbon on a clean white background."
+        },
+        {
+          "beat": 31,
+          "cardType": "flat-scene",
+          "label": "शौर्य",
+          "emotion": "inspired",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "नेपालीहरूको बहादुरी अद्भुत थियो।",
+          "visual": "Stickman soldier standing tall with a glowing aura of bravery."
+        },
+        {
+          "beat": 32,
+          "cardType": "red-x",
+          "label": "हार स्वीकार",
+          "emotion": "somber",
+          "characters": [],
+          "narration": "भौगोलिक अवस्थाले साथ दिएन।",
+          "visual": "A mountain path blocked by a red X mark."
+        },
+        {
+          "beat": 33,
+          "cardType": "flat-scene",
+          "label": "सम्झौता",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "अन्ततः पछि हट्नुपर्ने बाध्यता आयो।",
+          "visual": "Stick figures slowly walking back down a winding mountain trail."
+        },
+        {
+          "beat": 34,
+          "cardType": "whiteboard-prop",
+          "label": "सम्मानजनक",
+          "emotion": "warmly",
+          "characters": [],
+          "narration": "सम्मानजनक शर्तहरू राखिए।",
+          "visual": "A handshake icon drawn inside a decorative ink circle."
+        },
+        {
+          "beat": 35,
+          "cardType": "flat-scene",
+          "label": "सिक्नुपर्ने पाठ",
+          "emotion": "reflective",
+          "characters": [],
+          "narration": "शत्रुले पनि शत्रुको प्रशंसा गरे।",
+          "visual": "Two opposing stickmen bowing respectfully to each other."
+        },
+        {
+          "beat": 36,
+          "cardType": "flat-scene",
+          "label": "निरन्तरता",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "तर युद्ध अझै समाप्त भएको थिएन।",
+          "visual": "A ticking pocket watch sketch counting down time."
+        }
+      ]
+    },
+    {
+      "blockId": 4,
+      "title": "Block 4 · The Turning Tide & Makwanpur",
+      "beats": [
+        {
+          "beat": 37,
+          "cardType": "map-diagram",
+          "label": "तराई",
+          "emotion": "urgent",
+          "characters": [],
+          "narration": "युद्ध अब राजधानीतिर लम्कियो।",
+          "visual": "Map showing a red path moving from the hills down toward Kathmandu."
+        },
+        {
+          "beat": 38,
+          "cardType": "flat-scene",
+          "label": "मकवानपुर",
+          "emotion": "tense",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "मकवानपुरगढीमा निर्णायक लडाइँ भयो।",
+          "visual": "Defenders guarding a massive stone gateway with heavy logs and spears."
+        },
+        {
+          "beat": 39,
+          "cardType": "whiteboard-prop",
+          "label": "अक्टरलोनी",
+          "emotion": "serious",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "جنरल अक्टरलोनीले नयाँ रणनीति बनाए।",
+          "visual": "An ink map with strategic arrows drawn in black and red ink."
+        },
+        {
+          "beat": 40,
+          "cardType": "flat-scene",
+          "label": "चैत्य",
+          "emotion": "shocked",
+          "characters": [],
+          "narration": "राति नै पहाड चढेर आक्रमण गरे।",
+          "visual": "Stick figures climbing a steep cliffside under a crescent moon."
+        },
+        {
+          "beat": 41,
+          "cardType": "flat-scene",
+          "label": "प्रतिवाद",
+          "emotion": "energetic",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "नेपाली सेनाले कडा जवाफ फर्कायो।",
+          "visual": "Defenders rolling giant boulders down a slope onto attackers."
+        },
+        {
+          "beat": 42,
+          "cardType": "red-x",
+          "label": "क्षति",
+          "emotion": "somber",
+          "characters": [],
+          "narration": "दुवैतर्फ भारी क्षति भयो।",
+          "visual": "Broken weapons scattered on the ground with a red cross overhead."
+        },
+        {
+          "beat": 43,
+          "cardType": "whiteboard-prop",
+          "label": "खतरा",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "काठमाडौँ अब सीधै खतरामा पर्यो।",
+          "visual": "A target reticle pointing directly at a sketch of Kathmandu valley."
+        },
+        {
+          "beat": 44,
+          "cardType": "flat-scene",
+          "label": "निर्णय",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "दरबारमा गम्भीर छलफल चल्यो।",
+          "visual": "Multiple stick figures sitting in a circle discussing with worried gestures."
+        },
+        {
+          "beat": 45,
+          "cardType": "whiteboard-prop",
+          "label": "सन्धि",
+          "emotion": "neutral",
+          "characters": [],
+          "narration": "शान्ति सम्झौता बाहेک विकल्प थिएन।",
+          "visual": "A quill pen hovering over a blank document scroll."
+        },
+        {
+          "beat": 46,
+          "cardType": "flat-scene",
+          "label": "थकान",
+          "emotion": "exhausted",
+          "characters": [],
+          "narration": "दुवै पक्ष युद्धबाट थाकेका थिए।",
+          "visual": "A tired soldier leaning against a tree, resting his weapon."
+        },
+        {
+          "beat": 47,
+          "cardType": "map-diagram",
+          "label": "विराम",
+          "emotion": "calm",
+          "characters": [],
+          "narration": "हतियार बिसाउने बेला आयो।",
+          "visual": "Swords crossing and then resting peacefully side by side."
+        },
+        {
+          "beat": 48,
+          "cardType": "flat-scene",
+          "label": "इतिहास",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "इतिहास फेरिने मोडमा पुग्यो।",
+          "visual": "An hourglass turning upside down as sand flows to the bottom."
+        }
+      ]
+    },
+    {
+      "blockId": 5,
+      "title": "Block 5 · The Treaty of Sugauli",
+      "beats": [
+        {
+          "beat": 49,
+          "cardType": "whiteboard-prop",
+          "label": "सुगौली",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "सन् १८१६ मार्च ४ का दिन,",
+          "visual": "A parchment document title banner: 'Treaty of Sugauli 1816'."
+        },
+        {
+          "beat": 50,
+          "cardType": "flat-scene",
+          "label": "सही",
+          "emotion": "neutral",
+          "characters": [],
+          "narration": "सुगौली सन्धिमा हस्ताक्षर भयो।",
+          "visual": "An ink pen signing the bottom of a formal government agreement."
+        },
+        {
+          "beat": 51,
+          "cardType": "map-diagram",
+          "label": "गुमेको भूभाग",
+          "emotion": "somber",
+          "characters": [],
+          "narration": "नेपालले आफ्नो ठूलो भूभाग गुमायो।",
+          "visual": "Map of Greater Nepal shrinking as outer borders are trimmed away in red ink."
+        },
+        {
+          "beat": 52,
+          "cardType": "whiteboard-prop",
+          "label": "सीमाहरू",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "मेचीदेखि महाकालीसम्म सीमा सीमित भयो।",
+          "visual": "Two river icons labeled 'Mechi' and 'Mahakali' marking the new country borders."
+        },
+        {
+          "beat": 53,
+          "cardType": "red-x",
+          "label": "क्षेत्र त्याग",
+          "emotion": "sad",
+          "characters": [],
+          "narration": "टिस्टा र काँगडाका क्षेत्रहरू छुटे।",
+          "visual": "Regions on a map fading out with a small red cross on each."
+        },
+        {
+          "beat": 54,
+          "cardType": "flat-scene",
+          "label": "तराई त्याग",
+          "emotion": "somber",
+          "characters": [],
+          "narration": "प्रारम्भमा तराईको भूभाग पनि गुलियो।",
+          "visual": "Flat plains area shaded out with diagonal hash marks."
+        },
+        {
+          "beat": 55,
+          "cardType": "whiteboard-prop",
+          "label": "फिर्ता",
+          "emotion": "relieved",
+          "characters": [],
+          "narration": "पछि केही तराई भने फिर्ता पाइयो।",
+          "visual": "A southern strip of land highlighted back in solid black ink."
+        },
+        {
+          "beat": 56,
+          "cardType": "split-compare",
+          "label": "नक्सा परिवर्तन",
+          "emotion": "reflective",
+          "characters": [],
+          "narration": "विशाल नेपालको नक्सा सानो भयो।",
+          "visual": "Before-and-after comparison showing a large map shrinking into a compact shape."
+        },
+        {
+          "beat": 57,
+          "cardType": "flat-scene",
+          "label": "सार्वभौमिकता",
+          "emotion": "proud",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "तर स्वतन्त्रता र सार्वभौमिकता जोगियो।",
+          "visual": "A Nepali flag waving proudly on top of a mountain peak."
+        },
+        {
+          "beat": 58,
+          "cardType": "whiteboard-prop",
+          "label": "रेसिडेन्ट",
+          "emotion": "neutral",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "काठमाडौँमा ब्रिटिस प्रतिनिधि बस्न थाले।",
+          "visual": "A small colonial house drawing inside Kathmandu valley."
+        },
+        {
+          "beat": 59,
+          "cardType": "flat-scene",
+          "label": "शर्तहरू",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "कठिन शर्तहरूको पालना गर्नुपर्यो।",
+          "visual": "A strict scale of justice balancing a crown and a scroll."
+        },
+        {
+          "beat": 60,
+          "cardType": "flat-scene",
+          "label": "नयाँ युग",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "नेपालको परराष्ट्र नीति सदाका लागि बदलियो।",
+          "visual": "A compass spinning and pointing toward a new direction."
+        }
+      ]
+    },
+    {
+      "blockId": 6,
+      "title": "Block 6 · The Birth of Gurkha Recruitment",
+      "beats": [
+        {
+          "beat": 61,
+          "cardType": "flat-scene",
+          "label": "सम्मान",
+          "emotion": "admiring",
+          "characters": [
+            "BRITISH"
+          ],
+          "narration": "युद्ध मैदानको एउटा अनौठो परिणाम आयो।",
+          "visual": "British officer looking closely at a captured Nepali khukuri with awe."
+        },
+        {
+          "beat": 62,
+          "cardType": "whiteboard-prop",
+          "label": "बहादुरी",
+          "emotion": "surprised",
+          "characters": [],
+          "narration": "शत्रुले गोर्खा सैनिकको साहस बुझ्यो।",
+          "visual": "An ink quote bubble: 'Bravest of the brave'."
+        },
+        {
+          "beat": 63,
+          "cardType": "flat-scene",
+          "label": "भर्ती",
+          "emotion": "neutral",
+          "characters": [
+            "SOLDIER",
+            "BRITISH"
+          ],
+          "narration": "ब्रिटिस सेनामा गोर्खा भर्ती सुरु भयो।",
+          "visual": "Nepali soldier shaking hands with a British recruiter under a tent."
+        },
+        {
+          "beat": 64,
+          "cardType": "map-diagram",
+          "label": "विश्व यात्रा",
+          "emotion": "curious",
+          "characters": [],
+          "narration": "गोर्खा सैनिकहरू विश्वभर पुगे।",
+          "visual": "Global map with dotted lines extending from Nepal to various continents."
+        },
+        {
+          "beat": 65,
+          "cardType": "whiteboard-prop",
+          "label": "वीरता",
+          "emotion": "proud",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "उनीहरूको वीरताले इतिहास रचे।",
+          "visual": "Medals and crossed khukuri emblem on a white shield."
+        },
+        {
+          "beat": 66,
+          "cardType": "flat-scene",
+          "label": "सम्झौता",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "यो सम्झौता पछि दुवै देशबीच सम्बन्ध बदलियो।",
+          "visual": "Two flags flying side by side on a single pole."
+        },
+        {
+          "beat": 67,
+          "cardType": "whiteboard-prop",
+          "label": "मित्रता",
+          "emotion": "warmly",
+          "characters": [],
+          "narration": "शत्रुता मित्रतामा परिणत भयो।",
+          "visual": "A handshake icon framed inside a heart outline."
+        },
+        {
+          "beat": 68,
+          "cardType": "flat-scene",
+          "label": "पटक पटक",
+          "emotion": "neutral",
+          "characters": [],
+          "narration": "विभिन्न युद्धहरूमा गोर्खाले भाग लिए।",
+          "visual": "Stickman soldier marching through diverse terrains: desert, jungle, snow."
+        },
+        {
+          "beat": 69,
+          "cardType": "whiteboard-prop",
+          "label": "भिक्टोरिया क्रस",
+          "emotion": "proud",
+          "characters": [],
+          "narration": "सर्वोच्च सैन्य सम्मान प्राप्त गरे।",
+          "visual": "Victoria Cross medal drawing shining with little ink sparkles."
+        },
+        {
+          "beat": 70,
+          "cardType": "flat-scene",
+          "label": "पहिचान",
+          "emotion": "inspired",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "नेपालीको छुट्टै पहिचान विश्वभर फैलियो।",
+          "visual": "Globe spinning with a small Nepali mountain silhouette on top."
+        },
+        {
+          "beat": 71,
+          "cardType": "split-compare",
+          "label": "परिवर्तन",
+          "emotion": "reflective",
+          "characters": [],
+          "narration": "युद्धले घाउ दियो, तर नयाँ ढोका पनि खोल्यो।",
+          "visual": "Split graphic showing a battle scar on left and an open doorway on right."
+        },
+        {
+          "beat": 72,
+          "cardType": "flat-scene",
+          "label": "विरासत",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "यो विरासत आजसम्म कायम छ।",
+          "visual": "A stylized khukuri standing upright with rays of light drawn around it."
+        }
+      ]
+    },
+    {
+      "blockId": 7,
+      "title": "Block 7 · Geopolitical & Internal Impacts",
+      "beats": [
+        {
+          "beat": 73,
+          "cardType": "flat-scene",
+          "label": "एक्काइलो",
+          "emotion": "somber",
+          "characters": [],
+          "narration": "युद्धपछि नेपाल बाह्य संसारबाट अलग भयो।",
+          "visual": "A stick figure inside a protective stone boundary looking outward."
+        },
+        {
+          "beat": 74,
+          "cardType": "whiteboard-prop",
+          "label": "रणनीति",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "विदेशी हस्तक्षेप रोक्ने नीति लिइयो।",
+          "visual": "A heavy iron gate closing shut with a loud 'CLANG' text effect."
+        },
+        {
+          "beat": 75,
+          "cardType": "map-diagram",
+          "label": "घेराबन्दी नीति",
+          "emotion": "neutral",
+          "characters": [],
+          "narration": "देशभित्रै अलग्गै बस्ने अवस्था सिर्जना भयो।",
+          "visual": "Map of Nepal glowing inside an isolated protective bubble."
+        },
+        {
+          "beat": 76,
+          "cardType": "flat-scene",
+          "label": "राजनीतिक अस्थिरता",
+          "emotion": "anxious",
+          "characters": [],
+          "narration": "आन्तरिक दरबारमा राजनीतिक खिचातानी बढे।",
+          "visual": "Multiple court ministers arguing and pointing fingers at each other."
+        },
+        {
+          "beat": 77,
+          "cardType": "whiteboard-prop",
+          "label": "दरबारिया षड्यन्त्र",
+          "emotion": "tense",
+          "characters": [],
+          "narration": "विभिन्न षड्यन्त्र र हत्याकाण्डहरू भए।",
+          "visual": "A shadow cast over a royal palace sketch with a dagger icon."
+        },
+        {
+          "beat": 78,
+          "cardType": "flat-scene",
+          "label": "राना शासन",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "जसले पछि राणा शासनको उदय गरायो।",
+          "visual": "A commanding figure stepping up a staircase to a throne."
+        },
+        {
+          "beat": 79,
+          "cardType": "split-compare",
+          "label": "ब्रिटिस सम्बन्ध",
+          "emotion": "neutral",
+          "characters": [],
+          "narration": "ब्रिटिससँगको सम्बन्ध शान्तिपूर्ण राखियो।",
+          "visual": "Two leaders sitting across a tea table signing a document peacefully."
+        },
+        {
+          "beat": 80,
+          "cardType": "whiteboard-prop",
+          "label": "सुरक्षा",
+          "emotion": "relieved",
+          "characters": [],
+          "narration": "भारतका अन्य राज्य झैँ नेपाल गाभिएन।",
+          "visual": "A shield icon blocking a sword strike successfully."
+        },
+        {
+          "beat": 81,
+          "cardType": "flat-scene",
+          "label": "अस्तित्व",
+          "emotion": "proud",
+          "characters": [],
+          "narration": "स्वतन्त्र राष्ट्रको रूपमा अस्तित्व बच्यो।",
+          "visual": "A small independent flag standing firmly amidst a stormy wind."
+        },
+        {
+          "beat": 82,
+          "cardType": "map-diagram",
+          "label": "नयाँ सिमाना",
+          "emotion": "reflective",
+          "characters": [],
+          "narration": "वर्तमान नेपालको भौगोलिक रूप तय भयो।",
+          "visual": "The familiar modern map of Nepal outlined clearly in bold black ink."
+        },
+        {
+          "beat": 83,
+          "cardType": "flat-scene",
+          "label": "पाठ",
+          "emotion": "serious",
+          "characters": [],
+          "narration": "इतिहासबाट ठაठ पाठहरू सिकियो।",
+          "visual": "An open book with glowing pages floating in the air."
+        },
+        {
+          "beat": 84,
+          "cardType": "flat-scene",
+          "label": "परिणाम",
+          "emotion": "dramatic",
+          "characters": [],
+          "narration": "यसरी एउटा युगको अन्त्य भयो।",
+          "visual": "Sun setting behind mountain peaks with an ink wash background."
+        }
+      ]
+    },
+    {
+      "blockId": 8,
+      "title": "Block 8 · Legacy and Reflection",
+      "beats": [
+        {
+          "beat": 85,
+          "cardType": "flat-scene",
+          "label": "विरासत",
+          "emotion": "reflective",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "एङ्ग्लो-नेपाल युद्ध केवल हारजित थिएन।",
+          "visual": "A soldier standing in contemplation beneath a grand old tree."
+        },
+        {
+          "beat": 86,
+          "cardType": "whiteboard-prop",
+          "label": "वीरताको गाथा",
+          "emotion": "proud",
+          "characters": [],
+          "narration": "यो वीर गोर्खालीहरूको अमर गाथा थियो।",
+          "visual": "A memorial monument sketch inscribed with bold letters 'BRAVERY'."
+        },
+        {
+          "beat": 87,
+          "cardType": "split-compare",
+          "label": "अतीत र वर्तमान",
+          "emotion": "curious",
+          "characters": [],
+          "narration": "अतीतका ती घाउहरूले हामीलाई बलियो बनाए।",
+          "visual": "Split screen showing an old battlefield on left and a peaceful modern city on right."
+        },
+        {
+          "beat": 88,
+          "cardType": "flat-scene",
+          "label": "सम्झना",
+          "emotion": "somber",
+          "characters": [],
+          "narration": "नालापानी र मलाउँ सधैँ स्मरणीय छन्।",
+          "visual": "A wreath of flowers resting against a stone plaque."
+        },
+        {
+          "beat": 89,
+          "cardType": "whiteboard-prop",
+          "label": "बलिदान",
+          "emotion": "inspired",
+          "characters": [],
+          "narration": "पूर्खाको बलिदानले देश बचाएको छ।",
+          "visual": "Footprints leading up a mountain toward a shining sun icon."
+        },
+        {
+          "beat": 90,
+          "cardType": "flat-scene",
+          "label": "अखण्डता",
+          "emotion": "proud",
+          "characters": [],
+          "narration": "हाम्रो राष्ट्रिय स्वाभिमान उच्च रह्यो।",
+          "visual": "The Nepali flag waving high against a clear white sky."
+        },
+        {
+          "beat": 91,
+          "cardType": "map-diagram",
+          "label": "आजको नेपाल",
+          "emotion": "neutral",
+          "characters": [],
+          "narration": "आजको नेपाल तिनै संघर्षको परिणाम हो।",
+          "visual": "Modern map of Nepal pulsing with a gentle warm ink glow."
+        },
+        {
+          "beat": 92,
+          "cardType": "flat-scene",
+          "label": "सिकाइ",
+          "emotion": "reflective",
+          "characters": [],
+          "narration": "इतिहास हामीलाई भविष्यको बाटो देखाउँछ।",
+          "visual": "A compass resting on top of a stack of vintage history books."
+        },
+        {
+          "beat": 93,
+          "cardType": "whiteboard-prop",
+          "label": "साहस",
+          "emotion": "inspired",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "साहस र एकता नै हाम्रो शक्ति हो।",
+          "visual": "Multiple stick figures holding hands in a tight circle."
+        },
+        {
+          "beat": 94,
+          "cardType": "flat-scene",
+          "label": "सदाबहार",
+          "emotion": "warmly",
+          "characters": [],
+          "narration": "यो कथा सधैँ अमर रहनेछ।",
+          "visual": "An ink quill writing 'NEPALI HISTORY' in elegant cursive."
+        },
+        {
+          "beat": 95,
+          "cardType": "flat-scene",
+          "label": "समापन",
+          "emotion": "curious",
+          "characters": [],
+          "narration": "तपाईंलाई यो इतिहास कस्तो लाग्यो?",
+          "visual": "A large question mark drawn dynamically with black ink strokes."
+        },
+        {
+          "beat": 96,
+          "cardType": "flat-scene",
+          "label": "धन्यवाद",
+          "emotion": "energetic",
+          "characters": [
+            "SOLDIER"
+          ],
+          "narration": "कमेन्टमा आफ्नो विचार लेख्नुहोला!",
+          "visual": "Stick figure waving goodbye with a speech bubble saying 'SUBSCRIBE!'."
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-11-18T02:53:30.340Z"
+}
