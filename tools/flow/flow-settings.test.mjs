@@ -6,6 +6,9 @@ import assert from 'node:assert/strict';
 import { effectiveSettings, normalizeSettings, studioProjectName } from './flow-settings.mjs';
 import {
   alignBeatsToTimestamps,
+  buildExpressiveBlockPrompt,
+  deleteBeatImage,
+  episodeFlowProjectName,
   generateAndSaveBlockTts,
   generateAndSaveTts,
   listEpisodes,
@@ -13,6 +16,7 @@ import {
   loadCustomStory,
   loadEpisode,
   pcmToWav,
+  saveBeatImage,
   saveCustomStory,
   saveEpisode,
   wavDurationSeconds
@@ -206,4 +210,56 @@ test('explainer-service aligns rapid beats to timestamps and isolates multi-epis
   const epAssets = listExplainerAssets(tmpRoot, 'ink-explainer', 'medieval-vacations');
   assert.equal(epAssets.activeEpisodeId, 'medieval-vacations');
   assert.equal(epAssets.blockAudio[1].beatTimings[0].endSec, 1.65);
+
+  const expressive = buildExpressiveBlockPrompt([
+    { beat: 1, emotion: 'warmly', narration: 'It rained softly.' },
+    { beat: 2, emotion: 'whispering', narration: 'Then she smiled.' }
+  ], 'auto');
+  assert.equal(expressive, '[warmly] It rained softly. [whispering] Then she smiled.');
+
+  const alignedWithTags = alignBeatsToTimestamps(
+    [
+      { beat: 1, narration: '[warmly and softly] It rained softly.' },
+      { beat: 2, narration: '[whispering] Then she smiled.' }
+    ],
+    [
+      { word: '[warmly', start: 0, end: 0.1 },
+      { word: 'and', start: 0.1, end: 0.15 },
+      { word: 'softly]', start: 0.15, end: 0.2 },
+      { word: 'It', start: 0.2, end: 0.4 },
+      { word: 'rained', start: 0.45, end: 0.7 },
+      { word: 'softly.', start: 0.75, end: 1.2 },
+      { word: '[whispering]', start: 1.2, end: 1.2 },
+      { word: 'Then', start: 1.4, end: 1.6 },
+      { word: 'she', start: 1.65, end: 1.85 },
+      { word: 'smiled.', start: 1.9, end: 2.4 }
+    ],
+    2.5
+  );
+  assert.equal(alignedWithTags[0].endSec, 1.3);
+  assert.equal(alignedWithTags[1].startSec, 1.3);
+  assert.equal(alignedWithTags[1].endSec, 2.5);
+
+  assert.equal(
+    episodeFlowProjectName(tmpRoot, 'ink-explainer', 'ancient-humans-day'),
+    'Ink Explainer · Ancient Humans All Day'
+  );
+  assert.equal(
+    episodeFlowProjectName(tmpRoot, 'ink-explainer', 'medieval-vacations'),
+    'Ink Explainer · Why Medieval Peasants Had More Vacation'
+  );
+
+  const epImgDir = path.join(tmpRoot, 'projects', 'ink-explainer', 'episodes', 'medieval-vacations', 'images');
+  fs.mkdirSync(epImgDir, { recursive: true });
+  fs.writeFileSync(path.join(epImgDir, 'beat-01.png'), Buffer.from('a'));
+  fs.writeFileSync(path.join(epImgDir, 'beat-02.png'), Buffer.from('b'));
+  const delRes = deleteBeatImage(tmpRoot, 'ink-explainer', 'medieval-vacations', 1);
+  assert.equal(delRes.deleted, true);
+  assert.equal(fs.existsSync(path.join(epImgDir, 'beat-01.png')), false);
+  assert.equal(fs.existsSync(path.join(epImgDir, 'beat-02.png')), true);
+
+  const upRes = saveBeatImage(tmpRoot, 'ink-explainer', 'medieval-vacations', 1, Buffer.from('jpgbytes'), '.jpg');
+  assert.equal(upRes.ok, true);
+  assert.equal(upRes.url, '/projects/ink-explainer/episodes/medieval-vacations/images/beat-01.jpg');
+  assert.equal(fs.existsSync(path.join(epImgDir, 'beat-01.jpg')), true);
 });

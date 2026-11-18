@@ -61,3 +61,16 @@ API:
 - `GET /api/flow-settings` returns the saved settings, the option lists and the project ids.
 - `GET /api/flow-settings?project=<id>` also returns `effective`, the merged values for that project.
 - `PUT /api/flow-settings` with the full settings object replaces the saved settings.
+
+## Flow Frames Studio (`projects/flow-frames`)
+
+Start-frame + End-frame videos. Same machinery as Ink Explainer (Gemini text/TTS via the public Space, Flow driven through Chrome), no API keys.
+
+1. Pick one of 47 templates, topic, language, aspect, and shot length (default **4s**; 6/8/10 allowed). Gemini (`/api/explainer/gemini`) writes the storyboard (style bible, cast, shots with start/end prompts, motion prompt, narration).
+2. **Create characters in Flow** (consistency), then **Generate all frames**: Flow image mode, up to 4 in parallel, saved to `projects/flow-frames/episodes/<id>/frames/frame-NN.png`.
+3. **Generate all videos**: for each shot the driver switches Flow to *Video > Frames*, uploads the Start and End images, pastes the motion prompt and saves `videos/shot-NN.mp4`.
+4. Voice per shot via Gemini TTS (`/api/explainer/block-tts`), then **Play episode** to preview.
+
+Chaining: a chained shot's Start frame is the previous shot's End frame, so N shots need N+1 images and clips join seamlessly. Server code: `frames-service.mjs`, `frames-routes.mjs` (`/api/frames/*`), `generateFrameVideo` in `flow-video.mjs`. Tests: `node --test tools/flow/frames-service.test.mjs`.
+
+The Start/End tile selectors (`frameTile`, `frameUploadItem`, `frameConfirmButton`, `framesRadio`) are in `selectors.mjs`. If a Frames-mode run fails, read the newest file in `logs/` and adjust them. Restart the generator after updating.

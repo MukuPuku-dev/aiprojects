@@ -108,5 +108,16 @@ const PROJECTS = [
     mark: "🖋️",
     accent: "gold",
     flowNext: true
+  },
+  {
+    name: "Flow Frames Studio",
+    type: "Start + End frame videos · 47 Gemini templates (story, explainer, docs, shorts)",
+    description: "Pick a template, let Gemini storyboard it, render Start/End frames in Flow, then turn each 4s frame pair into a chained video clip. Includes the micro-horror 'The 3 AM Knock'.",
+    href: "projects/flow-frames/index.html",
+    id: "flow-frames",
+    totalClips: 10,
+    mark: "🎞️",
+    accent: "coral",
+    flowNext: false
   }
 ];

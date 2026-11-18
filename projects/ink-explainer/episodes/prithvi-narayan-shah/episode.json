@@ -1,0 +1,1058 @@
+{
+  "id": "prithvi-narayan-shah",
+  "title": "राष्ट्रनिर्माता पृथ्वीनारायण शाह · जन्मदेखि एकीकरण र दिव्य उपदेश",
+  "subtitle": "Nepali Historical Documentary · 14 Blocks, 87 Rapid Visual Beats",
+  "language": "ne",
+  "hook": "२२ र २४ राज्यमा टुक्रिएको भूगोललाई एउटै स्वाभिमानी नेपाल बनाउने राष्ट्रनिर्माताको वास्तविक ऐतिहासिक कथा।",
+  "niche": "Nepali History & National Pride",
+  "characters": [
+    {
+      "code": "PRITHVI",
+      "name": "Prithvi Narayan Shah",
+      "role": "Unifier of Nepal",
+      "refPrompt": "Dignified 2D flat hand-drawn stickman historical explainer character standing full-body centered on pure white (#FFFFFF) background: round white circle head with regal composed expression, traditional Nepali royal white daura suruwal, crimson-trimmed royal pagadi headdress with small plume, waist sash with curved Gorkhali khukuri, clean black ink outlines, respectful royal posture, no text."
+    },
+    {
+      "code": "KALU_PANDE",
+      "name": "Kaji Kalu Pande",
+      "role": "Supreme Gorkhali Commander",
+      "refPrompt": "Dignified 2D flat hand-drawn stickman historical explainer character standing full-body centered on pure white (#FFFFFF) background: round white circle head with wise mustache, traditional dark Gorkhali warrior coat, folded Nepali topi, curved khukuri at waist, clean black ink outlines, no text."
+    },
+    {
+      "code": "BISE_NAGARCHI",
+      "name": "Bise Nagarchi",
+      "role": "Wise Gorkhali Citizen",
+      "refPrompt": "Respectful 2D flat hand-drawn stickman historical explainer character standing full-body centered on pure white (#FFFFFF) background: round white circle head with kind humble smile, simple handwoven Nepali bhoto-kachhad tunic and simple cloth cap, holding a small brass coin, clean black ink outlines, no text."
+    },
+    {
+      "code": "GORKHALI_SOLDIER",
+      "name": "Gorkhali Warrior",
+      "role": "Unification Army",
+      "refPrompt": "2D flat hand-drawn stickman historical explainer soldier standing full-body centered on pure white (#FFFFFF) background: round white circle head with determined eyes, traditional dark Gorkhali tunic, cloth waistband holding curved khukuri and round shield, clean black ink outlines, no text."
+    }
+  ],
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "भाग १ · जन्म र गोरखाको ऐतिहासिक पृष्ठभूमि (१७७९ पुस २७)",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "flat-scene",
+          "label": "१७७९ पुस २७",
+          "emotion": "गम्भीर र गौरवपूर्ण स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "सत्र सय उनासी साल पुस सत्ताइस गतेको शुभ बिहानी,",
+          "visual": "Historic Gorkha hill palace at golden sunrise in 1723 AD, warm mist over stone fort."
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [],
+          "narration": "गोरखा दरबारको आकाशमा शान्ति र उत्साह छायो।",
+          "visual": "Inside royal Gorkha Durbar courtyard with glowing oil lamps and celebratory conch shells."
+        },
+        {
+          "beat": 3,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [],
+          "narration": "राजा नरभूपाल शाह र रानी कौशल्यावतीको कोखबाट,",
+          "visual": "Dignified Gorkha royal parents smiling beside an ornate traditional wooden cradle."
+        },
+        {
+          "beat": 4,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "एक तेजस्वी राजकुमार पृथ्वीनारायण शाहको जन्म भयो।",
+          "visual": "Infant Prince Prithvi Narayan Shah wrapped in royal crimson cloth inside palace."
+        },
+        {
+          "beat": 5,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "जन्मिएको सात महिनामै दरबारमा शुभ लक्षण देखियो,",
+          "visual": "Palace elders and royal priests smiling over auspicious ceremonial rice-feeding."
+        },
+        {
+          "beat": 6,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "उनको लालनपालन जेठी आमा चन्द्रप्रभावतीले गरिन्।",
+          "visual": "Wise Queen Chandraprabhawati gently guiding young Prince Prithvi in palace garden."
+        },
+        {
+          "beat": 7,
+          "cardType": "whiteboard-prop",
+          "label": "२२ र २४ राज्य",
+          "emotion": "",
+          "characters": [],
+          "narration": "त्यस समय आजको जस्तो एउटै विशाल नेपाल थिएन।",
+          "visual": "Pure white map showing fragmented tiny principalities labeled '22 & 24 STATES'."
+        },
+        {
+          "beat": 8,
+          "cardType": "map-diagram",
+          "label": "टुक्रिएको भूगोल",
+          "emotion": "",
+          "characters": [],
+          "narration": "हिमाली भेग बाइसे र चौबीसे स-साना राज्यमा बाँडिएको थियो।",
+          "visual": "Minimalist map of Himalayan hills split into dozens of small disconnected borders."
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "भाग २ · बाल्यकाल, शिक्षा र मितेरी साइनो",
+      "beats": [
+        {
+          "beat": 9,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "उत्साहपूर्वक",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "चन्द्रप्रभावतीले उनलाई नीति, धर्म र इतिहास पढाइन्।",
+          "visual": "Young Prithvi studying ancient palm-leaf manuscripts beside a brass oil lamp."
+        },
+        {
+          "beat": 10,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "बिहानै उठेर उनी धनुर्विद्या र तरबारको अभ्यास गर्थे।",
+          "visual": "Young Prithvi practicing swordsmanship and archery on sunlit Gorkha hillside."
+        },
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "उकालो-ओरालो पहाडमा घोडा दौडाउनु उनको दैनिकी थियो।",
+          "visual": "Teenage Prince Prithvi riding a galloping white hill horse along a mountain ridge."
+        },
+        {
+          "beat": 12,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "बाल्यकालमै उनले सामान्य जनताको दुःख नजिकबाट बुझे।",
+          "visual": "Young prince walking humbly among Gorkhali farmers on terraced hill fields."
+        },
+        {
+          "beat": 13,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "KALU_PANDE"
+          ],
+          "narration": "दरबारका भारदार कालु पाण्डेसँग उनको गहिरो विश्वास बस्यो।",
+          "visual": "Young Prithvi conversing earnestly with loyal strategist Kaji Kalu Pande."
+        },
+        {
+          "beat": 14,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "भक्तपुरका राजा रणजीत मल्लसँग मितेरी साइनो गाँसियो,",
+          "visual": "Traditional Nepali royal friendship ceremony exchanging garlands in Bhaktapur."
+        },
+        {
+          "beat": 15,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "भक्तपुर बसाइमा उनले मल्ल कला र व्यापार नियाले।",
+          "visual": "Young Prithvi admiring ornate Newa pagoda temples and bustling Bhaktapur square."
+        }
+      ]
+    },
+    {
+      "blockId": 3,
+      "title": "भाग ३ · चन्द्रागिरिको डाँडा र एकीकरणको सङ्कल्प",
+      "beats": [
+        {
+          "beat": 16,
+          "cardType": "flat-scene",
+          "label": "चन्द्रागिरि डाँडा",
+          "emotion": "प्रेरणादायक स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "भक्तपुरबाट गोरखा फर्किँदा उनी चन्द्रागिरि डाँडामा उभिए।",
+          "visual": "Prithvi standing atop misty green Chandragiri ridge looking down at the valley."
+        },
+        {
+          "beat": 17,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "तल हेर्दा कुहिरोभित्र तीन सुन्दर सहर चम्किरहेका थिए।",
+          "visual": "Panoramic valley view with golden roofs of Kantipur, Patan, and Bhaktapur."
+        },
+        {
+          "beat": 18,
+          "cardType": "whiteboard-prop",
+          "label": "कान्तिपुर · पाटन · भक्तपुर",
+          "emotion": "",
+          "characters": [],
+          "narration": "ती धनी राज्यहरू आपसी झगडाले कमजोर हुँदै थिए,",
+          "visual": "Whiteboard triangle showing three valley kingdoms quarreling with small arrows."
+        },
+        {
+          "beat": 19,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "दक्षिणतर्फ विदेशी अङ्ग्रेज शक्तिको छाया बढ्दै थियो।",
+          "visual": "Dark storm clouds gathering along southern plains while northern hills watch."
+        },
+        {
+          "beat": 20,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "त्यही क्षण पृथ्वीनारायण शाहको मनमा अठोट जाग्यो—",
+          "visual": "Close-up of Prithvi with determined eyes and firm hand on his khukuri hilt."
+        },
+        {
+          "beat": 21,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "यी टुक्रिएका राज्य नजोडे स्वाधीनता बच्दैन।",
+          "visual": "King Prithvi raising his palm toward the unified Himalayan horizon."
+        },
+        {
+          "beat": 22,
+          "cardType": "whiteboard-prop",
+          "label": "एकीकृत नेपाल",
+          "emotion": "",
+          "characters": [],
+          "narration": "र त्यहीँबाट विशाल नेपाल निर्माणको सङ्कल्प जन्मियो।",
+          "visual": "Glowing unified map outline of Nepal rising above the valley mist."
+        }
+      ]
+    },
+    {
+      "blockId": 4,
+      "title": "भाग ४ · राज्यारोहण र नुवाकोटको पहिलो परीक्षा (१७९९–१८००)",
+      "beats": [
+        {
+          "beat": 23,
+          "cardType": "flat-scene",
+          "label": "१७९९ वि.सं.",
+          "emotion": "गम्भीर स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "सत्र सय उनान्सय सालमा पिता नरभूपालको निधन भयो।",
+          "visual": "Solemn Gorkha palace courtyard with lowered royal banners at twilight."
+        },
+        {
+          "beat": 24,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "मात्र बीस वर्षको उमेरमा उनी गोरखाका राजा बने।",
+          "visual": "Twenty-year-old King Prithvi Narayan Shah crowned with royal Gorkhali pagadi."
+        },
+        {
+          "beat": 25,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "KALU_PANDE"
+          ],
+          "narration": "राजगद्दी सम्हाल्नासाथ उनले पहिलो लक्ष्य नुवाकोट तोके।",
+          "visual": "King Prithvi pointing to Nuwakot on a hand-drawn cloth map with Kalu Pande."
+        },
+        {
+          "beat": 26,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "अठार सय सालमा गोर्खाली सेना नुवाकोटतर्फ अघि बढ्यो।",
+          "visual": "Gorkhali soldiers marching along rocky riverbanks carrying shields and spears."
+        },
+        {
+          "beat": 27,
+          "cardType": "red-x",
+          "label": "१८०० असफलता",
+          "emotion": "सचेत स्वरमा",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "तर हतियार र तयारी अपुग हुँदा पहिलो आक्रमण असफल भयो।",
+          "visual": "Rough skirmish outside stone Nuwakot fort crossed with a bold red X."
+        },
+        {
+          "beat": 28,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "पराजयले उनलाई निराश होइन, अझ परिपक्व बनायो।",
+          "visual": "King Prithvi reflecting calmly beside an evening campfire in Gorkha."
+        },
+        {
+          "beat": 29,
+          "cardType": "whiteboard-prop",
+          "label": "बनारस यात्रा",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "राम्रा हतियार र ज्ञान जुटाउन उनी बनारस प्रस्थान गरे।",
+          "visual": "Whiteboard travel line showing Gorkha south to Varanasi on the Ganges."
+        }
+      ]
+    },
+    {
+      "blockId": 5,
+      "title": "भाग ५ · बनारस तयारी र बिसे नगर्चीको अमर सल्लाह",
+      "beats": [
+        {
+          "beat": 30,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "प्रभावशाली स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "बनारसमा उनले आधुनिक बन्दुक, बारुद र युद्धकला सिके।",
+          "visual": "King Prithvi inspecting flintlock muskets and forged steel blades with craftsmen."
+        },
+        {
+          "beat": 31,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "फर्किँदा गोरखा राज्यको ढुकुटी खाली भइसकेको थियो।",
+          "visual": "Empty wooden royal treasury chest inside Gorkha Durbar."
+        },
+        {
+          "beat": 32,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "त्यत्रो ठूलो अभियान कसरी चलाउने भन्ने चिन्ता थपियो।",
+          "visual": "King Prithvi pacing thoughtfully inside the candlelit palace hall."
+        },
+        {
+          "beat": 33,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "BISE_NAGARCHI"
+          ],
+          "narration": "तब दरबारका एक साधारण नगर्ची बिसे अगाडि सरे।",
+          "visual": "Humble elderly tailor-drummer Bise Nagarchi stepping forward respectfully."
+        },
+        {
+          "beat": 34,
+          "cardType": "whiteboard-prop",
+          "label": "१२,००० घरधुरी",
+          "emotion": "भावनात्मक र गर्विलो स्वरमा",
+          "characters": [
+            "BISE_NAGARCHI"
+          ],
+          "narration": "उनले भने, गोरखामा बाह्र हजार घरधुरी छन् महाराज,",
+          "visual": "Bise Nagarchi holding out a single copper coin on pure white background."
+        },
+        {
+          "beat": 35,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "BISE_NAGARCHI"
+          ],
+          "narration": "हरेक घरबाट एक-एक पैसा उठाउँदा अभियान चल्छ।",
+          "visual": "Crowds of smiling Gorkhali villagers each dropping one coin into a communal pot."
+        },
+        {
+          "beat": 36,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "राजाले एक साधारण नागरिकको सल्लाह शिरोधार्य गरे।",
+          "visual": "King Prithvi bowing respectfully in gratitude toward Bise Nagarchi."
+        },
+        {
+          "beat": 37,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "गाउँ-गाउँका कालीगढले अचूक खुकुरी र बन्दुक बनाए।",
+          "visual": "Village blacksmiths hammering glowing steel khukuris beside roaring bellows."
+        }
+      ]
+    },
+    {
+      "blockId": 6,
+      "title": "भाग ६ · नुवाकोट विजय र त्रिशूलीको रणनीतिक पार (१८०१)",
+      "beats": [
+        {
+          "beat": 38,
+          "cardType": "flat-scene",
+          "label": "१८०१ असोज १५",
+          "emotion": "उत्साहपूर्वक",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "अठार सय एक साल असोज पन्ध्र गतेको मध्यरात,",
+          "visual": "Moonlit Trishuli river with silent bamboo rafts carrying Gorkhali troops."
+        },
+        {
+          "beat": 39,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "KALU_PANDE"
+          ],
+          "narration": "गोर्खाली सेनाले उर्लिंदो त्रिशूली नदी पार गर्यो।",
+          "visual": "Gorkhali warriors climbing steep misty Mahamandal ridge before dawn."
+        },
+        {
+          "beat": 40,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "दुई तिरबाट घेरा हाली महामण्डल किल्ला कब्जा भयो।",
+          "visual": "Gorkhali troops securing stone watchtowers atop Nuwakot hills."
+        },
+        {
+          "beat": 41,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "र सूर्य उदाउँदा नुवाकोटमा गोर्खाली झन्डा फहरियो।",
+          "visual": "Gorkhali banner raised proudly atop Nuwakot Saat-talle hill fort."
+        },
+        {
+          "beat": 42,
+          "cardType": "map-diagram",
+          "label": "तिब्बत व्यापार मार्ग",
+          "emotion": "",
+          "characters": [],
+          "narration": "नुवाकोट जितेपछि तिब्बत र उपत्यकाको व्यापार मार्ग रोकियो।",
+          "visual": "Clean map showing Nuwakot controlling northern Himalayan trade route."
+        },
+        {
+          "beat": 43,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "यसले एकीकरणको लागि बलियो आधारशिला तयार पार्यो।",
+          "visual": "King Prithvi looking eastward from Nuwakot palace balcony toward Kathmandu."
+        }
+      ]
+    },
+    {
+      "blockId": 7,
+      "title": "भाग ७ · काजी कालु पाण्डेको बलिदान र कीर्तिपुरको पाठ (१८१४)",
+      "beats": [
+        {
+          "beat": 44,
+          "cardType": "flat-scene",
+          "label": "१८१४ कीर्तिपुर",
+          "emotion": "गम्भीर स्वरमा",
+          "characters": [
+            "PRITHVI",
+            "KALU_PANDE"
+          ],
+          "narration": "त्यसपछि काठमाडौँ उपत्यकाको ढोका कीर्तिपुरतर्फ नजर गयो।",
+          "visual": "High brick walls of hilltop Kirtipur fortress silhouetted against dusk sky."
+        },
+        {
+          "beat": 45,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "KALU_PANDE"
+          ],
+          "narration": "अनुभवी काजी कालु पाण्डेले हतार नगर्न सुझाव दिएका थिए,",
+          "visual": "Wise Kaji Kalu Pande cautioning thoughtfully over tactical scroll."
+        },
+        {
+          "beat": 46,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "KALU_PANDE",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "तर युद्ध सुरु भएपछि उनी स्वयं अग्रपङ्क्तिमा लडे।",
+          "visual": "Heroic commander Kaji Kalu Pande leading soldiers up the rocky slope."
+        },
+        {
+          "beat": 47,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "दुःखद स्वरमा",
+          "characters": [
+            "KALU_PANDE"
+          ],
+          "narration": "अठार सय चौधको भीषण युद्धमा कालु पाण्डेले वीरगति पाए।",
+          "visual": "Fallen commander Kaji Kalu Pande honored under Gorkhali shields."
+        },
+        {
+          "beat": 48,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "राजा पृथ्वीनारायण पनि बल्लतल्ल ज्यान जोगाई फर्किए।",
+          "visual": "Solemn King Prithvi retreating quietly through dark forest path."
+        },
+        {
+          "beat": 49,
+          "cardType": "whiteboard-prop",
+          "label": "धैर्य र रणनीति",
+          "emotion": "",
+          "characters": [],
+          "narration": "यस पीडाले उनलाई हतार होइन धैर्य र कूटनीति सिकायो।",
+          "visual": "Whiteboard card showing sword balanced beside tactical scale labeled 'PATIENCE & STRATEGY'."
+        }
+      ]
+    },
+    {
+      "blockId": 8,
+      "title": "भाग ८ · मकवानपुर विजय र मीर कासिमको पराजय (१८१९)",
+      "beats": [
+        {
+          "beat": 50,
+          "cardType": "flat-scene",
+          "label": "१८१९ वि.सं.",
+          "emotion": "उत्साहपूर्वक",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "उत्तेजनाको सट्टा अब उनले उपत्यकाको नाकाबन्दी थाले।",
+          "visual": "Gorkhali outposts guarding mountain passes surrounding Kathmandu Valley."
+        },
+        {
+          "beat": 51,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "अठार सय उन्नाइसमा रणनीतिक मकवानपुर किल्ला जितिँदा,",
+          "visual": "Makwanpur Gadhi stone fortress falling under Gorkhali control."
+        },
+        {
+          "beat": 52,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "बङ्गालका नवाब मीर कासिमको तीन हजार फौज आइपुग्यो।",
+          "visual": "Foreign Bengal troops with elephants and muskets marching up Makwanpur foothills."
+        },
+        {
+          "beat": 53,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "रातको अन्धकारमा गोर्खालीले चारैतिरबाट हमला गरे।",
+          "visual": "Swift night attack by Gorkhali khukuri warriors from surrounding dark hills."
+        },
+        {
+          "beat": 54,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "गर्विलो स्वरमा",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "मीर कासिमको आधुनिक फौज युद्धभूमि छोडेर भाग्यो।",
+          "visual": "Retreating Bengal forces leaving behind cannons and modern flintlocks."
+        },
+        {
+          "beat": 55,
+          "cardType": "whiteboard-prop",
+          "label": "५००+ बन्दुक प्राप्त",
+          "emotion": "",
+          "characters": [],
+          "narration": "गोर्खाली सेनाले सयौँ आधुनिक बन्दुक र तोप हात पार्यो।",
+          "visual": "Whiteboard tally showing captured cannons and rifles strengthening the hill army."
+        }
+      ]
+    },
+    {
+      "blockId": 9,
+      "title": "भाग ९ · सिन्धुलीगढीमा ब्रिटिश सेनामाथि ऐतिहासिक विजय (१८२४)",
+      "beats": [
+        {
+          "beat": 56,
+          "cardType": "flat-scene",
+          "label": "१८२४ वि.सं.",
+          "emotion": "गर्विलो स्वरमा",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "उपत्यकाको नाकाबन्दी कडा भएपछि कान्तिपुरका राजाले,",
+          "visual": "Worried valley messenger riding south requesting foreign military help."
+        },
+        {
+          "beat": 57,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [],
+          "narration": "भारतमा रहेको ब्रिटिश इस्ट इन्डिया कम्पनीसँग मद्दत मागे।",
+          "visual": "British East India Company fort flag and red-coated officers preparing expedition."
+        },
+        {
+          "beat": 58,
+          "cardType": "map-diagram",
+          "label": "सिन्धुलीगढी १८२४",
+          "emotion": "",
+          "characters": [],
+          "narration": "कप्तान किनलकको आधुनिक सेना सिन्धुलीगढीतर्फ बढ्यो।",
+          "visual": "Map arrow showing Captain Kinloch's British column advancing north into steep gorges."
+        },
+        {
+          "beat": 59,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "गोर्खाली सेनापतिहरूले साँघुरो पहाडी गल्छीमा जाल बिछ्याए।",
+          "visual": "Gorkhali commanders hiding behind steep rocky cliffs, trees, and hornets' nests."
+        },
+        {
+          "beat": 60,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "उत्साहपूर्वक",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "सिस्नु, अरिङ्गाल, ढुङ्गा र खुकुरीको अद्भुत प्रयोगले,",
+          "visual": "Dramatic mountain ambush sending red-coated invaders tumbling down the gorge."
+        },
+        {
+          "beat": 61,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "अठार सय चौबीस सालमा शक्तिशाली ब्रिटिश फौज परास्त भयो।",
+          "visual": "Gorkhali warriors cheering atop Sindhuligadhi fort holding captured muskets."
+        },
+        {
+          "beat": 62,
+          "cardType": "whiteboard-prop",
+          "label": "दक्षिण एशियाकै इतिहास",
+          "emotion": "",
+          "characters": [],
+          "narration": "यो जीतले नेपाललाई कहिल्यै उपनिवेश बन्न दिएन।",
+          "visual": "Pure white shield emblem reading 'NEVER COLONIZED · SINDHULIGADHI 1824'."
+        }
+      ]
+    },
+    {
+      "blockId": 10,
+      "title": "भाग १० · कीर्तिपुर विजय र कूटनीतिक घेराबन्दी (१८२२)",
+      "beats": [
+        {
+          "beat": 63,
+          "cardType": "flat-scene",
+          "label": "१८२२ वि.सं.",
+          "emotion": "सन्तुलित स्वरमा",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "लामो कूटनीतिक र आर्थिक नाकाबन्दीपछि,",
+          "visual": "Quiet winter siege lines around the misty hilltop of Kirtipur."
+        },
+        {
+          "beat": 64,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "अठार सय बाइस सालमा कीर्तिपुरले गोर्खासँग सम्झौता गर्यो।",
+          "visual": "Kirtipur city gates opening calmly at sunrise to Gorkhali commanders."
+        },
+        {
+          "beat": 65,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "त्यसपछि उपत्यकाका तीनै मल्ल राज्य चारैतिरबाट घेरिए।",
+          "visual": "Valley cities ringed softly by surrounding green hill outposts."
+        },
+        {
+          "beat": 66,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "अनावश्यक रक्तपात बिना विजय पाउने उनको चाहना थियो।",
+          "visual": "King Prithvi instructing commanders to avoid harming ordinary citizens."
+        }
+      ]
+    },
+    {
+      "blockId": 11,
+      "title": "भाग ११ · इन्द्रजात्राको रात कान्तिपुर प्रवेश (१८२५ असोज १३)",
+      "beats": [
+        {
+          "beat": 67,
+          "cardType": "flat-scene",
+          "label": "१८२५ असोज १३",
+          "emotion": "गौरवपूर्ण र भावुक स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "अठार सय पच्चीस साल असोज तेह्र गतेको पावन साँझ,",
+          "visual": "Festive glowing oil lamps and vibrant street banners across Kathmandu during Indra Jatra."
+        },
+        {
+          "beat": 68,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "काठमाडौँमा इन्द्रजात्राको भव्य रथयात्रा चलिरहेको थियो।",
+          "visual": "Ornate wooden Kumari chariot rolling smoothly past Hanuman Dhoka."
+        },
+        {
+          "beat": 69,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "गोर्खाली सेना तीन दिशाबाट शान्तिपूर्वक सहर पस्यो।",
+          "visual": "Disciplined Gorkhali soldiers marching calmly into Kathmandu square."
+        },
+        {
+          "beat": 70,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "पृथ्वीनारायण शाहले जीवित देवी कुमारीको दर्शन गरे,",
+          "visual": "King Prithvi bowing respectfully with folded hands before the Kumari chariot."
+        },
+        {
+          "beat": 71,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "र काठमाडौँका नेवार संस्कृति र जात्रा जोगाउने वचन दिए।",
+          "visual": "Local Newa elders and citizens applauding the king's cultural respect."
+        },
+        {
+          "beat": 72,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "केही हप्तामै पाटन र १८२६ मा भक्तपुर पनि एकीकृत भयो।",
+          "visual": "Unified royal banners rising peacefully over Patan and Bhaktapur Durbar Squares."
+        }
+      ]
+    },
+    {
+      "blockId": 12,
+      "title": "भाग १२ · पूर्व मेचीसम्म विस्तार र काठमाडौँ राजधानी",
+      "beats": [
+        {
+          "beat": 73,
+          "cardType": "whiteboard-prop",
+          "label": "काठमाडौँ राजधानी",
+          "emotion": "उत्साहपूर्वक",
+          "characters": [],
+          "narration": "अठार सय छब्बीसमा काठमाडौँ विशाल नेपालको राजधानी बन्यो।",
+          "visual": "Golden Hanuman Dhoka palace icon centered on pure white labeled 'CAPITAL: KATHMANDU'."
+        },
+        {
+          "beat": 74,
+          "cardType": "map-diagram",
+          "label": "पूर्व मेचीसम्म",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "त्यसपछि पूर्वका चौदण्डी र विजयपुर राज्य पनि जोडिए।",
+          "visual": "Clean Nepal unification map expanding eastward across Koshi to Mechi River."
+        },
+        {
+          "beat": 75,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI",
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "पुर्खाले सोचेकोभन्दा ठूलो स्वाधीन राष्ट्र आकारमा आयो।",
+          "visual": "Snow-capped Himalayan peaks stretching from west to east behind unified flags."
+        },
+        {
+          "beat": 76,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "उनले जितेका सहरका कला, मन्दिर र जात्रा सुरक्षित राखे।",
+          "visual": "King Prithvi inspecting restoration of historic valley temples and water spouts."
+        }
+      ]
+    },
+    {
+      "blockId": 13,
+      "title": "भाग १३ · अमर दिव्य उपदेश (राष्ट्र चलाउने नीति)",
+      "beats": [
+        {
+          "beat": 77,
+          "cardType": "flat-scene",
+          "label": "दिव्य उपदेश",
+          "emotion": "प्रेरणादायक र गम्भीर स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "जीवनको उत्तरार्धमा उनले आफ्ना भारदार र भाइहरूलाई बोलाए,",
+          "visual": "Wise elder King Prithvi sitting in Nuwakot surrounded by generals and scholars."
+        },
+        {
+          "beat": 78,
+          "cardType": "whiteboard-prop",
+          "label": "४ जात ३६ वर्ण",
+          "emotion": "भावनात्मक र गौरवपूर्ण स्वरमा",
+          "characters": [],
+          "narration": "नेपाल चार जात छत्तीस वर्णको साझा फूलबारी हो।",
+          "visual": "Colorful blooming garden wreath on pure white labeled 'SHARED GARDEN OF ALL PEOPLE'."
+        },
+        {
+          "beat": 79,
+          "cardType": "whiteboard-prop",
+          "label": "२ ढुङ्गाको तरुल",
+          "emotion": "",
+          "characters": [],
+          "narration": "यो देश दुई ठूला ढुङ्गाबीचको तरुल जस्तै संवेदनशील छ।",
+          "visual": "Symbolic diagram of a green yam growing safely between two giant boulders."
+        },
+        {
+          "beat": 80,
+          "cardType": "split-compare",
+          "label": "घुस दिने | लिने",
+          "emotion": "",
+          "characters": [],
+          "narration": "घुस लिने र दिने दुवै राष्ट्रका मुख्य शत्रु हुन्।",
+          "visual": "Split white card showing bribe giver and taker crossed out with bold warning."
+        },
+        {
+          "beat": 81,
+          "cardType": "whiteboard-prop",
+          "label": "स्वदेशी उद्योग",
+          "emotion": "",
+          "characters": [],
+          "narration": "विदेशी कपडा रोकी आफ्नै सिप र उद्योग चलाउनुपर्छ।",
+          "visual": "Hand-drawn wooden spinning wheel and loom representing self-reliance."
+        },
+        {
+          "beat": 82,
+          "cardType": "whiteboard-prop",
+          "label": "रक्षात्मक नीति",
+          "emotion": "",
+          "characters": [],
+          "narration": "अरूमाथि अन्याय नगर्नु, तर देश रक्षा गर्न पछि नहट्नु।",
+          "visual": "Crossed khukuris beneath protective shield labeled 'PEACEFUL YET DEFENSIVE'."
+        }
+      ]
+    },
+    {
+      "blockId": 14,
+      "title": "भाग १४ · देवीघाटमा महाप्रस्थान र अमर विरासत (१८३१ माघ १)",
+      "beats": [
+        {
+          "beat": 83,
+          "cardType": "flat-scene",
+          "label": "१८३१ माघ १",
+          "emotion": "भावुक र श्रद्धापूर्ण स्वरमा",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "अठार सय एकतीस साल माघ एक गतेको चिसो बिहानी,",
+          "visual": "Serene misty confluence of Trishuli and Tadi rivers at Devighat."
+        },
+        {
+          "beat": 84,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "नुवाकोटको पवित्र देवीघाटमा बाउन्न वर्षको उमेरमा,",
+          "visual": "Peaceful riverside pavilion in Devighat lit by soft morning sunbeams."
+        },
+        {
+          "beat": 85,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "राष्ट्रनिर्माता श्री ५ पृथ्वीनारायण शाहले देहत्याग गरे।",
+          "visual": "Glowing sacred oil lamp beside calm river waters as soldiers bow deeply."
+        },
+        {
+          "beat": 86,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "",
+          "characters": [
+            "GORKHALI_SOLDIER"
+          ],
+          "narration": "सिङ्गो देश शोकमा डुब्यो, तर उनको सपना अमर रह्यो।",
+          "visual": "Citizens and warriors standing together in dignified silent tribute."
+        },
+        {
+          "beat": 87,
+          "cardType": "flat-scene",
+          "label": "अमर राष्ट्रनिर्माता",
+          "emotion": "गर्व र सम्मानपूर्वक",
+          "characters": [
+            "PRITHVI"
+          ],
+          "narration": "उनले जोडेको स्वाभिमानी नेपाल आज पनि विश्वसामु अटल छ।",
+          "visual": "Majestic sunlit Himalayas rising behind the proud portrait of King Prithvi Narayan Shah."
+        }
+      ]
+    }
+  ]
+}

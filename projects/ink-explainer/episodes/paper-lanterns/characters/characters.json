@@ -1,0 +1,26 @@
+{
+  "ARIN": {
+    "code": "ARIN",
+    "name": "Arin",
+    "refPrompt": "2D flat hand-drawn stickman explainer teenage boy character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, neat dark brown hair, simple dot eyes and gentle eyebrows, thin black stick-figure arms and legs, wearing a dark navy blue school sweater over a white collared shirt and dark trousers, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T13:11:02.560Z"
+  },
+  "MIRA": {
+    "code": "MIRA",
+    "name": "Mira",
+    "refPrompt": "2D flat hand-drawn stickman explainer teenage girl character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, dark shoulder-length hair, tiny scar dot on chin, wooden pencil tucked behind her ear, simple dot eyes with warm smile, wearing an oversized bright yellow raincoat and holding a small sketchbook, thin black stick-figure legs, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T13:13:47.186Z"
+  },
+  "DEV": {
+    "code": "DEV",
+    "name": "Dev",
+    "refPrompt": "2D flat hand-drawn stickman explainer teenage boy character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, messy spiky black hair, cheerful grinning eyebrows, thin black stick-figure limbs, wearing a casual olive-green hoodie, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T13:14:17.145Z"
+  },
+  "PENNYWHISTLE": {
+    "code": "PENNYWHISTLE",
+    "name": "Mrs. Pennywhistle",
+    "refPrompt": "2D flat hand-drawn stickman explainer elderly woman librarian character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, neat silver-grey hair bun, round reading glasses, thin black stick-figure limbs, wearing a long grey cardigan over a dark skirt, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T13:14:49.310Z"
+  }
+}

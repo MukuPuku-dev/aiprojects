@@ -4,22 +4,27 @@ import path from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
+import { generateCharactersInFlow, generateFrameVideo, generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
+import { handleFramesRoute } from './frames-routes.mjs';
 import { resolveRequiredCharacters } from './flow-characters.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
 import { createFacebookService } from './facebook.mjs';
 import { createTelegramService } from './telegram.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
-import { callGeminiText, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveCustomStory, saveEpisode } from './explainer-service.mjs';
+import { callGeminiText, deleteBeatImage, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode } from './explainer-service.mjs';
+import { uploadToYouTube } from './youtube.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
 const PORT = Number(process.env.AIPROJECTS_PORT || 8787);
-const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.wav': 'audio/wav' };
+const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.wav': 'audio/wav', '.webm': 'video/webm' };
 
 const queue = createGenerationQueue(job => {
+  if (job.mode === 'youtube') return uploadToYouTube(job);
+  if (job.mode === 'characters') return generateCharactersInFlow(job);
   if (job.mode === 'image-batch') return generateImageBatch(job);
+  if (job.mode === 'frames-video') return generateFrameVideo(job);
   return job.mode === 'image' ? generateImage(job) : generateVideo(job);
 });
 const tiktok = createTikTokService(ROOT);
@@ -60,10 +65,21 @@ function validate(body) {
     if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
     const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : '';
     if (episode && !PROJECT_ID.test(episode)) throw new Error('episode must use lowercase letters, digits and dashes.');
+    const targetFlowProject = project === 'ink-explainer' && episode
+      ? episodeFlowProjectName(ROOT, project, episode, flowProject)
+      : flowProject;
+    const charProject = project === 'ink-explainer' && episode
+      ? `${project}/episodes/${episode}`
+      : project;
+    const useBeatChars = project === 'ink-explainer' && Array.isArray(body.characters) && body.characters.length > 0;
+    const effCharConsistency = useBeatChars ? true : characterConsistency;
+    const effRequiredChars = useBeatChars
+      ? resolveRequiredCharacters(ROOT, charProject, body.characters)
+      : requiredCharacters;
     const outFile = project === 'ink-explainer' && episode
       ? path.join(ROOT, 'projects', project, 'episodes', episode, 'images', `beat-${String(day).padStart(2, '0')}.png`)
       : path.join(ROOT, 'projects', project, 'videos', `day-${String(day).padStart(2, '0')}.png`);
-    return { mode: 'image', day, prompt: body.prompt, model, aspect, outFile, flowProject, project, characterConsistency, requiredCharacters };
+    return { mode: 'image', day, prompt: body.prompt, model, aspect, outFile, flowProject: targetFlowProject, project, charProject, characterConsistency: effCharConsistency, requiredCharacters: effRequiredChars };
   }
   const model = body.model || effective.video.model;
   const aspect = body.aspect || effective.video.aspect;
@@ -113,6 +129,7 @@ function handleJobStatus(res, id) {
     if (job.result.width) body.width = job.result.width;
     if (job.result.height) body.height = job.result.height;
     if (Array.isArray(job.result.saved)) body.savedCount = job.result.saved.length;
+    if (job.result.videoUrl) body.videoUrl = job.result.videoUrl;
   }
   if (job.error) body.error = job.error;
   send(res, 200, body);
@@ -218,6 +235,57 @@ async function handleExplainerRoute(req, res, url) {
     } catch (err) { return send(res, 400, { ok: false, error: err.message }); }
   }
   if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+  if (url.pathname === '/api/explainer/save-export') {
+    if (req.headers.origin !== `http://127.0.0.1:${PORT}`) {
+      return send(res, 403, { ok: false, error: 'Requests must originate from the local studio.' });
+    }
+    try {
+      const project = url.searchParams.get('project') || 'ink-explainer';
+      const episode = url.searchParams.get('episode') || 'ancient-humans-day';
+      if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
+      const outPath = path.join(ROOT, 'projects', project, 'episodes', episode, 'episode.webm');
+      fs.mkdirSync(path.dirname(outPath), { recursive: true });
+      const tmpPath = `${outPath}.${process.pid}.${Date.now()}.tmp`;
+      const ws = fs.createWriteStream(tmpPath);
+      await new Promise((resolve, reject) => {
+        req.pipe(ws);
+        ws.on('finish', resolve);
+        ws.on('error', reject);
+        req.on('error', reject);
+      });
+      fs.renameSync(tmpPath, outPath);
+      return send(res, 200, { ok: true, url: `/projects/${project}/episodes/${episode}/episode.webm` });
+    } catch (err) {
+      return send(res, 400, { ok: false, error: err.message });
+    }
+  }
+  if (url.pathname === '/api/explainer/upload-beat-image') {
+    if (req.headers.origin !== `http://127.0.0.1:${PORT}`) {
+      return send(res, 403, { ok: false, error: 'Requests must originate from the local studio.' });
+    }
+    try {
+      const project = url.searchParams.get('project') || 'ink-explainer';
+      const episode = url.searchParams.get('episode') || 'ancient-humans-day';
+      const beat = Number(url.searchParams.get('beat'));
+      const ct = String(req.headers['content-type'] || '').toLowerCase();
+      const ext = ct.includes('jpeg') || ct.includes('jpg') ? '.jpg' : ct.includes('webp') ? '.webp' : '.png';
+      const chunks = [];
+      let total = 0;
+      await new Promise((resolve, reject) => {
+        req.on('data', c => {
+          total += c.length;
+          if (total > 25 * 1024 * 1024) { reject(new Error('Image too large (max 25MB).')); return; }
+          chunks.push(c);
+        });
+        req.on('end', resolve);
+        req.on('error', reject);
+      });
+      const result = saveBeatImage(ROOT, project, episode, beat, Buffer.concat(chunks), ext);
+      return send(res, 200, result);
+    } catch (err) {
+      return send(res, 400, { ok: false, error: err.message });
+    }
+  }
   if (req.headers.origin !== `http://127.0.0.1:${PORT}` || !/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')) {
     return send(res, 403, { ok: false, error: 'Requests must originate from the local studio.' });
   }
@@ -248,6 +316,7 @@ async function handleExplainerRoute(req, res, url) {
         beats: Array.isArray(body.beats) ? body.beats : [],
         prompt: body.prompt,
         voice: body.voice || 'Kore',
+        emotionMode: body.emotionMode || 'auto',
         language: body.language || 'en'
       });
       return send(res, 200, result);
@@ -260,18 +329,47 @@ async function handleExplainerRoute(req, res, url) {
       const story = saveCustomStory(ROOT, body.project || 'ink-explainer', body.reset ? { reset: true } : (body.story || body));
       return send(res, 200, { ok: true, story });
     }
+    if (url.pathname === '/api/explainer/generate-characters') {
+      const project = body.project || 'ink-explainer';
+      if (!PROJECT_ID.test(project)) throw new Error('Invalid project.');
+      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      if (!PROJECT_ID.test(episode)) throw new Error('Invalid episode.');
+      const baseFlowProject = studioProjectName(project);
+      if (!baseFlowProject) throw new Error(`No studio card name found for project ${project}.`);
+      const flowProject = episodeFlowProjectName(ROOT, project, episode, baseFlowProject);
+      const charProject = `${project}/episodes/${episode}`;
+      const rawChars = Array.isArray(body.characters) ? body.characters : [];
+      if (!rawChars.length) throw new Error('characters array is required.');
+      const resolvedChars = resolveRequiredCharacters(ROOT, charProject, rawChars);
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'characters',
+        day: 1,
+        flowProject,
+        charProject,
+        characters: resolvedChars,
+        log: m => console.log(`[ink-chars ${episode}] ${m}`)
+      });
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status });
+    }
     if (url.pathname === '/api/explainer/generate-batch') {
       const project = body.project || 'ink-explainer';
       if (!PROJECT_ID.test(project)) throw new Error('Invalid project.');
       const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
       if (!PROJECT_ID.test(episode)) throw new Error('Invalid episode.');
-      const flowProject = studioProjectName(project);
-      if (!flowProject) throw new Error(`No studio card name found for project ${project}.`);
+      const baseFlowProject = studioProjectName(project);
+      if (!baseFlowProject) throw new Error(`No studio card name found for project ${project}.`);
+      const flowProject = episodeFlowProjectName(ROOT, project, episode, baseFlowProject);
+      const charProject = `${project}/episodes/${episode}`;
       const effective = effectiveSettings(readSettings(), project);
       const aspect = body.aspect || effective.image.aspect || '16:9';
       if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
       const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
       const concurrency = Math.max(1, Math.min(6, Number(body.concurrency) || 5));
+      const rawCast = Array.isArray(body.characters) ? body.characters : [];
+      const castList = rawCast.length ? resolveRequiredCharacters(ROOT, charProject, rawCast) : [];
+      const castByCode = new Map(castList.map(c => [c.code, c]));
       const rawItems = Array.isArray(body.items) ? body.items : [];
       if (!rawItems.length) throw new Error('items array is required.');
       const mapped = rawItems.map(it => {
@@ -279,7 +377,10 @@ async function handleExplainerRoute(req, res, url) {
         if (!Number.isInteger(day) || day < 1 || day > 365) throw new Error('Each item requires an integer day 1..365.');
         if (typeof it.prompt !== 'string' || it.prompt.trim().length < 20) throw new Error(`Beat ${day} prompt is too short.`);
         const outFile = path.join(ROOT, 'projects', project, 'episodes', episode, 'images', `beat-${String(day).padStart(2, '0')}.png`);
-        return { day, prompt: it.prompt.trim(), outFile };
+        const beatChars = Array.isArray(it.characters) && it.characters.length
+          ? it.characters.map(c => castByCode.get(String(c || '').trim().toUpperCase()) || resolveRequiredCharacters(ROOT, charProject, [c])[0]).filter(Boolean)
+          : [];
+        return { day, prompt: it.prompt.trim(), outFile, characters: beatChars };
       });
       const pending = mapped.filter(it => !fs.existsSync(it.outFile));
       if (!pending.length) {
@@ -295,6 +396,8 @@ async function handleExplainerRoute(req, res, url) {
         model,
         aspect,
         flowProject,
+        charProject,
+        characters: castList,
         concurrency,
         shouldStop: () => Boolean(tracked?.stopRequested),
         onProgress: p => {
@@ -333,6 +436,36 @@ async function handleExplainerRoute(req, res, url) {
       job.stopRequested = true;
       return send(res, 200, { ok: true, stopping: true });
     }
+    if (url.pathname === '/api/explainer/delete-beat-image') {
+      const resDel = deleteBeatImage(
+        ROOT,
+        body.project || 'ink-explainer',
+        body.episode || 'ancient-humans-day',
+        body.beat
+      );
+      return send(res, 200, resDel);
+    }
+    if (url.pathname === '/api/explainer/upload-youtube') {
+      const project = body.project || 'ink-explainer';
+      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
+      const filePath = path.join(ROOT, 'projects', project, 'episodes', episode, 'episode.webm');
+      if (!fs.existsSync(filePath)) {
+        throw new Error('Exported episode.webm not found. Click "Export Full Episode (.webm)" first.');
+      }
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'youtube',
+        day: 1,
+        filePath,
+        title: body.title || 'Ink Explainer Episode',
+        description: body.description || '',
+        visibility: body.visibility || 'unlisted',
+        log: m => console.log(`[youtube ${episode}] ${m}`)
+      });
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status });
+    }
     return send(res, 404, { ok: false, error: 'Not found.' });
   } catch (err) {
     return send(res, 400, { ok: false, error: err.message });
@@ -344,6 +477,7 @@ const server = http.createServer(async (req, res) => {
   if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
   if (url.pathname === '/api/server') return handleServerControl(req, res);
   if (url.pathname.startsWith('/api/explainer/')) return handleExplainerRoute(req, res, url);
+  if (url.pathname.startsWith('/api/frames/')) return handleFramesRoute(req, res, url, { root: ROOT, port: PORT, queue, send, readBody });
   if (url.pathname.startsWith('/api/tiktok/')) return handleSocialRoute(req, res, url, '/api/tiktok', tiktok, 'TikTok');
   if (url.pathname.startsWith('/api/facebook/')) return handleSocialRoute(req, res, url, '/api/facebook', facebook, 'Facebook');
   if (url.pathname.startsWith('/api/telegram/')) return handleSocialRoute(req, res, url, '/api/telegram', telegram, 'Telegram');

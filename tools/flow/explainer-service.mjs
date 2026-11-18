@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { loadWorkspaceCharacters } from './flow-characters.mjs';
 
 export const GEMINI_TEXT_URL = 'https://mukeshpokharel-testing.hf.space/gemini';
 export const GEMINI_TTS_URL = 'https://mukeshpokharel-testing.hf.space/geminitts';
@@ -79,6 +80,46 @@ function roundSec(val) {
   return Math.round(Math.max(0, Number(val) || 0) * 1000) / 1000;
 }
 
+function stripEmotionTags(text) {
+  return String(text || '').replace(/\[[^\]]+\]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+const EMOTION_PRESETS = {
+  romantic: 'warmly and tenderly',
+  documentary: 'curious and conversational',
+  dramatic: 'dramatic and expressive'
+};
+
+/**
+ * Formats a block's beats with Gemini TTS inline emotion/delivery tags (e.g. [warmly], [whispering])
+ * so the narrator expresses natural emotion while keeping beat texts clean.
+ */
+export function buildExpressiveBlockPrompt(beats = [], emotionMode = 'auto') {
+  const list = Array.isArray(beats) ? beats : [];
+  if (!list.length) return '';
+  if (emotionMode === 'none') {
+    return list.map(b => stripEmotionTags(b?.narration || '')).filter(Boolean).join(' ');
+  }
+  const presetTag = EMOTION_PRESETS[emotionMode] || 'expressively and naturally';
+  let lastTag = '';
+  return list
+    .map((b, i) => {
+      const narr = String(b?.narration || '').trim();
+      if (!narr) return '';
+      const explicit = String(b?.emotion || '').trim().replace(/^\[|\]$/g, '');
+      const tag = emotionMode === 'auto'
+        ? (explicit || (i === 0 ? 'warmly and expressively' : ''))
+        : (i === 0 ? (explicit || presetTag) : explicit);
+      if (tag && tag !== lastTag) {
+        lastTag = tag;
+        return `[${tag}] ${narr}`;
+      }
+      return narr;
+    })
+    .filter(Boolean)
+    .join(' ');
+}
+
 /**
  * Aligns rapid visual beats (1.5-2.5s clauses) against word-level timestamps from /geminitts
  * so voiceover plays continuously across the block while beat images snap at exact clause boundaries.
@@ -88,13 +129,29 @@ export function alignBeatsToTimestamps(beats, timestamps = [], totalDuration = 0
   if (list.length === 0) return [];
 
   const counts = list.map(b => {
-    const words = String(b?.narration || '').trim().split(/\s+/).filter(Boolean);
+    const words = stripEmotionTags(b?.narration || '').split(/\s+/).filter(Boolean);
     return Math.max(1, words.length);
   });
   const totalWords = counts.reduce((sum, n) => sum + n, 0);
-  const ts = Array.isArray(timestamps)
-    ? timestamps.filter(t => t && Number.isFinite(Number(t.start)) && Number.isFinite(Number(t.end)))
-    : [];
+  const ts = [];
+  let inBracket = false;
+  for (const t of (Array.isArray(timestamps) ? timestamps : [])) {
+    if (!t) continue;
+    const txt = String(t.word ?? t.expected ?? '').trim();
+    if (!txt) continue;
+    if (inBracket) {
+      if (txt.includes(']')) inBracket = false;
+      continue;
+    }
+    if (txt.startsWith('[')) {
+      if (!txt.includes(']')) inBracket = true;
+      continue;
+    }
+    if (txt.endsWith(']') || /^\[.*\]$/.test(txt)) continue;
+    if (t.start === null || t.start === undefined || t.end === null || t.end === undefined) continue;
+    if (!Number.isFinite(Number(t.start)) || !Number.isFinite(Number(t.end))) continue;
+    ts.push(t);
+  }
   const lastTsEnd = ts.length ? Number(ts[ts.length - 1].end) : 0;
   const dur = Math.max(Number(totalDuration) || 0, lastTsEnd);
 
@@ -288,6 +345,7 @@ export async function generateAndSaveBlockTts({
   beats = [],
   prompt,
   voice = 'Kore',
+  emotionMode = 'auto',
   language = 'en',
   fetchImpl = fetch
 }) {
@@ -299,7 +357,7 @@ export async function generateAndSaveBlockTts({
   }
   const spokenText = (typeof prompt === 'string' && prompt.trim())
     ? prompt.trim()
-    : (Array.isArray(beats) ? beats.map(b => String(b?.narration || '').trim()).filter(Boolean).join(' ') : '');
+    : buildExpressiveBlockPrompt(beats, emotionMode);
 
   const tts = await fetchTtsAudio({ prompt: spokenText, voice, timestamps: true, language, fetchImpl });
   const beatTimings = alignBeatsToTimestamps(beats, tts.wordTimestamps, tts.duration);
@@ -363,6 +421,8 @@ export function saveEpisode(root, project = 'ink-explainer', episode) {
         beat: globalBeat,
         cardType,
         label: String(b?.label || '').trim(),
+        emotion: String(b?.emotion || '').trim(),
+        characters: Array.isArray(b?.characters) ? b.characters.map(c => String(c || '').trim().toUpperCase()).filter(Boolean) : [],
         narration: String(b?.narration || '').trim(),
         visual: String(b?.visual || '').trim()
       };
@@ -381,9 +441,20 @@ export function saveEpisode(root, project = 'ink-explainer', episode) {
   const clean = {
     id: epId,
     title: String(episode.title || 'Untitled Explainer Episode').trim(),
-    subtitle: String(episode.subtitle || 'Rapid-Beat English Explainer').trim(),
+    subtitle: String(episode.subtitle || 'Rapid-Beat Explainer').trim(),
     hook: String(episode.hook || '').trim(),
     niche: String(episode.niche || 'History & Human Curiosity').trim(),
+    language: String(episode.language || 'en').trim() === 'ne' ? 'ne' : 'en',
+    characters: Array.isArray(episode.characters)
+      ? episode.characters
+          .filter(c => c && (c.code || c.name))
+          .map(c => ({
+            code: String(c.code || c.name).trim().toUpperCase().replace(/[^A-Z0-9_-]+/g, '_'),
+            name: String(c.name || c.code).trim(),
+            role: String(c.role || '').trim(),
+            refPrompt: String(c.refPrompt || '').trim()
+          }))
+      : [],
     blocks: cleanBlocks,
     updatedAt: new Date().toISOString()
   };
@@ -490,6 +561,58 @@ export function loadCustomStory(root, project = 'ink-explainer') {
   }
 }
 
+/** Deletes a single generated beat image from disk so batch generation will regenerate only missing beats. */
+export function deleteBeatImage(root, project = 'ink-explainer', episodeId = 'ancient-humans-day', beatNum) {
+  const proj = validateId(project, 'project identifier');
+  const epId = validateId(episodeId, 'episode identifier');
+  const num = Number(beatNum);
+  if (!Number.isInteger(num) || num < 1 || num > 365) {
+    throw new Error('beat must be an integer from 1 to 365.');
+  }
+  const dir = path.join(root, 'projects', proj, 'episodes', epId, 'images');
+  const stem = `beat-${pad2(num)}`;
+  let deleted = false;
+  for (const ext of ['.png', '.jpg', '.jpeg', '.webp']) {
+    const file = path.join(dir, `${stem}${ext}`);
+    if (fs.existsSync(file)) {
+      fs.unlinkSync(file);
+      deleted = true;
+    }
+  }
+  return { ok: true, deleted, beat: num };
+}
+
+/** Saves a manually pasted/uploaded beat image to disk so it is used immediately and skipped by Batch Flow. */
+export function saveBeatImage(root, project = 'ink-explainer', episodeId = 'ancient-humans-day', beatNum, imageBuffer, ext = '.png') {
+  const proj = validateId(project, 'project identifier');
+  const epId = validateId(episodeId, 'episode identifier');
+  const num = Number(beatNum);
+  if (!Number.isInteger(num) || num < 1 || num > 365) {
+    throw new Error('beat must be an integer from 1 to 365.');
+  }
+  const buf = Buffer.isBuffer(imageBuffer) ? imageBuffer : Buffer.from(imageBuffer || []);
+  if (!buf.length) throw new Error('Image file is empty.');
+  const cleanExt = ['.png', '.jpg', '.jpeg', '.webp'].includes(String(ext || '').toLowerCase())
+    ? String(ext).toLowerCase()
+    : '.png';
+  deleteBeatImage(root, proj, epId, num);
+  const fileName = `beat-${pad2(num)}${cleanExt}`;
+  const outPath = path.join(root, 'projects', proj, 'episodes', epId, 'images', fileName);
+  writeAtomic(outPath, buf);
+  return { ok: true, beat: num, url: `/projects/${proj}/episodes/${epId}/images/${fileName}` };
+}
+
+/** Builds a dedicated, concise Google Flow project name per Ink Explainer episode. */
+export function episodeFlowProjectName(root, project = 'ink-explainer', episodeId = '', baseFlowProject = 'Ink Explainer') {
+  const base = String(baseFlowProject || 'Ink Explainer').trim();
+  const epId = typeof episodeId === 'string' ? episodeId.trim() : '';
+  if (!epId) return base;
+  const ep = loadEpisode(root, project, epId);
+  const rawTitle = ep?.title || (epId === 'ancient-humans-day' ? 'Ancient Humans All Day' : epId);
+  const shortTitle = rawTitle.replace(/\s+/g, ' ').trim().slice(0, 42).trim();
+  return shortTitle ? `${base} · ${shortTitle}` : base;
+}
+
 /** Lists local beat images, continuous block audio tracks, and episode metadata. */
 export function listExplainerAssets(root, project = 'ink-explainer', episodeId = 'ancient-humans-day') {
   const proj = validateId(project, 'project identifier');
@@ -569,12 +692,40 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
     }
   }
 
+  const charScope = `${proj}/episodes/${epId}`;
+  const storedChars = loadWorkspaceCharacters(root, charScope);
+  const episodeCharacters = {};
+  for (const [code, entry] of Object.entries(storedChars)) {
+    const fileName = entry.imageFile ? path.basename(entry.imageFile) : '';
+    let imageUrl = '';
+    if (fileName && fs.existsSync(entry.imageFile)) {
+      const stat = fs.statSync(entry.imageFile);
+      imageUrl = `/projects/${proj}/episodes/${epId}/characters/${fileName}?t=${Math.floor(stat.mtimeMs)}`;
+    }
+    episodeCharacters[code] = {
+      code,
+      name: entry.name || code,
+      refPrompt: entry.refPrompt || '',
+      imageUrl
+    };
+  }
+
+  const exportPath = path.join(root, 'projects', proj, 'episodes', epId, 'episode.webm');
+  let exportedVideoUrl = '';
+  if (fs.existsSync(exportPath)) {
+    const stat = fs.statSync(exportPath);
+    exportedVideoUrl = `/projects/${proj}/episodes/${epId}/episode.webm?t=${Math.floor(stat.mtimeMs)}`;
+  }
+
   return {
     ok: true,
     project: proj,
     activeEpisodeId: epId,
+    flowProject: episodeFlowProjectName(root, proj, epId),
+    exportedVideoUrl,
     episodes: listEpisodes(root, proj),
     episode: loadEpisode(root, proj, epId),
+    episodeCharacters,
     beatImages,
     blockAudio,
     images,

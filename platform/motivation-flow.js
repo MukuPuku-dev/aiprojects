@@ -184,14 +184,24 @@
           const beats = typeof inkExplainerActiveBeats === "function" ? inkExplainerActiveBeats() : cfg.items;
           const batchItems = beats.map((b, idx) => ({
             day: Number(b.beat || idx + 1),
-            prompt: inkExplainerPromptFor(idx, aspect)
+            prompt: inkExplainerPromptFor(idx, aspect),
+            characters: b.characters || []
           }));
           const batchId = crypto.randomUUID();
           const r = await fetch("/api/explainer/generate-batch", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             keepalive: true,
-            body: JSON.stringify({ id: batchId, project: cfg.project, episode: episodeId, aspect, model, concurrency: 5, items: batchItems })
+            body: JSON.stringify({
+              id: batchId,
+              project: cfg.project,
+              episode: episodeId,
+              aspect,
+              model,
+              concurrency: 5,
+              characters: ep?.characters || [],
+              items: batchItems
+            })
           });
           const body = await r.json();
           if (!r.ok || !body.ok) throw new Error(body.error || "Could not start parallel Flow image batch.");

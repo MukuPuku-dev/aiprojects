@@ -4,5 +4,11 @@
     "name": "Kiran",
     "refPrompt": "Character reference: clean full-body 2D stickman cartoon turnaround character sheet of KIRAN (Main Stickman Hero): Classic 2D stickman cartoon character with clean bold ink-black line art, expressive white circular eyes with dynamic pupils and brow lines, slender proportions, wearing a flowing bright crimson-red scarf trailing behind his neck and carrying a small vintage brass oil lantern glowing warm golden-amber in his right hand. Plain clean white/light neutral background for easy referencing, ultra-sharp black ink outlines, clear silhouette, expression range chart, no text.",
     "updatedAt": "2026-11-16T17:58:44.643Z"
+  },
+  "PIP": {
+    "code": "PIP",
+    "name": "Pip",
+    "refPrompt": "Character reference: clean full-body 2D stickman cartoon turnaround character sheet of PIP (Small Stickman Companion): Smaller, younger 2D stickman cartoon character with clean ink-black line art, big curious expressive eyes, wearing an oversized pale sky-blue hooded tunic and carrying a tiny carved wooden flute tied to a waist string. Plain clean white/light neutral background for easy referencing, ultra-sharp black ink outlines, clear silhouette, expression range chart, no text.",
+    "updatedAt": "2026-11-17T17:32:29.308Z"
   }
 }

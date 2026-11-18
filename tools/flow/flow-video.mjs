@@ -261,7 +261,7 @@ async function diagnose(page, label, error) {
   return base;
 }
 
-async function runGeneration({ checkCredits, configurePage, thumbnailSelector, waitOpen, saveOpened, summary, prompt, flowProject, project = '', characterConsistency = false, requiredCharacters = [], log }) {
+async function runGeneration({ checkCredits, configurePage, thumbnailSelector, waitOpen, saveOpened, summary, prompt, flowProject, project = '', charProject = '', characterConsistency = false, requiredCharacters = [], log }) {
   const browser = await connect(log);
   let page;
   try {
@@ -270,7 +270,7 @@ async function runGeneration({ checkCredits, configurePage, thumbnailSelector, w
     await ensureFlowProject(page, flowProject, { log });
     await ensureDirectPromptMode(page);
     if (characterConsistency && requiredCharacters.length) {
-      await ensureCharactersInFlow(page, { root: ROOT, project, characters: requiredCharacters, log });
+      await ensureCharactersInFlow(page, { root: ROOT, project: charProject || project, characters: requiredCharacters, log });
     }
     await configurePage(page);
     if (characterConsistency && requiredCharacters.length) {
@@ -323,7 +323,7 @@ export function generateVideo({ prompt, outFile, model, aspect, duration, flowPr
 /**
  * Generates one image in Flow and saves it to outFile without checking credits or switching accounts.
  */
-export function generateImage({ prompt, outFile, model = '', aspect = '9:16', flowProject, project = '', characterConsistency = false, requiredCharacters = [], log = console.log }) {
+export function generateImage({ prompt, outFile, model = '', aspect = '9:16', flowProject, project = '', charProject = '', characterConsistency = false, requiredCharacters = [], log = console.log }) {
   return runGeneration({
     checkCredits: false,
     configurePage: page => configureImage(page, { model, aspect }),
@@ -331,8 +331,32 @@ export function generateImage({ prompt, outFile, model = '', aspect = '9:16', fl
     waitOpen: (page, before) => openNewImage(page, before, prompt),
     saveOpened: page => saveOpenedImage(page, outFile, aspect, log),
     summary: `Image${model ? `, ${model}` : ''}, ${aspect}`,
-    prompt, flowProject, project, characterConsistency, requiredCharacters, log
+    prompt, flowProject, project, charProject, characterConsistency, requiredCharacters, log
   });
+}
+
+/**
+ * Generates/syncs episode cast characters in Flow and saves them to the episode's workspace.
+ */
+export async function generateCharactersInFlow({ flowProject, charProject, characters = [], log = console.log }) {
+  if (!characters.length) return { count: 0 };
+  const browser = await connect(log);
+  let page;
+  try {
+    page = await findFlowPage(browser);
+    await ensureFlowProject(page, flowProject, { log });
+    await ensureDirectPromptMode(page);
+    await ensureCharactersInFlow(page, { root: ROOT, project: charProject, characters, log });
+    return { count: characters.length };
+  } catch (err) {
+    if (page) {
+      const base = await diagnose(page, 'char-failure', err);
+      err.message += ` Diagnostics: ${base}`;
+    }
+    throw err;
+  } finally {
+    await browser.close().catch(() => {});
+  }
 }
 
 /**
@@ -344,6 +368,8 @@ export async function generateImageBatch({
   model = '',
   aspect = '16:9',
   flowProject,
+  charProject = '',
+  characters = [],
   concurrency = 5,
   shouldStop = () => false,
   onProgress = () => {},
@@ -364,6 +390,10 @@ export async function generateImageBatch({
     page = await findFlowPage(browser);
     await ensureFlowProject(page, flowProject, { log });
     await ensureDirectPromptMode(page);
+    if (characters.length && charProject) {
+      onProgress({ phase: 'characters', inFlight: 0, remaining: pending.length, savedCount: 0 });
+      await ensureCharactersInFlow(page, { root: ROOT, project: charProject, characters, log });
+    }
     await configureImage(page, { model, aspect });
 
     const before = await page.locator(S.imageThumbnail).evaluateAll(imgs => imgs.map(i => i.src).filter(Boolean));
@@ -381,6 +411,9 @@ export async function generateImageBatch({
       // 1. Top up Flow's active queue up to `maxParallel` simultaneous image prompts.
       while (!shouldStop() && pending.length > 0 && inFlightCount() < maxParallel) {
         const next = pending[0];
+        if (Array.isArray(next.characters) && next.characters.length > 0) {
+          await attachCharactersToPrompt(page, { characters: next.characters, log });
+        }
         const box = page.locator(S.promptBox).first();
         await box.waitFor({ state: 'visible', timeout: 15000 });
         await box.fill(next.prompt);
@@ -466,4 +499,78 @@ export async function generateImageBatch({
   } finally {
     await browser.close().catch(() => {});
   }
+}
+
+
+/* ---------- Frames mode (Start frame + End frame -> video) ---------- */
+
+async function clickConfirmIfShown(page) {
+  const confirm = page.getByRole('button', { name: S.frameConfirmButton }).filter({ visible: true }).first();
+  if (await confirm.waitFor({ state: 'visible', timeout: 2500 }).then(() => true, () => false)) {
+    await confirm.click().catch(() => {});
+    await page.waitForTimeout(500);
+  }
+}
+
+/** Puts a local image into the Start or End tile of Flow's Frames mode. */
+async function attachFrame(page, label, file, log) {
+  if (!file || !fs.existsSync(file)) throw new Error(`${label} frame file is missing: ${file}`);
+  const tile = page.locator(S.frameTile(label)).filter({ visible: true }).first();
+  await tile.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {
+    throw new Error(`Flow ${label} frame tile not found. Is Frames mode selected? Update selectors.mjs (frameTile).`);
+  });
+  let chooser = null;
+  let chooserWait = page.waitForEvent('filechooser', { timeout: 4000 }).catch(() => null);
+  await tile.click();
+  chooser = await chooserWait;
+  if (!chooser) {
+    // The tile opened a menu/dialog: click its Upload entry.
+    const upload = page.locator('.cdk-overlay-container').getByText(S.frameUploadItem).filter({ visible: true }).first();
+    if (await upload.waitFor({ state: 'visible', timeout: 5000 }).then(() => true, () => false)) {
+      chooserWait = page.waitForEvent('filechooser', { timeout: 8000 }).catch(() => null);
+      await upload.click();
+      chooser = await chooserWait;
+    }
+  }
+  if (chooser) await chooser.setFiles(file);
+  else {
+    const input = page.locator('input[type="file"]').first();
+    await input.waitFor({ state: 'attached', timeout: 5000 }).catch(() => {
+      throw new Error(`Could not upload the ${label} frame (no file chooser). Update selectors.mjs (frameTile/frameUploadItem).`);
+    });
+    await input.setInputFiles(file);
+  }
+  await clickConfirmIfShown(page);
+  await page.waitForTimeout(2500); // let Flow finish ingesting the image
+  log(`${label} frame attached (${path.basename(file)}).`);
+}
+
+async function configureFrames(page, { model, aspect, duration, startFile, endFile, log }) {
+  const modelButton = await openSettingsPanel(page);
+  await setRadio(page, page.getByRole('radio', { name: S.videoModeRadio }), 'Video mode');
+  await selectModel(page, modelButton, model);
+  await setRadio(page, page.getByRole('radio', { name: S.framesRadio }), 'Frames mode');
+  await setRadio(page, page.getByRole('radio', { name: S.aspectRadio(aspect) }), `aspect ${aspect}`);
+  await setRadio(page, page.getByRole('radio', { name: S.durationRadio(duration) }), `duration ${duration}`);
+  await setRadio(page, page.getByRole('radio', { name: S.singleRadio }), 'x1 output count');
+  await page.keyboard.press('Escape').catch(() => {}); // close the settings popup so the tiles are clickable
+  await page.waitForTimeout(300);
+  await attachFrame(page, 'Start', startFile, log);
+  await attachFrame(page, 'End', endFile, log);
+}
+
+/**
+ * Generates one Flow video from a Start frame and an End frame and saves it to outFile.
+ * Credits are checked like normal video jobs. Does not resubmit on its own.
+ */
+export function generateFrameVideo({ prompt, outFile, model, aspect, duration, startFile, endFile, flowProject, log = console.log }) {
+  return runGeneration({
+    checkCredits: true,
+    configurePage: page => configureFrames(page, { model, aspect, duration, startFile, endFile, log }),
+    thumbnailSelector: S.videoThumbnail,
+    waitOpen: (page, before) => openNewVideo(page, before, prompt),
+    saveOpened: page => saveOpenedVideo(page, outFile, aspect, log),
+    summary: `Frames, ${model}, ${aspect}, ${duration}`,
+    prompt, flowProject, log
+  });
 }

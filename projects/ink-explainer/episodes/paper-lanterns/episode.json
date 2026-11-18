@@ -1,0 +1,669 @@
+{
+  "id": "paper-lanterns",
+  "title": "The Girl with the Paper Lanterns",
+  "subtitle": "A Love Story in Seven Chapters · Arin Vale & Mira Sen (54 Visual Beats)",
+  "hook": "Arin Vale didn't believe in love at first sight—until a girl in an oversized yellow raincoat lost her sketchbook on rainy Platform Two.",
+  "niche": "Teenage Romance · Love at First Sight",
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "Chapter 1 · Three Minutes at Platform Two",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "flat-scene",
+          "label": "PLATFORM TWO · 7:42",
+          "narration": "On a rainy Monday morning, seventeen-year-old Arin stood on Platform Two with a cracked umbrella and cold tea.",
+          "visual": "Rainy train platform under soft grey sky: round-white-headed teenage boy stickman in school uniform holding a cracked black umbrella and steaming-less tea cup beside a sign reading 'PLATFORM 2'.",
+          "emotion": "warmly and storytelling",
+          "characters": [
+            "ARIN"
+          ]
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Then the 7:42 train pulled in, and a girl in an oversized yellow raincoat stepped out clutching a sketchbook.",
+          "visual": "Blue-grey commuter train doors open at station: round-white-headed teenage girl stickman wearing a bright oversized yellow raincoat, tiny chin scar dot, and a pencil tucked behind her ear holding a sketchbook.",
+          "characters": [
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 3,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Four steps later, the wind snatched her sketchbook and sent drawings fluttering across the wet platform like pigeons.",
+          "visual": "Dramatic gust swirls around the girl as white sketchbook pages fly wildly into the air across rain puddles.",
+          "emotion": "excitedly",
+          "characters": [
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 4,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Arin dropped his tea, chased one page across a puddle, and stamped on another like he was defending a castle.",
+          "visual": "Boy stickman leaping heroically mid-stride with cracked umbrella, one foot stomping a runaway white drawing on the wet platform while grabbing another flying sheet.",
+          "characters": [
+            "ARIN"
+          ]
+        },
+        {
+          "beat": 5,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "When he stood up holding damp drawings, she was laughing hard and said, 'You just fought a bench for my art.'",
+          "visual": "Boy holding a messy stack of damp papers while the girl in yellow raincoat laughs joyfully holding her stomach in the rain.",
+          "emotion": "laughing warmly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 6,
+          "cardType": "whiteboard-prop",
+          "label": "HONEY EYES · PENCIL · SCAR",
+          "narration": "And as her fingers brushed his, the whole town of Willowbrook seemed to step back and go quiet.",
+          "visual": "Clean white minimalist close-up portrait sketch of the girl's round white face with warm honey-brown eyes, tiny chin mark, and pencil behind her ear, soft golden glow around her.",
+          "emotion": "softly and dreamily",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 7,
+          "cardType": "flat-scene",
+          "label": "7:49 TO EASTBRIDGE",
+          "narration": "'I'm Mira,' she smiled, before the 7:49 speaker crackled and she vanished into the crowd.",
+          "visual": "Girl in bright yellow raincoat waving goodbye as she hurries back toward the boarding train doors while Arin stands watching.",
+          "emotion": "wistfully",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 8,
+          "cardType": "whiteboard-prop",
+          "label": "7:44 · REMEMBER THIS FACE",
+          "narration": "Left in his hand was one page she had drawn in under two minutes: 'Boy who fights benches. Remember this face.'",
+          "visual": "Pure white sketchbook page showing a charming pencil doodle of Arin mid-stomp with his cracked umbrella, timestamped '7:44' and handwritten 'Boy who fights benches. Remember this face.'",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "Chapter 2 · The New Girl",
+      "beats": [
+        {
+          "beat": 9,
+          "cardType": "split-compare",
+          "label": "TUESDAY | WEDNESDAY",
+          "narration": "All week Arin was hopeless—staring blankly in Physics and accidentally pouring ketchup into his tea at lunch.",
+          "visual": "Split white screen with dashed line: left shows Arin daydreaming with tiny yellow raincoat doodles in his notebook; right shows him absentmindedly squeezing red ketchup into a tea mug.",
+          "emotion": "playfully",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 10,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "His best friend Dev snapped, 'You've stared at one page for forty minutes, and your ears are bright red.'",
+          "visual": "Classroom desks: best friend stickman Dev leaning over pointing knowingly at Arin's blushing bright-red ears.",
+          "characters": [
+            "ARIN",
+            "DEV"
+          ]
+        },
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Then the door opened—and Mr. Okafor walked in beside a girl still wearing a yellow raincoat.",
+          "visual": "Classroom front by chalkboard: teacher Mr. Okafor gesturing warmly beside Mira in her yellow raincoat with the pencil still behind her ear.",
+          "characters": [
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 12,
+          "cardType": "flat-scene",
+          "label": "IT'S THE BENCH GUY",
+          "narration": "Arin stood up so fast his chair screeched like a dying goose, and Mira grinned, 'Oh. It's the bench guy.'",
+          "visual": "Arin frozen awkwardly half-standing over a tipped wooden chair while the entire classroom turns to stare and Mira smiles mischievously.",
+          "emotion": "amused",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 13,
+          "cardType": "whiteboard-prop",
+          "label": "OOOOOOH!",
+          "narration": "The whole class erupted in 'Ooooooh,' and Arin wished the floor would swallow him whole.",
+          "visual": "Pure white reaction card with bold hand-lettered 'OOOOOOH!' surrounded by tiny laughing stickman heads peeking from the bottom.",
+          "characters": []
+        },
+        {
+          "beat": 14,
+          "cardType": "flat-scene",
+          "label": "HI.",
+          "narration": "Mira dropped into the empty seat right next to him, whispered 'Hi,' and smiled like she had won a prize.",
+          "visual": "Side-by-side wooden school desks: Mira leaning cheerfully on her hand whispering 'Hi' to a stunned, smiling Arin.",
+          "emotion": "warmly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        }
+      ]
+    },
+    {
+      "blockId": 3,
+      "title": "Chapter 3 · The Library Book",
+      "beats": [
+        {
+          "beat": 15,
+          "cardType": "flat-scene",
+          "label": "NO WHISPERING",
+          "narration": "Willowbrook High's old library was ruled by Mrs. Pennywhistle, who treated giggling like high treason.",
+          "visual": "Tall wooden bookshelves in a quiet library: stern elderly librarian stickman with round glasses and bun holding a finger to her lips under a 'SILENCE' sign.",
+          "emotion": "hushed",
+          "characters": [
+            "MIRA",
+            "PENNYWHISTLE"
+          ]
+        },
+        {
+          "beat": 16,
+          "cardType": "whiteboard-prop",
+          "label": "THE CARTOGRAPHER'S DAUGHTER",
+          "narration": "Their secret language began inside a battered green library book called The Cartographer's Daughter.",
+          "visual": "Pure white card featuring a well-worn green hardcover book open to a page with a folded paper note tucked inside the back cover.",
+          "characters": []
+        },
+        {
+          "beat": 17,
+          "cardType": "whiteboard-prop",
+          "label": "BEST PAGE EVER · - M.",
+          "narration": "Mira found Arin's tiny pencil margin note on Chapter 12 and slipped her own note inside: 'Made me cry on the bus.'",
+          "visual": "Clean white card showing a handwritten folded note reading 'Chapter 12 made me cry on the bus. - M.' beside an underlined book margin.",
+          "emotion": "softly",
+          "characters": []
+        },
+        {
+          "beat": 18,
+          "cardType": "split-compare",
+          "label": "MANGOES | TOAST",
+          "narration": "Through that green book they traded secret truths—favorite foods, worst fears, and dreams nobody else knew.",
+          "visual": "Split white screen with dashed line: left shows Mira holding a bright golden mango; right shows Arin proudly holding a slice of buttered toast.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 19,
+          "cardType": "flat-scene",
+          "label": "ROW 7",
+          "narration": "One afternoon Mira left a note: 'Meet me in Row 7, behind the encyclopedias. Close your eyes.'",
+          "visual": "Hidden cozy corner behind towering library shelves labeled 'ROW 7': Mira sitting cross-legged on the carpet holding her sketchbook while Arin sits opposite with eyes shut tight.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 20,
+          "cardType": "whiteboard-prop",
+          "label": "",
+          "narration": "Her drawing turned every shelf into tiny doors to lighthouses and lantern streets—with two kids reading under a carpet tree.",
+          "visual": "Detailed ink-and-watercolor sketchbook spread: library shelves with tiny glowing doors opening into a lighthouse, ship, and lantern street, and two tiny figures (yellow raincoat and cracked umbrella) under a tree.",
+          "emotion": "wonderingly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 21,
+          "cardType": "flat-scene",
+          "label": "TEN MORE MINUTES.",
+          "narration": "Mrs. Pennywhistle caught them, stared at the drawing, softened slightly, and muttered, 'Ten more minutes. Not a sound.'",
+          "visual": "Stern librarian Mrs. Pennywhistle standing over the two kids holding up one finger with a tiny reluctant half-smile before walking away.",
+          "characters": [
+            "PENNYWHISTLE"
+          ]
+        },
+        {
+          "beat": 22,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "The second she turned away, they collapsed into silent, helpless laughter against the bookshelves.",
+          "visual": "Arin and Mira leaning shoulder-to-shoulder covering their mouths, shaking with quiet happy laughter on the library floor.",
+          "emotion": "giggling softly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        }
+      ]
+    },
+    {
+      "blockId": 4,
+      "title": "Chapter 4 · The Rooftop and the Question",
+      "beats": [
+        {
+          "beat": 23,
+          "cardType": "flat-scene",
+          "label": "THE LANTERN COUPLE",
+          "narration": "By October everyone knew—Dev nicknamed them the Lantern Couple as Mira stuffed folded paper lanterns into her locker.",
+          "visual": "School hallway locker overflowing with colorful folded paper lanterns while Dev points and laughs beside Arin.",
+          "characters": [
+            "ARIN",
+            "MIRA",
+            "DEV"
+          ]
+        },
+        {
+          "beat": 24,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "On the school rooftop at sunset, Mira turned a half-folded lantern in her hands and told him her grandmother's tradition.",
+          "visual": "Warm apricot-orange sunset sky on flat school rooftop: Arin and Mira sitting side by side on the ledge while Mira folds a delicate paper lantern.",
+          "emotion": "warmly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 25,
+          "cardType": "whiteboard-prop",
+          "label": "WISHES TRAVEL.",
+          "narration": "'Wishes don't disappear,' she whispered. 'I wish to find a place where I can finally stop packing my bags.'",
+          "visual": "Pure white card showing a glowing golden paper lantern floating upward with neat hand-lettered text 'WISHES TRAVEL.'",
+          "emotion": "tenderly",
+          "characters": []
+        },
+        {
+          "beat": 26,
+          "cardType": "flat-scene",
+          "label": "DECEMBER...",
+          "narration": "Then Arin asked softly, 'Are you leaving?'—and Mira admitted her dad's contract ended in December.",
+          "visual": "Wind blowing across Mira's hair on the dusk rooftop as her smile turns fragile and Arin looks at her with sudden quiet heartbreak.",
+          "emotion": "sadly and quietly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 27,
+          "cardType": "red-x",
+          "label": "",
+          "narration": "Arin's logical brain warned him to protect his heart—but he refused to listen to caution.",
+          "visual": "Stickman brain diagram labeled 'PROTECT YOURSELF / BE PRACTICAL' crossed out boldly corner-to-corner by a giant red X.",
+          "characters": []
+        },
+        {
+          "beat": 28,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "'Then we'll make December the best two months anyone's ever had,' he promised, wrapping his scarf around her until the stars came out.",
+          "visual": "Deep starry night sky over the rooftop: Arin gently wrapping his warm scarf around Mira's shoulders as she laughs through tears.",
+          "emotion": "sincerely and warmly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        }
+      ]
+    },
+    {
+      "blockId": 5,
+      "title": "Chapter 5 · The Wow Moment",
+      "beats": [
+        {
+          "beat": 29,
+          "cardType": "flat-scene",
+          "label": "SILVERLAKE FESTIVAL",
+          "narration": "On Lantern Festival night, Silverlake Park glowed with thousands of lights, roasted chestnuts, and an off-key brass band.",
+          "visual": "Festive twilight park beside a shimmering lake with warm lantern glow, food stall steam, and cheerful townspeople.",
+          "emotion": "brightly",
+          "characters": []
+        },
+        {
+          "beat": 30,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "For three weeks Arin had conspired in secret with Dev, the art club, the janitor, and even Mrs. Pennywhistle.",
+          "visual": "Humorous montage scene: Arin, Dev, janitor with paintbrush, and Mrs. Pennywhistle huddled together painting paper lanterns with brushes and tape.",
+          "characters": [
+            "ARIN",
+            "DEV",
+            "PENNYWHISTLE"
+          ]
+        },
+        {
+          "beat": 31,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Holding her warm hand, he led Mira onto the old wooden bridge and told her, 'Close your eyes. Now open.'",
+          "visual": "Middle of the wooden bridge over Silverlake: Arin standing nervously holding Mira's hand as she covers and then opens her eyes.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 32,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Hundreds of gold-threaded paper lanterns lined the bridge—each painted with worlds from her own sketchbook.",
+          "visual": "Breath-taking wooden bridge illuminated from rail to rail by hundreds of glowing golden paper lanterns painted with lighthouses, forests, and tiny ships.",
+          "emotion": "amazed",
+          "characters": [
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 33,
+          "cardType": "whiteboard-prop",
+          "label": "REMEMBER THIS FACE?",
+          "narration": "At the center hung the biggest lantern of all, showing her sketch of him—'Remember this face? I'd like to be remembered by yours, too.'",
+          "visual": "Giant glowing centerpiece lantern featuring the umbrella boy drawing and handwritten message 'Remember this face? I'd like to be remembered by yours, too.'",
+          "emotion": "tenderly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 34,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "The entire festival crowd erupted into cheers—Dev whistling from a bench, Mrs. Pennywhistle dabbing her eyes.",
+          "visual": "Jubilant crowd cheering on the lakeside shore, Dev standing proudly on a bench whistling and waving, Mrs. Pennywhistle dabbing a handkerchief.",
+          "emotion": "joyfully",
+          "characters": [
+            "MIRA",
+            "DEV",
+            "PENNYWHISTLE"
+          ]
+        },
+        {
+          "beat": 35,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "'I fell in love with you in four steps and a puddle,' Mira laughed. 'It took me one,' Arin smiled.",
+          "visual": "Warm lantern-lit close-up on the bridge: Mira throwing her arms happily around Arin's neck while golden lantern light sparkles in their eyes.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 36,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "And under a thousand glowing lanterns, he kissed her softly, like the opening line of a book he'd read forever.",
+          "visual": "Tender silhouette-style 2D stickman couple sharing a sweet kiss on the wooden bridge under a canopy of floating golden lanterns.",
+          "emotion": "softly and romantically",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        }
+      ]
+    },
+    {
+      "blockId": 6,
+      "title": "Chapter 6 · The Hardest Goodbye",
+      "beats": [
+        {
+          "beat": 37,
+          "cardType": "flat-scene",
+          "label": "DECEMBER",
+          "narration": "December arrived too fast, so they crammed a lifetime into snowmen with cracked umbrellas and mangoes in the snow.",
+          "visual": "Snowy winter park: Arin and Mira laughing as they put a cracked black umbrella onto a cheerful round snowman while eating yellow mangoes.",
+          "emotion": "bittersweet",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 38,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Then came the final Friday—cardboard boxes loaded into a moving van in the cold driveway.",
+          "visual": "Winter driveway beside a white moving van stacked with cardboard boxes while Arin stands clutching a small wrapped package in the snow.",
+          "characters": [
+            "ARIN"
+          ]
+        },
+        {
+          "beat": 39,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Mira carried only her sketchbook and the green library book Mrs. Pennywhistle told her to keep until she came home.",
+          "visual": "Mira hugging her sketchbook and the battered green library book tightly against her coat.",
+          "characters": [
+            "MIRA",
+            "PENNYWHISTLE"
+          ]
+        },
+        {
+          "beat": 40,
+          "cardType": "flat-scene",
+          "label": "HOME IS WHEREVER YOU ARE",
+          "narration": "'Home is wherever you are,' she whispered, hugging him like an entire year was folded inside.",
+          "visual": "Heartbreaking snowy embrace: Arin and Mira holding each other tightly beside the driveway as snowflakes fall gently around them.",
+          "emotion": "heartbroken and choked up",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 41,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "He pressed a small wooden box into her hands—'Open it on the train'—then watched the van disappear down the road.",
+          "visual": "Mira pressing her palm against the rear window of the departing van while Arin stands alone in the snow without an umbrella.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 42,
+          "cardType": "whiteboard-prop",
+          "label": "DON'T LIGHT IT UNTIL YOU COME BACK.",
+          "narration": "Inside the box lay one perfectly folded paper lantern and his note: 'Don't light it until you're ready to come back.'",
+          "visual": "Pure white close-up of an open small wooden box holding a neatly folded golden paper lantern with a note reading 'Wishes travel. Don't light it until you're ready to come back.'",
+          "emotion": "softly",
+          "characters": []
+        }
+      ]
+    },
+    {
+      "blockId": 7,
+      "title": "Chapter 7 · Wishes Find the Right Person",
+      "beats": [
+        {
+          "beat": 43,
+          "cardType": "whiteboard-prop",
+          "label": "COUNTING DAYS IN ENVELOPES",
+          "narration": "They wrote every single day—real ink letters with doodles in the margins, counting winter, spring, and summer in envelopes.",
+          "visual": "Pure white montage card showing stamped paper envelopes piling up alongside little ink sketches of lighthouses and mangoes.",
+          "emotion": "hopeful",
+          "characters": []
+        },
+        {
+          "beat": 44,
+          "cardType": "flat-scene",
+          "label": "LATE AUGUST",
+          "narration": "Then on a honey-colored August Sunday, Arin sat on the steps of Platform Two with cold tea—when the 7:42 pulled in.",
+          "visual": "Warm golden late-summer station platform: Arin sitting patiently on the steps with a cup of tea as the 7:42 train glides into Platform Two.",
+          "characters": [
+            "ARIN"
+          ]
+        },
+        {
+          "beat": 45,
+          "cardType": "flat-scene",
+          "label": "HI, BENCH GUY.",
+          "narration": "The doors hissed open, and out stepped Mira in her bright yellow raincoat under the blazing sun: 'Hi, bench guy.'",
+          "visual": "Train doors open into bright sunshine: Mira grinning warmly in her oversized yellow raincoat with sketchbook and green book, pencil tilted behind her ear.",
+          "emotion": "surprised and delighted",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 46,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Arin dropped his tea again, sprinted across the platform, and spun her around while the whole station watched.",
+          "visual": "Spilled paper tea cup on the platform while Arin catches Mira in a joyful spinning hug as onlookers smile.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 47,
+          "cardType": "flat-scene",
+          "label": "WE'RE STAYING!",
+          "narration": "'Dad quit! He found a hospital job in Willowbrook—we bought the little blue house by the lake. I get to unpack my locker!'",
+          "visual": "Mira laughing through happy tears pointing toward a cozy little blue house painted near the lakeshore.",
+          "emotion": "crying happy tears",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 48,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "That evening at Silverlake's edge, she pulled out the crumpled paper lantern she had kept safe for eight months.",
+          "visual": "Warm twilight lakeside: Mira holding the soft, well-folded paper lantern as first evening stars appear over Silverlake.",
+          "characters": [
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 49,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Arin held one side, Mira held the other, and together they let the glowing lantern drift into the starry sky.",
+          "visual": "Arin and Mira side by side releasing the lit glowing golden lantern as it floats upward over the wooden bridge and blue lakeside house.",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        },
+        {
+          "beat": 50,
+          "cardType": "flat-scene",
+          "label": "IT WORKED.",
+          "narration": "'What did you wish for?' she asked. 'Never to say goodbye on Platform Two again,' he smiled. 'It worked.'",
+          "visual": "Mira leaning her head softly on Arin's shoulder gazing up as their tiny golden lantern becomes one bright star among a thousand.",
+          "emotion": "tenderly",
+          "characters": [
+            "ARIN",
+            "MIRA"
+          ]
+        }
+      ]
+    },
+    {
+      "blockId": 8,
+      "title": "Epilogue · A Long Way Home",
+      "beats": [
+        {
+          "beat": 51,
+          "cardType": "whiteboard-prop",
+          "label": "ROW 7 DISPLAY CASE",
+          "narration": "Years later, Willowbrook High's library added a glass display case beside Row 7.",
+          "visual": "Clean glass museum-style wooden display case inside the library holding a battered green book and a yellowing pencil sketch.",
+          "emotion": "nostalgically",
+          "characters": []
+        },
+        {
+          "beat": 52,
+          "cardType": "whiteboard-prop",
+          "label": "SOME WISHES TRAVEL HOME.",
+          "narration": "Inside sat The Cartographer's Daughter, a yellowed sketch of an umbrella boy, and a brass plaque.",
+          "visual": "Pure white close-up on the little brass plaque reading: 'Some stories begin in the rain. Some wishes travel a long way home.'",
+          "characters": []
+        },
+        {
+          "beat": 53,
+          "cardType": "flat-scene",
+          "label": "",
+          "narration": "Elderly Mrs. Pennywhistle always brought students there, calling it the most impractical thing she'd ever seen—",
+          "visual": "White-haired elderly Mrs. Pennywhistle adjusting her glasses with a group of curious students beside the glass case.",
+          "characters": [
+            "MIRA",
+            "PENNYWHISTLE"
+          ]
+        },
+        {
+          "beat": 54,
+          "cardType": "flat-scene",
+          "label": "THE END",
+          "narration": "before smiling softly and whispering, 'And I wouldn't change a single page.'",
+          "visual": "Warm golden close-up of Mrs. Pennywhistle smiling tenderly beneath a soft glowing paper lantern icon, clean 'THE END' vignette.",
+          "emotion": "warmly smiling",
+          "characters": [
+            "PENNYWHISTLE"
+          ]
+        }
+      ]
+    }
+  ],
+  "characters": [
+    {
+      "code": "ARIN",
+      "name": "Arin",
+      "role": "17yo Lead Boy",
+      "refPrompt": "2D flat hand-drawn stickman explainer teenage boy character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, neat dark brown hair, simple dot eyes and gentle eyebrows, thin black stick-figure arms and legs, wearing a dark navy blue school sweater over a white collared shirt and dark trousers, clean black ink outlines, no text."
+    },
+    {
+      "code": "MIRA",
+      "name": "Mira",
+      "role": "17yo Lead Girl",
+      "refPrompt": "2D flat hand-drawn stickman explainer teenage girl character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, dark shoulder-length hair, tiny scar dot on chin, wooden pencil tucked behind her ear, simple dot eyes with warm smile, wearing an oversized bright yellow raincoat and holding a small sketchbook, thin black stick-figure legs, clean black ink outlines, no text."
+    },
+    {
+      "code": "DEV",
+      "name": "Dev",
+      "role": "Best Friend",
+      "refPrompt": "2D flat hand-drawn stickman explainer teenage boy character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, messy spiky black hair, cheerful grinning eyebrows, thin black stick-figure limbs, wearing a casual olive-green hoodie, clean black ink outlines, no text."
+    },
+    {
+      "code": "PENNYWHISTLE",
+      "name": "Mrs. Pennywhistle",
+      "role": "Strict Librarian",
+      "refPrompt": "2D flat hand-drawn stickman explainer elderly woman librarian character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, neat silver-grey hair bun, round reading glasses, thin black stick-figure limbs, wearing a long grey cardigan over a dark skirt, clean black ink outlines, no text."
+    }
+  ]
+}

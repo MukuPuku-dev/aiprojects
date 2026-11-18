@@ -112,6 +112,21 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         <option value="Zephyr">Zephyr</option>
       </select>
     </label>
+    <label class="pill-lbl" title="Story &amp; TTS Timestamp Language">Lang:
+      <select id="lang-sel">
+        <option value="en">English (en)</option>
+        <option value="ne">नेपाली (ne)</option>
+      </select>
+    </label>
+    <label class="pill-lbl" title="Expressive emotion cues for Gemini TTS">Tone:
+      <select id="emotion-sel">
+        <option value="auto">Auto Emotion</option>
+        <option value="romantic">Warm &amp; Romantic</option>
+        <option value="documentary">Witty Documentary</option>
+        <option value="dramatic">Dramatic &amp; Deep</option>
+        <option value="none">Plain (No Tags)</option>
+      </select>
+    </label>
     <span class="sub" id="api" style="margin-left:auto">Checking studio…</span>
   </nav>
 </header>
@@ -150,7 +165,27 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
       </select>
       <button type="button" class="primary" id="btn-create-episode">✨ Generate Episode Script</button>
     </div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+      <div class="sub" style="margin-bottom:6px"><b>Or paste your own written story</b> (any chapters/script — Gemini converts it into rapid Ink Explainer beats):</div>
+      <textarea id="paste-story-input" rows="4" style="width:100%" placeholder="Paste your full story text here..."></textarea>
+      <div class="row" style="margin-top:6px">
+        <button type="button" class="blue" id="btn-convert-story">📋 Convert Pasted Story into Episode</button>
+      </div>
+    </div>
     <div class="sub" id="ep-gen-status" style="margin-top:6px"></div>
+  </section>
+
+  <!-- Step 0: Episode Cast & Character References -->
+  <section class="panel" id="cast-panel">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <div>
+        <h2>🎭 Step 0: Episode Cast &amp; Character References <span class="sub" id="cast-summary"></span></h2>
+        <div class="sub">Generate recurring characters in Flow first so every beat attaches their reference images automatically for consistent faces &amp; outfits.</div>
+      </div>
+      <button type="button" class="primary" id="btn-gen-cast">✨ Generate All Cast in Flow</button>
+    </div>
+    <div class="formula-grid" id="cast-grid"></div>
+    <div class="sub" id="cast-status" style="margin-top:6px"></div>
   </section>
 
   <!-- Synchronized Rapid-Cut Episode Player -->
@@ -178,17 +213,69 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         <button type="button" id="p-prev">⏮ Prev Beat</button>
         <button type="button" id="p-next">⏭ Next Beat</button>
         <button type="button" id="p-restart">↻ Restart</button>
-        <label class="pill-lbl"><input type="checkbox" id="p-captions"> Live Captions</label>
+        <label class="pill-lbl"><input type="checkbox" id="p-captions" checked> Live Captions</label>
+        <label class="pill-lbl" title="Playback &amp; Export Speed">Speed:
+          <select id="p-speed">
+            <option value="1">1.0x</option>
+            <option value="1.1">1.1x</option>
+            <option value="1.15">1.15x</option>
+            <option value="1.2">1.2x</option>
+            <option value="1.25">1.25x</option>
+          </select>
+        </label>
       </div>
       <div class="btns">
         <button type="button" class="primary" id="p-export">🎥 Export Full Episode (.webm)</button>
+        <button type="button" class="danger hide" id="p-stop-export">⏹ Finish &amp; Save Now</button>
         <button type="button" id="p-manifest">📋 CapCut Beat Timeline (.json)</button>
         <button type="button" id="btn-refresh">🔄 Refresh</button>
       </div>
     </div>
     <div class="beat-strip-nav" id="player-pills"></div>
     <div class="sub" id="player-status" style="margin-top:6px">Ready. Press Play Full Episode to preview rapid 1.5–2.5s visual switching right now.</div>
+    <div class="sub" id="export-status" style="margin-top:4px"></div>
     <div class="sub" id="batch-status" style="margin-top:4px;color:var(--blue)"></div>
+  </section>
+
+  <!-- Step 5: Publish Pack (Captions, Chapters, SRT Subtitles & YouTube Upload) -->
+  <section class="panel" id="publish-panel">
+    <div class="row" style="justify-content:space-between;margin-bottom:8px">
+      <div>
+        <h2>📢 Step 5: Captions, YouTube SEO &amp; Publish Pack <span class="sub" id="pub-video-badge"></span></h2>
+        <div class="sub">Generate viral English YouTube Title, Chapters, Description, Tags, Social Captions &amp; .srt subtitles, then upload directly to YouTube Studio.</div>
+      </div>
+      <div class="btns">
+        <button type="button" class="primary" id="btn-gen-publish">✨ Generate Captions &amp; SEO (Gemini)</button>
+        <button type="button" class="blue" id="btn-dl-srt">⬇ Download Subtitles (.srt)</button>
+      </div>
+    </div>
+    <div class="formula-grid" style="margin-top:0">
+      <div class="formula-card" style="display:flex;flex-direction:column;gap:6px">
+        <div class="row" style="justify-content:space-between"><b>YouTube Title</b><button type="button" data-copy-target="pub-yt-title">Copy</button></div>
+        <input type="text" id="pub-yt-title" placeholder="Viral YouTube Title">
+        <div class="row" style="justify-content:space-between;margin-top:4px"><b>YouTube Tags</b><button type="button" data-copy-target="pub-yt-tags">Copy</button></div>
+        <input type="text" id="pub-yt-tags" placeholder="ink explainer, storytelling, ...">
+        <div class="row" style="justify-content:space-between;margin-top:4px"><b>TikTok / Facebook / Telegram Caption</b><button type="button" data-copy-target="pub-social-cap">Copy</button></div>
+        <textarea id="pub-social-cap" rows="4" placeholder="Ready-to-post social caption with hashtags..."></textarea>
+      </div>
+      <div class="formula-card" style="display:flex;flex-direction:column;gap:6px">
+        <div class="row" style="justify-content:space-between"><b>YouTube Description &amp; Chapters (00:00)</b><button type="button" data-copy-target="pub-yt-desc">Copy</button></div>
+        <textarea id="pub-yt-desc" rows="8" placeholder="Hook + summary + 00:00 chapter timestamps..."></textarea>
+      </div>
+    </div>
+    <div class="row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--line);justify-content:space-between">
+      <div class="row">
+        <label class="pill-lbl">YouTube Visibility:
+          <select id="yt-visibility">
+            <option value="unlisted" selected>Unlisted (Review First)</option>
+            <option value="public">Public</option>
+            <option value="private">Private</option>
+          </select>
+        </label>
+        <button type="button" class="ok" id="btn-upload-yt">▶ Upload Exported Video to YouTube Studio</button>
+      </div>
+      <span class="sub" id="yt-status"></span>
+    </div>
   </section>
 
   <!-- Narration Blocks + Rapid Beats -->
@@ -319,13 +406,52 @@ function renderAll() {
 
   $("#pb").style.width = `${pct}%`;
   $("#st").textContent = `${doneCount}/${beats.length} beat images · ${audioCount}/${(ep.blocks || []).length} audio blocks`;
-  $("#story-sub").textContent = `${ep.title} · ${beats.length} rapid visual beats (~${fmtSec(totalEpisodeDuration())} runtime)`;
+  const flowName = assets.flowProject || `Ink Explainer · ${ep.title}`;
+  $("#story-sub").textContent = `${ep.title} · ${beats.length} beats (~${fmtSec(totalEpisodeDuration())}) · Flow project: "${flowName}"`;
   $("#player-ep-title").textContent = `— ${ep.title}`;
 
   renderEpisodeSelector();
+  if ($("#lang-sel")) $("#lang-sel").value = activeLanguage();
+  renderCast();
   renderPlayerPills();
   renderBlocks();
   updatePlayerChrome();
+  populatePublishDefaults();
+}
+
+function renderCast() {
+  const ep = inkExplainerActiveEpisode();
+  const cast = Array.isArray(ep.characters) ? ep.characters : [];
+  const panel = $("#cast-panel");
+  if (!cast.length) {
+    panel.classList.add("hide");
+    return;
+  }
+  panel.classList.remove("hide");
+  const savedMap = assets.episodeCharacters || {};
+  const readyCount = cast.filter(c => Boolean(savedMap[c.code]?.imageUrl)).length;
+  $("#cast-summary").textContent = `(${readyCount}/${cast.length} references ready)`;
+  $("#cast-grid").innerHTML = cast.map((c, idx) => {
+    const saved = savedMap[c.code];
+    return `<div class="formula-card" style="display:flex;flex-direction:column;gap:6px">
+      <div class="top">
+        <span class="badge">${esc(c.code)}</span>
+        <b>${esc(c.name)}</b>
+        <span class="sub">${esc(c.role || "")}</span>
+      </div>
+      <div class="thumb-box" style="aspect-ratio:1/1;max-height:150px">
+        ${saved?.imageUrl
+          ? `<img src="${esc(saved.imageUrl)}" alt="${esc(c.name)}" style="object-fit:contain;background:#fff">`
+          : `<span>Not generated yet</span>`}
+      </div>
+      <label class="field-lbl">Character Reference Prompt
+        <textarea rows="2" class="edit-char-prompt" data-cidx="${idx}">${esc(c.refPrompt || "")}</textarea>
+      </label>
+      <div class="btns">
+        <button type="button" class="blue" data-act="gen-one-char" data-code="${esc(c.code)}">✨ Generate in Flow</button>
+      </div>
+    </div>`;
+  }).join("");
 }
 
 function renderPlayerPills() {
@@ -361,12 +487,13 @@ function renderBlocks() {
         <div class="top">
           <span class="badge">Beat ${b.beat}</span>
           <span class="ctype">${esc(b.cardType)}</span>
+          ${b.characters?.length ? `<span class="ctype" style="color:var(--amber);border-color:#574118" title="Attached character references">🎭 ${esc(b.characters.join(", "))}</span>` : ""}
           <span class="timing-pill">${t.startSec.toFixed(1)}s–${t.endSec.toFixed(1)}s (${t.durationSec.toFixed(1)}s)</span>
         </div>
-        <div class="${thumbCls}">
+        <div class="${thumbCls}" tabindex="0" data-drop-beat="${b.beat}" title="Click and press Ctrl+V to paste an image, or drop an image file here">
           ${img
             ? `<img src="${esc(img.url)}" alt="Beat ${b.beat}" loading="lazy">`
-            : `<span><b>${esc(b.cardType)}</b>${b.label ? `<br>Label: "${esc(b.label)}"` : ""}<br>Click Flow Image or Batch Generate</span>`}
+            : `<span><b>${esc(b.cardType)}</b>${b.label ? `<br>Label: "${esc(b.label)}"` : ""}<br>Paste (Ctrl+V), drop, or generate</span>`}
         </div>
         <label class="field-lbl">Spoken Clause (~1.5–2.5s)
           <textarea rows="2" class="edit-narr" data-blk="${blkIdx}" data-idx="${localIdx}">${esc(b.narration)}</textarea>
@@ -382,8 +509,11 @@ function renderBlocks() {
         </label>
         <div class="btns">
           <button type="button" class="primary" data-act="flow-beat" data-beat="${b.beat}">🖼 Flow Image</button>
+          <button type="button" data-act="paste-beat" data-beat="${b.beat}" title="Paste image from clipboard">📋 Paste</button>
+          <button type="button" data-act="upload-beat" data-beat="${b.beat}" title="Choose image file from computer">📁 Upload</button>
           <button type="button" class="ok" data-act="play-beat" data-beat="${b.beat}">▶ Play Beat</button>
           <button type="button" data-act="copy-beat" data-beat="${b.beat}">Copy</button>
+          ${img ? `<button type="button" class="danger" data-act="del-beat" data-beat="${b.beat}" title="Delete this image so Batch Flow regenerates it">🗑 Delete</button>` : ""}
         </div>
         <div class="gen-status" data-beat-status="${b.beat}"></div>
       </article>`;
@@ -401,6 +531,7 @@ function renderBlocks() {
                <audio controls src="${esc(aud.url)}" preload="none"></audio>`
             : `<span class="sub">No voiceover generated yet</span>`}
           <button type="button" class="blue" data-act="gen-block-tts" data-block="${blk.blockId}">🎙 Generate Block Voiceover</button>
+          <button type="button" data-act="clip-block" data-block="${blk.blockId}" title="Export only this chapter block as a standalone .webm clip">✂ Export Clip</button>
         </div>
       </div>
       <div class="beat-grid">${beatsHtml}</div>
@@ -449,6 +580,11 @@ async function persistActiveEpisode() {
 }
 
 /* ---------- Step 1: Block Continuous Voiceover (Gemini TTS + Word Timestamps) ---------- */
+function activeLanguage() {
+  const ep = inkExplainerActiveEpisode();
+  return ep?.language === "ne" || state.language === "ne" ? "ne" : "en";
+}
+
 async function generateBlockVoiceover(blockId, silent = false) {
   if (isFile) { toast("Open via http://127.0.0.1:8787 to generate TTS"); return false; }
   const ep = inkExplainerActiveEpisode();
@@ -456,9 +592,8 @@ async function generateBlockVoiceover(blockId, silent = false) {
   if (!blk) return false;
   const btn = document.querySelector(`button[data-act="gen-block-tts"][data-block="${blockId}"]`);
   if (btn) btn.disabled = true;
-  $("#batch-status").textContent = `Synthesizing Block ${blockId} continuous voiceover (${state.voice})…`;
+  $("#batch-status").textContent = `Synthesizing Block ${blockId} continuous voiceover (${state.voice} · ${activeLanguage()})…`;
   try {
-    const prompt = blk.beats.map(b => b.narration).join(" ");
     const r = await fetch("/api/explainer/block-tts", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -467,9 +602,9 @@ async function generateBlockVoiceover(blockId, silent = false) {
         episode: ep.id,
         blockId: blk.blockId,
         beats: blk.beats,
-        prompt,
         voice: state.voice,
-        language: "en"
+        emotionMode: state.emotionMode || "auto",
+        language: activeLanguage()
       })
     });
     const j = await r.json();
@@ -511,12 +646,60 @@ async function generateAllVoiceovers() {
 }
 
 /* ---------- Step 2: Single Beat or Batch Flow Image Generation ---------- */
+async function generateEpisodeCharacters(onlyCodes = null) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to generate characters"); return; }
+  const ep = inkExplainerActiveEpisode();
+  const cast = Array.isArray(ep.characters) ? ep.characters : [];
+  const targetChars = onlyCodes?.length
+    ? cast.filter(c => onlyCodes.includes(c.code))
+    : cast;
+  if (!targetChars.length) { toast("No characters defined for this episode"); return; }
+  $("#btn-gen-cast").disabled = true;
+  $("#cast-status").textContent = `Generating ${targetChars.length} cast reference(s) in Flow…`;
+  try {
+    const jobId = crypto.randomUUID();
+    const r = await fetch("/api/explainer/generate-characters", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: jobId,
+        project: PROJECT_ID,
+        episode: ep.id,
+        characters: targetChars
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not start character generation");
+    while (true) {
+      await new Promise(res => setTimeout(res, 2200));
+      const sr = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+      const sj = await sr.json();
+      if (!sr.ok || !sj.ok) throw new Error(sj.error || "Lost connection to character job");
+      if (sj.status === "completed") {
+        await refreshAssets(true);
+        $("#cast-status").textContent = "Cast character references synced with Flow & workspace ✓";
+        toast("Cast references ready ✓");
+        break;
+      }
+      if (sj.status === "failed") throw new Error(sj.error || "Character generation failed");
+    }
+  } catch (err) {
+    $("#cast-status").textContent = `Character error: ${err.message}`;
+    toast(`Character error: ${err.message}`);
+  } finally {
+    $("#btn-gen-cast").disabled = false;
+  }
+}
+
 async function generateFlowBeatImage(beatNum) {
   if (isFile) { toast("Open via http://127.0.0.1:8787 to run Google Flow"); return false; }
   const beats = inkExplainerActiveBeats();
   const idx = beats.findIndex(b => b.beat === Number(beatNum));
   if (idx < 0) return false;
+  const beat = beats[idx];
   const ep = inkExplainerActiveEpisode();
+  const castByCode = new Map((ep.characters || []).map(c => [c.code, c]));
+  const beatChars = (beat.characters || []).map(code => castByCode.get(code) || { code }).filter(Boolean);
   const btn = document.querySelector(`button[data-act="flow-beat"][data-beat="${beatNum}"]`);
   const stEl = document.querySelector(`[data-beat-status="${beatNum}"]`);
   if (btn) btn.disabled = true;
@@ -531,7 +714,8 @@ async function generateFlowBeatImage(beatNum) {
         mode: "image",
         day: beatNum,
         prompt: inkExplainerPromptFor(idx, state.ar),
-        aspect: state.ar
+        aspect: state.ar,
+        characters: beatChars
       })
     });
     const j = await r.json();
@@ -565,7 +749,8 @@ async function runFlowImageBatch() {
 
     const items = beats.map((b, idx) => ({
       day: b.beat,
-      prompt: inkExplainerPromptFor(idx, state.ar)
+      prompt: inkExplainerPromptFor(idx, state.ar),
+      characters: b.characters || []
     }));
 
     const jobId = crypto.randomUUID();
@@ -581,6 +766,7 @@ async function runFlowImageBatch() {
         episode: ep.id,
         aspect: state.ar,
         concurrency: 5,
+        characters: ep.characters || [],
         items
       })
     });
@@ -640,19 +826,15 @@ function parseGeminiJson(text) {
   throw new Error("Could not parse JSON episode from Gemini response.");
 }
 
-async function createGeminiEpisode() {
+async function runEpisodeGenerator(geminiPrompt, btnEl, statusLabel) {
   if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
-  const topic = ($("#topic-input").value || "").trim();
-  if (!topic) { toast("Enter a topic or click a preset chip first"); return; }
-  const totalSel = Number($("#block-count-sel").value || 4);
-  const perBlock = totalSel === 3 ? 6 : totalSel === 8 ? 10 : 8;
-  $("#btn-create-episode").disabled = true;
-  $("#ep-gen-status").textContent = `Writing ${totalSel * perBlock} rapid visual beats with Gemini…`;
+  btnEl.disabled = true;
+  $("#ep-gen-status").textContent = statusLabel;
   try {
     const r = await fetch("/api/explainer/gemini", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt: buildInkEpisodeGeneratorPrompt(topic, totalSel, perBlock) })
+      body: JSON.stringify({ prompt: geminiPrompt })
     });
     const j = await r.json();
     if (!r.ok || !j.ok) throw new Error(j.error || "Gemini failed");
@@ -674,8 +856,32 @@ async function createGeminiEpisode() {
   } catch (err) {
     $("#ep-gen-status").textContent = `Error: ${err.message}`;
   } finally {
-    $("#btn-create-episode").disabled = false;
+    btnEl.disabled = false;
   }
+}
+
+async function createGeminiEpisode() {
+  const topic = ($("#topic-input").value || "").trim();
+  if (!topic) { toast("Enter a topic or click a preset chip first"); return; }
+  const totalSel = Number($("#block-count-sel").value || 4);
+  const perBlock = totalSel === 3 ? 8 : totalSel === 8 ? 12 : 10;
+  const lang = $("#lang-sel")?.value || state.language || "en";
+  await runEpisodeGenerator(
+    buildInkEpisodeGeneratorPrompt(topic, totalSel, perBlock, lang),
+    $("#btn-create-episode"),
+    `Writing ${totalSel * perBlock} rapid visual beats (${lang === "ne" ? "Nepali" : "English"}) with Gemini…`
+  );
+}
+
+async function createEpisodeFromPastedStory() {
+  const story = ($("#paste-story-input").value || "").trim();
+  if (story.length < 40) { toast("Paste your story text first"); return; }
+  const lang = $("#lang-sel")?.value || state.language || "en";
+  await runEpisodeGenerator(
+    buildInkStoryToEpisodePrompt(story, lang),
+    $("#btn-convert-story"),
+    "Converting your story into rapid 4–8 word Ink Explainer beats with Gemini…"
+  );
 }
 
 async function deleteActiveEpisode() {
@@ -709,6 +915,7 @@ const player = {
   rafId: 0,
   timerStartMs: 0,
   exporting: false,
+  clipEndBlkIdx: null,
   recorder: null,
   chunks: []
 };
@@ -884,6 +1091,62 @@ function drawProceduralInkFrame(beat) {
   ctx.fillText(`Storyboard Preview [Beat ${beat.beat} · ${ct}]: "${beat.narration}"`, 28, H - 29);
 }
 
+function filterSpokenTimestampWords(rawTs) {
+  if (!Array.isArray(rawTs)) return [];
+  const out = [];
+  let inBracket = false;
+  for (const t of rawTs) {
+    if (!t) continue;
+    const txt = String(t.word ?? t.expected ?? t.text ?? "").trim();
+    if (!txt) continue;
+    if (inBracket) {
+      if (txt.includes("]")) inBracket = false;
+      continue;
+    }
+    if (txt.startsWith("[")) {
+      if (!txt.includes("]")) inBracket = true;
+      continue;
+    }
+    if (txt.endsWith("]") || /^\[.*\]$/.test(txt)) continue;
+    if (t.start === null || t.start === undefined || t.end === null || t.end === undefined) continue;
+    if (!Number.isFinite(Number(t.start)) || !Number.isFinite(Number(t.end))) continue;
+    out.push(t);
+  }
+  return out;
+}
+
+function activeSpokenWordCue(blk, beat, elapsedBlockSec) {
+  const rawTs = assets.blockAudio[blk?.blockId]?.timestamps;
+  if (Array.isArray(rawTs) && rawTs.length > 0) {
+    const words = filterSpokenTimestampWords(rawTs);
+    if (words.length > 0) {
+      let idx = words.findIndex(t => elapsedBlockSec >= Number(t.start) && elapsedBlockSec <= Number(t.end) + 0.14);
+      if (idx < 0) {
+        idx = words.reduce((best, t, i) => (Number(t.start) <= elapsedBlockSec ? i : best), 0);
+      }
+      const w = words[idx];
+      if (w) {
+        return {
+          word: String(w.word ?? w.expected ?? w.text ?? "").trim(),
+          ageSec: Math.max(0, elapsedBlockSec - Number(w.start))
+        };
+      }
+    }
+  }
+  const timings = getBlockTimings(blk);
+  const bt = timings[player.localBeatIdx] || { startSec: 0, endSec: 2 };
+  const cleanWords = String(beat?.narration || "").replace(/\[[^\]]+\]/g, " ").trim().split(/\s+/).filter(Boolean);
+  if (!cleanWords.length) return null;
+  const span = Math.max(0.4, bt.endSec - bt.startSec);
+  const rel = Math.max(0, Math.min(span - 0.001, elapsedBlockSec - bt.startSec));
+  const perWord = span / cleanWords.length;
+  const wIdx = Math.min(cleanWords.length - 1, Math.floor(rel / perWord));
+  return {
+    word: cleanWords[wIdx],
+    ageSec: rel - wIdx * perWord
+  };
+}
+
 function drawCurrentFrame(elapsedBlockSec = 0) {
   ensureCanvasSize();
   const ep = inkExplainerActiveEpisode();
@@ -910,20 +1173,35 @@ function drawCurrentFrame(elapsedBlockSec = 0) {
   }
 
   if ($("#p-captions").checked) {
-    const grad = ctx.createLinearGradient(0, H * 0.78, 0, H);
-    grad.addColorStop(0, "rgba(0,0,0,0)");
-    grad.addColorStop(1, "rgba(0,0,0,0.78)");
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, H * 0.78, W, H * 0.22);
+    const cue = activeSpokenWordCue(blk, beat, elapsedBlockSec);
+    if (cue && cue.word) {
+      const animDur = 0.14;
+      const p = Math.min(1, cue.ageSec / animDur);
+      // Smooth overshoot pop-in: 0.78 -> 1.15 -> 1.0
+      const scale = p < 0.65
+        ? 0.78 + (1.15 - 0.78) * (p / 0.65)
+        : 1.15 - (1.15 - 1.0) * ((p - 0.65) / 0.35);
+      const liftY = (1 - p) * 12;
+      const fontSize = Math.round(H * 0.088);
 
-    ctx.font = `800 ${Math.round(H * 0.044)}px system-ui, sans-serif`;
-    ctx.textAlign = "center";
-    ctx.lineWidth = 6;
-    ctx.strokeStyle = "rgba(0,0,0,0.9)";
-    ctx.strokeText(beat.narration, W * 0.5, H * 0.91);
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText(beat.narration, W * 0.5, H * 0.91);
-    ctx.textAlign = "left";
+      ctx.save();
+      ctx.globalAlpha = Math.min(1, 0.35 + p * 0.65);
+      ctx.translate(W * 0.5, H * 0.85 + liftY);
+      ctx.scale(scale, scale);
+      ctx.font = `900 ${fontSize}px system-ui, "Nirmala UI", "Noto Sans Devanagari", -apple-system, "Segoe UI", sans-serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.lineJoin = "round";
+      ctx.shadowColor = "rgba(0,0,0,0.65)";
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetY = 4;
+      ctx.lineWidth = Math.max(8, Math.round(fontSize * 0.18));
+      ctx.strokeStyle = "#0b0d13";
+      ctx.strokeText(cue.word, 0, 0);
+      ctx.fillStyle = "#fbbf24";
+      ctx.fillText(cue.word, 0, 0);
+      ctx.restore();
+    }
   }
 }
 
@@ -940,6 +1218,10 @@ function updatePlayerChrome(elapsedInBlk = 0) {
   }
   const totalDur = totalEpisodeDuration();
   $("#player-timecode").textContent = `${fmtSec(priorSec + elapsedInBlk)} / ${fmtSec(totalDur)}`;
+  if (player.exporting && totalDur > 0) {
+    const pct = Math.min(99, Math.round(((priorSec + elapsedInBlk) / totalDur) * 100));
+    $("#p-export").textContent = `⏺ Recording ${pct}% (${fmtSec(priorSec + elapsedInBlk)} / ${fmtSec(totalDur)})`;
+  }
   $("#player-beat-label").textContent = beat ? `Block ${blk.blockId} · Beat ${beat.beat} / ${totalBeats} (${beat.cardType})` : "Done";
 
   const curNum = beat ? beat.beat : -1;
@@ -964,10 +1246,15 @@ function initAudioGraphOnce() {
   return Promise.resolve();
 }
 
+function activeSpeed() {
+  const spd = Number(state.speed || 1);
+  return spd >= 1 && spd <= 1.5 ? spd : 1;
+}
+
 async function startBlockPlayback(blkIdx, startLocalBeatIdx = 0) {
   const ep = inkExplainerActiveEpisode();
   const blocks = ep.blocks || [];
-  if (blkIdx >= blocks.length) {
+  if (blkIdx >= blocks.length || (player.clipEndBlkIdx !== null && blkIdx > player.clipEndBlkIdx)) {
     finishEpisodePlayback();
     return;
   }
@@ -975,6 +1262,7 @@ async function startBlockPlayback(blkIdx, startLocalBeatIdx = 0) {
   player.localBeatIdx = Math.max(0, startLocalBeatIdx);
   player.playing = true;
 
+  const speed = activeSpeed();
   const blk = blocks[player.blkIdx];
   const timings = getBlockTimings(blk);
   const offsetSec = timings[player.localBeatIdx]?.startSec || 0;
@@ -983,32 +1271,41 @@ async function startBlockPlayback(blkIdx, startLocalBeatIdx = 0) {
   if (aud && aud.url) {
     await initAudioGraphOnce().catch(() => {});
     audioEl.src = aud.url;
+    audioEl.preservesPitch = true;
+    audioEl.playbackRate = speed;
     audioEl.currentTime = offsetSec;
-    await audioEl.play().catch(() => {
-      player.timerStartMs = performance.now() - offsetSec * 1000;
-    });
+    try {
+      await audioEl.play();
+    } catch (err) {
+      player.timerStartMs = performance.now() - (offsetSec / speed) * 1000;
+      $("#player-status").textContent = `Audio blocked/unavailable for Block ${blk.blockId} (${err?.message || "check Studio server"}) — running silent preview`;
+      tickPlayerLoop();
+      return;
+    }
   } else {
     audioEl.pause();
     audioEl.removeAttribute("src");
-    player.timerStartMs = performance.now() - offsetSec * 1000;
+    player.timerStartMs = performance.now() - (offsetSec / speed) * 1000;
   }
 
-  $("#player-status").textContent = `Playing Block ${blk.blockId}${aud ? "" : " (timed storyboard preview — generate Voiceover for spoken narration)"}`;
+  $("#player-status").textContent = `Playing Block ${blk.blockId} at ${speed}x${aud ? "" : " (timed storyboard preview)"}`;
   tickPlayerLoop();
 }
 
 function tickPlayerLoop() {
   cancelAnimationFrame(player.rafId);
-  const loop = () => {
+  clearInterval(player.bgTimer);
+  const step = () => {
     if (!player.playing) return;
     const ep = inkExplainerActiveEpisode();
     const blk = ep.blocks?.[player.blkIdx];
     if (!blk) { finishEpisodePlayback(); return; }
 
+    const speed = activeSpeed();
     const timings = getBlockTimings(blk);
     const totalBlkDur = timings.length ? timings[timings.length - 1].endSec : 0;
     const hasAudio = Boolean(assets.blockAudio[blk.blockId]?.url && !audioEl.paused && audioEl.currentSrc);
-    const elapsed = hasAudio ? audioEl.currentTime : (performance.now() - player.timerStartMs) / 1000;
+    const elapsed = hasAudio ? audioEl.currentTime : ((performance.now() - player.timerStartMs) / 1000) * speed;
 
     // Pick exact beat active at elapsed timestamp inside block
     let foundIdx = timings.findIndex(t => elapsed >= t.startSec && elapsed < t.endSec);
@@ -1024,9 +1321,17 @@ function tickPlayerLoop() {
       startBlockPlayback(player.blkIdx + 1, 0);
       return;
     }
-    player.rafId = requestAnimationFrame(loop);
   };
-  player.rafId = requestAnimationFrame(loop);
+  const rafLoop = () => {
+    if (!player.playing) return;
+    step();
+    player.rafId = requestAnimationFrame(rafLoop);
+  };
+  player.rafId = requestAnimationFrame(rafLoop);
+  // Keep frames advancing even if the browser tab loses focus during a long export
+  player.bgTimer = setInterval(() => {
+    if (player.playing && document.hidden) step();
+  }, 100);
 }
 
 audioEl.addEventListener("ended", () => {
@@ -1037,7 +1342,9 @@ audioEl.addEventListener("ended", () => {
 function finishEpisodePlayback() {
   player.playing = false;
   cancelAnimationFrame(player.rafId);
+  clearInterval(player.bgTimer);
   if (player.exporting && player.recorder && player.recorder.state === "recording") {
+    $("#export-status").textContent = "Finalizing WebM video…";
     player.recorder.stop();
   }
   $("#player-status").textContent = "Episode playback complete ✓";
@@ -1047,6 +1354,7 @@ function finishEpisodePlayback() {
 function pausePlayback() {
   player.playing = false;
   cancelAnimationFrame(player.rafId);
+  clearInterval(player.bgTimer);
   if (!audioEl.paused) audioEl.pause();
   $("#player-status").textContent = "Paused.";
 }
@@ -1079,7 +1387,7 @@ function jumpToBeatNumber(beatNum, autoplay = false) {
   }
 }
 
-async function exportWebmVideo() {
+async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null) {
   if (typeof MediaRecorder === "undefined" || !canvas.captureStream) {
     toast("Your browser does not support canvas MediaRecorder export");
     return;
@@ -1091,27 +1399,229 @@ async function exportWebmVideo() {
   const tracks = [...canvasStream.getVideoTracks(), ...streamDest.stream.getAudioTracks()];
   const combined = new MediaStream(tracks);
   const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") ? "video/webm;codecs=vp9,opus" : "video/webm";
+  const isClip = endBlkIdx !== null && Number.isInteger(endBlkIdx);
+  player.clipEndBlkIdx = isClip ? endBlkIdx : null;
   player.chunks = [];
   player.exporting = true;
   player.recorder = new MediaRecorder(combined, { mimeType: mime, videoBitsPerSecond: 4_500_000 });
   player.recorder.ondataavailable = e => { if (e.data && e.data.size > 0) player.chunks.push(e.data); };
-  player.recorder.onstop = () => {
+  player.recorder.onstop = async () => {
     player.exporting = false;
+    player.clipEndBlkIdx = null;
     $("#p-export").disabled = false;
     $("#p-export").textContent = "🎥 Export Full Episode (.webm)";
+    $("#p-stop-export").classList.add("hide");
+    if (!player.chunks.length) {
+      $("#export-status").textContent = "Export produced 0 bytes. Make sure at least one frame played.";
+      return;
+    }
     const blob = new Blob(player.chunks, { type: "video/webm" });
+    const sizeMb = (blob.size / (1024 * 1024)).toFixed(1);
+    if (player.lastExportUrl) URL.revokeObjectURL(player.lastExportUrl);
     const url = URL.createObjectURL(blob);
+    player.lastExportUrl = url;
+    const fname = isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.webm` : `${state.episodeId}.webm`;
+
+    let savedNote = "";
+    if (!isFile && !isClip) {
+      try {
+        $("#export-status").textContent = `Saving ${sizeMb} MB video to workspace…`;
+        const sr = await fetch(`/api/explainer/save-export?project=${PROJECT_ID}&episode=${encodeURIComponent(state.episodeId)}`, {
+          method: "POST",
+          headers: { "Content-Type": "video/webm" },
+          body: blob
+        });
+        const sj = await sr.json();
+        if (sr.ok && sj.ok) savedNote = ` · Saved on disk: <a href="${esc(sj.url)}" target="_blank" rel="noopener" style="color:var(--ok)">Open saved video ↗</a>`;
+      } catch {}
+    }
+
+    $("#export-status").innerHTML = `<span style="color:var(--ok)">✓ Export ready (${sizeMb} MB):</span> <a href="${esc(url)}" download="${esc(fname)}" style="color:var(--amber);font-weight:700">⬇ Download ${esc(fname)}</a>${savedNote}`;
     const a = document.createElement("a");
     a.href = url;
-    a.download = `${state.episodeId}-${Date.now()}.webm`;
+    a.download = fname;
     a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 5000);
-    toast("Exported full episode WebM ✓");
+    toast(isClip ? `Exported Block ${startBlkIdx + 1} clip ✓` : "Exported full episode WebM ✓");
   };
   $("#p-export").disabled = true;
-  $("#p-export").textContent = "⏺ Recording Full Episode…";
-  player.recorder.start(250);
-  await startBlockPlayback(0, 0);
+  $("#p-stop-export").classList.remove("hide");
+  $("#p-export").textContent = isClip ? `⏺ Recording Block ${startBlkIdx + 1} Clip…` : "⏺ Recording 0%…";
+  const spd = activeSpeed();
+  $("#export-status").textContent = isClip
+    ? `Recording Block ${startBlkIdx + 1} clip at ${spd}x…`
+    : `Recording at ${spd}x (~${fmtSec(totalEpisodeDuration() / spd)} real time). Click "Finish & Save Now" anytime to save early.`;
+  player.recorder.start(1000);
+  await startBlockPlayback(startBlkIdx, 0);
+}
+
+/* ---------- Step 5: Publish Pack (Chapters, SRT Subtitles, Gemini SEO & YouTube Upload) ---------- */
+function fmtMmSs(sec) {
+  const s = Math.max(0, Math.floor(sec));
+  const h = Math.floor(s / 3600);
+  const m = Math.floor((s % 3600) / 60);
+  const rem = s % 60;
+  return h > 0
+    ? `${h}:${String(m).padStart(2, "0")}:${String(rem).padStart(2, "0")}`
+    : `${String(m).padStart(2, "0")}:${String(rem).padStart(2, "0")}`;
+}
+
+function buildChapterListText() {
+  const ep = inkExplainerActiveEpisode();
+  const spd = activeSpeed();
+  let t = 0;
+  return (ep.blocks || []).map(blk => {
+    const line = `${fmtMmSs(t)} ${blk.title}`;
+    const timings = getBlockTimings(blk);
+    t += (timings.length ? timings[timings.length - 1].endSec : 0) / spd;
+    return line;
+  }).join("\n");
+}
+
+function populatePublishDefaults() {
+  const ep = inkExplainerActiveEpisode();
+  if (assets.exportedVideoUrl) {
+    $("#pub-video-badge").innerHTML = `· <a href="${esc(assets.exportedVideoUrl)}" target="_blank" rel="noopener" style="color:var(--ok)">episode.webm ready ↗</a>`;
+  } else {
+    $("#pub-video-badge").textContent = "· Export .webm above before uploading";
+  }
+  if (!$("#pub-yt-title").value.trim() || $("#pub-yt-title").dataset.ep !== ep.id) {
+    $("#pub-yt-title").value = ep.title;
+    $("#pub-yt-title").dataset.ep = ep.id;
+    $("#pub-yt-desc").value = `${ep.hook || ep.subtitle}\n\nChapters:\n${buildChapterListText()}\n\n#InkExplainer #Storytelling #Animation`;
+    $("#pub-yt-tags").value = "ink explainer, animated story, storytelling, narration, youtube story";
+    $("#pub-social-cap").value = `${ep.title}\n\n${ep.hook || ""}\n\n#InkExplainer #StoryTime #ViralStory`;
+  }
+}
+
+async function generatePublishPack() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
+  const ep = inkExplainerActiveEpisode();
+  const chapters = buildChapterListText();
+  const summary = (ep.blocks || []).map(b => `${b.title}: ${b.beats.map(x => x.narration).join(" ")}`).join("\n").slice(0, 6000);
+  const btn = $("#btn-gen-publish");
+  btn.disabled = true;
+  $("#yt-status").textContent = "Generating YouTube Title, Description, Tags & Social Captions with Gemini…";
+  try {
+    const langLabel = activeLanguage() === "ne" ? "Nepali (Devanagari)" : "English";
+    const prompt = [
+      "You are a YouTube growth strategist and social copywriter.",
+      `Given this ${langLabel} episode titled "${ep.title}" (${ep.niche || "Storytelling"}), generate viral metadata in ${langLabel}.`,
+      "Return ONLY raw JSON (no markdown fences) with keys:",
+      '{ "ytTitle": "Curiosity-driven YouTube title under 90 chars", "ytDescription": "2-3 engaging paragraphs + CTA (do NOT repeat chapters, I will append them)", "ytTags": "comma, separated, 12, tags", "socialCaption": "Punchy TikTok/Facebook/Telegram caption with 5 hashtags" }',
+      "",
+      "Episode summary:",
+      summary
+    ].join("\n");
+    const r = await fetch("/api/explainer/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Gemini failed");
+    const parsed = parseGeminiJson(j.text);
+    $("#pub-yt-title").value = parsed.ytTitle || ep.title;
+    $("#pub-yt-desc").value = `${parsed.ytDescription || ep.hook}\n\nChapters:\n${chapters}`;
+    $("#pub-yt-tags").value = parsed.ytTags || "";
+    $("#pub-social-cap").value = parsed.socialCaption || "";
+    $("#yt-status").textContent = "YouTube SEO & social captions generated ✓";
+    toast("Publish pack ready ✓");
+  } catch (err) {
+    $("#yt-status").textContent = `Gemini error: ${err.message}`;
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function fmtSrtTime(sec) {
+  const msTotal = Math.max(0, Math.round(sec * 1000));
+  const h = Math.floor(msTotal / 3600000);
+  const m = Math.floor((msTotal % 3600000) / 60000);
+  const s = Math.floor((msTotal % 60000) / 1000);
+  const ms = msTotal % 1000;
+  return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")},${String(ms).padStart(3, "0")}`;
+}
+
+function downloadSrtSubtitles() {
+  const ep = inkExplainerActiveEpisode();
+  const spd = activeSpeed();
+  let offset = 0;
+  const cues = [];
+  let cueNum = 1;
+  for (const blk of ep.blocks || []) {
+    const aud = assets.blockAudio[blk.blockId];
+    const timings = getBlockTimings(blk);
+    const blkDur = timings.length ? timings[timings.length - 1].endSec : 0;
+    const rawTs = Array.isArray(aud?.timestamps) ? aud.timestamps : [];
+    const words = filterSpokenTimestampWords(rawTs);
+    if (words.length > 0) {
+      for (let i = 0; i < words.length; i += 5) {
+        const chunk = words.slice(i, i + 5);
+        const st = offset + Number(chunk[0].start) / spd;
+        const en = offset + Number(chunk[chunk.length - 1].end) / spd;
+        const text = chunk.map(w => String(w.word ?? w.expected).trim()).join(" ");
+        cues.push(`${cueNum++}\n${fmtSrtTime(st)} --> ${fmtSrtTime(Math.max(st + 0.2, en))}\n${text}\n`);
+      }
+    } else {
+      blk.beats.forEach((b, idx) => {
+        const t = timings[idx];
+        const st = offset + t.startSec / spd;
+        const en = offset + t.endSec / spd;
+        cues.push(`${cueNum++}\n${fmtSrtTime(st)} --> ${fmtSrtTime(Math.max(st + 0.2, en))}\n${b.narration}\n`);
+      });
+    }
+    offset += blkDur / spd;
+  }
+  const blob = new Blob([cues.join("\n")], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${ep.id}.srt`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 4000);
+  toast("Downloaded .srt subtitles ✓");
+}
+
+async function uploadEpisodeToYouTube() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to upload"); return; }
+  const ep = inkExplainerActiveEpisode();
+  const btn = $("#btn-upload-yt");
+  btn.disabled = true;
+  $("#yt-status").textContent = "Opening YouTube Studio in Flow Chrome & uploading episode.webm…";
+  try {
+    const jobId = crypto.randomUUID();
+    const r = await fetch("/api/explainer/upload-youtube", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: jobId,
+        project: PROJECT_ID,
+        episode: ep.id,
+        title: $("#pub-yt-title").value.trim() || ep.title,
+        description: $("#pub-yt-desc").value.trim(),
+        visibility: $("#yt-visibility").value || "unlisted"
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not start YouTube upload");
+    while (true) {
+      await new Promise(res => setTimeout(res, 2500));
+      const sr = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+      const sj = await sr.json();
+      if (!sr.ok || !sj.ok) throw new Error(sj.error || "Lost connection to YouTube upload");
+      if (sj.status === "completed") {
+        $("#yt-status").innerHTML = `✓ Uploaded to YouTube Studio! <a href="${esc(sj.videoUrl || "https://studio.youtube.com")}" target="_blank" rel="noopener" style="color:var(--ok)">Open YouTube ↗</a>`;
+        toast("YouTube upload complete ✓");
+        break;
+      }
+      if (sj.status === "failed") throw new Error(sj.error || "YouTube upload failed");
+    }
+  } catch (err) {
+    $("#yt-status").textContent = `YouTube error: ${err.message}`;
+    toast(`YouTube error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 function downloadCapCutTimeline() {
@@ -1158,6 +1668,16 @@ $("#ar-sel").addEventListener("change", () => { state.ar = $("#ar-sel").value; s
 $("#voice-sel").value = state.voice;
 $("#voice-sel").addEventListener("change", () => { state.voice = $("#voice-sel").value; saveState(); });
 
+$("#emotion-sel").value = state.emotionMode || "auto";
+$("#emotion-sel").addEventListener("change", () => { state.emotionMode = $("#emotion-sel").value; saveState(); });
+$("#lang-sel").addEventListener("change", async () => {
+  state.language = $("#lang-sel").value;
+  const ep = inkExplainerActiveEpisode();
+  ep.language = state.language;
+  saveState();
+  await persistActiveEpisode().catch(() => {});
+});
+
 $("#episode-sel").addEventListener("change", async () => {
   state.episodeId = $("#episode-sel").value;
   saveState();
@@ -1173,6 +1693,22 @@ $("#topic-chips").addEventListener("click", e => {
   if (b) $("#topic-input").value = b.textContent.trim();
 });
 $("#btn-create-episode").addEventListener("click", createGeminiEpisode);
+$("#btn-convert-story").addEventListener("click", createEpisodeFromPastedStory);
+$("#btn-gen-cast").addEventListener("click", () => generateEpisodeCharacters());
+$("#cast-grid").addEventListener("click", e => {
+  const b = e.target.closest('button[data-act="gen-one-char"]');
+  if (b) generateEpisodeCharacters([b.dataset.code]);
+});
+$("#cast-grid").addEventListener("change", async e => {
+  if (!e.target.classList.contains("edit-char-prompt")) return;
+  const cidx = Number(e.target.dataset.cidx);
+  const ep = inkExplainerActiveEpisode();
+  if (!ep.characters?.[cidx]) return;
+  ep.characters[cidx].refPrompt = e.target.value.trim();
+  window.__INK_ACTIVE_EPISODE = ep;
+  await persistActiveEpisode().catch(() => {});
+  toast("Character prompt saved ✓");
+});
 $("#btn-gen-all-audio").addEventListener("click", generateAllVoiceovers);
 $("#btn-batch-flow").addEventListener("click", runFlowImageBatch);
 $("#btn-stop-flow").addEventListener("click", async () => {
@@ -1192,12 +1728,57 @@ $("#p-restart").addEventListener("click", () => startBlockPlayback(0, 0));
 $("#p-prev").addEventListener("click", () => jumpToBeatNumber(Math.max(1, activeGlobalBeatNum() - 1), false));
 $("#p-next").addEventListener("click", () => jumpToBeatNumber(Math.min(inkExplainerActiveBeats().length, activeGlobalBeatNum() + 1), false));
 $("#p-captions").addEventListener("change", () => { if (!player.playing) drawCurrentFrame(); });
-$("#p-export").addEventListener("click", exportWebmVideo);
+$("#p-speed").value = String(activeSpeed());
+$("#p-speed").addEventListener("change", () => {
+  state.speed = Number($("#p-speed").value) || 1;
+  saveState();
+  if (player.playing && audioEl.currentSrc) {
+    audioEl.preservesPitch = true;
+    audioEl.playbackRate = activeSpeed();
+  }
+  populatePublishDefaults();
+});
+$("#btn-gen-publish").addEventListener("click", generatePublishPack);
+$("#btn-dl-srt").addEventListener("click", downloadSrtSubtitles);
+$("#btn-upload-yt").addEventListener("click", uploadEpisodeToYouTube);
+$("#publish-panel").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-copy-target]");
+  if (!b) return;
+  const el = document.getElementById(b.dataset.copyTarget);
+  if (!el) return;
+  try { await navigator.clipboard.writeText(el.value); } catch {}
+  toast("Copied ✓");
+});
+$("#p-export").addEventListener("click", () => exportWebmVideo(0, null));
+$("#p-stop-export").addEventListener("click", finishEpisodePlayback);
 $("#p-manifest").addEventListener("click", downloadCapCutTimeline);
 $("#player-pills").addEventListener("click", e => {
   const btn = e.target.closest("[data-jump-beat]");
   if (btn) jumpToBeatNumber(Number(btn.dataset.jumpBeat), player.playing);
 });
+
+async function uploadBeatImageBlob(beatNum, blobOrFile) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to save images"); return; }
+  if (!blobOrFile || !blobOrFile.size) return;
+  const ep = inkExplainerActiveEpisode();
+  const stEl = document.querySelector(`[data-beat-status="${beatNum}"]`);
+  if (stEl) stEl.textContent = "Saving pasted/uploaded image…";
+  try {
+    const r = await fetch(`/api/explainer/upload-beat-image?project=${PROJECT_ID}&episode=${encodeURIComponent(ep.id)}&beat=${beatNum}`, {
+      method: "POST",
+      headers: { "Content-Type": blobOrFile.type || "image/png" },
+      body: blobOrFile
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Upload failed");
+    imageCache.delete(`${state.episodeId}:${beatNum}`);
+    await refreshAssets(true);
+    toast(`Beat ${beatNum} image saved ✓`);
+  } catch (err) {
+    if (stEl) stEl.textContent = `Save failed: ${err.message}`;
+    toast(`Save failed: ${err.message}`);
+  }
+}
 
 $("#blocks-container").addEventListener("click", async e => {
   const btn = e.target.closest("button[data-act]");
@@ -1205,8 +1786,43 @@ $("#blocks-container").addEventListener("click", async e => {
   const act = btn.dataset.act;
   if (act === "gen-block-tts") {
     await generateBlockVoiceover(Number(btn.dataset.block));
+  } else if (act === "clip-block") {
+    const bId = Number(btn.dataset.block);
+    const ep = inkExplainerActiveEpisode();
+    const bIdx = (ep.blocks || []).findIndex(b => Number(b.blockId) === bId);
+    if (bIdx >= 0) {
+      window.scrollTo({ top: 120, behavior: "smooth" });
+      await exportWebmVideo(bIdx, bIdx);
+    }
   } else if (act === "flow-beat") {
     await generateFlowBeatImage(Number(btn.dataset.beat));
+  } else if (act === "paste-beat") {
+    const bNum = Number(btn.dataset.beat);
+    try {
+      if (!navigator.clipboard?.read) throw new Error("Click the image box and press Ctrl+V to paste.");
+      const items = await navigator.clipboard.read();
+      for (const item of items) {
+        const imgType = item.types.find(t => t.startsWith("image/"));
+        if (imgType) {
+          const blob = await item.getType(imgType);
+          await uploadBeatImageBlob(bNum, blob);
+          return;
+        }
+      }
+      toast("No image found in clipboard. Copy an image first!");
+    } catch (err) {
+      toast(err.message || "Click the image box and press Ctrl+V");
+    }
+  } else if (act === "upload-beat") {
+    const bNum = Number(btn.dataset.beat);
+    const inp = document.createElement("input");
+    inp.type = "file";
+    inp.accept = "image/*";
+    inp.onchange = async () => {
+      const f = inp.files?.[0];
+      if (f) await uploadBeatImageBlob(bNum, f);
+    };
+    inp.click();
   } else if (act === "play-beat") {
     window.scrollTo({ top: 120, behavior: "smooth" });
     jumpToBeatNumber(Number(btn.dataset.beat), true);
@@ -1215,7 +1831,53 @@ $("#blocks-container").addEventListener("click", async e => {
     const idx = inkExplainerActiveBeats().findIndex(b => b.beat === bNum);
     try { await navigator.clipboard.writeText(inkExplainerPromptFor(idx, state.ar)); } catch {}
     toast(`Beat ${bNum} prompt copied ✓`);
+  } else if (act === "del-beat") {
+    if (isFile) return;
+    const bNum = Number(btn.dataset.beat);
+    const ep = inkExplainerActiveEpisode();
+    btn.disabled = true;
+    try {
+      const r = await fetch("/api/explainer/delete-beat-image", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project: PROJECT_ID, episode: ep.id, beat: bNum })
+      });
+      const j = await r.json();
+      if (!r.ok || !j.ok) throw new Error(j.error || "Could not delete image");
+      imageCache.delete(`${state.episodeId}:${bNum}`);
+      await refreshAssets(true);
+      toast(`Beat ${bNum} image deleted — click Batch Flow to regenerate it ✓`);
+    } catch (err) {
+      toast(`Delete failed: ${err.message}`);
+    } finally {
+      btn.disabled = false;
+    }
   }
+});
+
+$("#blocks-container").addEventListener("paste", async e => {
+  const box = e.target.closest("[data-drop-beat], .beat-card");
+  if (!box) return;
+  const bNum = Number(box.dataset.dropBeat || box.dataset.beat);
+  if (!bNum) return;
+  const file = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith("image/"));
+  if (!file) return;
+  e.preventDefault();
+  await uploadBeatImageBlob(bNum, file);
+});
+
+$("#blocks-container").addEventListener("dragover", e => {
+  if (e.target.closest("[data-drop-beat], .beat-card")) e.preventDefault();
+});
+
+$("#blocks-container").addEventListener("drop", async e => {
+  const box = e.target.closest("[data-drop-beat], .beat-card");
+  if (!box) return;
+  const bNum = Number(box.dataset.dropBeat || box.dataset.beat);
+  const file = [...(e.dataTransfer?.files || [])].find(f => f.type.startsWith("image/"));
+  if (!bNum || !file) return;
+  e.preventDefault();
+  await uploadBeatImageBlob(bNum, file);
 });
 
 $("#blocks-container").addEventListener("change", async e => {

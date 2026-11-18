@@ -1,0 +1,26 @@
+{
+  "PRITHVI": {
+    "code": "PRITHVI",
+    "name": "Prithvi Narayan Shah",
+    "refPrompt": "Dignified 2D flat hand-drawn stickman historical explainer character standing full-body centered on pure white (#FFFFFF) background: round white circle head with regal composed expression, traditional Nepali royal white daura suruwal, crimson-trimmed royal pagadi headdress with small plume, waist sash with curved Gorkhali khukuri, clean black ink outlines, respectful royal posture, no text.",
+    "updatedAt": "2026-11-17T15:33:47.291Z"
+  },
+  "KALU_PANDE": {
+    "code": "KALU_PANDE",
+    "name": "Kaji Kalu Pande",
+    "refPrompt": "Dignified 2D flat hand-drawn stickman historical explainer character standing full-body centered on pure white (#FFFFFF) background: round white circle head with wise mustache, traditional dark Gorkhali warrior coat, folded Nepali topi, curved khukuri at waist, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T15:34:21.038Z"
+  },
+  "BISE_NAGARCHI": {
+    "code": "BISE_NAGARCHI",
+    "name": "Bise Nagarchi",
+    "refPrompt": "Respectful 2D flat hand-drawn stickman historical explainer character standing full-body centered on pure white (#FFFFFF) background: round white circle head with kind humble smile, simple handwoven Nepali bhoto-kachhad tunic and simple cloth cap, holding a small brass coin, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T15:35:10.091Z"
+  },
+  "GORKHALI_SOLDIER": {
+    "code": "GORKHALI_SOLDIER",
+    "name": "Gorkhali Warrior",
+    "refPrompt": "2D flat hand-drawn stickman historical explainer soldier standing full-body centered on pure white (#FFFFFF) background: round white circle head with determined eyes, traditional dark Gorkhali tunic, cloth waistband holding curved khukuri and round shield, clean black ink outlines, no text.",
+    "updatedAt": "2026-11-17T15:35:57.854Z"
+  }
+}

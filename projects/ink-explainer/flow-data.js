@@ -41,6 +41,20 @@ const INK_EXPLAINER_DEFAULT_EPISODE = {
   subtitle: "32 Rapid Visual Beats (~2s/image) · Continuous Block Narration + Word-Timestamp Sync",
   hook: "Your alarm screams at 7 AM, yet for 95% of human history, daily survival work took about 17 hours a week.",
   niche: "Anthropology & Human History",
+  characters: [
+    {
+      code: "CAVEMAN",
+      name: "Caveman",
+      role: "Prehistoric Hunter-Gatherer",
+      refPrompt: "2D flat hand-drawn stickman explainer character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, messy dark brown hair, simple dot eyes and expressive eyebrows, thin black stick-figure arms and legs, wearing a ragged brown fur pelt tunic, clean black ink outlines, no text."
+    },
+    {
+      code: "ANTHROPOLOGIST",
+      name: "Anthropologist",
+      role: "Modern Field Scientist",
+      refPrompt: "2D flat hand-drawn stickman explainer character standing full-body centered on a pure solid white (#FFFFFF) background: round white circle head, simple dot eyes, thin black stick-figure limbs, wearing a tan explorer field shirt and tan pith helmet, holding a clipboard and silver stopwatch, clean black ink outlines, no text."
+    }
+  ],
   blocks: [
     {
       blockId: 1,
@@ -293,6 +307,21 @@ const INK_EXPLAINER_DEFAULT_EPISODE = {
   ]
 };
 
+function inferBeatCharacters(episode, beat) {
+  if (Array.isArray(beat?.characters)) return beat.characters;
+  const cast = Array.isArray(episode?.characters) ? episode.characters : [];
+  if (!cast.length) return [];
+  const txt = `${beat?.visual || ""} ${beat?.narration || ""}`;
+  return cast
+    .filter(c => {
+      const code = String(c.code || "").toUpperCase();
+      if (code === "CAVEMAN") return /caveman|hunter|gatherer|farmer|forager|prehistoric/i.test(txt);
+      if (code === "ANTHROPOLOGIST") return /anthropologist|archaeologist|scientist|richard lee/i.test(txt);
+      return new RegExp(`\\b${String(c.name || code).replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(txt);
+    })
+    .map(c => c.code);
+}
+
 function flattenEpisodeBeats(episode) {
   const blocks = Array.isArray(episode?.blocks) ? episode.blocks : [];
   const out = [];
@@ -306,6 +335,8 @@ function flattenEpisodeBeats(episode) {
         blockTitle: blk.title || `Block ${bId}`,
         cardType: INK_EXPLAINER_CARD_STYLES[beat.cardType] ? beat.cardType : "flat-scene",
         label: String(beat.label || "").trim(),
+        emotion: String(beat.emotion || "").trim(),
+        characters: inferBeatCharacters(episode, beat),
         narration: String(beat.narration || "").trim(),
         visual: String(beat.visual || "").trim()
       });
@@ -347,32 +378,32 @@ function inkExplainerCaptionFor(index) {
   return `"${ep.title}" — ${b.narration}\n\n#InkExplainer #StickmanExplainer #HumanHistory #VisualStorytelling`;
 }
 
-function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 6) {
-  const blocks = Math.max(2, Math.min(8, Number(blockCount) || 4));
-  const perBlock = Math.max(4, Math.min(10, Number(beatsPerBlock) || 6));
+function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 10, language = "en") {
+  const blocks = Math.max(2, Math.min(20, Number(blockCount) || 4));
+  const perBlock = Math.max(6, Math.min(14, Number(beatsPerBlock) || 10));
   const cleanTopic = String(topic || "").trim() || "Why Medieval Peasants Actually Had More Free Time Than You";
+  const langName = language === "ne" ? "Nepali (Devanagari script, natural documentary Nepali)" : "English";
   return [
-    "You are an expert English documentary scriptwriter and visual beat director matching the exact YouTube style of Ink Explainer ('What Did Ancient Humans Actually Do All Day?').",
-    `Write a complete English episode on this topic: "${cleanTopic}".`,
-    `Organize the episode into exactly ${blocks} continuous narration blocks, and break EACH block into ${perBlock} rapid visual beats (1 image every 1.5–2.5 seconds).`,
+    `You are an expert ${langName} documentary scriptwriter and visual beat director matching the rapid-cut YouTube style of Ink Explainer ('What Did Ancient Humans Actually Do All Day?').`,
+    `Write a complete ${langName} episode on this topic: "${cleanTopic}".`,
+    `Organize the episode into ${blocks} continuous narration blocks (each ~35-50 seconds of speech so TTS stays well within output limits), and break EACH block into ${perBlock} rapid visual beats (1 image every 1.2–2.2 seconds).`,
     "",
     "CRITICAL RULES:",
-    "1. Each beat's 'narration' MUST be ONE short natural spoken clause of ONLY 5 to 10 words so that joining a block's beats forms smooth continuous English prose and cutting between images every 1.5–2.5 seconds matches natural speech.",
-    "2. Mix the 5 Ink Explainer visual card types across beats:",
-    "   - 'whiteboard-prop': Pure white background (#FFFFFF) with 1 centered object/diagram and short uppercase label.",
-    "   - 'split-compare': Pure white background split vertically by a dashed black line comparing two ideas ('YOU | HIM', 'FAST | STEADY').",
-    "   - 'red-x': Flat stickman cartoon scene crossed out corner-to-corner by a bold giant red X.",
-    "   - 'map-diagram': Pure white background with a simple flat map, timeline arrow, or pin.",
-    "   - 'flat-scene': Simple flat horizon, solid pale sky (#bce3f5 or warm peach), flat tan earth (#d5b485), and white-round-headed black stickman characters.",
-    "3. Write concise visual descriptions ('visual') that preserve round white circle heads and clean black ink outlines.",
+    "1. NEVER put a long multi-clause sentence on one single beat! Split every action into its own beat of ONLY 4 to 8 words (e.g. 'He placed a wooden box in her hands,' = Beat 1; 'Open it on the train,' = Beat 2; 'and watched the van disappear.' = Beat 3).",
+    "2. Keep 'visual' descriptions in clear English for Google Flow 2D ink-cartoon generation even when 'narration' is in Nepali.",
+    "3. Mix the 5 Ink Explainer visual card types across beats ('whiteboard-prop', 'split-compare', 'red-x', 'map-diagram', 'flat-scene').",
     "",
     "Return ONLY valid raw JSON (no markdown fences, no commentary) using this exact schema:",
     "{",
     '  "id": "kebab-case-slug",',
     '  "title": "Curiosity-Hook Episode Title",',
-    '  "subtitle": "Rapid-Beat English Explainer",',
+    '  "subtitle": "Rapid-Beat Explainer",',
+    `  "language": "${language === "ne" ? "ne" : "en"}",`,
     '  "hook": "One-sentence opening curiosity hook",',
     '  "niche": "History & Human Curiosity",',
+    '  "characters": [',
+    '    { "code": "HERO", "name": "Hero Name", "role": "Lead", "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, distinct outfit..." }',
+    "  ],",
     '  "blocks": [',
     "    {",
     '      "blockId": 1,',
@@ -382,12 +413,33 @@ function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 6
     '          "beat": 1,',
     '          "cardType": "flat-scene",',
     '          "label": "",',
-    '          "narration": "Short 5 to 10 word spoken phrase,",',
+    '          "emotion": "warmly",',
+    '          "characters": ["HERO"],',
+    '          "narration": "Short 4 to 8 word spoken clause,",',
     '          "visual": "Concrete 2D stickman explainer frame description."',
     "        }",
     "      ]",
     "    }",
     "  ]",
     "}"
+  ].join("\n");
+}
+
+function buildInkStoryToEpisodePrompt(storyText, language = "en") {
+  const cleanStory = String(storyText || "").trim();
+  const isNepali = language === "ne" || /[\u0900-\u097F]/.test(cleanStory);
+  return [
+    "You are an expert visual storyboard director for the rapid-cut Ink Explainer YouTube style.",
+    "Convert the user's FULL written story below into a rapid-beat Ink Explainer episode JSON without losing any plot points, actions, or emotional beats.",
+    "",
+    "CRITICAL RULES:",
+    "1. Group chapters/sections into narration 'blocks' (~70-110 words per block so Gemini TTS stays fast and never hits output limits).",
+    "2. Break every sentence into short 4 to 8 word visual beats (~1 image every 1.5s) — NEVER put a full multi-action sentence on one image (e.g., placing a box, saying open it on the train, and watching the van disappear MUST be 3 separate beats!).",
+    "3. Write 'visual' prompts in English for Google Flow, keeping 'narration' in the story's language (" + (isNepali ? "Nepali Devanagari" : "English") + ").",
+    "4. Return ONLY valid raw JSON (no markdown fences) matching this exact schema (define 2-4 recurring characters with 'refPrompt' and tag each beat's 'characters' array + optional 'emotion' delivery cue):",
+    `{ "id": "kebab-case-slug", "title": "Story Title", "subtitle": "Story Subtitle", "language": "${isNepali ? "ne" : "en"}", "hook": "One-sentence hook", "niche": "Story Genre", "characters": [{ "code": "LEAD1", "name": "Name", "role": "Lead", "refPrompt": "2D flat stickman explainer character full-body on pure white background..." }], "blocks": [{ "blockId": 1, "title": "Chapter 1", "beats": [{ "beat": 1, "cardType": "flat-scene", "label": "", "emotion": "warmly", "characters": ["LEAD1"], "narration": "4-8 word spoken clause", "visual": "..." }] }] }`,
+    "",
+    "USER STORY:",
+    cleanStory.slice(0, 24000)
   ].join("\n");
 }

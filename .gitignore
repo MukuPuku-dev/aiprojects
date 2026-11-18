@@ -2,8 +2,24 @@
 /dist
 /.env
 /coverage
+
+# Generated media is stored outside the repository.
+*.png
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.webm
+*.m4v
+*.mpeg
+*.mpg
+*.wmv
+*.flv
+
 /projects/gk-questions/videos
 /projects/daily-motivations/videos
+/projects/**/audio/
+/tools/flow/logs/
 /tools/flow/tiktok-posts.json
 /tools/flow/tiktok-posts.json.tmp
 /tools/flow/telegram-posts.json
