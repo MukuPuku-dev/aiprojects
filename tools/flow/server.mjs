@@ -12,6 +12,8 @@ import { createFacebookService } from './facebook.mjs';
 import { createTelegramService, uploadToTelegram } from './telegram.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
 import { callGeminiText, deleteBeatImage, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode } from './explainer-service.mjs';
+import { compressImageToJpeg, csvImagesDir, deleteCsvImage, listCsvImages, mapAspectToFlow, sanitizeFileName, sanitizeFolderName } from './csv-images-service.mjs';
+import { searchAndSaveImageBatchInBrowser, searchAndSaveImageInBrowser } from './csv-web-search.mjs';
 import { uploadToYouTube } from './youtube.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
@@ -23,6 +25,7 @@ const queue = createGenerationQueue(job => {
   if (job.mode === 'youtube') return uploadToYouTube(job);
   if (job.mode === 'characters') return generateCharactersInFlow(job);
   if (job.mode === 'image-batch') return generateImageBatch(job);
+  if (job.mode === 'csv-image-batch') return job.run();
   return job.mode === 'image' ? generateImage(job) : generateVideo(job);
 });
 const tiktok = createTikTokService(ROOT);
@@ -242,7 +245,7 @@ async function handleExplainerRoute(req, res, url) {
       const episode = url.searchParams.get('episode') || 'ancient-humans-day';
       const rawFile = url.searchParams.get('file') || 'episode.webm';
       if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
-      if (!/^[a-z0-9._-]+\.webm$/i.test(rawFile)) throw new Error('Invalid export filename.');
+      if (!/^[a-z0-9._-]+\.(webm|mp4)$/i.test(rawFile)) throw new Error('Invalid export filename.');
       const outPath = path.join(ROOT, 'projects', project, 'episodes', episode, rawFile);
       fs.mkdirSync(path.dirname(outPath), { recursive: true });
       const tmpPath = `${outPath}.${process.pid}.${Date.now()}.tmp`;
@@ -492,10 +495,315 @@ async function handleExplainerRoute(req, res, url) {
   }
 }
 
+async function handleCsvImagesRoute(req, res, url) {
+  try {
+    if (url.pathname === '/api/csv-images/list') {
+      const folder = url.searchParams.get('folder') || 'default';
+      return send(res, 200, { ok: true, ...listCsvImages(ROOT, folder) });
+    }
+    if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+    const body = await readBody(req);
+    const project = 'images-from-csv';
+    const flowProject = studioProjectName(project) || 'Images from CSV';
+    const effective = effectiveSettings(readSettings(), project);
+
+    if (url.pathname === '/api/csv-images/delete') {
+      const result = deleteCsvImage(ROOT, body.folder, body.filename);
+      return send(res, 200, { ok: true, ...result });
+    }
+
+    if (url.pathname === '/api/csv-images/delete-batch') {
+      const filenames = Array.isArray(body.filenames) ? body.filenames : [];
+      if (!filenames.length) throw new Error('filenames array is required.');
+      let deletedCount = 0;
+      for (const fname of filenames) {
+        const resDel = deleteCsvImage(ROOT, body.folder, fname);
+        if (resDel.deleted) deletedCount++;
+      }
+      return send(res, 200, { ok: true, deletedCount });
+    }
+
+    if (url.pathname === '/api/csv-images/compress-batch') {
+      const folder = sanitizeFolderName(body.folder);
+      const outDir = csvImagesDir(ROOT, folder);
+      const filenames = Array.isArray(body.filenames) ? body.filenames : [];
+      if (!filenames.length) throw new Error('filenames array is required.');
+      const quality = Number(body.quality) || 85;
+      let compressedCount = 0;
+      let savedBytes = 0;
+      for (const fname of filenames) {
+        const safe = sanitizeFileName(fname);
+        const full = path.join(outDir, safe);
+        if (fs.existsSync(full)) {
+          const info = await compressImageToJpeg(full, quality);
+          if (info) {
+            compressedCount++;
+            savedBytes += Math.max(0, info.originalSize - info.compressedSize);
+          }
+        }
+      }
+      return send(res, 200, { ok: true, compressedCount, savedBytes });
+    }
+
+    if (url.pathname === '/api/csv-images/stop-batch') {
+      const job = queue.get(body.id);
+      if (!job) return send(res, 404, { ok: false, error: 'Batch job not found.' });
+      job.stopRequested = true;
+      return send(res, 200, { ok: true, stopping: true });
+    }
+
+    if (url.pathname === '/api/csv-images/search-browser') {
+      const query = typeof body.query === 'string' ? body.query.trim() : '';
+      if (query.length < 2) throw new Error('Search query is required.');
+      const folder = sanitizeFolderName(body.folder);
+      const filename = sanitizeFileName(body.filename);
+      const outDir = csvImagesDir(ROOT, folder);
+      fs.mkdirSync(outDir, { recursive: true });
+      const outFile = path.join(outDir, filename);
+      const day = Math.max(1, Number(body.day) || 1);
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'csv-image-batch',
+        day,
+        log: m => console.log(`[csv-search ${folder}/${filename}] ${m}`),
+        run: () => searchAndSaveImageInBrowser({
+          query,
+          outFile,
+          log: m => console.log(`[csv-search ${folder}/${filename}] ${m}`)
+        })
+      });
+      return send(res, 202, {
+        ok: true,
+        id: tracked.id,
+        status: tracked.status,
+        file: path.relative(ROOT, outFile).split(path.sep).join('/')
+      });
+    }
+
+    if (url.pathname === '/api/csv-images/search-browser-batch') {
+      const folder = sanitizeFolderName(body.folder);
+      const outDir = csvImagesDir(ROOT, folder);
+      fs.mkdirSync(outDir, { recursive: true });
+      const rawItems = Array.isArray(body.items) ? body.items : [];
+      if (!rawItems.length) throw new Error('items array is required.');
+      const overwrite = Boolean(body.overwrite);
+      const mapped = rawItems.map((it, idx) => {
+        const query = typeof it.query === 'string' ? it.query.trim() : '';
+        if (query.length < 2) throw new Error(`Row ${it.rowId || idx + 1} search query is too short.`);
+        const filename = sanitizeFileName(it.filename);
+        const outFile = path.join(outDir, filename);
+        return {
+          day: Number.isInteger(Number(it.day)) && Number(it.day) > 0 ? Number(it.day) : idx + 1,
+          rowId: String(it.rowId || idx + 1),
+          filename,
+          query,
+          outFile
+        };
+      });
+      const pending = overwrite ? mapped : mapped.filter(it => !fs.existsSync(it.outFile));
+      if (!pending.length) {
+        return send(res, 200, { ok: true, alreadyComplete: true, total: mapped.length, skipped: mapped.length });
+      }
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+
+      let tracked;
+      const savedFiles = [];
+      tracked = queue.submit(jobId, {
+        mode: 'csv-image-batch',
+        day: pending[0].day,
+        log: m => console.log(`[csv-search-batch ${folder}] ${m}`),
+        run: () => searchAndSaveImageBatchInBrowser({
+          items: pending,
+          shouldStop: () => Boolean(tracked?.stopRequested),
+          onProgress: p => {
+            tracked.progress = {
+              ...(tracked.progress || {}),
+              total: mapped.length,
+              skipped: mapped.length - pending.length,
+              savedCount: savedFiles.length,
+              inFlight: p.inFlight ?? 0,
+              remaining: p.remaining ?? Math.max(0, pending.length - savedFiles.length),
+              lastQuery: p.lastQuery || '',
+              savedFiles: [...savedFiles]
+            };
+          },
+          onItemSaved: entry => {
+            if (entry.filename && !savedFiles.includes(entry.filename)) savedFiles.push(entry.filename);
+            tracked.progress = {
+              ...(tracked.progress || {}),
+              total: mapped.length,
+              skipped: mapped.length - pending.length,
+              savedCount: savedFiles.length,
+              lastSavedFile: entry.filename,
+              savedFiles: [...savedFiles]
+            };
+          },
+          log: m => console.log(`[csv-search-batch ${folder}] ${m}`)
+        })
+      });
+      tracked.progress = {
+        total: mapped.length,
+        skipped: mapped.length - pending.length,
+        savedCount: 0,
+        inFlight: 0,
+        remaining: pending.length,
+        savedFiles: []
+      };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
+    }
+
+    if (url.pathname === '/api/csv-images/generate') {
+      const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
+      if (prompt.length < 10) throw new Error('Prompt must be at least 10 characters.');
+      const folder = sanitizeFolderName(body.folder);
+      const filename = sanitizeFileName(body.filename);
+      const outDir = csvImagesDir(ROOT, folder);
+      fs.mkdirSync(outDir, { recursive: true });
+      const outFile = path.join(outDir, filename);
+      const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
+      const aspect = mapAspectToFlow(body.aspect || effective.image.aspect);
+      const day = Math.max(1, Number(body.day) || 1);
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'csv-image-batch',
+        day,
+        log: m => console.log(`[csv-img ${folder}/${filename}] ${m}`),
+        run: async () => {
+          const resImg = await generateImage({
+            prompt,
+            outFile,
+            model,
+            aspect,
+            flowProject,
+            project,
+            log: m => console.log(`[csv-img ${folder}/${filename}] ${m}`)
+          });
+          await compressImageToJpeg(resImg.file || outFile, 85).catch(err => {
+            console.warn(`[csv-img] JPEG compression skipped for ${filename}: ${err.message}`);
+          });
+          return resImg;
+        }
+      });
+      return send(res, 202, {
+        ok: true,
+        id: tracked.id,
+        status: tracked.status,
+        file: path.relative(ROOT, outFile).split(path.sep).join('/')
+      });
+    }
+
+    if (url.pathname === '/api/csv-images/generate-batch') {
+      const folder = sanitizeFolderName(body.folder);
+      const outDir = csvImagesDir(ROOT, folder);
+      fs.mkdirSync(outDir, { recursive: true });
+      const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
+      const concurrency = Math.max(1, Math.min(6, Number(body.concurrency) || 4));
+      const rawItems = Array.isArray(body.items) ? body.items : [];
+      if (!rawItems.length) throw new Error('items array is required.');
+      const overwrite = Boolean(body.overwrite);
+      const mapped = rawItems.map((it, idx) => {
+        const prompt = typeof it.prompt === 'string' ? it.prompt.trim() : '';
+        if (prompt.length < 10) throw new Error(`Row ${it.rowId || idx + 1} prompt is too short.`);
+        const filename = sanitizeFileName(it.filename);
+        const outFile = path.join(outDir, filename);
+        const aspect = body.aspectOverride ? mapAspectToFlow(body.aspectOverride) : mapAspectToFlow(it.aspect);
+        return {
+          day: Number.isInteger(Number(it.day)) && Number(it.day) > 0 ? Number(it.day) : idx + 1,
+          rowId: String(it.rowId || idx + 1),
+          filename,
+          prompt,
+          outFile,
+          aspect
+        };
+      });
+      const pending = overwrite ? mapped : mapped.filter(it => !fs.existsSync(it.outFile));
+      if (!pending.length) {
+        return send(res, 200, { ok: true, alreadyComplete: true, total: mapped.length, skipped: mapped.length });
+      }
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+
+      let tracked;
+      const savedFiles = [];
+      tracked = queue.submit(jobId, {
+        mode: 'csv-image-batch',
+        day: pending[0].day,
+        log: m => console.log(`[csv-batch ${folder}] ${m}`),
+        run: async () => {
+          const groups = new Map();
+          for (const item of pending) {
+            if (!groups.has(item.aspect)) groups.set(item.aspect, []);
+            groups.get(item.aspect).push(item);
+          }
+          const compressionTasks = [];
+          for (const [aspect, groupItems] of groups.entries()) {
+            if (tracked?.stopRequested) break;
+            await generateImageBatch({
+              items: groupItems,
+              model,
+              aspect,
+              flowProject,
+              concurrency,
+              shouldStop: () => Boolean(tracked?.stopRequested),
+              onProgress: p => {
+                tracked.progress = {
+                  ...(tracked.progress || {}),
+                  total: mapped.length,
+                  skipped: mapped.length - pending.length,
+                  savedCount: savedFiles.length,
+                  inFlight: p.inFlight ?? 0,
+                  remaining: Math.max(0, pending.length - savedFiles.length),
+                  savedFiles: [...savedFiles]
+                };
+              },
+              onItemSaved: entry => {
+                compressionTasks.push(
+                  compressImageToJpeg(entry.file || entry.outFile, 85).catch(err => {
+                    console.warn(`[csv-batch] JPEG compression skipped for ${entry.filename}: ${err.message}`);
+                  })
+                );
+                if (entry.filename && !savedFiles.includes(entry.filename)) savedFiles.push(entry.filename);
+                tracked.progress = {
+                  ...(tracked.progress || {}),
+                  total: mapped.length,
+                  skipped: mapped.length - pending.length,
+                  savedCount: savedFiles.length,
+                  lastSavedFile: entry.filename,
+                  savedFiles: [...savedFiles]
+                };
+              },
+              log: m => console.log(`[csv-batch ${folder} ${aspect}] ${m}`)
+            });
+          }
+          await Promise.all(compressionTasks);
+          return { saved: savedFiles, file: pending[0].outFile };
+        }
+      });
+      tracked.progress = {
+        total: mapped.length,
+        skipped: mapped.length - pending.length,
+        savedCount: 0,
+        inFlight: 0,
+        remaining: pending.length,
+        savedFiles: []
+      };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
+    }
+
+    return send(res, 404, { ok: false, error: 'Not found.' });
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
-  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, csvImagesApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
   if (url.pathname === '/api/server') return handleServerControl(req, res);
+  if (url.pathname.startsWith('/api/csv-images/')) return handleCsvImagesRoute(req, res, url);
   if (url.pathname.startsWith('/api/explainer/')) return handleExplainerRoute(req, res, url);
   if (url.pathname.startsWith('/api/tiktok/')) return handleSocialRoute(req, res, url, '/api/tiktok', tiktok, 'TikTok');
   if (url.pathname.startsWith('/api/facebook/')) return handleSocialRoute(req, res, url, '/api/facebook', facebook, 'Facebook');

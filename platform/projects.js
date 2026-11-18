@@ -108,5 +108,16 @@ const PROJECTS = [
     mark: "🖋️",
     accent: "gold",
     flowNext: true
+  },
+  {
+    name: "Images from CSV",
+    type: "CSV Batch Image Generator · Upload CSV & Save to Folder",
+    description: "Upload any prompt CSV (with id, type, placement, aspect, caption & prompt/brief), auto-name each image identifiably, generate in Google Flow, and save into an organized folder.",
+    href: "projects/images-from-csv/index.html",
+    id: "images-from-csv",
+    totalClips: 15,
+    mark: "🗂️",
+    accent: "coral",
+    flowNext: false
   }
 ];

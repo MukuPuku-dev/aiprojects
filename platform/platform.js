@@ -18,7 +18,8 @@ const PROGRESS_STORAGE_KEYS = {
   "sadhu-rani": "sadhu-rani-v1",
   "tarkari-katha": "tarkari-katha-v1",
   "stickman-lantern": "stickman-lantern-v1",
-  "ink-explainer": "ink-explainer-v1"
+  "ink-explainer": "ink-explainer-v1",
+  "images-from-csv": "images-from-csv-v1"
 };
 const SERIES_LABELS = {
   "kam-nalagne": "काम नलाग्ने कोही हुँदैन",
@@ -334,7 +335,7 @@ function renderProjects(query = "") {
 }
 
 function isPhotoProject(pid) {
-  return pid === "maya-photos" || pid === "jindagi-kitaab" || pid === "ink-explainer";
+  return pid === "maya-photos" || pid === "jindagi-kitaab" || pid === "ink-explainer" || pid === "images-from-csv";
 }
 
 function readLocalSummary(pid, defaultTotal) {

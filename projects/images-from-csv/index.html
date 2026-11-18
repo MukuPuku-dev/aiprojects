@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Images from CSV · Story Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --card: #17171c;
+      --card-2: #1f1f27;
+      --ink: #f3f2f5;
+      --mut: #a6a3b0;
+      --coral: #ff5b57;
+      --gold: #ead7b7;
+      --ok: #62d99a;
+      --blue: #7ab8ff;
+      --warn: #ffb84d;
+      --line: #2d2c36;
+      --font: "Noto Sans Devanagari", "Mukta", "Nirmala UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 14.5px/1.55 var(--font); }
+    header {
+      position: sticky; top: 0; z-index: 10;
+      background: #0d0d10ee; backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+    }
+    .head-row {
+      max-width: 1180px; margin: 0 auto;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .back { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 13.5px; }
+    .back:hover { text-decoration: underline; }
+    h1 { margin: 0; font-size: 19px; }
+    h1 span { color: var(--coral); }
+    .sub { color: var(--mut); font-size: 12.5px; margin-left: auto; }
+    main { max-width: 1180px; margin: 0 auto; padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+    }
+    .upload-zone {
+      border: 2px dashed #3d3b4a; border-radius: 12px; padding: 24px 18px;
+      text-align: center; cursor: pointer; transition: border-color .2s, background .2s;
+      background: #131318;
+    }
+    .upload-zone.dragover { border-color: var(--coral); background: #1e171b; }
+    .upload-zone strong { color: var(--gold); font-size: 15.5px; display: block; margin-bottom: 4px; }
+    .upload-zone p { margin: 0; color: var(--mut); font-size: 13px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .between { justify-content: space-between; }
+    button, input, select, textarea {
+      background: #22212a; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 11px; font: inherit;
+    }
+    button, select { cursor: pointer; }
+    button.primary { background: var(--coral); border-color: var(--coral); color: #fff; font-weight: 700; }
+    button.gold { background: var(--gold); border-color: var(--gold); color: #1b140b; font-weight: 700; }
+    button.ghost { background: transparent; }
+    button.on { border-color: var(--coral); color: #ff9a97; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    .folder-bar {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px; margin-top: 12px; align-items: end;
+    }
+    label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12.5px; color: var(--mut); }
+    label.field input, label.field select { width: 100%; }
+    .path-hint { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--ok); }
+    .progress-wrap { margin-top: 10px; }
+    .bar { height: 7px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0; }
+    .bar i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--coral), var(--gold)); transition: width .3s; }
+    .status-line { font-size: 13px; color: var(--gold); min-height: 20px; }
+    .paste-box { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+    .paste-box textarea { width: 100%; min-height: 120px; font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 14px;
+    }
+    .card {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px;
+      display: flex; flex-direction: column; gap: 9px;
+    }
+    .card.saved { border-color: #2f6b4b; }
+    .card.non-ai { opacity: .78; }
+    .card-top { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      font-weight: 800; font-size: 12px; border-radius: 6px; padding: 2px 8px;
+      background: #2b2a36; color: #fff;
+    }
+    .badge.t-AI { background: #1e4d38; color: var(--ok); }
+    .badge.t-DG { background: #1f3d5c; color: var(--blue); }
+    .badge.t-PH, .badge.t-GR { background: #4a3519; color: var(--warn); }
+    .chip {
+      border: 1px solid var(--line); border-radius: 99px; padding: 1px 8px;
+      font-size: 11.5px; color: var(--mut);
+    }
+    .caption-ne { font-size: 15px; font-weight: 700; color: var(--gold); margin: 0; }
+    .placement { font-size: 12px; color: var(--mut); margin: 0; }
+    .word-note {
+      font-size: 12px; background: #1c1a24; border-left: 3px solid var(--warn);
+      padding: 6px 8px; border-radius: 0 6px 6px 0; color: #f6dcb2;
+    }
+    .fname-row { display: flex; gap: 6px; align-items: center; }
+    .fname-row input {
+      flex: 1; font-family: ui-monospace, Consolas, monospace; font-size: 12px; padding: 5px 8px;
+      color: var(--ok); background: #121217;
+    }
+    .prompt-box {
+      font-size: 12.5px; color: #d9d6e0; background: #121217; border: 1px solid #262530;
+      border-radius: 8px; padding: 8px; max-height: 110px; overflow-y: auto; white-space: pre-wrap;
+    }
+    .preview-wrap {
+      position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--line);
+      background: #0b0b0e;
+    }
+    .preview-wrap img { display: block; width: 100%; max-height: 220px; object-fit: contain; }
+    .card-actions { display: flex; gap: 8px; align-items: center; margin-top: auto; flex-wrap: wrap; }
+    .card-actions .state-txt { font-size: 12px; color: var(--mut); margin-left: auto; }
+    .hide { display: none !important; }
+    .empty { text-align: center; color: var(--mut); padding: 28px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="head-row">
+      <a class="back" href="../../index.html">← Story Studio</a>
+      <h1>Images <span>from CSV</span></h1>
+      <span class="sub" id="server-badge">Checking local server…</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div id="upload-zone" class="upload-zone" tabindex="0" role="button" aria-label="Upload CSV file">
+        <strong>Drop your CSV file here or click to browse</strong>
+        <p>Supports columns like <code>id, type, placement, aspect, width, caption_ne, labels_to_add_in_word, ai_prompt_or_photo_brief</code> (or any <code>id</code> + <code>prompt</code> CSV).</p>
+        <input id="csv-file-input" type="file" accept=".csv,text/csv" class="hide">
+      </div>
+
+      <div class="row between" style="margin-top: 10px;">
+        <div class="row">
+          <button type="button" id="toggle-paste-btn">Paste CSV text</button>
+          <button type="button" id="clear-csv-btn" class="ghost">Clear CSV</button>
+        </div>
+        <span class="path-hint" id="save-path-preview">Save folder: projects/images-from-csv/images/default/</span>
+      </div>
+
+      <div id="paste-box" class="paste-box hide">
+        <textarea id="csv-paste-input" placeholder="Paste CSV content here (including header row)…"></textarea>
+        <div class="row">
+          <button type="button" id="parse-paste-btn" class="gold">Load Pasted CSV</button>
+        </div>
+      </div>
+
+      <div class="folder-bar">
+        <label class="field">
+          <span>Output Folder Name (identifiable batch folder)</span>
+          <input type="text" id="folder-name-input" value="default" placeholder="e.g. katahari-class5">
+        </label>
+        <label class="field">
+          <span>Existing Folders</span>
+          <select id="existing-folders-select">
+            <option value="">— Switch to saved folder —</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Flow Aspect</span>
+          <select id="aspect-override">
+            <option value="">Auto from CSV (landscape → 16:9)</option>
+            <option value="16:9">Force 16:9</option>
+            <option value="9:16">Force 9:16</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Parallel in Flow</span>
+          <select id="concurrency-select">
+            <option value="2">2 parallel</option>
+            <option value="4" selected>4 parallel</option>
+            <option value="5">5 parallel</option>
+            <option value="6">6 parallel</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel" id="controls-panel">
+      <div class="row between">
+        <div class="row">
+          <button type="button" id="sel-ai-btn">Select AI &amp; DG</button>
+          <button type="button" id="sel-ph-btn">Select PH &amp; GR</button>
+          <button type="button" id="sel-all-btn">Select All</button>
+          <button type="button" id="sel-none-btn">Deselect All</button>
+          <label class="row" style="gap:5px;font-size:13px;color:var(--gold);margin-left:6px;font-weight:700;" title="For quick book demos: lets regular Flow AI generate PH and GR rows too (with 85% JPEG compression)">
+            <input type="checkbox" id="allow-ai-ph-gr"> Allow AI generated for PH &amp; GR
+          </label>
+          <label class="row" style="gap:5px;font-size:13px;color:var(--ok);margin-left:6px;font-weight:700;" title="Replaces picture-book/gouache illustration phrasing with photorealistic DSLR photography instructions">
+            <input type="checkbox" id="photorealistic-mode"> Photorealistic mode (real-photo look)
+          </label>
+          <label class="row" style="gap:5px;font-size:13px;color:var(--mut);margin-left:6px;">
+            <input type="checkbox" id="overwrite-check"> Overwrite existing
+          </label>
+        </div>
+        <div class="row">
+          <button type="button" id="compress-batch-btn" title="Compress already-generated selected images to 85% JPEG">Compress Selected (85%)</button>
+          <button type="button" id="delete-batch-btn" class="ghost" style="color:var(--coral);border-color:#5a2528;" title="Delete generated images for selected rows so you can regenerate them">Delete Selected Images</button>
+          <button type="button" id="search-batch-btn" class="gold">Search Selected in Browser</button>
+          <button type="button" id="generate-batch-btn" class="primary">Generate Selected in Flow</button>
+          <button type="button" id="stop-batch-btn" class="hide">Stop Batch</button>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top: 10px;" id="filter-tabs">
+        <button type="button" data-filter="all" class="on">All (<span id="cnt-all">0</span>)</button>
+        <button type="button" data-filter="ai">AI &amp; DG (<span id="cnt-ai">0</span>)</button>
+        <button type="button" data-filter="nonai">PH &amp; GR (<span id="cnt-nonai">0</span>)</button>
+        <button type="button" data-filter="saved">Saved (<span id="cnt-saved">0</span>)</button>
+        <button type="button" data-filter="pending">Pending (<span id="cnt-pending">0</span>)</button>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="bar"><i id="progress-fill"></i></div>
+        <div class="status-line" id="status-line">Upload a CSV file to begin.</div>
+      </div>
+    </section>
+
+    <section id="cards-grid" class="grid"></section>
+    <div id="empty-msg" class="empty">No CSV loaded yet. Drop a `.csv` file above to preview rows and generate images.</div>
+  </main>
+
+  <script src="../../platform/project-storage.js"></script>
+  <script type="module">
+    import { parseCsv, mapCsvRows, suggestFolderSlug, cleanPromptForAi, makePhotorealisticPrompt } from './csv-parser.js';
+
+    const STORAGE_KEY = 'images-from-csv-v1';
+    const els = {
+      uploadZone: document.getElementById('upload-zone'),
+      fileInput: document.getElementById('csv-file-input'),
+      togglePasteBtn: document.getElementById('toggle-paste-btn'),
+      pasteBox: document.getElementById('paste-box'),
+      pasteInput: document.getElementById('csv-paste-input'),
+      parsePasteBtn: document.getElementById('parse-paste-btn'),
+      clearBtn: document.getElementById('clear-csv-btn'),
+      folderInput: document.getElementById('folder-name-input'),
+      existingFolders: document.getElementById('existing-folders-select'),
+      savePathPreview: document.getElementById('save-path-preview'),
+      aspectOverride: document.getElementById('aspect-override'),
+      concurrency: document.getElementById('concurrency-select'),
+      overwrite: document.getElementById('overwrite-check'),
+      allowAiPhGr: document.getElementById('allow-ai-ph-gr'),
+      photorealistic: document.getElementById('photorealistic-mode'),
+      selAiBtn: document.getElementById('sel-ai-btn'),
+      selPhBtn: document.getElementById('sel-ph-btn'),
+      selAllBtn: document.getElementById('sel-all-btn'),
+      selNoneBtn: document.getElementById('sel-none-btn'),
+      compressBatchBtn: document.getElementById('compress-batch-btn'),
+      deleteBatchBtn: document.getElementById('delete-batch-btn'),
+      searchBatchBtn: document.getElementById('search-batch-btn'),
+      genBatchBtn: document.getElementById('generate-batch-btn'),
+      stopBatchBtn: document.getElementById('stop-batch-btn'),
+      filterTabs: document.getElementById('filter-tabs'),
+      progressFill: document.getElementById('progress-fill'),
+      statusLine: document.getElementById('status-line'),
+      cardsGrid: document.getElementById('cards-grid'),
+      emptyMsg: document.getElementById('empty-msg'),
+      serverBadge: document.getElementById('server-badge')
+    };
+
+    let state = {
+      folder: 'default',
+      csvName: '',
+      rows: [],
+      filter: 'all'
+    };
+    let savedMap = new Map(); // filename -> { name, url, size, mtimeMs }
+    let activeBatchId = null;
+    let pollTimer = null;
+    const singleJobTimers = new Map();
+    let serverOnline = false;
+
+    function sanitizeFolder(name) {
+      return String(name || '').trim().toLowerCase().replace(/[^a-z0-9_-]+/g, '-').replace(/^-+|-+$/g, '') || 'default';
+    }
+
+    function saveLocalState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({
+          folder: state.folder,
+          csvName: state.csvName,
+          rows: state.rows
+        }));
+      } catch {}
+    }
+
+    function loadLocalState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return;
+        const parsed = JSON.parse(raw);
+        if (parsed && Array.isArray(parsed.rows)) {
+          state.folder = sanitizeFolder(parsed.folder || 'default');
+          state.csvName = parsed.csvName || '';
+          state.rows = parsed.rows;
+          els.folderInput.value = state.folder;
+        }
+      } catch {}
+    }
+
+    function updatePathPreview() {
+      const f = sanitizeFolder(els.folderInput.value);
+      state.folder = f;
+      els.savePathPreview.textContent = `Save folder: projects/images-from-csv/images/${f}/`;
+    }
+
+    async function checkServer() {
+      try {
+        const res = await fetch('/api/health');
+        const data = await res.json();
+        serverOnline = Boolean(data?.ok);
+        els.serverBadge.textContent = serverOnline ? 'Local Flow server connected' : 'Server offline';
+        els.serverBadge.style.color = serverOnline ? 'var(--ok)' : 'var(--coral)';
+      } catch {
+        serverOnline = false;
+        els.serverBadge.textContent = 'Open via Start Story Studio.vbs to generate';
+        els.serverBadge.style.color = 'var(--warn)';
+      }
+    }
+
+    async function refreshSavedFiles() {
+      const folder = sanitizeFolder(els.folderInput.value);
+      try {
+        const res = await fetch(`/api/csv-images/list?folder=${encodeURIComponent(folder)}`);
+        if (!res.ok) return;
+        const data = await res.json();
+        savedMap = new Map((data.files || []).map(f => [f.name, f]));
+        const current = els.existingFolders.value;
+        els.existingFolders.innerHTML = '<option value="">— Switch to saved folder —</option>' +
+          (data.folders || []).map(fn => `<option value="${fn}" ${fn === folder ? 'selected' : ''}>${fn}</option>`).join('');
+        if (current && !(data.folders || []).includes(current)) {
+          els.existingFolders.value = '';
+        }
+      } catch {}
+      render();
+    }
+
+    function loadCsvText(text, fileName) {
+      const parsed = parseCsv(text);
+      const rows = mapCsvRows(parsed);
+      if (!rows.length) {
+        els.statusLine.textContent = 'No rows found in CSV. Make sure it has a header row and at least one data row.';
+        return;
+      }
+      state.rows = rows;
+      state.csvName = fileName || 'pasted.csv';
+      if (fileName) {
+        const slug = suggestFolderSlug(fileName);
+        els.folderInput.value = slug;
+        state.folder = slug;
+      }
+      updatePathPreview();
+      saveLocalState();
+      els.statusLine.textContent = `Loaded ${rows.length} rows from ${state.csvName} (${rows.filter(r => r.selected).length} AI/DG selected).`;
+      refreshSavedFiles();
+    }
+
+    function getSavedFile(row) {
+      if (!row?.filename) return null;
+      return savedMap.get(row.filename)
+        || savedMap.get(row.filename.replace(/\.(jpg|jpeg|png)$/i, '.png'))
+        || savedMap.get(row.filename.replace(/\.(jpg|jpeg|png)$/i, '.jpg'))
+        || null;
+    }
+
+    function updateCounts() {
+      const total = state.rows.length;
+      const aiCount = state.rows.filter(r => r.isAiDefault).length;
+      const nonAiCount = total - aiCount;
+      const savedCount = state.rows.filter(r => Boolean(getSavedFile(r))).length;
+      const pendingCount = total - savedCount;
+      document.getElementById('cnt-all').textContent = total;
+      document.getElementById('cnt-ai').textContent = aiCount;
+      document.getElementById('cnt-nonai').textContent = nonAiCount;
+      document.getElementById('cnt-saved').textContent = savedCount;
+      document.getElementById('cnt-pending').textContent = pendingCount;
+      const pct = total ? Math.round((savedCount / total) * 100) : 0;
+      els.progressFill.style.width = `${pct}%`;
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function render() {
+      updateCounts();
+      const filtered = state.rows.filter(r => {
+        const isSaved = Boolean(getSavedFile(r));
+        if (state.filter === 'ai') return r.isAiDefault;
+        if (state.filter === 'nonai') return !r.isAiDefault;
+        if (state.filter === 'saved') return isSaved;
+        if (state.filter === 'pending') return !isSaved;
+        return true;
+      });
+
+      els.emptyMsg.classList.toggle('hide', state.rows.length > 0);
+      els.cardsGrid.innerHTML = filtered.map(r => {
+        const saved = getSavedFile(r);
+        const typeClass = `t-${r.type}`;
+        return `
+          <article class="card ${saved ? 'saved' : ''} ${r.isAiDefault ? '' : 'non-ai'}" data-idx="${r.index}">
+            <div class="card-top">
+              <input type="checkbox" class="row-check" data-idx="${r.index}" ${r.selected ? 'checked' : ''} aria-label="Select ${escapeHtml(r.id)}">
+              <span class="badge ${typeClass}">${escapeHtml(r.type)}</span>
+              <strong>${escapeHtml(r.id)}</strong>
+              <span class="chip">${escapeHtml(r.aspect)}${r.width ? ` · ${escapeHtml(r.width)}` : ''}</span>
+              ${saved ? '<span class="chip" style="color:var(--ok);border-color:#2f6b4b;">Saved</span>' : ''}
+            </div>
+            ${r.caption ? `<p class="caption-ne">${escapeHtml(r.caption)}</p>` : ''}
+            ${r.placement ? `<p class="placement">${escapeHtml(r.placement)}</p>` : ''}
+            ${r.labels ? `<div class="word-note"><strong>Word labels:</strong> ${escapeHtml(r.labels)}</div>` : ''}
+            <div class="fname-row">
+              <span style="font-size:11.5px;color:var(--mut);">File:</span>
+              <input type="text" class="fname-input" data-idx="${r.index}" value="${escapeHtml(r.filename)}" title="Editable output filename">
+            </div>
+            ${!r.isAiDefault ? `
+              <div class="fname-row">
+                <span style="font-size:11.5px;color:var(--warn);">Search:</span>
+                <input type="text" class="search-input" data-idx="${r.index}" value="${escapeHtml(r.searchQuery || '')}" title="Editable Google Images search query" style="color:var(--gold);">
+              </div>
+            ` : ''}
+            <div class="prompt-box" title="Prompt / brief">${escapeHtml(r.prompt)}</div>
+            ${saved ? `
+              <div class="preview-wrap">
+                <a href="${saved.url}?t=${Math.floor(saved.mtimeMs)}" target="_blank" rel="noopener">
+                  <img src="${saved.url}?t=${Math.floor(saved.mtimeMs)}" alt="${escapeHtml(r.id)}" loading="lazy">
+                </a>
+              </div>
+            ` : ''}
+            <div class="card-actions">
+              ${!r.isAiDefault ? `
+                <button type="button" class="search-one-btn gold" data-idx="${r.index}">
+                  ${saved ? 'Re-search in Browser' : 'Search in Browser'}
+                </button>
+              ` : ''}
+              <button type="button" class="gen-one-btn ${r.isAiDefault ? 'gold' : 'ghost'}" data-idx="${r.index}" ${r.prompt.length < 10 ? 'disabled' : ''}>
+                ${saved ? 'Regenerate in Flow' : (r.isAiDefault ? 'Generate' : 'Flow AI')}
+              </button>
+              ${saved ? `<button type="button" class="del-one-btn ghost" data-idx="${r.index}">Delete</button>` : ''}
+              <span class="state-txt">${r.statusText || (saved ? 'Ready' : (r.isAiDefault ? 'Pending' : 'Photo/Chart brief'))}</span>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    async function searchSingle(idx) {
+      const row = state.rows[idx];
+      if (!row) return;
+      const query = (row.searchQuery || row.caption || row.prompt || '').trim();
+      if (!query) return;
+      row.statusText = 'Searching in Chrome…';
+      render();
+      try {
+        const res = await fetch('/api/csv-images/search-browser', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            day: row.day,
+            rowId: row.id,
+            filename: row.filename,
+            folder: state.folder,
+            query
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to queue browser search.');
+        els.statusLine.textContent = `Searching Chrome for "${query}" → ${row.filename}…`;
+        pollJob(data.id, () => {
+          row.statusText = 'Saved from browser';
+          els.statusLine.textContent = `Saved ${row.filename} from Google Images.`;
+          refreshSavedFiles();
+        }, err => {
+          row.statusText = `Error: ${err}`;
+          els.statusLine.textContent = err;
+          render();
+        });
+      } catch (err) {
+        row.statusText = `Error: ${err.message}`;
+        els.statusLine.textContent = err.message;
+        render();
+      }
+    }
+
+    async function searchBatch() {
+      const selected = state.rows.filter(r => r.selected && (r.searchQuery || r.caption || r.prompt));
+      if (!selected.length) {
+        els.statusLine.textContent = 'Select at least one row to search in browser.';
+        return;
+      }
+      els.searchBatchBtn.disabled = true;
+      els.genBatchBtn.disabled = true;
+      els.stopBatchBtn.classList.remove('hide');
+      els.statusLine.textContent = `Opening Chrome to search & save ${selected.length} image(s) into ${state.folder}/…`;
+
+      try {
+        const res = await fetch('/api/csv-images/search-browser-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            folder: state.folder,
+            overwrite: els.overwrite.checked,
+            items: selected.map(r => ({
+              day: r.day,
+              rowId: r.id,
+              filename: r.filename,
+              query: (r.searchQuery || r.caption || r.prompt).trim()
+            }))
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to start browser search batch.');
+        if (data.alreadyComplete) {
+          els.statusLine.textContent = `All ${data.total} selected images already exist in ${state.folder}/ (check "Overwrite existing" to re-search).`;
+          els.searchBatchBtn.disabled = false;
+          els.genBatchBtn.disabled = false;
+          els.stopBatchBtn.classList.add('hide');
+          return;
+        }
+        activeBatchId = data.id;
+        pollJob(data.id, () => {
+          activeBatchId = null;
+          els.searchBatchBtn.disabled = false;
+          els.genBatchBtn.disabled = false;
+          els.stopBatchBtn.classList.add('hide');
+          els.statusLine.textContent = `Browser search batch complete! Saved to projects/images-from-csv/images/${state.folder}/`;
+          refreshSavedFiles();
+        }, err => {
+          activeBatchId = null;
+          els.searchBatchBtn.disabled = false;
+          els.genBatchBtn.disabled = false;
+          els.stopBatchBtn.classList.add('hide');
+          els.statusLine.textContent = `Browser search failed: ${err}`;
+          refreshSavedFiles();
+        }, progress => {
+          if (!progress) return;
+          els.statusLine.textContent = `Browser search: ${progress.savedCount || 0} saved · ${progress.remaining ?? '?'} remaining${progress.lastQuery ? ` ("${progress.lastQuery}")` : ''}`;
+          refreshSavedFiles();
+        });
+      } catch (err) {
+        els.searchBatchBtn.disabled = false;
+        els.genBatchBtn.disabled = false;
+        els.stopBatchBtn.classList.add('hide');
+        els.statusLine.textContent = err.message;
+      }
+    }
+
+    function buildEffectivePrompt(row) {
+      let text = els.allowAiPhGr.checked ? cleanPromptForAi(row) : row.prompt;
+      if (els.photorealistic.checked) {
+        text = makePhotorealisticPrompt(text);
+      }
+      return text;
+    }
+
+    async function generateSingle(idx) {
+      const row = state.rows[idx];
+      if (!row) return;
+      row.statusText = 'Queued in Flow…';
+      render();
+      const promptText = buildEffectivePrompt(row);
+      try {
+        const res = await fetch('/api/csv-images/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            day: row.day,
+            rowId: row.id,
+            filename: row.filename,
+            folder: state.folder,
+            prompt: promptText,
+            aspect: els.aspectOverride.value || row.aspect
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to queue image.');
+        els.statusLine.textContent = `Queued ${row.filename} in Flow…`;
+        pollSingleJob(data.id, () => {
+          row.statusText = 'Saved';
+          refreshSavedFiles();
+        }, err => {
+          row.statusText = `Error: ${err}`;
+          render();
+        });
+      } catch (err) {
+        row.statusText = `Error: ${err.message}`;
+        els.statusLine.textContent = err.message;
+        render();
+      }
+    }
+
+    async function generateBatch() {
+      const allowPhGr = els.allowAiPhGr.checked;
+      const selected = state.rows.filter(r => r.selected && (allowPhGr || r.isAiDefault) && r.prompt.length >= 10);
+      if (!selected.length) {
+        els.statusLine.textContent = allowPhGr
+          ? 'Select at least one row with a valid prompt.'
+          : 'No AI/DG rows selected. Check "Allow AI generated for PH & GR" to include PH/GR rows.';
+        return;
+      }
+      els.genBatchBtn.disabled = true;
+      els.stopBatchBtn.classList.remove('hide');
+      els.statusLine.textContent = `Starting batch for ${selected.length} image(s) into ${state.folder}/ (85% JPEG)…`;
+
+      try {
+        const res = await fetch('/api/csv-images/generate-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            folder: state.folder,
+            concurrency: Number(els.concurrency.value) || 4,
+            aspectOverride: els.aspectOverride.value || '',
+            overwrite: els.overwrite.checked,
+            items: selected.map(r => ({
+              day: r.day,
+              rowId: r.id,
+              filename: r.filename,
+              prompt: buildEffectivePrompt(r),
+              aspect: r.aspect
+            }))
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Failed to start batch.');
+        if (data.alreadyComplete) {
+          els.statusLine.textContent = `All ${data.total} selected images already exist in ${state.folder}/ (check "Overwrite existing" to regenerate).`;
+          els.genBatchBtn.disabled = false;
+          els.stopBatchBtn.classList.add('hide');
+          return;
+        }
+        activeBatchId = data.id;
+        pollJob(data.id, () => {
+          activeBatchId = null;
+          els.genBatchBtn.disabled = false;
+          els.stopBatchBtn.classList.add('hide');
+          els.statusLine.textContent = `Batch complete! Images saved to projects/images-from-csv/images/${state.folder}/`;
+          refreshSavedFiles();
+        }, err => {
+          activeBatchId = null;
+          els.genBatchBtn.disabled = false;
+          els.stopBatchBtn.classList.add('hide');
+          els.statusLine.textContent = `Batch failed: ${err}`;
+          refreshSavedFiles();
+        }, progress => {
+          if (!progress) return;
+          els.statusLine.textContent = `Generating: ${progress.savedCount || 0} saved · ${progress.inFlight || 0} in Flow · ${progress.remaining ?? '?'} remaining`;
+          refreshSavedFiles();
+        });
+      } catch (err) {
+        els.genBatchBtn.disabled = false;
+        els.stopBatchBtn.classList.add('hide');
+        els.statusLine.textContent = err.message;
+      }
+    }
+
+    function pollSingleJob(jobId, onDone, onFail) {
+      if (singleJobTimers.has(jobId)) clearTimeout(singleJobTimers.get(jobId));
+      const tick = async () => {
+        try {
+          const res = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Job status error');
+          if (data.status === 'completed') { singleJobTimers.delete(jobId); onDone(data); return; }
+          if (data.status === 'failed') { singleJobTimers.delete(jobId); onFail(data.error || 'Failed'); return; }
+        } catch (err) {
+          singleJobTimers.delete(jobId);
+          onFail(err.message);
+          return;
+        }
+        singleJobTimers.set(jobId, setTimeout(tick, 2500));
+      };
+      singleJobTimers.set(jobId, setTimeout(tick, 1800));
+    }
+
+    function pollJob(jobId, onDone, onFail, onProgress) {
+      if (pollTimer) clearTimeout(pollTimer);
+      const tick = async () => {
+        try {
+          const res = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Job status error');
+          if (data.status === 'completed') { onDone(data); return; }
+          if (data.status === 'failed') { onFail(data.error || 'Failed'); return; }
+          if (onProgress && data.progress) onProgress(data.progress);
+        } catch (err) {
+          onFail(err.message);
+          return;
+        }
+        pollTimer = setTimeout(tick, 2500);
+      };
+      pollTimer = setTimeout(tick, 1800);
+    }
+
+    // Event bindings
+    els.uploadZone.addEventListener('click', () => els.fileInput.click());
+    els.uploadZone.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); els.fileInput.click(); } });
+    els.uploadZone.addEventListener('dragover', e => { e.preventDefault(); els.uploadZone.classList.add('dragover'); });
+    els.uploadZone.addEventListener('dragleave', () => els.uploadZone.classList.remove('dragover'));
+    els.uploadZone.addEventListener('drop', e => {
+      e.preventDefault();
+      els.uploadZone.classList.remove('dragover');
+      const file = e.dataTransfer?.files?.[0];
+      if (file) file.text().then(txt => loadCsvText(txt, file.name));
+    });
+    els.fileInput.addEventListener('change', () => {
+      const file = els.fileInput.files?.[0];
+      if (file) file.text().then(txt => loadCsvText(txt, file.name));
+      els.fileInput.value = '';
+    });
+
+    els.togglePasteBtn.addEventListener('click', () => els.pasteBox.classList.toggle('hide'));
+    els.parsePasteBtn.addEventListener('click', () => {
+      loadCsvText(els.pasteInput.value, state.csvName || 'pasted-csv');
+      els.pasteBox.classList.add('hide');
+    });
+    els.clearBtn.addEventListener('click', () => {
+      state.rows = [];
+      state.csvName = '';
+      saveLocalState();
+      els.statusLine.textContent = 'Cleared. Upload a new CSV file.';
+      render();
+    });
+
+    els.folderInput.addEventListener('input', () => {
+      updatePathPreview();
+      saveLocalState();
+    });
+    els.folderInput.addEventListener('change', () => refreshSavedFiles());
+    els.existingFolders.addEventListener('change', () => {
+      if (!els.existingFolders.value) return;
+      els.folderInput.value = els.existingFolders.value;
+      updatePathPreview();
+      saveLocalState();
+      refreshSavedFiles();
+    });
+
+    els.allowAiPhGr.addEventListener('change', () => {
+      if (els.allowAiPhGr.checked) {
+        state.rows.forEach(r => { if (r.prompt.length >= 10) r.selected = true; });
+        els.statusLine.textContent = `AI generation enabled for all rows including PH & GR (${state.rows.filter(r => r.selected).length} selected).`;
+      } else {
+        state.rows.forEach(r => { r.selected = r.isAiDefault && r.prompt.length >= 10; });
+        els.statusLine.textContent = `AI generation restricted to AI & DG rows (${state.rows.filter(r => r.selected).length} selected).`;
+      }
+      saveLocalState();
+      render();
+    });
+
+    els.selAiBtn.addEventListener('click', () => {
+      state.rows.forEach(r => { r.selected = r.isAiDefault && r.prompt.length >= 10; });
+      saveLocalState(); render();
+    });
+    els.selPhBtn.addEventListener('click', () => {
+      state.rows.forEach(r => { r.selected = !r.isAiDefault; });
+      saveLocalState(); render();
+    });
+    els.selAllBtn.addEventListener('click', () => {
+      state.rows.forEach(r => { r.selected = r.prompt.length >= 10; });
+      saveLocalState(); render();
+    });
+    els.selNoneBtn.addEventListener('click', () => {
+      state.rows.forEach(r => { r.selected = false; });
+      saveLocalState(); render();
+    });
+
+    els.filterTabs.addEventListener('click', e => {
+      const btn = e.target.closest('button[data-filter]');
+      if (!btn) return;
+      state.filter = btn.dataset.filter;
+      els.filterTabs.querySelectorAll('button').forEach(b => b.classList.toggle('on', b === btn));
+      render();
+    });
+
+    els.cardsGrid.addEventListener('change', e => {
+      const idx = Number(e.target.dataset.idx);
+      if (!Number.isInteger(idx) || !state.rows[idx]) return;
+      if (e.target.classList.contains('row-check')) {
+        state.rows[idx].selected = e.target.checked;
+        saveLocalState();
+      } else if (e.target.classList.contains('fname-input')) {
+        state.rows[idx].filename = e.target.value.trim() || state.rows[idx].filename;
+        saveLocalState();
+        render();
+      } else if (e.target.classList.contains('search-input')) {
+        state.rows[idx].searchQuery = e.target.value.trim();
+        saveLocalState();
+      }
+    });
+
+    els.cardsGrid.addEventListener('click', async e => {
+      const searchBtn = e.target.closest('.search-one-btn');
+      if (searchBtn) {
+        searchSingle(Number(searchBtn.dataset.idx));
+        return;
+      }
+      const genBtn = e.target.closest('.gen-one-btn');
+      if (genBtn) {
+        generateSingle(Number(genBtn.dataset.idx));
+        return;
+      }
+      const delBtn = e.target.closest('.del-one-btn');
+      if (delBtn) {
+        const row = state.rows[Number(delBtn.dataset.idx)];
+        if (!row) return;
+        await fetch('/api/csv-images/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ folder: state.folder, filename: row.filename })
+        });
+        row.statusText = 'Deleted';
+        refreshSavedFiles();
+      }
+    });
+
+    els.compressBatchBtn.addEventListener('click', async () => {
+      const targets = state.rows
+        .filter(r => r.selected)
+        .map(r => ({ row: r, saved: getSavedFile(r) }))
+        .filter(x => Boolean(x.saved));
+      if (!targets.length) {
+        els.statusLine.textContent = 'No saved images among the selected rows to compress.';
+        return;
+      }
+      els.compressBatchBtn.disabled = true;
+      els.statusLine.textContent = `Compressing ${targets.length} selected image(s) to 85% JPEG…`;
+      try {
+        const res = await fetch('/api/csv-images/compress-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            folder: state.folder,
+            quality: 85,
+            filenames: targets.map(x => x.saved.name)
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Compression failed.');
+        const savedKb = Math.round((data.savedBytes || 0) / 1024);
+        els.statusLine.textContent = `Compressed ${data.compressedCount} image(s) to 85% JPEG (saved ${savedKb} KB).`;
+        refreshSavedFiles();
+      } catch (err) {
+        els.statusLine.textContent = err.message;
+      } finally {
+        els.compressBatchBtn.disabled = false;
+      }
+    });
+
+    els.deleteBatchBtn.addEventListener('click', async () => {
+      const targets = state.rows
+        .filter(r => r.selected)
+        .map(r => ({ row: r, saved: getSavedFile(r) }))
+        .filter(x => Boolean(x.saved));
+      if (!targets.length) {
+        els.statusLine.textContent = 'No saved images among the selected rows to delete.';
+        return;
+      }
+      if (!confirm(`Delete ${targets.length} generated image(s) from "${state.folder}/" so you can regenerate them?`)) return;
+      els.deleteBatchBtn.disabled = true;
+      els.statusLine.textContent = `Deleting ${targets.length} selected image(s)…`;
+      try {
+        const res = await fetch('/api/csv-images/delete-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            folder: state.folder,
+            filenames: targets.map(x => x.saved.name)
+          })
+        });
+        const data = await res.json();
+        if (!res.ok || !data.ok) throw new Error(data.error || 'Delete failed.');
+        targets.forEach(x => { x.row.statusText = 'Pending'; });
+        els.statusLine.textContent = `Deleted ${data.deletedCount} image(s). Ready to batch generate again.`;
+        refreshSavedFiles();
+      } catch (err) {
+        els.statusLine.textContent = err.message;
+      } finally {
+        els.deleteBatchBtn.disabled = false;
+      }
+    });
+
+    els.searchBatchBtn.addEventListener('click', searchBatch);
+    els.genBatchBtn.addEventListener('click', generateBatch);
+    els.stopBatchBtn.addEventListener('click', async () => {
+      if (!activeBatchId) return;
+      await fetch('/api/csv-images/stop-batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: activeBatchId })
+      });
+      els.statusLine.textContent = 'Stopping batch after current in-flight images finish…';
+    });
+
+    loadLocalState();
+    updatePathPreview();
+    checkServer();
+    refreshSavedFiles();
+  </script>
+</body>
+</html>

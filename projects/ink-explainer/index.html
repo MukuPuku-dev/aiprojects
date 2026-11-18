@@ -277,7 +277,13 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
           <input type="number" id="export-to-beat" min="1" value="32" style="width:58px;padding:3px 6px">
           <span id="export-range-badge" style="color:var(--amber);font-weight:700;margin-left:4px"></span>
         </label>
-        <button type="button" class="primary" id="p-export">🎥 Export Video (.webm)</button>
+        <label class="pill-lbl" title="Video Export Format">Format:
+          <select id="export-fmt">
+            <option value="mp4" selected>MP4 (TikTok / YT)</option>
+            <option value="webm">WebM</option>
+          </select>
+        </label>
+        <button type="button" class="primary" id="p-export">🎥 Export Video</button>
         <button type="button" class="danger hide" id="p-stop-export">⏹ Finish &amp; Save Now</button>
         <button type="button" id="p-manifest">📋 CapCut Beat Timeline (.json)</button>
         <button type="button" id="btn-refresh">🔄 Refresh</button>
@@ -1562,6 +1568,32 @@ function jumpToBeatNumber(beatNum, autoplay = false) {
   }
 }
 
+function pickExportFormat(preferMp4 = true) {
+  if (typeof MediaRecorder === "undefined" || typeof MediaRecorder.isTypeSupported !== "function") {
+    return { ext: "webm", mimeType: "video/webm" };
+  }
+  const mp4Candidates = [
+    "video/mp4;codecs=avc1.42E01E,mp4a.40.2",
+    "video/mp4;codecs=avc1,mp4a.40.2",
+    "video/mp4;codecs=avc1",
+    "video/mp4"
+  ];
+  const webmCandidates = [
+    "video/webm;codecs=vp9,opus",
+    "video/webm;codecs=vp8,opus",
+    "video/webm"
+  ];
+  if (preferMp4) {
+    for (const m of mp4Candidates) {
+      if (MediaRecorder.isTypeSupported(m)) return { ext: "mp4", mimeType: m };
+    }
+  }
+  for (const m of webmCandidates) {
+    if (MediaRecorder.isTypeSupported(m)) return { ext: "webm", mimeType: m };
+  }
+  return { ext: "webm", mimeType: "video/webm" };
+}
+
 async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null, startLocalIdx = 0, endSecCutoff = null, customFileName = "") {
   if (typeof MediaRecorder === "undefined" || !canvas.captureStream) {
     toast("Your browser does not support canvas MediaRecorder export");
@@ -1573,45 +1605,52 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null, startLocalIdx 
   const canvasStream = canvas.captureStream(30);
   const tracks = [...canvasStream.getVideoTracks(), ...streamDest.stream.getAudioTracks()];
   const combined = new MediaStream(tracks);
-  const mime = MediaRecorder.isTypeSupported("video/webm;codecs=vp9,opus") ? "video/webm;codecs=vp9,opus" : "video/webm";
+  const preferMp4 = ($("#export-fmt")?.value || "mp4") === "mp4";
+  const fmt = pickExportFormat(preferMp4);
+  if (preferMp4 && fmt.ext !== "mp4") {
+    toast("This browser does not support native MP4 recording; falling back to WebM");
+  }
   const isClip = endBlkIdx !== null && Number.isInteger(endBlkIdx);
   player.clipEndBlkIdx = isClip ? endBlkIdx : null;
   player.clipEndSec = endSecCutoff;
   player.chunks = [];
   player.exporting = true;
-  player.recorder = new MediaRecorder(combined, { mimeType: mime, videoBitsPerSecond: 4_500_000 });
+  player.recorder = new MediaRecorder(combined, { mimeType: fmt.mimeType, videoBitsPerSecond: 4_500_000 });
   player.recorder.ondataavailable = e => { if (e.data && e.data.size > 0) player.chunks.push(e.data); };
   player.recorder.onstop = async () => {
     player.exporting = false;
     player.clipEndBlkIdx = null;
     player.clipEndSec = null;
     $("#p-export").disabled = false;
-    $("#p-export").textContent = "🎥 Export Video (.webm)";
+    $("#p-export").textContent = "🎥 Export Video";
     $("#p-stop-export").classList.add("hide");
     if (!player.chunks.length) {
       $("#export-status").textContent = "Export produced 0 bytes. Make sure at least one frame played.";
       return;
     }
-    const blob = new Blob(player.chunks, { type: "video/webm" });
+    const baseMime = fmt.ext === "mp4" ? "video/mp4" : "video/webm";
+    const blob = new Blob(player.chunks, { type: baseMime });
     const sizeMb = (blob.size / (1024 * 1024)).toFixed(1);
     if (player.lastExportUrl) URL.revokeObjectURL(player.lastExportUrl);
     const url = URL.createObjectURL(blob);
     player.lastExportUrl = url;
-    const serverFile = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.webm` : "episode.webm");
-    const dlName = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.webm` : `${state.episodeId}.webm`);
+    const serverFile = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.${fmt.ext}` : `episode.${fmt.ext}`);
+    const dlName = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.${fmt.ext}` : `${state.episodeId}.${fmt.ext}`);
 
     let savedNote = "";
     if (!isFile) {
       try {
-        $("#export-status").textContent = `Saving ${sizeMb} MB video to workspace…`;
+        $("#export-status").textContent = `Saving ${sizeMb} MB ${fmt.ext.toUpperCase()} video to workspace…`;
         const sr = await fetch(`/api/explainer/save-export?project=${PROJECT_ID}&episode=${encodeURIComponent(state.episodeId)}&file=${encodeURIComponent(serverFile)}`, {
           method: "POST",
-          headers: { "Content-Type": "video/webm" },
+          headers: { "Content-Type": baseMime },
           body: blob
         });
         const sj = await sr.json();
         if (sr.ok && sj.ok) {
           player.lastSavedFileName = sj.fileName || serverFile;
+          assets.exportedVideoUrl = sj.url || assets.exportedVideoUrl;
+          populatePublishDefaults(false);
           savedNote = ` · Saved on disk: <a href="${esc(sj.url)}" target="_blank" rel="noopener" style="color:var(--ok)">Open saved video ↗</a>`;
         }
       } catch {}
@@ -1622,15 +1661,15 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null, startLocalIdx 
     a.href = url;
     a.download = dlName;
     a.click();
-    toast(isClip ? `Exported clip (${dlName}) ✓` : "Exported full episode WebM ✓");
+    toast(isClip ? `Exported clip (${dlName}) ✓` : `Exported full episode ${fmt.ext.toUpperCase()} ✓`);
   };
   $("#p-export").disabled = true;
   $("#p-stop-export").classList.remove("hide");
   $("#p-export").textContent = isClip ? `⏺ Recording Selection…` : "⏺ Recording 0%…";
   const spd = activeSpeed();
   $("#export-status").textContent = isClip
-    ? `Recording selected range at ${spd}x…`
-    : `Recording at ${spd}x (~${fmtSec(totalEpisodeDuration() / spd)} real time). Click "Finish & Save Now" anytime to save early.`;
+    ? `Recording ${fmt.ext.toUpperCase()} selected range at ${spd}x…`
+    : `Recording ${fmt.ext.toUpperCase()} at ${spd}x (~${fmtSec(totalEpisodeDuration() / spd)} real time). Click "Finish & Save Now" anytime to save early.`;
   player.recorder.start(1000);
   await startBlockPlayback(startBlkIdx, startLocalIdx);
 }
@@ -1641,9 +1680,10 @@ async function exportBeatRange() {
   const totalBeats = inkExplainerActiveBeats().length;
   const fromB = Math.max(1, Math.min(totalBeats, Number($("#export-from-beat")?.value || 1)));
   const toB = Math.max(fromB, Math.min(totalBeats, Number($("#export-to-beat")?.value || totalBeats)));
+  const fmt = pickExportFormat(($("#export-fmt")?.value || "mp4") === "mp4");
 
   if (fromB === 1 && toB === totalBeats) {
-    await exportWebmVideo(0, null, 0, null, "episode.webm");
+    await exportWebmVideo(0, null, 0, null, `episode.${fmt.ext}`);
     return;
   }
   let startPos = null;
@@ -1657,7 +1697,7 @@ async function exportBeatRange() {
     });
   }
   if (!startPos || !endPos) { toast("Invalid beat range"); return; }
-  const customName = `episode-beats-${String(fromB).padStart(2, "0")}-${String(toB).padStart(2, "0")}.webm`;
+  const customName = `episode-beats-${String(fromB).padStart(2, "0")}-${String(toB).padStart(2, "0")}.${fmt.ext}`;
   await exportWebmVideo(startPos.bi, endPos.bi, startPos.li, endPos.endSec, customName);
 }
 
@@ -1707,9 +1747,13 @@ function populatePublishDefaults(forceChaptersRefresh = false) {
   const { fromB, toB, isSubset } = selectedBeatRange();
   const rangeTag = isSubset ? ` · Beats ${fromB}–${toB}` : "";
   if (assets.exportedVideoUrl) {
-    $("#pub-video-badge").innerHTML = `· <a href="${esc(assets.exportedVideoUrl)}" target="_blank" rel="noopener" style="color:var(--ok)">episode.webm ready ↗</a>${rangeTag}`;
+    const cleanName = assets.exportedVideoUrl.split("?")[0].split("/").pop() || "episode.mp4";
+    if (!player.lastSavedFileName || /^episode\.(mp4|webm)$/i.test(player.lastSavedFileName)) {
+      player.lastSavedFileName = cleanName;
+    }
+    $("#pub-video-badge").innerHTML = `· <a href="${esc(assets.exportedVideoUrl)}" target="_blank" rel="noopener" style="color:var(--ok)">${esc(cleanName)} ready ↗</a>${rangeTag}`;
   } else {
-    $("#pub-video-badge").textContent = `· Export .webm above before uploading${rangeTag}`;
+    $("#pub-video-badge").textContent = `· Export video above before uploading${rangeTag}`;
   }
   if (!$("#pub-yt-title").value.trim() || $("#pub-yt-title").dataset.ep !== ep.id || forceChaptersRefresh) {
     $("#pub-yt-title").value = isSubset ? `${ep.title} (Beats ${fromB}–${toB})` : ep.title;
@@ -1839,7 +1883,7 @@ async function uploadEpisodeToYouTube() {
   const ep = inkExplainerActiveEpisode();
   const btn = $("#btn-upload-yt");
   btn.disabled = true;
-  $("#yt-status").textContent = "Opening YouTube Studio in Flow Chrome & uploading episode.webm…";
+  $("#yt-status").textContent = `Opening YouTube Studio in Flow Chrome & uploading ${player.lastSavedFileName || "episode.mp4"}…`;
   try {
     const jobId = crypto.randomUUID();
     const r = await fetch("/api/explainer/upload-youtube", {

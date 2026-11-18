@@ -710,11 +710,14 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
     };
   }
 
-  const exportPath = path.join(root, 'projects', proj, 'episodes', epId, 'episode.webm');
   let exportedVideoUrl = '';
-  if (fs.existsSync(exportPath)) {
-    const stat = fs.statSync(exportPath);
-    exportedVideoUrl = `/projects/${proj}/episodes/${epId}/episode.webm?t=${Math.floor(stat.mtimeMs)}`;
+  for (const fname of ['episode.mp4', 'episode.webm']) {
+    const exportPath = path.join(root, 'projects', proj, 'episodes', epId, fname);
+    if (fs.existsSync(exportPath)) {
+      const stat = fs.statSync(exportPath);
+      exportedVideoUrl = `/projects/${proj}/episodes/${epId}/${fname}?t=${Math.floor(stat.mtimeMs)}`;
+      break;
+    }
   }
 
   return {
