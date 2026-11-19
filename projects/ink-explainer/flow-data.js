@@ -338,7 +338,9 @@ function flattenEpisodeBeats(episode) {
         emotion: String(beat.emotion || "").trim(),
         characters: inferBeatCharacters(episode, beat),
         narration: String(beat.narration || "").trim(),
-        visual: String(beat.visual || "").trim()
+        visual: String(beat.visual || "").trim(),
+        dynamic: Boolean(beat.dynamic),
+        motionPrompt: String(beat.motionPrompt || "").trim()
       });
     }
   }
@@ -468,5 +470,27 @@ function buildDynamicPairsSuggestPrompt(episode) {
     "",
     "BEATS:",
     JSON.stringify(beats)
+  ].join("\n");
+}
+
+function buildOpeningHooksPrompt(episode) {
+  const isNe = episode?.language === "ne";
+  const langName = isNe ? "Nepali (Devanagari script)" : "English";
+  const sampleBeats = (episode?.blocks?.[0]?.beats || []).slice(0, 6).map(b => b.narration).join(" ");
+  return [
+    `You are a viral YouTube & TikTok retention strategist for Ink Explainer ("${episode?.title || "Episode"}").`,
+    `Current hook: "${episode?.hook || ""}". Opening lines: "${sampleBeats}".`,
+    `Generate 5 distinct, high-retention opening hooks (for the first 3 to 5 seconds of the video) using these 5 proven archetypes:`,
+    "1. Myth-Buster (Everyone believes X, but they are completely wrong)",
+    "2. Shocking Scale / Contrast (Tiny underdog vs giant force)",
+    "3. High-Stakes Flash-Forward (Drop straight into the most dangerous turning point)",
+    "4. Visual Paradox Question (A bizarre visual contradiction that demands an answer)",
+    "5. Hidden Detail / Secret (Zoom into a map or prop detail nobody notices)",
+    "",
+    "RULES:",
+    `1. Write 'hookText' and each beat's 'narration' (4 to 7 words per beat, 2 beats per hook) in ${langName}.`,
+    "2. Write 'visual' and 'motionPrompt' in clear English for 2D Ink Explainer stickman generation.",
+    "3. Mark the first beat of each 2-beat hook with \"dynamic\": true and a punchy 'motionPrompt' connecting Beat 1 -> Beat 2.",
+    '4. Return ONLY valid raw JSON: { "hooks": [ { "style": "1. Myth-Buster", "whyItWorks": "Breaks viewer assumption in 2 seconds", "hookText": "...", "beats": [ { "cardType": "red-x", "label": "", "emotion": "dramatically", "narration": "...", "visual": "...", "dynamic": true, "motionPrompt": "..." }, { "cardType": "flat-scene", "label": "", "emotion": "excitedly", "narration": "...", "visual": "..." } ] } ] }'
   ].join("\n");
 }

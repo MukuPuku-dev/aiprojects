@@ -44,7 +44,18 @@ async function closeAccountPanel(page) {
 
 async function openAccountPanel(page) {
   await closeAccountPanel(page);
-  await page.locator(S.accountButton).first().click({ timeout: 15000 });
+  const btn = page.locator(S.accountButton).first();
+  if (!(await btn.isVisible().catch(() => false))) {
+    await page.keyboard.press('Escape').catch(() => {});
+    await page.evaluate(() => window.scrollTo(0, 0)).catch(() => {});
+    await page.waitForTimeout(300);
+  }
+  if (!(await btn.isVisible().catch(() => false))) {
+    const home = page.url().match(/^https:\/\/flow\.google\.com\/(u\/\d+\/)?/)?.[0] || 'https://flow.google.com/';
+    await page.goto(home, { waitUntil: 'domcontentloaded' });
+  }
+  await btn.waitFor({ state: 'visible', timeout: 15000 });
+  await btn.click({ timeout: 15000 });
   const panel = page.locator(S.menuPanel).filter({ hasText: S.switchAccountText }).first();
   await panel.waitFor({ state: 'visible', timeout: 10000 });
   return panel;

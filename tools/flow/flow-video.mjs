@@ -26,7 +26,7 @@ export async function connect(log) {
   if (!fs.existsSync(CHROME)) throw new Error(`Chrome not found at ${CHROME}. Set FLOW_CHROME_PATH.`);
   fs.mkdirSync(PROFILE, { recursive: true });
   log(`Starting Chrome with the Flow profile (${PROFILE})...`);
-  spawn(CHROME, [`--remote-debugging-port=${PORT}`, `--user-data-dir=${PROFILE}`, '--no-first-run', '--no-default-browser-check', '--start-minimized', FLOW_URL],
+  spawn(CHROME, [`--remote-debugging-port=${PORT}`, `--user-data-dir=${PROFILE}`, '--no-first-run', '--no-default-browser-check', FLOW_URL],
     { detached: true, stdio: 'ignore' }).unref();
   for (let i = 0; i < 60; i++) {
     await sleep(1000);
@@ -43,6 +43,7 @@ async function findFlowPage(browser) {
     await page.goto(FLOW_URL, { waitUntil: 'domcontentloaded' });
   }
   if (/accounts\.google\./.test(page.url())) throw new Error('Google sign-in is showing. Sign in in the Flow Chrome window, then retry.');
+  await page.bringToFront().catch(() => {});
   return page;
 }
 
@@ -110,6 +111,8 @@ async function configureImage(page, { model, aspect }) {
   await selectModel(page, modelButton, model);
   await setRadio(page, page.getByRole('radio', { name: S.aspectRadio(aspect) }), `aspect ${aspect}`);
   await setRadio(page, page.getByRole('radio', { name: S.singleRadio }), 'x1 output count');
+  await page.keyboard.press('Escape').catch(() => {});
+  await page.waitForTimeout(200);
 }
 
 async function downloadVideo(page, src) {
@@ -269,10 +272,11 @@ async function runGeneration({ checkCredits, configurePage, thumbnailSelector, w
     if (checkCredits) await ensureCredits(page, { accounts: readAccountList(), log });
     await ensureFlowProject(page, flowProject, { log });
     await ensureDirectPromptMode(page);
+    await configurePage(page);
     if (characterConsistency && requiredCharacters.length) {
       await ensureCharactersInFlow(page, { root: ROOT, project: charProject || project, characters: requiredCharacters, log });
+      await configurePage(page);
     }
-    await configurePage(page);
     if (characterConsistency && requiredCharacters.length) {
       await attachCharactersToPrompt(page, { characters: requiredCharacters, log });
     }
@@ -360,7 +364,7 @@ export async function generateCharactersInFlow({ flowProject, charProject, chara
 }
 
 /**
- * Generates multiple Flow images in parallel by keeping up to `concurrency` (5-6) prompts
+ * Generates multiple Flow images in parallel by keeping up to `concurrency` (default 10, max 12) prompts
  * in flight simultaneously and saving each image as soon as its tile completes.
  */
 export async function generateImageBatch({
@@ -370,7 +374,7 @@ export async function generateImageBatch({
   flowProject,
   charProject = '',
   characters = [],
-  concurrency = 5,
+  concurrency = 10,
   shouldStop = () => false,
   onProgress = () => {},
   onItemSaved = () => {},
@@ -381,7 +385,7 @@ export async function generateImageBatch({
     return { saved: [], skipped: items.length, file: items[0]?.outFile || '' };
   }
 
-  const maxParallel = Math.max(1, Math.min(6, Number(concurrency) || 5));
+  const maxParallel = Math.max(1, Math.min(12, Number(concurrency) || 10));
   const browser = await connect(log);
   let page;
   const saved = [];
@@ -390,11 +394,12 @@ export async function generateImageBatch({
     page = await findFlowPage(browser);
     await ensureFlowProject(page, flowProject, { log });
     await ensureDirectPromptMode(page);
+    await configureImage(page, { model, aspect });
     if (characters.length && charProject) {
       onProgress({ phase: 'characters', inFlight: 0, remaining: pending.length, savedCount: 0 });
       await ensureCharactersInFlow(page, { root: ROOT, project: charProject, characters, log });
+      await configureImage(page, { model, aspect });
     }
-    await configureImage(page, { model, aspect });
 
     const before = await page.locator(S.imageThumbnail).evaluateAll(imgs => imgs.map(i => i.src).filter(Boolean));
     const seen = new Set(before);
@@ -506,15 +511,21 @@ export async function generateImageBatch({
 
 async function clickConfirmIfShown(page) {
   const confirm = page.getByRole('button', { name: S.frameConfirmButton }).filter({ visible: true }).first();
-  if (await confirm.waitFor({ state: 'visible', timeout: 2500 }).then(() => true, () => false)) {
+  if (await confirm.waitFor({ state: 'visible', timeout: 10000 }).then(() => true, () => false)) {
+    await page.waitForFunction(re => {
+      const btn = [...document.querySelectorAll('.cdk-overlay-container button')].find(b => re.test(b.innerText.trim()));
+      return btn && !btn.disabled;
+    }, S.frameConfirmButton, { timeout: 15000 }).catch(() => {});
     await confirm.click().catch(() => {});
-    await page.waitForTimeout(500);
+    await confirm.waitFor({ state: 'hidden', timeout: 5000 }).catch(() => {});
+    await page.waitForTimeout(400);
   }
 }
 
 /** Puts a local image into the Start or End tile of Flow's Frames mode. */
 async function attachFrame(page, label, file, log) {
   if (!file || !fs.existsSync(file)) throw new Error(`${label} frame file is missing: ${file}`);
+  const beforeImgCount = await page.locator('flow-prompt-box img').count().catch(() => 0);
   const tile = page.locator(S.frameTile(label)).filter({ visible: true }).first();
   await tile.waitFor({ state: 'visible', timeout: 15000 }).catch(() => {
     throw new Error(`Flow ${label} frame tile not found. Is Frames mode selected? Update selectors.mjs (frameTile).`);
@@ -525,7 +536,7 @@ async function attachFrame(page, label, file, log) {
   chooser = await chooserWait;
   if (!chooser) {
     // The tile opened a menu/dialog: click its Upload entry.
-    const upload = page.locator('.cdk-overlay-container').getByText(S.frameUploadItem).filter({ visible: true }).first();
+    const upload = page.locator('.cdk-overlay-container button, .cdk-overlay-container [role="menuitem"]').filter({ hasText: S.frameUploadItem }).filter({ visible: true }).first();
     if (await upload.waitFor({ state: 'visible', timeout: 5000 }).then(() => true, () => false)) {
       chooserWait = page.waitForEvent('filechooser', { timeout: 8000 }).catch(() => null);
       await upload.click();
@@ -541,7 +552,11 @@ async function attachFrame(page, label, file, log) {
     await input.setInputFiles(file);
   }
   await clickConfirmIfShown(page);
-  await page.waitForTimeout(2500); // let Flow finish ingesting the image
+  await page.waitForFunction(prev => {
+    const imgs = [...document.querySelectorAll('flow-prompt-box img')];
+    return imgs.length > prev && imgs.every(i => i.complete && i.naturalWidth > 0);
+  }, beforeImgCount, { timeout: 25000 }).catch(() => {});
+  await page.waitForTimeout(500);
   log(`${label} frame attached (${path.basename(file)}).`);
 }
 
@@ -555,6 +570,12 @@ async function configureFrames(page, { model, aspect, duration, startFile, endFi
   await setRadio(page, page.getByRole('radio', { name: S.singleRadio }), 'x1 output count');
   await page.keyboard.press('Escape').catch(() => {}); // close the settings popup so the tiles are clickable
   await page.waitForTimeout(300);
+  for (let i = 0; i < 4; i++) {
+    const chip = page.locator('flow-prompt-box button.chip-container').first();
+    if (!(await chip.isVisible().catch(() => false))) break;
+    await chip.click().catch(() => {});
+    await page.waitForTimeout(250);
+  }
   await attachFrame(page, 'Start', startFile, log);
   await attachFrame(page, 'End', endFile, log);
 }

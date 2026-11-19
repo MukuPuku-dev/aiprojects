@@ -11,7 +11,7 @@ import { createTikTokService } from './tiktok.mjs';
 import { createFacebookService } from './facebook.mjs';
 import { createTelegramService, uploadToTelegram } from './telegram.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
-import { callGeminiText, deleteBeatImage, deleteBeatTransition, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode } from './explainer-service.mjs';
+import { callGeminiText, deleteBeatImage, deleteBeatTransition, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode, shiftEpisodeBeatAssets } from './explainer-service.mjs';
 import { compressImageToJpeg, csvImagesDir, deleteCsvImage, listCsvImages, mapAspectToFlow, sanitizeFileName, sanitizeFolderName } from './csv-images-service.mjs';
 import { searchAndSaveImageBatchInBrowser, searchAndSaveImageInBrowser } from './csv-web-search.mjs';
 import { uploadToYouTube } from './youtube.mjs';
@@ -20,6 +20,38 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
 const PORT = Number(process.env.AIPROJECTS_PORT || 8787);
 const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.mjs': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.json': 'application/json', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.mp4': 'video/mp4', '.wav': 'audio/wav', '.webm': 'video/webm' };
+
+function findFfmpegBinary() {
+  if (process.env.FFMPEG_PATH && fs.existsSync(process.env.FFMPEG_PATH)) return process.env.FFMPEG_PATH;
+  const home = process.env.USERPROFILE || process.env.HOME || '';
+  const extDir = path.join(home, '.vscode', 'extensions');
+  if (fs.existsSync(extDir)) {
+    for (const entry of fs.readdirSync(extDir)) {
+      const candidate = path.join(extDir, entry, 'bin', 'ffmpeg.exe');
+      if (fs.existsSync(candidate)) return candidate;
+    }
+  }
+  return 'ffmpeg';
+}
+
+function runFfmpegArgs(bin, args) {
+  return new Promise((resolve, reject) => {
+    const child = spawn(bin, args, { stdio: ['ignore', 'ignore', 'pipe'] });
+    let errText = '';
+    child.stderr.on('data', d => { errText += d.toString(); if (errText.length > 4000) errText = errText.slice(-4000); });
+    child.on('error', reject);
+    child.on('close', code => (code === 0 ? resolve() : reject(new Error(errText || `ffmpeg exited ${code}`))));
+  });
+}
+
+async function finalizeMp4WithFfmpeg(inputPath, outputMp4Path) {
+  const bin = findFfmpegBinary();
+  try {
+    await runFfmpegArgs(bin, ['-y', '-i', inputPath, '-c:v', 'copy', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', outputMp4Path]);
+  } catch {
+    await runFfmpegArgs(bin, ['-y', '-i', inputPath, '-c:v', 'libx264', '-preset', 'veryfast', '-pix_fmt', 'yuv420p', '-c:a', 'aac', '-b:a', '128k', '-movflags', '+faststart', outputMp4Path]);
+  }
+}
 
 const queue = createGenerationQueue(job => {
   if (job.mode === 'youtube') return uploadToYouTube(job);
@@ -258,8 +290,26 @@ async function handleExplainerRoute(req, res, url) {
         ws.on('error', reject);
         req.on('error', reject);
       });
-      fs.renameSync(tmpPath, outPath);
-      return send(res, 200, { ok: true, fileName: rawFile, url: `/projects/${project}/episodes/${episode}/${rawFile}` });
+      if (/\.mp4$/i.test(rawFile)) {
+        const fixedPath = `${outPath}.${process.pid}.${Date.now()}.fixed.mp4`;
+        try {
+          await finalizeMp4WithFfmpeg(tmpPath, fixedPath);
+          if (fs.existsSync(fixedPath) && fs.statSync(fixedPath).size > 0) {
+            fs.unlinkSync(tmpPath);
+            fs.renameSync(fixedPath, outPath);
+          } else {
+            fs.renameSync(tmpPath, outPath);
+          }
+        } catch (ffErr) {
+          console.warn('[save-export ffmpeg fallback]', ffErr.message);
+          try { if (fs.existsSync(fixedPath)) fs.unlinkSync(fixedPath); } catch {}
+          fs.renameSync(tmpPath, outPath);
+        }
+      } else {
+        fs.renameSync(tmpPath, outPath);
+      }
+      const stat = fs.statSync(outPath);
+      return send(res, 200, { ok: true, fileName: rawFile, size: stat.size, url: `/projects/${project}/episodes/${episode}/${rawFile}?t=${Math.floor(stat.mtimeMs)}` });
     } catch (err) {
       return send(res, 400, { ok: false, error: err.message });
     }
@@ -371,7 +421,7 @@ async function handleExplainerRoute(req, res, url) {
       const aspect = body.aspect || effective.image.aspect || '16:9';
       if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
       const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
-      const concurrency = Math.max(1, Math.min(6, Number(body.concurrency) || 5));
+      const concurrency = Math.max(1, Math.min(12, Number(body.concurrency) || 10));
       const rawCast = Array.isArray(body.characters) ? body.characters : [];
       const castList = rawCast.length ? resolveRequiredCharacters(ROOT, charProject, rawCast) : [];
       const castByCode = new Map(castList.map(c => [c.code, c]));
@@ -458,6 +508,15 @@ async function handleExplainerRoute(req, res, url) {
         body.fromBeat
       );
       return send(res, 200, resDel);
+    }
+    if (url.pathname === '/api/explainer/shift-beat-assets') {
+      const resShift = shiftEpisodeBeatAssets(
+        ROOT,
+        body.project || 'ink-explainer',
+        body.episode || 'ancient-humans-day',
+        body.delta
+      );
+      return send(res, 200, resShift);
     }
     if (url.pathname === '/api/explainer/generate-frame-pair') {
       const project = body.project || 'ink-explainer';
@@ -618,40 +677,46 @@ async function handleExplainerRoute(req, res, url) {
       };
       return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
     }
-    if (url.pathname === '/api/explainer/upload-youtube') {
+    if (url.pathname === '/api/explainer/upload-youtube' || url.pathname === '/api/explainer/send-telegram') {
       const project = body.project || 'ink-explainer';
       const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
-      const fileName = typeof body.fileName === 'string' && /^[a-z0-9._-]+\.(webm|mp4)$/i.test(body.fileName.trim())
-        ? body.fileName.trim()
-        : 'episode.webm';
       if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
-      const filePath = path.join(ROOT, 'projects', project, 'episodes', episode, fileName);
+      const epDir = path.join(ROOT, 'projects', project, 'episodes', episode);
+      let fileName = typeof body.fileName === 'string' && /^[a-z0-9._-]+\.(webm|mp4)$/i.test(body.fileName.trim())
+        ? body.fileName.trim()
+        : 'episode.mp4';
+      let filePath = path.join(epDir, fileName);
       if (!fs.existsSync(filePath)) {
-        throw new Error(`Exported ${fileName} not found. Export the video first.`);
+        const mp4Alt = fileName.replace(/\.webm$/i, '.mp4');
+        const candidates = [mp4Alt, 'episode.mp4', 'episode.webm'];
+        if (fs.existsSync(epDir)) {
+          const allVids = fs.readdirSync(epDir)
+            .filter(f => /\.(mp4|webm)$/i.test(f))
+            .sort((a, b) => fs.statSync(path.join(epDir, b)).mtimeMs - fs.statSync(path.join(epDir, a)).mtimeMs);
+          candidates.push(...allVids);
+        }
+        const found = candidates.find(f => fs.existsSync(path.join(epDir, f)));
+        if (found) {
+          fileName = found;
+          filePath = path.join(epDir, found);
+        }
       }
-      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
-      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
-      const tracked = queue.submit(jobId, {
-        mode: 'youtube',
-        day: 1,
-        filePath,
-        title: body.title || 'Ink Explainer Episode',
-        description: body.description || '',
-        visibility: body.visibility || 'unlisted',
-        log: m => console.log(`[youtube ${episode}] ${m}`)
-      });
-      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status });
-    }
-    if (url.pathname === '/api/explainer/send-telegram') {
-      const project = body.project || 'ink-explainer';
-      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
-      const fileName = typeof body.fileName === 'string' && /^[a-z0-9._-]+\.(webm|mp4)$/i.test(body.fileName.trim())
-        ? body.fileName.trim()
-        : 'episode.webm';
-      if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
-      const filePath = path.join(ROOT, 'projects', project, 'episodes', episode, fileName);
       if (!fs.existsSync(filePath)) {
-        throw new Error(`Exported ${fileName} not found. Export the video first.`);
+        throw new Error(`Exported video (${fileName}) not found. Export the video first.`);
+      }
+      if (url.pathname === '/api/explainer/upload-youtube') {
+        const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+        if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+        const tracked = queue.submit(jobId, {
+          mode: 'youtube',
+          day: 1,
+          filePath,
+          title: body.title || 'Ink Explainer Episode',
+          description: body.description || '',
+          visibility: body.visibility || 'unlisted',
+          log: m => console.log(`[youtube ${episode}] ${m}`)
+        });
+        return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, fileName });
       }
       await uploadToTelegram({
         file: filePath,
@@ -870,7 +935,7 @@ async function handleCsvImagesRoute(req, res, url) {
       const outDir = csvImagesDir(ROOT, folder);
       fs.mkdirSync(outDir, { recursive: true });
       const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
-      const concurrency = Math.max(1, Math.min(6, Number(body.concurrency) || 4));
+      const concurrency = Math.max(1, Math.min(12, Number(body.concurrency) || 10));
       const rawItems = Array.isArray(body.items) ? body.items : [];
       if (!rawItems.length) throw new Error('items array is required.');
       const overwrite = Boolean(body.overwrite);

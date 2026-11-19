@@ -1,0 +1,14 @@
+{
+  "SOLDIER": {
+    "code": "SOLDIER",
+    "name": "गोर्खा सिपाही",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, wearing a traditional Nepali Dhaka topi and khaki uniform, holding a khukuri knife.",
+    "updatedAt": "2026-11-18T16:34:09.705Z"
+  },
+  "BRITISH": {
+    "code": "BRITISH",
+    "name": "ब्रिटिस जनरल",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, wearing a red British colonial officer uniform with a large tricorn hat.",
+    "updatedAt": "2026-11-18T16:34:47.285Z"
+  }
+}

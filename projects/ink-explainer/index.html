@@ -259,7 +259,17 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         <button type="button" id="p-prev">⏮ Prev Beat</button>
         <button type="button" id="p-next">⏭ Next Beat</button>
         <button type="button" id="p-restart">↻ Restart</button>
-        <label class="pill-lbl"><input type="checkbox" id="p-captions" checked> Live Captions</label>
+        <label class="pill-lbl"><input type="checkbox" id="p-captions" checked> Live Captions
+          <select id="p-caption-pos" title="Subtitle / Live Caption Position">
+            <option value="bottom-center" selected>Bottom Center</option>
+            <option value="top-center">Top Center</option>
+            <option value="center">Middle Center</option>
+            <option value="top-left">Top Left</option>
+            <option value="top-right">Top Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="bottom-right">Bottom Right</option>
+          </select>
+        </label>
         <label class="pill-lbl" title="Playback &amp; Export Speed">Speed:
           <select id="p-speed">
             <option value="1">1.0x</option>
@@ -310,11 +320,45 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
       </div>
       <span class="sub" id="dyn-summary" style="color:var(--ok);font-weight:700">0 pairs selected · 0 videos ready</span>
     </div>
+    <div class="row" style="margin-top:8px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:9px;justify-content:space-between">
+      <div class="row">
+        <label class="pill-lbl" style="font-weight:700">
+          <input type="checkbox" id="silence-cut-on">
+          <span>✂ Silence Cut</span>
+        </label>
+        <label class="pill-lbl" title="Normal cuts pauses >0.22s; Tight >0.14s; Gentle >0.35s">Level:
+          <select id="silence-level">
+            <option value="normal" selected>Normal</option>
+            <option value="tight">Tight (Fast)</option>
+            <option value="gentle">Gentle</option>
+          </select>
+        </label>
+        <label class="pill-lbl" title="Leave blank to apply Silence Cut to the whole audio, or enter beats to KEEP pauses (e.g. 1-4, 20-25)">Skip Beats:
+          <input type="text" id="silence-skip-beats" placeholder="none (whole audio)" style="width:140px;padding:2px 6px">
+        </label>
+      </div>
+      <span class="sub" id="silence-status" style="color:var(--amber);font-weight:700">Off · Original timing</span>
+    </div>
+    <div style="margin-top:8px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:9px">
+      <div class="row" style="justify-content:space-between">
+        <div class="row">
+          <span class="sub"><b>🎣 Opening Hook Booster (Optional):</b></span>
+          <button type="button" id="btn-toggle-hooks">💡 Hook Ideas (5 Formulas)</button>
+          <button type="button" class="primary hide" id="btn-gen-hooks">✨ Generate 5 Custom Hooks (Gemini)</button>
+          <button type="button" class="danger hide" id="btn-remove-hook" title="Remove first 2 beats of Block 1 and shift beat numbers/images back by 2">↩ Remove First 2 Beats</button>
+        </div>
+        <span class="sub" id="hooks-status" style="color:var(--amber)">Optional: browse 5 viral hook formulas or generate custom opening beats</span>
+      </div>
+      <div id="hooks-panel" class="hide" style="margin-top:8px">
+        <div class="formula-grid" id="hooks-grid"></div>
+      </div>
+    </div>
     <div class="beat-strip-nav" id="player-pills"></div>
     <div class="sub" id="player-status" style="margin-top:6px">Ready. Press Play Full Episode to preview rapid 1.5–2.5s visual switching right now.</div>
     <div class="sub" id="export-status" style="margin-top:4px"></div>
     <div class="sub" id="batch-status" style="margin-top:4px;color:var(--blue)"></div>
     <div class="sub" id="dyn-status" style="margin-top:4px;color:var(--amber)"></div>
+    <div class="row" id="dyn-pairs-list" style="margin-top:6px;gap:6px;flex-wrap:wrap"></div>
   </section>
 
   <!-- Step 5: Publish Pack (Captions, Chapters, SRT Subtitles & YouTube Upload) -->
@@ -389,9 +433,9 @@ let flowBatchBusy = false;
 function loadState() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STATE_KEY) || "{}");
-    return Object.assign({ episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", done: {} }, parsed || {});
+    return Object.assign({ episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", captionPos: "bottom-center", silenceCut: false, silenceLevel: "normal", silenceSkip: "", done: {} }, parsed || {});
   } catch {
-    return { episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", done: {} };
+    return { episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", captionPos: "bottom-center", silenceCut: false, silenceLevel: "normal", silenceSkip: "", done: {} };
   }
 }
 
@@ -430,9 +474,309 @@ function fmtSec(s) {
   return `${String(m).padStart(2, "0")}:${rem}`;
 }
 
+const silenceCutCache = new Map();
+
+function silenceCutCacheKey(blockId, rawUrl) {
+  return `${state.episodeId}:${blockId}:${rawUrl || ""}:${state.silenceLevel || "normal"}:${String(state.silenceSkip || "").trim()}`;
+}
+
+function parseSkipBeatSet(spec) {
+  const set = new Set();
+  String(spec || "").split(",").forEach(part => {
+    const clean = part.trim();
+    if (!clean) return;
+    const m = clean.match(/^(\d+)\s*-\s*(\d+)$/);
+    if (m) {
+      const a = Math.min(Number(m[1]), Number(m[2]));
+      const b = Math.max(Number(m[1]), Number(m[2]));
+      for (let i = a; i <= b && i <= 1000; i++) set.add(i);
+    } else if (/^\d+$/.test(clean)) {
+      set.add(Number(clean));
+    }
+  });
+  return set;
+}
+
+function silencePreset(level) {
+  if (level === "tight") return { minGapSec: 0.14, keepPadSec: 0.04, rmsThresh: 0.014 };
+  if (level === "gentle") return { minGapSec: 0.35, keepPadSec: 0.11, rmsThresh: 0.008 };
+  return { minGapSec: 0.22, keepPadSec: 0.07, rmsThresh: 0.011 };
+}
+
+function parseWavPcm16(buf) {
+  const dv = new DataView(buf);
+  if (buf.byteLength < 44) return null;
+  const tag = String.fromCharCode(dv.getUint8(0), dv.getUint8(1), dv.getUint8(2), dv.getUint8(3));
+  if (tag !== "RIFF") return null;
+  let offset = 12;
+  let sampleRate = 24000, numChannels = 1, bitsPerSample = 16, dataOffset = -1, dataLength = 0;
+  while (offset + 8 <= buf.byteLength) {
+    const id = String.fromCharCode(dv.getUint8(offset), dv.getUint8(offset + 1), dv.getUint8(offset + 2), dv.getUint8(offset + 3));
+    const size = dv.getUint32(offset + 4, true);
+    if (id === "fmt ") {
+      const fmt = dv.getUint16(offset + 8, true);
+      if (fmt !== 1) return null;
+      numChannels = dv.getUint16(offset + 10, true);
+      sampleRate = dv.getUint32(offset + 12, true);
+      bitsPerSample = dv.getUint16(offset + 22, true);
+    } else if (id === "data") {
+      dataOffset = offset + 8;
+      dataLength = Math.min(size, buf.byteLength - dataOffset);
+      break;
+    }
+    offset += 8 + size + (size & 1);
+  }
+  if (dataOffset < 0 || bitsPerSample !== 16 || numChannels < 1) return null;
+  const totalSamples = Math.floor(dataLength / (2 * numChannels));
+  const samples = new Int16Array(buf, dataOffset, totalSamples * numChannels);
+  return { sampleRate, numChannels, totalSamples, samples };
+}
+
+function encodeWavPcm16(samples, sampleRate, numChannels) {
+  const dataBytes = samples.length * 2;
+  const out = new ArrayBuffer(44 + dataBytes);
+  const dv = new DataView(out);
+  const wStr = (o, s) => { for (let i = 0; i < s.length; i++) dv.setUint8(o + i, s.charCodeAt(i)); };
+  wStr(0, "RIFF");
+  dv.setUint32(4, 36 + dataBytes, true);
+  wStr(8, "WAVE");
+  wStr(12, "fmt ");
+  dv.setUint32(16, 16, true);
+  dv.setUint16(20, 1, true);
+  dv.setUint16(22, numChannels, true);
+  dv.setUint32(24, sampleRate, true);
+  dv.setUint32(28, sampleRate * numChannels * 2, true);
+  dv.setUint16(32, numChannels * 2, true);
+  dv.setUint16(34, 16, true);
+  wStr(36, "data");
+  dv.setUint32(40, dataBytes, true);
+  new Int16Array(out, 44).set(samples);
+  return new Blob([out], { type: "audio/wav" });
+}
+
+function remapCutTime(segments, t) {
+  const v = Number(t) || 0;
+  for (let i = 0; i < segments.length; i++) {
+    const seg = segments[i];
+    if (v <= seg.origStart) return seg.newStart;
+    if (v <= seg.origEnd) return seg.newStart + (v - seg.origStart);
+  }
+  return segments.length ? segments[segments.length - 1].newEnd : v;
+}
+
+async function buildSilenceCutForBlock(blk) {
+  const raw = assets.blockAudio[blk.blockId];
+  if (!raw || !raw.url) return null;
+  const key = silenceCutCacheKey(blk.blockId, raw.url);
+  if (silenceCutCache.has(key)) return silenceCutCache.get(key);
+
+  const resp = await fetch(raw.url, { cache: "no-store" });
+  const buf = await resp.arrayBuffer();
+  const wav = parseWavPcm16(buf);
+  if (!wav || wav.totalSamples === 0) return raw;
+
+  const { sampleRate, numChannels, totalSamples, samples } = wav;
+  const origDur = totalSamples / sampleRate;
+  const { minGapSec, keepPadSec, rmsThresh } = silencePreset(state.silenceLevel);
+  const skipSet = parseSkipBeatSet(state.silenceSkip);
+
+  // Compute 10ms RMS windows
+  const winSamples = Math.max(1, Math.round(sampleRate * 0.01));
+  const numWins = Math.ceil(totalSamples / winSamples);
+  const keepWin = new Uint8Array(numWins);
+
+  for (let w = 0; w < numWins; w++) {
+    const start = w * winSamples;
+    const end = Math.min(totalSamples, start + winSamples);
+    let sumSq = 0;
+    let cnt = 0;
+    for (let s = start; s < end; s++) {
+      for (let ch = 0; ch < numChannels; ch++) {
+        const val = samples[s * numChannels + ch] / 32768;
+        sumSq += val * val;
+        cnt++;
+      }
+    }
+    const rms = Math.sqrt(sumSq / Math.max(1, cnt));
+    if (rms >= rmsThresh) keepWin[w] = 1;
+  }
+
+  // Protect word timestamps from ever being clipped
+  if (Array.isArray(raw.timestamps)) {
+    for (const ts of raw.timestamps) {
+      if (ts.start == null || ts.end == null) continue;
+      const w0 = Math.max(0, Math.floor((Number(ts.start) - 0.03) / 0.01));
+      const w1 = Math.min(numWins - 1, Math.ceil((Number(ts.end) + 0.04) / 0.01));
+      for (let w = w0; w <= w1; w++) keepWin[w] = 1;
+    }
+  }
+
+  // Protect any beats listed in Skip Beats
+  if (skipSet.size > 0 && Array.isArray(raw.beatTimings)) {
+    for (const bt of raw.beatTimings) {
+      if (!skipSet.has(Number(bt.beat))) continue;
+      const w0 = Math.max(0, Math.floor(Number(bt.startSec) / 0.01));
+      const w1 = Math.min(numWins - 1, Math.ceil(Number(bt.endSec) / 0.01));
+      for (let w = w0; w <= w1; w++) keepWin[w] = 1;
+    }
+  }
+
+  // Find silent runs >= minGapSec and compute kept sample intervals
+  const cuts = [];
+  const halfPad = keepPadSec / 2;
+  let i = 0;
+  while (i < numWins) {
+    if (keepWin[i]) { i++; continue; }
+    let j = i;
+    while (j < numWins && !keepWin[j]) j++;
+    const gapStart = i * 0.01;
+    const gapEnd = Math.min(origDur, j * 0.01);
+    if (gapEnd - gapStart >= minGapSec) {
+      const cutStart = Math.round((gapStart + halfPad) * sampleRate);
+      const cutEnd = Math.round((gapEnd - halfPad) * sampleRate);
+      if (cutEnd > cutStart + Math.round(sampleRate * 0.03)) {
+        cuts.push([cutStart, cutEnd]);
+      }
+    }
+    i = j;
+  }
+
+  if (!cuts.length) {
+    silenceCutCache.set(key, raw);
+    return raw;
+  }
+
+  const keptRanges = [];
+  let cursor = 0;
+  for (const [cs, ce] of cuts) {
+    if (cs > cursor) keptRanges.push([cursor, cs]);
+    cursor = ce;
+  }
+  if (cursor < totalSamples) keptRanges.push([cursor, totalSamples]);
+
+  const totalKeptSamples = keptRanges.reduce((sum, [a, b]) => sum + (b - a), 0);
+  const outSamples = new Int16Array(totalKeptSamples * numChannels);
+  const fadeSamples = Math.min(Math.round(sampleRate * 0.005), 200);
+  const segments = [];
+  let outCursor = 0;
+
+  for (let rIdx = 0; rIdx < keptRanges.length; rIdx++) {
+    const [a, b] = keptRanges[rIdx];
+    const len = b - a;
+    outSamples.set(samples.subarray(a * numChannels, b * numChannels), outCursor * numChannels);
+    if (rIdx > 0) {
+      const f = Math.min(fadeSamples, Math.floor(len / 2));
+      for (let k = 0; k < f; k++) {
+        const g = k / f;
+        for (let ch = 0; ch < numChannels; ch++) {
+          const idx = (outCursor + k) * numChannels + ch;
+          outSamples[idx] = Math.round(outSamples[idx] * g);
+        }
+      }
+    }
+    if (rIdx < keptRanges.length - 1) {
+      const f = Math.min(fadeSamples, Math.floor(len / 2));
+      for (let k = 0; k < f; k++) {
+        const g = k / f;
+        for (let ch = 0; ch < numChannels; ch++) {
+          const idx = (outCursor + len - 1 - k) * numChannels + ch;
+          outSamples[idx] = Math.round(outSamples[idx] * g);
+        }
+      }
+    }
+    segments.push({
+      origStart: a / sampleRate,
+      origEnd: b / sampleRate,
+      newStart: outCursor / sampleRate,
+      newEnd: (outCursor + len) / sampleRate
+    });
+    outCursor += len;
+  }
+
+  const newDur = totalKeptSamples / sampleRate;
+  const blob = encodeWavPcm16(outSamples, sampleRate, numChannels);
+  const blobUrl = URL.createObjectURL(blob);
+
+  const remappedTs = Array.isArray(raw.timestamps)
+    ? raw.timestamps.map(ts => (ts.start == null || ts.end == null) ? ts : {
+        ...ts,
+        start: Math.round(remapCutTime(segments, ts.start) * 1000) / 1000,
+        end: Math.round(remapCutTime(segments, ts.end) * 1000) / 1000
+      })
+    : [];
+
+  const remappedBeats = Array.isArray(raw.beatTimings)
+    ? raw.beatTimings.map((bt, idx) => {
+        const s = idx === 0 ? 0 : remapCutTime(segments, bt.startSec);
+        const e = idx === raw.beatTimings.length - 1 ? newDur : remapCutTime(segments, bt.endSec);
+        return {
+          ...bt,
+          startSec: Math.round(s * 100) / 100,
+          endSec: Math.round(Math.max(s + 0.05, e) * 100) / 100,
+          durationSec: Math.round(Math.max(0.05, e - s) * 100) / 100
+        };
+      })
+    : undefined;
+
+  const entry = {
+    ...raw,
+    url: blobUrl,
+    duration: newDur,
+    timestamps: remappedTs,
+    beatTimings: remappedBeats
+  };
+  silenceCutCache.set(key, entry);
+  return entry;
+}
+
+async function rebuildAllSilenceCuts() {
+  const stEl = $("#silence-status");
+  const ep = inkExplainerActiveEpisode();
+  const blocks = (ep.blocks || []).filter(b => Boolean(assets.blockAudio[b.blockId]?.url));
+  if (!state.silenceCut) {
+    if (stEl) stEl.textContent = "Off · Original timing";
+    renderAll();
+    updateExportRangeSummary();
+    return;
+  }
+  if (!blocks.length) {
+    if (stEl) stEl.textContent = "On · Generate voiceover first";
+    return;
+  }
+  if (stEl) stEl.textContent = `Analyzing ${blocks.length} audio blocks…`;
+  try {
+    let origTotal = 0;
+    let newTotal = 0;
+    await Promise.all(blocks.map(async blk => {
+      const raw = assets.blockAudio[blk.blockId];
+      origTotal += Number(raw?.duration || 0);
+      const cut = await buildSilenceCutForBlock(blk);
+      newTotal += Number(cut?.duration || raw?.duration || 0);
+    }));
+    const saved = Math.max(0, origTotal - newTotal);
+    if (stEl) stEl.textContent = `✓ Saved ${saved.toFixed(1)}s (${fmtSec(origTotal)} → ${fmtSec(newTotal)})`;
+    renderAll();
+    updateExportRangeSummary();
+    if (!player.playing) drawCurrentFrame();
+  } catch (err) {
+    if (stEl) stEl.textContent = `Silence Cut error: ${err.message}`;
+  }
+}
+
+function effectiveBlockAudio(blockId) {
+  const raw = assets.blockAudio[blockId];
+  if (!raw) return null;
+  if (state.silenceCut) {
+    const key = silenceCutCacheKey(blockId, raw.url);
+    const cut = silenceCutCache.get(key);
+    if (cut) return cut;
+  }
+  return raw;
+}
+
 /* ---------- Beat Timing Calculation (Exact TTS Timestamps or Word-Weighted Fallback) ---------- */
 function getBlockTimings(block) {
-  const blkAudio = assets.blockAudio[block.blockId];
+  const blkAudio = effectiveBlockAudio(block.blockId);
   if (blkAudio && Array.isArray(blkAudio.beatTimings) && blkAudio.beatTimings.length === block.beats.length) {
     return blkAudio.beatTimings;
   }
@@ -577,7 +921,7 @@ function renderBlocks() {
   const totalEpBeats = inkExplainerActiveBeats().length;
 
   container.innerHTML = (ep.blocks || []).map((blk, blkIdx) => {
-    const aud = assets.blockAudio[blk.blockId];
+    const aud = effectiveBlockAudio(blk.blockId);
     const timings = getBlockTimings(blk);
     const totalBlkDur = timings.length ? timings[timings.length - 1].endSec : 0;
     const readyCount = blk.beats.filter(b => Boolean(assets.beatImages[b.beat])).length;
@@ -682,6 +1026,7 @@ async function refreshAssets(silent = false) {
     preloadBeatImages();
     preloadTransitionVideos();
     renderAll();
+    if (state.silenceCut) await rebuildAllSilenceCuts();
     drawCurrentFrame();
     if (!silent) toast("Episode assets refreshed ✓");
   } catch (err) {
@@ -963,7 +1308,7 @@ async function runFlowImageBatch() {
 
     const jobId = crypto.randomUUID();
     activeBatchJobId = jobId;
-    $("#batch-status").textContent = `Launching 5× parallel Flow batch for ${missing.length} remaining beats…`;
+    $("#batch-status").textContent = `Launching 10× parallel Flow batch for ${missing.length} remaining beats…`;
 
     const r = await fetch("/api/explainer/generate-batch", {
       method: "POST",
@@ -973,7 +1318,7 @@ async function runFlowImageBatch() {
         project: PROJECT_ID,
         episode: ep.id,
         aspect: state.ar,
-        concurrency: 5,
+        concurrency: 10,
         characters: ep.characters || [],
         items
       })
@@ -996,7 +1341,7 @@ async function runFlowImageBatch() {
       const p = sj.progress || {};
       const savedDays = Array.isArray(p.savedDays) ? p.savedDays : [];
       const savedTotal = (p.skipped || 0) + savedDays.length;
-      $("#batch-status").textContent = `⚡ 5× Parallel Flow: ${savedTotal} / ${p.total || beats.length} images saved (${p.inFlight || 0} generating now, ${p.remaining || 0} queued)…`;
+      $("#batch-status").textContent = `⚡ 10× Parallel Flow: ${savedTotal} / ${p.total || beats.length} images saved (${p.inFlight || 0} generating now, ${p.remaining || 0} queued)…`;
 
       if (savedDays.length > lastSavedLen) {
         lastSavedLen = savedDays.length;
@@ -1126,7 +1471,7 @@ const player = {
   exporting: false,
   clipEndBlkIdx: null,
   clipEndSec: null,
-  lastSavedFileName: "episode.webm",
+  lastSavedFileName: "episode.mp4",
   recorder: null,
   chunks: []
 };
@@ -1205,8 +1550,28 @@ function updateDynamicSummary() {
   if (!el) return;
   const beats = inkExplainerActiveBeats();
   const selected = beats.filter(b => Boolean(b.dynamic) && b.beat < beats.length);
-  const ready = Object.keys(assets.beatTransitions || {}).length;
+  const transMap = assets.beatTransitions || {};
+  const ready = Object.keys(transMap).length;
   el.textContent = `${selected.length} pair${selected.length === 1 ? "" : "s"} selected · ${ready} clip${ready === 1 ? "" : "s"} ready`;
+
+  const listEl = $("#dyn-pairs-list");
+  if (!listEl) return;
+  const pairSet = new Set(selected.map(b => b.beat));
+  Object.keys(transMap).forEach(k => pairSet.add(Number(k)));
+  const sorted = [...pairSet].filter(n => Number.isInteger(n) && n < beats.length).sort((a, b) => a - b);
+  if (!sorted.length) {
+    listEl.innerHTML = "";
+    return;
+  }
+  listEl.innerHTML = `<span class="sub" style="margin-right:2px">Selected pairs:</span>` + sorted.map(n => {
+    const hasClip = Boolean(transMap[n]);
+    const bObj = beats.find(b => b.beat === n);
+    const tip = bObj?.motionPrompt ? `${n}→${n + 1}: ${bObj.motionPrompt}` : `Jump to Beat ${n}→${n + 1}`;
+    const bg = hasClip ? "#122a1e" : "#221b10";
+    const bd = hasClip ? "#22c55e" : "#f59e0b";
+    const fg = hasClip ? "#86efac" : "#fcd34d";
+    return `<button type="button" data-jump-card="${n}" title="${esc(tip)}" style="padding:3px 8px;font-size:11.5px;border-radius:999px;background:${bg};border:1px solid ${bd};color:${fg}">🎞 ${n}→${n + 1}${hasClip ? " ✓" : ""}</button>`;
+  }).join("");
 }
 
 function ensureCanvasSize() {
@@ -1382,7 +1747,7 @@ function filterSpokenTimestampWords(rawTs) {
 }
 
 function activeSpokenWordCue(blk, beat, elapsedBlockSec) {
-  const rawTs = assets.blockAudio[blk?.blockId]?.timestamps;
+  const rawTs = effectiveBlockAudio(blk?.blockId)?.timestamps;
   if (Array.isArray(rawTs) && rawTs.length > 0) {
     const words = filterSpokenTimestampWords(rawTs);
     if (words.length > 0) {
@@ -1491,13 +1856,23 @@ function drawCurrentFrame(elapsedBlockSec = 0) {
         : 1.15 - (1.15 - 1.0) * ((p - 0.65) / 0.35);
       const liftY = (1 - p) * 12;
       const fontSize = Math.round(H * 0.088);
+      const pos = state.captionPos || $("#p-caption-pos")?.value || "bottom-center";
+      let posX = W * 0.5;
+      let posY = H * 0.85 + liftY;
+      let align = "center";
+      if (pos === "top-center") { posX = W * 0.5; posY = H * 0.14 + liftY; align = "center"; }
+      else if (pos === "center") { posX = W * 0.5; posY = H * 0.50 + liftY; align = "center"; }
+      else if (pos === "top-left") { posX = W * 0.06; posY = H * 0.14 + liftY; align = "left"; }
+      else if (pos === "top-right") { posX = W * 0.94; posY = H * 0.14 + liftY; align = "right"; }
+      else if (pos === "bottom-left") { posX = W * 0.06; posY = H * 0.85 + liftY; align = "left"; }
+      else if (pos === "bottom-right") { posX = W * 0.94; posY = H * 0.85 + liftY; align = "right"; }
 
       ctx.save();
       ctx.globalAlpha = Math.min(1, 0.35 + p * 0.65);
-      ctx.translate(W * 0.5, H * 0.85 + liftY);
+      ctx.translate(posX, posY);
       ctx.scale(scale, scale);
       ctx.font = `900 ${fontSize}px system-ui, "Nirmala UI", "Noto Sans Devanagari", -apple-system, "Segoe UI", sans-serif`;
-      ctx.textAlign = "center";
+      ctx.textAlign = align;
       ctx.textBaseline = "middle";
       ctx.lineJoin = "round";
       ctx.shadowColor = "rgba(0,0,0,0.65)";
@@ -1574,7 +1949,7 @@ async function startBlockPlayback(blkIdx, startLocalBeatIdx = 0) {
   const blk = blocks[player.blkIdx];
   const timings = getBlockTimings(blk);
   const offsetSec = timings[player.localBeatIdx]?.startSec || 0;
-  const aud = assets.blockAudio[blk.blockId];
+  const aud = effectiveBlockAudio(blk.blockId);
 
   if (aud && aud.url) {
     await initAudioGraphOnce().catch(() => {});
@@ -1612,7 +1987,7 @@ function tickPlayerLoop() {
     const speed = activeSpeed();
     const timings = getBlockTimings(blk);
     const totalBlkDur = timings.length ? timings[timings.length - 1].endSec : 0;
-    const hasAudio = Boolean(assets.blockAudio[blk.blockId]?.url && !audioEl.paused && audioEl.currentSrc);
+    const hasAudio = Boolean(effectiveBlockAudio(blk.blockId)?.url && !audioEl.paused && audioEl.currentSrc);
     const elapsed = hasAudio ? audioEl.currentTime : ((performance.now() - player.timerStartMs) / 1000) * speed;
 
     // Pick exact beat active at elapsed timestamp inside block
@@ -1657,7 +2032,7 @@ function finishEpisodePlayback() {
   cancelAnimationFrame(player.rafId);
   clearInterval(player.bgTimer);
   if (player.exporting && player.recorder && player.recorder.state === "recording") {
-    $("#export-status").textContent = "Finalizing WebM video…";
+    $("#export-status").textContent = "Finalizing video (converting to TikTok-ready MP4)…";
     player.recorder.stop();
   }
   $("#player-status").textContent = "Episode playback complete ✓";
@@ -1771,9 +2146,10 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null, startLocalIdx 
     const dlName = customFileName || (isClip ? `${state.episodeId}-block-${String(startBlkIdx + 1).padStart(2, "0")}.${fmt.ext}` : `${state.episodeId}.${fmt.ext}`);
 
     let savedNote = "";
+    let dlHref = url;
     if (!isFile) {
       try {
-        $("#export-status").textContent = `Saving ${sizeMb} MB ${fmt.ext.toUpperCase()} video to workspace…`;
+        $("#export-status").textContent = `Saving & finalizing ${sizeMb} MB ${fmt.ext.toUpperCase()} video for TikTok/Android…`;
         const sr = await fetch(`/api/explainer/save-export?project=${PROJECT_ID}&episode=${encodeURIComponent(state.episodeId)}&file=${encodeURIComponent(serverFile)}`, {
           method: "POST",
           headers: { "Content-Type": baseMime },
@@ -1783,15 +2159,17 @@ async function exportWebmVideo(startBlkIdx = 0, endBlkIdx = null, startLocalIdx 
         if (sr.ok && sj.ok) {
           player.lastSavedFileName = sj.fileName || serverFile;
           assets.exportedVideoUrl = sj.url || assets.exportedVideoUrl;
+          if (sj.url) dlHref = sj.url;
           populatePublishDefaults(false);
           savedNote = ` · Saved on disk: <a href="${esc(sj.url)}" target="_blank" rel="noopener" style="color:var(--ok)">Open saved video ↗</a>`;
         }
       } catch {}
     }
 
-    $("#export-status").innerHTML = `<span style="color:var(--ok)">✓ Export ready (${sizeMb} MB):</span> <a href="${esc(url)}" download="${esc(dlName)}" style="color:var(--amber);font-weight:700">⬇ Download ${esc(dlName)}</a>${savedNote}`;
+    const finalMb = (blob.size / (1024 * 1024)).toFixed(1);
+    $("#export-status").innerHTML = `<span style="color:var(--ok)">✓ Export ready (${finalMb} MB):</span> <a href="${esc(dlHref)}" download="${esc(dlName)}" style="color:var(--amber);font-weight:700">⬇ Download ${esc(dlName)}</a>${savedNote}`;
     const a = document.createElement("a");
-    a.href = url;
+    a.href = dlHref;
     a.download = dlName;
     a.click();
     toast(isClip ? `Exported clip (${dlName}) ✓` : `Exported full episode ${fmt.ext.toUpperCase()} ✓`);
@@ -1880,10 +2258,8 @@ function populatePublishDefaults(forceChaptersRefresh = false) {
   const { fromB, toB, isSubset } = selectedBeatRange();
   const rangeTag = isSubset ? ` · Beats ${fromB}–${toB}` : "";
   if (assets.exportedVideoUrl) {
-    const cleanName = assets.exportedVideoUrl.split("?")[0].split("/").pop() || "episode.mp4";
-    if (!player.lastSavedFileName || /^episode\.(mp4|webm)$/i.test(player.lastSavedFileName)) {
-      player.lastSavedFileName = cleanName;
-    }
+    const cleanName = assets.exportedVideoFile || assets.exportedVideoUrl.split("?")[0].split("/").pop() || "episode.mp4";
+    player.lastSavedFileName = cleanName;
     $("#pub-video-badge").innerHTML = `· <a href="${esc(assets.exportedVideoUrl)}" target="_blank" rel="noopener" style="color:var(--ok)">${esc(cleanName)} ready ↗</a>${rangeTag}`;
   } else {
     $("#pub-video-badge").textContent = `· Export video above before uploading${rangeTag}`;
@@ -1966,7 +2342,7 @@ function downloadSrtSubtitles() {
   const cues = [];
   let cueNum = 1;
   for (const blk of ep.blocks || []) {
-    const aud = assets.blockAudio[blk.blockId];
+    const aud = effectiveBlockAudio(blk.blockId);
     const timings = getBlockTimings(blk);
     const selIndices = [];
     blk.beats.forEach((b, idx) => {
@@ -2015,8 +2391,9 @@ async function uploadEpisodeToYouTube() {
   if (isFile) { toast("Open via http://127.0.0.1:8787 to upload"); return; }
   const ep = inkExplainerActiveEpisode();
   const btn = $("#btn-upload-yt");
+  const fileName = player.lastSavedFileName || assets.exportedVideoFile || "episode.mp4";
   btn.disabled = true;
-  $("#yt-status").textContent = `Opening YouTube Studio in Flow Chrome & uploading ${player.lastSavedFileName || "episode.mp4"}…`;
+  $("#yt-status").textContent = `Opening YouTube Studio in Flow Chrome & uploading ${fileName}…`;
   try {
     const jobId = crypto.randomUUID();
     const r = await fetch("/api/explainer/upload-youtube", {
@@ -2026,7 +2403,7 @@ async function uploadEpisodeToYouTube() {
         id: jobId,
         project: PROJECT_ID,
         episode: ep.id,
-        fileName: player.lastSavedFileName || "episode.webm",
+        fileName,
         title: $("#pub-yt-title").value.trim() || ep.title,
         description: $("#pub-yt-desc").value.trim(),
         visibility: $("#yt-visibility").value || "unlisted"
@@ -2059,7 +2436,7 @@ async function sendEpisodeToTelegram() {
   const ep = inkExplainerActiveEpisode();
   const btn = $("#btn-send-tg");
   btn.disabled = true;
-  const fileName = player.lastSavedFileName || "episode.webm";
+  const fileName = player.lastSavedFileName || assets.exportedVideoFile || "episode.mp4";
   $("#yt-status").textContent = `Sending ${fileName} to Telegram…`;
   try {
     const r = await fetch("/api/explainer/send-telegram", {
@@ -2074,7 +2451,7 @@ async function sendEpisodeToTelegram() {
     });
     const j = await r.json();
     if (!r.ok || !j.ok) throw new Error(j.error || "Telegram send failed");
-    $("#yt-status").textContent = `✓ Sent ${fileName} to Telegram!`;
+    $("#yt-status").textContent = `✓ Sent ${j.fileName || fileName} to Telegram!`;
     toast("Sent to Telegram ✓");
   } catch (err) {
     $("#yt-status").textContent = `Telegram error: ${err.message}`;
@@ -2130,6 +2507,315 @@ $("#voice-sel").addEventListener("change", () => { state.voice = $("#voice-sel")
 
 $("#emotion-sel").value = state.emotionMode || "auto";
 $("#emotion-sel").addEventListener("change", () => { state.emotionMode = $("#emotion-sel").value; saveState(); });
+$("#silence-cut-on").checked = Boolean(state.silenceCut);
+$("#silence-level").value = state.silenceLevel || "normal";
+$("#silence-skip-beats").value = state.silenceSkip || "";
+$("#silence-cut-on").addEventListener("change", async () => {
+  state.silenceCut = $("#silence-cut-on").checked;
+  saveState();
+  await rebuildAllSilenceCuts();
+});
+$("#silence-level").addEventListener("change", async () => {
+  state.silenceLevel = $("#silence-level").value || "normal";
+  saveState();
+  if (state.silenceCut) await rebuildAllSilenceCuts();
+});
+let silenceSkipTimer = 0;
+$("#silence-skip-beats").addEventListener("input", () => {
+  state.silenceSkip = $("#silence-skip-beats").value;
+  saveState();
+  if (!state.silenceCut) return;
+  clearTimeout(silenceSkipTimer);
+  silenceSkipTimer = setTimeout(() => rebuildAllSilenceCuts(), 350);
+});
+$("#p-caption-pos").value = state.captionPos || "bottom-center";
+$("#p-caption-pos").addEventListener("change", () => {
+  state.captionPos = $("#p-caption-pos").value || "bottom-center";
+  saveState();
+  if (!player.playing) drawCurrentFrame();
+});
+
+let activeHookList = [];
+
+function defaultHookTemplates(ep) {
+  const isNe = ep?.language === "ne";
+  const topic = String(ep?.title || "This Story").trim();
+  const baseHook = String(ep?.hook || topic).trim();
+  return [
+    {
+      style: "1. Myth-Buster",
+      whyItWorks: "Challenging a widely believed assumption creates an instant curiosity gap in 2 seconds.",
+      hookText: isNe ? `सबैलाई लाग्छ यो सामान्य थियो—तर वास्तविकता अचम्मको छ!` : `Most people assume it happened slowly—that's completely false.`,
+      beats: [
+        {
+          cardType: "red-x",
+          label: isNe ? "गलत सोचाइ!" : "MYTH",
+          emotion: "dramatically",
+          narration: isNe ? "तपाईंले सुनेको कथा आधा मात्र सत्य हो," : "Everything you heard about this is backwards,",
+          visual: `Bold red X drawn across a crowded textbook scene about ${topic}, puzzled stickman pointing.`,
+          dynamic: true,
+          motionPrompt: "Sharp red X slashes across the frame before morphing into the hidden truth scene."
+        },
+        {
+          cardType: "flat-scene",
+          label: "",
+          emotion: "excitedly",
+          narration: isNe ? "वास्तविक मोड यहाँबाट सुरु भयो।" : "the real twist started in a single moment.",
+          visual: `Stickman historian revealing a dramatic hidden detail behind ${topic} on a chalkboard.`
+        }
+      ]
+    },
+    {
+      style: "2. Shocking Scale Contrast",
+      whyItWorks: "David-vs-Goliath visual contrast locks attention before the first sentence finishes.",
+      hookText: isNe ? `एउटा सानो शक्ति कसरी विशाल साम्राज्यसँग भिड्यो?` : `How did a tiny underdog go head-to-head with a giant?`,
+      beats: [
+        {
+          cardType: "split-compare",
+          label: isNe ? "सानो बनाम विशाल" : "TINY vs GIANT",
+          emotion: "amazed",
+          narration: isNe ? "एकातिर विशाल शक्ति, अर्कोतिर सानो आँट," : "One side had endless numbers, the other had grit,",
+          visual: `Split comparison frame showing a tiny determined ink stickman facing an enormous towering shadow.`,
+          dynamic: true,
+          motionPrompt: "Camera zooms rapidly toward the tiny stickman as the giant silhouette looms forward."
+        },
+        {
+          cardType: "flat-scene",
+          label: "",
+          emotion: "warmly",
+          narration: isNe ? "र इतिहासले असम्भव नतिजा देखायो।" : "and nobody expected what happened next.",
+          visual: `Tiny stickman standing firm atop a hill clutching a bright lantern as storm clouds roll.`
+        }
+      ]
+    },
+    {
+      style: "3. High-Stakes Flash-Forward",
+      whyItWorks: "Dropping straight into peak tension forces viewers to watch how the characters got there.",
+      hookText: isNe ? `यो एक निर्णय नभएको भए आज नक्सा अर्कै हुन्थ्यो!` : `One decision changed the map forever.`,
+      beats: [
+        {
+          cardType: "flat-scene",
+          label: "",
+          emotion: "urgently",
+          narration: isNe ? "रातारात आएको एउटा खबरले सबथोक बदल्यो," : "Midnight, an urgent secret message changed everything,",
+          visual: `Stickman running in darkness carrying an urgent folded scroll by flickering torchlight.`,
+          dynamic: true,
+          motionPrompt: "Urgent camera track as runner bursts through doorway into dramatic map room."
+        },
+        {
+          cardType: "map-diagram",
+          label: "",
+          emotion: "seriously",
+          narration: isNe ? "जहाँ सानो गल्तीले पूरै भविष्य मोडिदिन्थ्यो।" : "one step wrong and history collapses.",
+          visual: `Bold black ink map with glowing red arrows converging toward a critical chokepoint.`
+        }
+      ]
+    },
+    {
+      style: "4. Visual Paradox Question",
+      whyItWorks: "Showing an impossible-looking clue with a direct question triggers immediate pattern seeking.",
+      hookText: isNe ? `किन यो एउटै घटनाले संसारको ध्यान तान्यो?` : `Why did this single odd detail change everything?`,
+      beats: [
+        {
+          cardType: "whiteboard-prop",
+          label: "?",
+          emotion: "curiously",
+          narration: isNe ? "पहिलो नजरमा यो साधारण देखिन सक्छ," : "At first glance this detail looks completely ordinary,",
+          visual: `Minimalist ink prop surrounded by bold drawn question marks on warm parchment background.`,
+          dynamic: true,
+          motionPrompt: "Question marks orbit inward and sharpen focus onto the centerpiece object."
+        },
+        {
+          cardType: "flat-scene",
+          label: "",
+          emotion: "intrigued",
+          narration: isNe ? "तर नजिकबाट हेर्दा रहस्य खुल्छ।" : "until you zoom in ten times closer.",
+          visual: `Stickman leaning close with a magnifying glass revealing hidden gears inside the prop.`
+        }
+      ]
+    },
+    {
+      style: "5. Hidden Detail / Episode Hook Remix",
+      whyItWorks: "Re-frames your episode's core hook as an insider secret rather than a standard summary.",
+      hookText: baseHook,
+      beats: [
+        {
+          cardType: "map-diagram",
+          label: isNe ? "गोप्य मोड" : "HIDDEN CLUE",
+          emotion: "conspiratorially",
+          narration: isNe ? "किताबका पानामा प्रायः छुट्ने एउटा कुरा छ," : "History books almost always skip this opening moment,",
+          visual: `Pencil sketching an overlooked dotted line across a simple ink map of ${topic}.`,
+          dynamic: true,
+          motionPrompt: "Ink pen draws an illuminated circle zooming straight into the first beat scene."
+        },
+        {
+          cardType: "flat-scene",
+          label: "",
+          emotion: "warmly",
+          narration: isNe ? "आउनुहोस्, सुरुबाटै यसको भित्री कथा हेरौँ।" : "let's rewind to the second it actually began.",
+          visual: `Lead stickman turning toward the viewer and gesturing toward an unfolding storybook scene.`
+        }
+      ]
+    }
+  ];
+}
+
+function renderHookCards(hooks) {
+  activeHookList = Array.isArray(hooks) ? hooks : [];
+  const grid = $("#hooks-grid");
+  if (!grid) return;
+  if (!activeHookList.length) {
+    grid.innerHTML = `<div class="sub">No hook ideas loaded.</div>`;
+    return;
+  }
+  grid.innerHTML = activeHookList.map((h, idx) => {
+    const b1 = h.beats?.[0];
+    const b2 = h.beats?.[1];
+    return `<div class="formula-card" style="display:flex;flex-direction:column;gap:6px">
+      <div class="top">
+        <span class="badge">${esc(h.style || `Hook ${idx + 1}`)}</span>
+      </div>
+      <div class="sub" style="color:var(--ink);font-weight:700">${esc(h.hookText || "")}</div>
+      <div class="sub">${esc(h.whyItWorks || "")}</div>
+      ${b1 ? `<div class="sub" style="background:#11141c;padding:5px 7px;border-radius:6px;border:1px solid var(--line)">
+        <b>Beat +1 (${esc(b1.cardType || "flat-scene")}):</b> ${esc(b1.narration || "")}<br>
+        ${b2 ? `<b>Beat +2 (${esc(b2.cardType || "flat-scene")}):</b> ${esc(b2.narration || "")}` : ""}
+      </div>` : ""}
+      <div class="btns" style="margin-top:auto">
+        <button type="button" data-act="copy-hook" data-hidx="${idx}">📋 Copy Hook</button>
+        <button type="button" class="ok" data-act="prepend-hook" data-hidx="${idx}">➕ Prepend to Block 1</button>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+async function generateCustomHooksWithGemini() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
+  const btn = $("#btn-gen-hooks");
+  btn.disabled = true;
+  $("#hooks-status").textContent = "Generating 5 tailored opening hooks with Gemini…";
+  try {
+    const ep = inkExplainerActiveEpisode();
+    const r = await fetch("/api/explainer/gemini", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: buildOpeningHooksPrompt(ep) })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Gemini failed");
+    const parsed = parseGeminiJson(j.text);
+    const list = Array.isArray(parsed?.hooks) ? parsed.hooks : [];
+    if (!list.length) throw new Error("Gemini returned empty hooks list");
+    renderHookCards(list);
+    $("#hooks-status").textContent = `✓ Generated ${list.length} custom opening hooks for "${ep.title}".`;
+    toast("5 custom hooks ready ✓");
+  } catch (err) {
+    $("#hooks-status").textContent = `Hook generation error: ${err.message}`;
+    toast(`Hook error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+$("#btn-toggle-hooks").addEventListener("click", () => {
+  const panel = $("#hooks-panel");
+  const genBtn = $("#btn-gen-hooks");
+  const remBtn = $("#btn-remove-hook");
+  const opening = panel.classList.contains("hide");
+  panel.classList.toggle("hide", !opening);
+  genBtn.classList.toggle("hide", !opening);
+  remBtn?.classList.toggle("hide", !opening);
+  if (opening && !activeHookList.length) {
+    renderHookCards(defaultHookTemplates(inkExplainerActiveEpisode()));
+  }
+});
+
+$("#btn-gen-hooks").addEventListener("click", generateCustomHooksWithGemini);
+
+$("#btn-remove-hook")?.addEventListener("click", async () => {
+  const ep = JSON.parse(JSON.stringify(inkExplainerActiveEpisode()));
+  const blk0 = ep.blocks?.[0];
+  if (!blk0 || !Array.isArray(blk0.beats) || blk0.beats.length <= 2) {
+    toast("Block 1 needs more than 2 beats before removing the first 2");
+    return;
+  }
+  if (!confirm("Remove the first 2 beats of Block 1 and shift remaining beat numbers/images back by 2?")) return;
+  blk0.beats = blk0.beats.slice(2);
+  let counter = 0;
+  for (const blk of ep.blocks) {
+    for (const b of blk.beats) {
+      counter += 1;
+      b.beat = counter;
+    }
+  }
+  await fetch("/api/explainer/shift-beat-assets", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ project: PROJECT_ID, episode: ep.id, delta: -2 })
+  }).catch(() => {});
+  imageCache.clear();
+  transitionVideoCache.clear();
+  window.__INK_ACTIVE_EPISODE = ep;
+  await persistActiveEpisode();
+  await refreshAssets(true);
+  $("#hooks-status").textContent = `✓ Removed first 2 beats and re-aligned ${counter} beats.`;
+  toast("Removed first 2 beats & shifted assets back ✓");
+});
+
+$("#hooks-grid").addEventListener("click", async e => {
+  const btn = e.target.closest("button[data-act]");
+  if (!btn) return;
+  const idx = Number(btn.dataset.hidx);
+  const hook = activeHookList[idx];
+  if (!hook) return;
+  if (btn.dataset.act === "copy-hook") {
+    const txt = [hook.hookText, ...(hook.beats || []).map(b => `${b.narration} [${b.visual}]`)].filter(Boolean).join("\n");
+    try { await navigator.clipboard.writeText(txt); } catch {}
+    toast("Hook copied ✓");
+  } else if (btn.dataset.act === "prepend-hook") {
+    const existingImgCount = Object.keys(assets.beatImages || {}).length;
+    if (existingImgCount > 0 && !confirm(`This episode already has ${existingImgCount} beat image(s). Prepending 2 hook beats will shift existing beat images forward (+2) to stay aligned, and you will need to generate images for Beats 1–2 and regenerate Block 1 audio. Continue?`)) {
+      return;
+    }
+    const ep = JSON.parse(JSON.stringify(inkExplainerActiveEpisode()));
+    if (!Array.isArray(ep.blocks) || !ep.blocks.length) return;
+    const newBeats = (hook.beats || []).map((hb, i) => ({
+      beat: i + 1,
+      cardType: INK_EXPLAINER_CARD_STYLES[hb.cardType] ? hb.cardType : "flat-scene",
+      label: String(hb.label || "").trim(),
+      emotion: String(hb.emotion || "").trim(),
+      characters: Array.isArray(hb.characters) ? hb.characters : [],
+      narration: String(hb.narration || "").trim(),
+      visual: String(hb.visual || "").trim(),
+      dynamic: Boolean(hb.dynamic),
+      motionPrompt: String(hb.motionPrompt || "").trim()
+    }));
+    if (!newBeats.length) return;
+    if (existingImgCount > 0 || Object.keys(assets.beatTransitions || {}).length > 0) {
+      await fetch("/api/explainer/shift-beat-assets", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ project: PROJECT_ID, episode: ep.id, delta: newBeats.length })
+      }).catch(() => {});
+    }
+    ep.blocks[0].beats = [...newBeats, ...(ep.blocks[0].beats || [])];
+    let counter = 0;
+    for (const blk of ep.blocks) {
+      for (const b of blk.beats) {
+        counter += 1;
+        b.beat = counter;
+      }
+    }
+    if (hook.hookText) ep.hook = hook.hookText;
+    imageCache.clear();
+    transitionVideoCache.clear();
+    window.__INK_ACTIVE_EPISODE = ep;
+    await persistActiveEpisode();
+    await refreshAssets(true);
+    $("#hooks-status").textContent = `✓ Prepended "${hook.style}" (${newBeats.length} beats) to Block 1, shifted existing images forward (+${newBeats.length}). Generate images for Beats 1–${newBeats.length} & regenerate Block 1 audio.`;
+    toast(`Prepended ${newBeats.length} hook beats to Block 1 ✓`);
+  }
+});
 $("#lang-sel").addEventListener("change", async () => {
   state.language = $("#lang-sel").value;
   const ep = inkExplainerActiveEpisode();
@@ -2374,6 +3060,12 @@ async function deleteFramePair(fromBeat) {
 }
 
 $("#btn-ai-dyn").addEventListener("click", aiSuggestDynamicPairs);
+$("#dyn-pairs-list").addEventListener("click", e => {
+  const btn = e.target.closest("button[data-jump-card]");
+  if (!btn) return;
+  const card = document.querySelector(`.beat-card[data-beat="${Number(btn.dataset.jumpCard)}"]`);
+  if (card) card.scrollIntoView({ behavior: "smooth", block: "center" });
+});
 $("#btn-batch-dyn").addEventListener("click", generateBatchDynamicPairs);
 $("#btn-stop-dyn").addEventListener("click", async () => {
   if (!activeDynBatchJobId) return;

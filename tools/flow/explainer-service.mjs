@@ -606,6 +606,66 @@ export function deleteBeatTransition(root, project = 'ink-explainer', episodeId 
   return { ok: true, deleted, fromBeat: num };
 }
 
+/**
+ * Shifts beat-XX.* images and pair-XX-YY.* transition clips on disk by `delta`
+ * (e.g. +2 when prepending 2 hook beats, -2 when removing them) so existing images stay aligned.
+ */
+export function shiftEpisodeBeatAssets(root, project = 'ink-explainer', episodeId = 'ancient-humans-day', delta = 2) {
+  const proj = validateId(project, 'project identifier');
+  const epId = validateId(episodeId, 'episode identifier');
+  const shift = Number(delta);
+  if (!Number.isInteger(shift) || shift === 0 || Math.abs(shift) > 20) {
+    throw new Error('delta must be a non-zero integer between -20 and 20.');
+  }
+  const imgDir = path.join(root, 'projects', proj, 'episodes', epId, 'images');
+  const transDir = path.join(root, 'projects', proj, 'episodes', epId, 'transitions');
+
+  if (fs.existsSync(imgDir)) {
+    const entries = fs.readdirSync(imgDir)
+      .map(name => {
+        const m = name.match(/^beat-(\d+)(\.(?:png|jpe?g|webp))$/i);
+        return m ? { name, num: Number(m[1]), ext: m[2].toLowerCase() } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => (shift > 0 ? b.num - a.num : a.num - b.num));
+
+    for (const it of entries) {
+      const targetNum = it.num + shift;
+      const oldPath = path.join(imgDir, it.name);
+      if (targetNum < 1) {
+        fs.unlinkSync(oldPath);
+      } else {
+        const newPath = path.join(imgDir, `beat-${pad2(targetNum)}${it.ext}`);
+        fs.renameSync(oldPath, newPath);
+      }
+    }
+  }
+
+  if (fs.existsSync(transDir)) {
+    const entries = fs.readdirSync(transDir)
+      .map(name => {
+        const m = name.match(/^pair-(\d+)-(\d+)(\.(?:mp4|webm))$/i);
+        return m ? { name, from: Number(m[1]), to: Number(m[2]), ext: m[3].toLowerCase() } : null;
+      })
+      .filter(Boolean)
+      .sort((a, b) => (shift > 0 ? b.from - a.from : a.from - b.from));
+
+    for (const it of entries) {
+      const targetFrom = it.from + shift;
+      const targetTo = it.to + shift;
+      const oldPath = path.join(transDir, it.name);
+      if (targetFrom < 1) {
+        fs.unlinkSync(oldPath);
+      } else {
+        const newPath = path.join(transDir, `pair-${pad2(targetFrom)}-${pad2(targetTo)}${it.ext}`);
+        fs.renameSync(oldPath, newPath);
+      }
+    }
+  }
+
+  return { ok: true, shiftedBy: shift };
+}
+
 /** Saves a manually pasted/uploaded beat image to disk so it is used immediately and skipped by Batch Flow. */
 export function saveBeatImage(root, project = 'ink-explainer', episodeId = 'ancient-humans-day', beatNum, imageBuffer, ext = '.png') {
   const proj = validateId(project, 'project identifier');
@@ -630,11 +690,13 @@ export function saveBeatImage(root, project = 'ink-explainer', episodeId = 'anci
 export function episodeFlowProjectName(root, project = 'ink-explainer', episodeId = '', baseFlowProject = 'Ink Explainer') {
   const base = String(baseFlowProject || 'Ink Explainer').trim();
   const epId = typeof episodeId === 'string' ? episodeId.trim() : '';
-  if (!epId) return base;
+  if (!epId) return base.slice(0, 48).trim();
   const ep = loadEpisode(root, project, epId);
   const rawTitle = ep?.title || (epId === 'ancient-humans-day' ? 'Ancient Humans All Day' : epId);
-  const shortTitle = rawTitle.replace(/\s+/g, ' ').trim().slice(0, 42).trim();
-  return shortTitle ? `${base} · ${shortTitle}` : base;
+  const prefix = `${base} · `;
+  const maxTitleLen = Math.max(8, 48 - prefix.length);
+  const shortTitle = rawTitle.replace(/\s+/g, ' ').trim().slice(0, maxTitleLen).trim();
+  return shortTitle ? `${prefix}${shortTitle}`.slice(0, 48).trim() : base.slice(0, 48).trim();
 }
 
 /** Lists local beat images, continuous block audio tracks, and episode metadata. */
@@ -753,13 +815,21 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
     };
   }
 
+  const epRootDir = path.join(root, 'projects', proj, 'episodes', epId);
   let exportedVideoUrl = '';
-  for (const fname of ['episode.mp4', 'episode.webm']) {
-    const exportPath = path.join(root, 'projects', proj, 'episodes', epId, fname);
-    if (fs.existsSync(exportPath)) {
-      const stat = fs.statSync(exportPath);
-      exportedVideoUrl = `/projects/${proj}/episodes/${epId}/${fname}?t=${Math.floor(stat.mtimeMs)}`;
-      break;
+  let exportedVideoFile = '';
+  if (fs.existsSync(epRootDir)) {
+    const candidates = fs.readdirSync(epRootDir)
+      .filter(f => /\.(mp4|webm)$/i.test(f))
+      .map(f => {
+        const st = fs.statSync(path.join(epRootDir, f));
+        const isMp4 = /\.mp4$/i.test(f) ? 1 : 0;
+        return { file: f, mtimeMs: st.mtimeMs, isMp4 };
+      })
+      .sort((a, b) => (b.mtimeMs - a.mtimeMs) || (b.isMp4 - a.isMp4));
+    if (candidates.length) {
+      exportedVideoFile = candidates[0].file;
+      exportedVideoUrl = `/projects/${proj}/episodes/${epId}/${exportedVideoFile}?t=${Math.floor(candidates[0].mtimeMs)}`;
     }
   }
 
@@ -769,6 +839,7 @@ export function listExplainerAssets(root, project = 'ink-explainer', episodeId =
     activeEpisodeId: epId,
     flowProject: episodeFlowProjectName(root, proj, epId),
     exportedVideoUrl,
+    exportedVideoFile,
     episodes: listEpisodes(root, proj),
     episode: loadEpisode(root, proj, epId),
     episodeCharacters,

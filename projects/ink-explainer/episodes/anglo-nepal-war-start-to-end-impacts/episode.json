@@ -2,7 +2,7 @@
   "id": "anglo-nepal-war-start-to-end-impacts",
   "title": "कसरी एक सानो पहाडी राज्यले ब्रिटिस साम्राज्यलाई हल्लायो?",
   "subtitle": "Rapid-Beat Explainer",
-  "hook": "एउटा सानो हिमाली राज्यले विश्वकै शक्तिशाली ब्रिटिस सेनालाई कसरी घुँडा टेकायो?",
+  "hook": "सबैलाई लाग्छ यो सामान्य थियो—तर वास्तविकता अचम्मको छ!",
   "niche": "History & Human Curiosity",
   "language": "ne",
   "characters": [
@@ -33,7 +33,9 @@
             "SOLDIER"
           ],
           "narration": "अठारौँ शताब्दीको उत्तरार्धतिर,",
-          "visual": "A simple black ink outline map of South Asia on white background with a growing ink blot."
+          "visual": "A simple black ink outline map of South Asia on white background with a growing ink blot.",
+          "dynamic": true,
+          "motionPrompt": "The black ink blot on the South Asia map smoothly transforms into forward-marching footprints left by a soldier."
         },
         {
           "beat": 2,
@@ -44,7 +46,9 @@
             "SOLDIER"
           ],
           "narration": "नेपाल एकीकरणको लहर चलिरहेको थियो।",
-          "visual": "Stickman soldier marching forward with a flag, leaving small black footprints behind."
+          "visual": "Stickman soldier marching forward with a flag, leaving small black footprints behind.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 3,
@@ -53,7 +57,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "पहाडी राज्यहरूको तीव्र विस्तारले,",
-          "visual": "Map showing small mountain territories merging into one large shaded region."
+          "visual": "Map showing small mountain territories merging into one large shaded region.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 4,
@@ -65,7 +71,9 @@
             "BRITISH"
           ],
           "narration": "ब्रिटिस इस्ट इन्डिया कम्पनीलाई भेट्टायो।",
-          "visual": "Split screen comparing a Nepali hill soldier on left and a British redcoat soldier on right."
+          "visual": "Split screen comparing a Nepali hill soldier on left and a British redcoat soldier on right.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 5,
@@ -74,7 +82,9 @@
           "emotion": "anxious",
           "characters": [],
           "narration": "दुवै शक्तिहरू आमनेसामने आए।",
-          "visual": "Two opposing stick figures staring intensely across a dashed line on the ground."
+          "visual": "Two opposing stick figures staring intensely across a dashed line on the ground.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 6,
@@ -83,7 +93,9 @@
           "emotion": "shocked",
           "characters": [],
           "narration": "सिमानाको यो विवादले,",
-          "visual": "A red X mark flashing over a disputed border line on a parchment map."
+          "visual": "A red X mark flashing over a disputed border line on a parchment map.",
+          "dynamic": true,
+          "motionPrompt": "The flashing red X over the parchment map smoothly unrolls downward to reveal a wooden scroll."
         },
         {
           "beat": 7,
@@ -94,7 +106,9 @@
             "BRITISH"
           ],
           "narration": "ठوलो युद्धको बीजारोपण गर्यो।",
-          "visual": "A wooden scroll unrolling on screen with bold ink text 'WAR 1814'."
+          "visual": "A wooden scroll unrolling on screen with bold ink text 'WAR 1814'.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 8,
@@ -105,7 +119,9 @@
             "SOLDIER"
           ],
           "narration": "नेपाली सेना युद्धका लागि तयार भयो।",
-          "visual": "Stickman warrior sharpening a traditional curved khukuri blade against a whetstone."
+          "visual": "Stickman warrior sharpening a traditional curved khukuri blade against a whetstone.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 9,
@@ -114,7 +130,9 @@
           "emotion": "urgent",
           "characters": [],
           "narration": "चारवटा भिन्न मोर्चाहरूमा,",
-          "visual": "Map of Nepal with four blinking red arrows pointing inward from the southern plains."
+          "visual": "Map of Nepal with four blinking red arrows pointing inward from the southern plains.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 10,
@@ -125,7 +143,9 @@
             "BRITISH"
           ],
           "narration": "ब्रिटिस सेना संख्यामा निकै ठूलो थियो।",
-          "visual": "Icon of a massive army of stickmen neatly lined up with muskets."
+          "visual": "Icon of a massive army of stickmen neatly lined up with muskets.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 11,
@@ -136,7 +156,9 @@
             "SOLDIER"
           ],
           "narration": "तर नेपालीहरूको साहस अदम्य थियो।",
-          "visual": "A single stick figure standing tall and fearless against a giant wall."
+          "visual": "A single stick figure standing tall and fearless against a giant wall.",
+          "dynamic": true,
+          "motionPrompt": "The fearless stick figure's outline bursts outward into dramatic ink splashes that form the title '1814 AD'."
         },
         {
           "beat": 12,
@@ -145,7 +167,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "इतिहासको ठूलो युद्ध सुरु भयो।",
-          "visual": "Ink splashes dramatically across the screen forming the title '1814 AD'."
+          "visual": "Ink splashes dramatically across the screen forming the title '1814 AD'.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -162,7 +186,9 @@
             "SOLDIER"
           ],
           "narration": "सन् १८१४ को नोभेम्बरमा,",
-          "visual": "Stickman defender standing atop a rugged hill fortress holding a spear."
+          "visual": "Stickman defender standing atop a rugged hill fortress holding a spear.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 14,
@@ -173,7 +199,9 @@
             "SOLDIER"
           ],
           "narration": "कप्तान बलभद्र कुँवरले मोर्चा सम्हाले।",
-          "visual": "Nameplate graphic 'Kapilbhadra Kunwar' with an ink sketch of a fort."
+          "visual": "Nameplate graphic 'Kapilbhadra Kunwar' with an ink sketch of a fort.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 15,
@@ -184,7 +212,9 @@
             "BRITISH"
           ],
           "narration": "हजारौँ ब्रिटिस सैनिकले किल्ला घेरे।",
-          "visual": "Multiple enemy stick figures surrounding a small stone fort with cannons."
+          "visual": "Multiple enemy stick figures surrounding a small stone fort with cannons.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 16,
@@ -193,7 +223,9 @@
           "emotion": "shocked",
           "characters": [],
           "narration": "किल्लाको पानीको मूल सुकाइयो।",
-          "visual": "A water spring icon blocked by a large red X mark."
+          "visual": "A water spring icon blocked by a large red X mark.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 17,
@@ -204,7 +236,9 @@
             "SOLDIER"
           ],
           "narration": "पानी बिना नै लडाइँ जारी रह्यो।",
-          "visual": "Thirsty stickman soldier fighting with cracked lips under a blazing sun."
+          "visual": "Thirsty stickman soldier fighting with cracked lips under a blazing sun.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 18,
@@ -213,7 +247,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "ब्रिटिस तोपले पर्खाल भत्काए।",
-          "visual": "Animated cannonball crashing into a brick wall drawing."
+          "visual": "Animated cannonball crashing into a brick wall drawing.",
+          "dynamic": true,
+          "motionPrompt": "The animated cannonball crashing into the brick wall smoothly transitions into a stick figure waving a broken flag."
         },
         {
           "beat": 19,
@@ -224,7 +260,9 @@
             "SOLDIER"
           ],
           "narration": "आत्मसमर्पण गर्न अस्वीकार गरियो।",
-          "visual": "Stickman waving a broken Nepali flag defiantly amidst smoke."
+          "visual": "Stickman waving a broken Nepali flag defiantly amidst smoke.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 20,
@@ -233,7 +271,9 @@
           "emotion": "tense",
           "characters": [],
           "narration": "उता जैथगढमा पनि उस्तै दृश्य थियो।",
-          "visual": "Another steep mountain fort sketch with defenders preparing rocks."
+          "visual": "Another steep mountain fort sketch with defenders preparing rocks.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 21,
@@ -242,7 +282,9 @@
           "emotion": "inspired",
           "characters": [],
           "narration": "वृद्ध सरदार भक्ति थापा लडे।",
-          "visual": "Portrait sketch of an elderly bearded warrior with a turban."
+          "visual": "Portrait sketch of an elderly bearded warrior with a turban.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 22,
@@ -251,7 +293,9 @@
           "emotion": "moureful",
           "characters": [],
           "narration": "वीरगति प्राप्त गरे, तर झुकेनन्।",
-          "visual": "Stickman falling gently under a shower of falling autumn leaves."
+          "visual": "Stickman falling gently under a shower of falling autumn leaves.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 23,
@@ -262,7 +306,9 @@
             "BRITISH"
           ],
           "narration": "ब्रिटिस सेनापतिहरू चकित भए।",
-          "visual": "British commander stick figure dropping his monocle in absolute disbelief."
+          "visual": "British commander stick figure dropping his monocle in absolute disbelief.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 24,
@@ -271,7 +317,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "सोचेभन्दा धेरै कडा प्रतिरोध थियो।",
-          "visual": "Crossed muskets and khukuri over a dark charcoal background."
+          "visual": "Crossed muskets and khukuri over a dark charcoal background.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -286,7 +334,9 @@
           "emotion": "curious",
           "characters": [],
           "narration": "मलाउँ किल्लाको युद्ध मैदान,",
-          "visual": "Map zooming in on a high altitude ridge named Malaugi."
+          "visual": "Map zooming in on a high altitude ridge named Malaugi.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 26,
@@ -297,7 +347,9 @@
             "SOLDIER"
           ],
           "narration": "अमरसिंह थापाले नेतृत्व गरे।",
-          "visual": "Commander stick figure pointing forward with a long sword on a hill."
+          "visual": "Commander stick figure pointing forward with a long sword on a hill.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 27,
@@ -306,7 +358,9 @@
           "emotion": "tense",
           "characters": [],
           "narration": "चारैतिरबाट शत्रुले घेरेका थिए।",
-          "visual": "Concentric circles of enemy troops closing in on a central fort."
+          "visual": "Concentric circles of enemy troops closing in on a central fort.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 28,
@@ -315,7 +369,9 @@
           "emotion": "anxious",
           "characters": [],
           "narration": "खाना र गोलाबारूद सकिँदै थियो।",
-          "visual": "An empty wooden supply crate with dust blowing out of it."
+          "visual": "An empty wooden supply crate with dust blowing out of it.",
+          "dynamic": true,
+          "motionPrompt": "Dust blowing from the empty wooden crate shifts horizontally to become a sliding letter across the screen."
         },
         {
           "beat": 29,
@@ -327,7 +383,9 @@
             "SOLDIER"
           ],
           "narration": "अक्टरलोनीले आत्मसमर्पणको प्रस्ताव पठाए।",
-          "visual": "A letter sliding across the screen between a British officer and Nepali leader."
+          "visual": "A letter sliding across the screen between a British officer and Nepali leader.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 30,
@@ -336,7 +394,9 @@
           "emotion": "admiring",
           "characters": [],
           "narration": "तर ब्रिटिसहरूले पनि तारिफ गरे।",
-          "visual": "A glowing medal icon with ribbon on a clean white background."
+          "visual": "A glowing medal icon with ribbon on a clean white background.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 31,
@@ -347,7 +407,9 @@
             "SOLDIER"
           ],
           "narration": "नेपालीहरूको बहादुरी अद्भुत थियो।",
-          "visual": "Stickman soldier standing tall with a glowing aura of bravery."
+          "visual": "Stickman soldier standing tall with a glowing aura of bravery.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 32,
@@ -356,7 +418,9 @@
           "emotion": "somber",
           "characters": [],
           "narration": "भौगोलिक अवस्थाले साथ दिएन।",
-          "visual": "A mountain path blocked by a red X mark."
+          "visual": "A mountain path blocked by a red X mark.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 33,
@@ -365,7 +429,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "अन्ततः पछि हट्नुपर्ने बाध्यता आयो।",
-          "visual": "Stick figures slowly walking back down a winding mountain trail."
+          "visual": "Stick figures slowly walking back down a winding mountain trail.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 34,
@@ -374,7 +440,9 @@
           "emotion": "warmly",
           "characters": [],
           "narration": "सम्मानजनक शर्तहरू राखिए।",
-          "visual": "A handshake icon drawn inside a decorative ink circle."
+          "visual": "A handshake icon drawn inside a decorative ink circle.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 35,
@@ -383,7 +451,9 @@
           "emotion": "reflective",
           "characters": [],
           "narration": "शत्रुले पनि शत्रुको प्रशंसा गरे।",
-          "visual": "Two opposing stickmen bowing respectfully to each other."
+          "visual": "Two opposing stickmen bowing respectfully to each other.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 36,
@@ -392,7 +462,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "तर युद्ध अझै समाप्त भएको थिएन।",
-          "visual": "A ticking pocket watch sketch counting down time."
+          "visual": "A ticking pocket watch sketch counting down time.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -407,7 +479,9 @@
           "emotion": "urgent",
           "characters": [],
           "narration": "युद्ध अब राजधानीतिर लम्कियो।",
-          "visual": "Map showing a red path moving from the hills down toward Kathmandu."
+          "visual": "Map showing a red path moving from the hills down toward Kathmandu.",
+          "dynamic": true,
+          "motionPrompt": "The red path moving downward on the map smoothly expands into a massive stone gateway guarded by defenders."
         },
         {
           "beat": 38,
@@ -418,7 +492,9 @@
             "SOLDIER"
           ],
           "narration": "मकवानपुरगढीमा निर्णायक लडाइँ भयो।",
-          "visual": "Defenders guarding a massive stone gateway with heavy logs and spears."
+          "visual": "Defenders guarding a massive stone gateway with heavy logs and spears.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 39,
@@ -429,7 +505,9 @@
             "BRITISH"
           ],
           "narration": "جنरल अक्टरलोनीले नयाँ रणनीति बनाए।",
-          "visual": "An ink map with strategic arrows drawn in black and red ink."
+          "visual": "An ink map with strategic arrows drawn in black and red ink.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 40,
@@ -438,7 +516,9 @@
           "emotion": "shocked",
           "characters": [],
           "narration": "राति नै पहाड चढेर आक्रमण गरे।",
-          "visual": "Stick figures climbing a steep cliffside under a crescent moon."
+          "visual": "Stick figures climbing a steep cliffside under a crescent moon.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 41,
@@ -449,7 +529,9 @@
             "SOLDIER"
           ],
           "narration": "नेपाली सेनाले कडा जवाफ फर्कायो।",
-          "visual": "Defenders rolling giant boulders down a slope onto attackers."
+          "visual": "Defenders rolling giant boulders down a slope onto attackers.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 42,
@@ -458,7 +540,9 @@
           "emotion": "somber",
           "characters": [],
           "narration": "दुवैतर्फ भारी क्षति भयो।",
-          "visual": "Broken weapons scattered on the ground with a red cross overhead."
+          "visual": "Broken weapons scattered on the ground with a red cross overhead.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 43,
@@ -467,7 +551,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "काठमाडौँ अब सीधै खतरामा पर्यो।",
-          "visual": "A target reticle pointing directly at a sketch of Kathmandu valley."
+          "visual": "A target reticle pointing directly at a sketch of Kathmandu valley.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 44,
@@ -476,7 +562,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "दरबारमा गम्भीर छलफल चल्यो।",
-          "visual": "Multiple stick figures sitting in a circle discussing with worried gestures."
+          "visual": "Multiple stick figures sitting in a circle discussing with worried gestures.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 45,
@@ -485,7 +573,9 @@
           "emotion": "neutral",
           "characters": [],
           "narration": "शान्ति सम्झौता बाहेک विकल्प थिएन।",
-          "visual": "A quill pen hovering over a blank document scroll."
+          "visual": "A quill pen hovering over a blank document scroll.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 46,
@@ -494,7 +584,9 @@
           "emotion": "exhausted",
           "characters": [],
           "narration": "दुवै पक्ष युद्धबाट थाकेका थिए।",
-          "visual": "A tired soldier leaning against a tree, resting his weapon."
+          "visual": "A tired soldier leaning against a tree, resting his weapon.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 47,
@@ -503,7 +595,9 @@
           "emotion": "calm",
           "characters": [],
           "narration": "हतियार बिसाउने बेला आयो।",
-          "visual": "Swords crossing and then resting peacefully side by side."
+          "visual": "Swords crossing and then resting peacefully side by side.",
+          "dynamic": true,
+          "motionPrompt": "Crossing swords resting side by side morph vertically into an hourglass turning upside down as sand flows."
         },
         {
           "beat": 48,
@@ -512,7 +606,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "इतिहास फेरिने मोडमा पुग्यो।",
-          "visual": "An hourglass turning upside down as sand flows to the bottom."
+          "visual": "An hourglass turning upside down as sand flows to the bottom.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -527,7 +623,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "सन् १८१६ मार्च ४ का दिन,",
-          "visual": "A parchment document title banner: 'Treaty of Sugauli 1816'."
+          "visual": "A parchment document title banner: 'Treaty of Sugauli 1816'.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 50,
@@ -536,7 +634,9 @@
           "emotion": "neutral",
           "characters": [],
           "narration": "सुगौली सन्धिमा हस्ताक्षर भयो।",
-          "visual": "An ink pen signing the bottom of a formal government agreement."
+          "visual": "An ink pen signing the bottom of a formal government agreement.",
+          "dynamic": true,
+          "motionPrompt": "The signed government agreement seamlessly transitions into the map of Greater Nepal shrinking as borders trim."
         },
         {
           "beat": 51,
@@ -545,7 +645,9 @@
           "emotion": "somber",
           "characters": [],
           "narration": "नेपालले आफ्नो ठूलो भूभाग गुमायो।",
-          "visual": "Map of Greater Nepal shrinking as outer borders are trimmed away in red ink."
+          "visual": "Map of Greater Nepal shrinking as outer borders are trimmed away in red ink.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 52,
@@ -554,7 +656,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "मेचीदेखि महाकालीसम्म सीमा सीमित भयो।",
-          "visual": "Two river icons labeled 'Mechi' and 'Mahakali' marking the new country borders."
+          "visual": "Two river icons labeled 'Mechi' and 'Mahakali' marking the new country borders.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 53,
@@ -563,7 +667,9 @@
           "emotion": "sad",
           "characters": [],
           "narration": "टिस्टा र काँगडाका क्षेत्रहरू छुटे।",
-          "visual": "Regions on a map fading out with a small red cross on each."
+          "visual": "Regions on a map fading out with a small red cross on each.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 54,
@@ -572,7 +678,9 @@
           "emotion": "somber",
           "characters": [],
           "narration": "प्रारम्भमा तराईको भूभाग पनि गुलियो।",
-          "visual": "Flat plains area shaded out with diagonal hash marks."
+          "visual": "Flat plains area shaded out with diagonal hash marks.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 55,
@@ -581,7 +689,9 @@
           "emotion": "relieved",
           "characters": [],
           "narration": "पछि केही तराई भने फिर्ता पाइयो।",
-          "visual": "A southern strip of land highlighted back in solid black ink."
+          "visual": "A southern strip of land highlighted back in solid black ink.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 56,
@@ -590,7 +700,9 @@
           "emotion": "reflective",
           "characters": [],
           "narration": "विशाल नेपालको नक्सा सानो भयो।",
-          "visual": "Before-and-after comparison showing a large map shrinking into a compact shape."
+          "visual": "Before-and-after comparison showing a large map shrinking into a compact shape.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 57,
@@ -601,7 +713,9 @@
             "SOLDIER"
           ],
           "narration": "तर स्वतन्त्रता र सार्वभौमिकता जोगियो।",
-          "visual": "A Nepali flag waving proudly on top of a mountain peak."
+          "visual": "A Nepali flag waving proudly on top of a mountain peak.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 58,
@@ -612,7 +726,9 @@
             "BRITISH"
           ],
           "narration": "काठमाडौँमा ब्रिटिस प्रतिनिधि बस्न थाले।",
-          "visual": "A small colonial house drawing inside Kathmandu valley."
+          "visual": "A small colonial house drawing inside Kathmandu valley.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 59,
@@ -621,7 +737,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "कठिन शर्तहरूको पालना गर्नुपर्यो।",
-          "visual": "A strict scale of justice balancing a crown and a scroll."
+          "visual": "A strict scale of justice balancing a crown and a scroll.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 60,
@@ -630,7 +748,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "नेपालको परराष्ट्र नीति सदाका लागि बदलियो।",
-          "visual": "A compass spinning and pointing toward a new direction."
+          "visual": "A compass spinning and pointing toward a new direction.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -647,7 +767,9 @@
             "BRITISH"
           ],
           "narration": "युद्ध मैदानको एउटा अनौठो परिणाम आयो।",
-          "visual": "British officer looking closely at a captured Nepali khukuri with awe."
+          "visual": "British officer looking closely at a captured Nepali khukuri with awe.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 62,
@@ -656,7 +778,9 @@
           "emotion": "surprised",
           "characters": [],
           "narration": "शत्रुले गोर्खा सैनिकको साहस बुझ्यो।",
-          "visual": "An ink quote bubble: 'Bravest of the brave'."
+          "visual": "An ink quote bubble: 'Bravest of the brave'.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 63,
@@ -668,7 +792,9 @@
             "BRITISH"
           ],
           "narration": "ब्रिटिस सेनामा गोर्खा भर्ती सुरु भयो।",
-          "visual": "Nepali soldier shaking hands with a British recruiter under a tent."
+          "visual": "Nepali soldier shaking hands with a British recruiter under a tent.",
+          "dynamic": true,
+          "motionPrompt": "The handshake under the tent stretches outward to form dotted lines spreading across a global map."
         },
         {
           "beat": 64,
@@ -677,7 +803,9 @@
           "emotion": "curious",
           "characters": [],
           "narration": "गोर्खा सैनिकहरू विश्वभर पुगे।",
-          "visual": "Global map with dotted lines extending from Nepal to various continents."
+          "visual": "Global map with dotted lines extending from Nepal to various continents.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 65,
@@ -688,7 +816,9 @@
             "SOLDIER"
           ],
           "narration": "उनीहरूको वीरताले इतिहास रचे।",
-          "visual": "Medals and crossed khukuri emblem on a white shield."
+          "visual": "Medals and crossed khukuri emblem on a white shield.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 66,
@@ -697,7 +827,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "यो सम्झौता पछि दुवै देशबीच सम्बन्ध बदलियो।",
-          "visual": "Two flags flying side by side on a single pole."
+          "visual": "Two flags flying side by side on a single pole.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 67,
@@ -706,7 +838,9 @@
           "emotion": "warmly",
           "characters": [],
           "narration": "शत्रुता मित्रतामा परिणत भयो।",
-          "visual": "A handshake icon framed inside a heart outline."
+          "visual": "A handshake icon framed inside a heart outline.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 68,
@@ -715,7 +849,9 @@
           "emotion": "neutral",
           "characters": [],
           "narration": "विभिन्न युद्धहरूमा गोर्खाले भाग लिए।",
-          "visual": "Stickman soldier marching through diverse terrains: desert, jungle, snow."
+          "visual": "Stickman soldier marching through diverse terrains: desert, jungle, snow.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 69,
@@ -724,7 +860,9 @@
           "emotion": "proud",
           "characters": [],
           "narration": "सर्वोच्च सैन्य सम्मान प्राप्त गरे।",
-          "visual": "Victoria Cross medal drawing shining with little ink sparkles."
+          "visual": "Victoria Cross medal drawing shining with little ink sparkles.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 70,
@@ -735,7 +873,9 @@
             "SOLDIER"
           ],
           "narration": "नेपालीको छुट्टै पहिचान विश्वभर फैलियो।",
-          "visual": "Globe spinning with a small Nepali mountain silhouette on top."
+          "visual": "Globe spinning with a small Nepali mountain silhouette on top.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 71,
@@ -744,7 +884,9 @@
           "emotion": "reflective",
           "characters": [],
           "narration": "युद्धले घाउ दियो, तर नयाँ ढोका पनि खोल्यो।",
-          "visual": "Split graphic showing a battle scar on left and an open doorway on right."
+          "visual": "Split graphic showing a battle scar on left and an open doorway on right.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 72,
@@ -753,7 +895,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "यो विरासत आजसम्म कायम छ।",
-          "visual": "A stylized khukuri standing upright with rays of light drawn around it."
+          "visual": "A stylized khukuri standing upright with rays of light drawn around it.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -768,7 +912,9 @@
           "emotion": "somber",
           "characters": [],
           "narration": "युद्धपछि नेपाल बाह्य संसारबाट अलग भयो।",
-          "visual": "A stick figure inside a protective stone boundary looking outward."
+          "visual": "A stick figure inside a protective stone boundary looking outward.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 74,
@@ -777,7 +923,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "विदेशी हस्तक्षेप रोक्ने नीति लिइयो।",
-          "visual": "A heavy iron gate closing shut with a loud 'CLANG' text effect."
+          "visual": "A heavy iron gate closing shut with a loud 'CLANG' text effect.",
+          "dynamic": true,
+          "motionPrompt": "The heavy iron gate closing shut with a clang transforms smoothly into a protective glowing bubble around Nepal."
         },
         {
           "beat": 75,
@@ -786,7 +934,9 @@
           "emotion": "neutral",
           "characters": [],
           "narration": "देशभित्रै अलग्गै बस्ने अवस्था सिर्जना भयो।",
-          "visual": "Map of Nepal glowing inside an isolated protective bubble."
+          "visual": "Map of Nepal glowing inside an isolated protective bubble.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 76,
@@ -795,7 +945,9 @@
           "emotion": "anxious",
           "characters": [],
           "narration": "आन्तरिक दरबारमा राजनीतिक खिचातानी बढे।",
-          "visual": "Multiple court ministers arguing and pointing fingers at each other."
+          "visual": "Multiple court ministers arguing and pointing fingers at each other.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 77,
@@ -804,7 +956,9 @@
           "emotion": "tense",
           "characters": [],
           "narration": "विभिन्न षड्यन्त्र र हत्याकाण्डहरू भए।",
-          "visual": "A shadow cast over a royal palace sketch with a dagger icon."
+          "visual": "A shadow cast over a royal palace sketch with a dagger icon.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 78,
@@ -813,7 +967,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "जसले पछि राणा शासनको उदय गरायो।",
-          "visual": "A commanding figure stepping up a staircase to a throne."
+          "visual": "A commanding figure stepping up a staircase to a throne.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 79,
@@ -822,7 +978,9 @@
           "emotion": "neutral",
           "characters": [],
           "narration": "ब्रिटिससँगको सम्बन्ध शान्तिपूर्ण राखियो।",
-          "visual": "Two leaders sitting across a tea table signing a document peacefully."
+          "visual": "Two leaders sitting across a tea table signing a document peacefully.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 80,
@@ -831,7 +989,9 @@
           "emotion": "relieved",
           "characters": [],
           "narration": "भारतका अन्य राज्य झैँ नेपाल गाभिएन।",
-          "visual": "A shield icon blocking a sword strike successfully."
+          "visual": "A shield icon blocking a sword strike successfully.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 81,
@@ -840,7 +1000,9 @@
           "emotion": "proud",
           "characters": [],
           "narration": "स्वतन्त्र राष्ट्रको रूपमा अस्तित्व बच्यो।",
-          "visual": "A small independent flag standing firmly amidst a stormy wind."
+          "visual": "A small independent flag standing firmly amidst a stormy wind.",
+          "dynamic": true,
+          "motionPrompt": "The independent flag standing firmly in stormy wind condenses cleanly into the bold modern map of Nepal."
         },
         {
           "beat": 82,
@@ -849,7 +1011,9 @@
           "emotion": "reflective",
           "characters": [],
           "narration": "वर्तमान नेपालको भौगोलिक रूप तय भयो।",
-          "visual": "The familiar modern map of Nepal outlined clearly in bold black ink."
+          "visual": "The familiar modern map of Nepal outlined clearly in bold black ink.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 83,
@@ -858,7 +1022,9 @@
           "emotion": "serious",
           "characters": [],
           "narration": "इतिहासबाट ठაठ पाठहरू सिकियो।",
-          "visual": "An open book with glowing pages floating in the air."
+          "visual": "An open book with glowing pages floating in the air.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 84,
@@ -867,7 +1033,9 @@
           "emotion": "dramatic",
           "characters": [],
           "narration": "यसरी एउटा युगको अन्त्य भयो।",
-          "visual": "Sun setting behind mountain peaks with an ink wash background."
+          "visual": "Sun setting behind mountain peaks with an ink wash background.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     },
@@ -884,7 +1052,9 @@
             "SOLDIER"
           ],
           "narration": "एङ्ग्लो-नेपाल युद्ध केवल हारजित थिएन।",
-          "visual": "A soldier standing in contemplation beneath a grand old tree."
+          "visual": "A soldier standing in contemplation beneath a grand old tree.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 86,
@@ -893,7 +1063,9 @@
           "emotion": "proud",
           "characters": [],
           "narration": "यो वीर गोर्खालीहरूको अमर गाथा थियो।",
-          "visual": "A memorial monument sketch inscribed with bold letters 'BRAVERY'."
+          "visual": "A memorial monument sketch inscribed with bold letters 'BRAVERY'.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 87,
@@ -902,7 +1074,9 @@
           "emotion": "curious",
           "characters": [],
           "narration": "अतीतका ती घाउहरूले हामीलाई बलियो बनाए।",
-          "visual": "Split screen showing an old battlefield on left and a peaceful modern city on right."
+          "visual": "Split screen showing an old battlefield on left and a peaceful modern city on right.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 88,
@@ -911,7 +1085,9 @@
           "emotion": "somber",
           "characters": [],
           "narration": "नालापानी र मलाउँ सधैँ स्मरणीय छन्।",
-          "visual": "A wreath of flowers resting against a stone plaque."
+          "visual": "A wreath of flowers resting against a stone plaque.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 89,
@@ -920,7 +1096,9 @@
           "emotion": "inspired",
           "characters": [],
           "narration": "पूर्खाको बलिदानले देश बचाएको छ।",
-          "visual": "Footprints leading up a mountain toward a shining sun icon."
+          "visual": "Footprints leading up a mountain toward a shining sun icon.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 90,
@@ -929,7 +1107,9 @@
           "emotion": "proud",
           "characters": [],
           "narration": "हाम्रो राष्ट्रिय स्वाभिमान उच्च रह्यो।",
-          "visual": "The Nepali flag waving high against a clear white sky."
+          "visual": "The Nepali flag waving high against a clear white sky.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 91,
@@ -938,7 +1118,9 @@
           "emotion": "neutral",
           "characters": [],
           "narration": "आजको नेपाल तिनै संघर्षको परिणाम हो।",
-          "visual": "Modern map of Nepal pulsing with a gentle warm ink glow."
+          "visual": "Modern map of Nepal pulsing with a gentle warm ink glow.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 92,
@@ -947,7 +1129,9 @@
           "emotion": "reflective",
           "characters": [],
           "narration": "इतिहास हामीलाई भविष्यको बाटो देखाउँछ।",
-          "visual": "A compass resting on top of a stack of vintage history books."
+          "visual": "A compass resting on top of a stack of vintage history books.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 93,
@@ -958,7 +1142,9 @@
             "SOLDIER"
           ],
           "narration": "साहस र एकता नै हाम्रो शक्ति हो।",
-          "visual": "Multiple stick figures holding hands in a tight circle."
+          "visual": "Multiple stick figures holding hands in a tight circle.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 94,
@@ -967,7 +1153,9 @@
           "emotion": "warmly",
           "characters": [],
           "narration": "यो कथा सधैँ अमर रहनेछ।",
-          "visual": "An ink quill writing 'NEPALI HISTORY' in elegant cursive."
+          "visual": "An ink quill writing 'NEPALI HISTORY' in elegant cursive.",
+          "dynamic": false,
+          "motionPrompt": ""
         },
         {
           "beat": 95,
@@ -976,7 +1164,9 @@
           "emotion": "curious",
           "characters": [],
           "narration": "तपाईंलाई यो इतिहास कस्तो लाग्यो?",
-          "visual": "A large question mark drawn dynamically with black ink strokes."
+          "visual": "A large question mark drawn dynamically with black ink strokes.",
+          "dynamic": true,
+          "motionPrompt": "The dynamically drawn black question mark morphs smoothly into a stick figure waving goodbye with a speech bubble."
         },
         {
           "beat": 96,
@@ -987,10 +1177,12 @@
             "SOLDIER"
           ],
           "narration": "कमेन्टमा आफ्नो विचार लेख्नुहोला!",
-          "visual": "Stick figure waving goodbye with a speech bubble saying 'SUBSCRIBE!'."
+          "visual": "Stick figure waving goodbye with a speech bubble saying 'SUBSCRIBE!'.",
+          "dynamic": false,
+          "motionPrompt": ""
         }
       ]
     }
   ],
-  "updatedAt": "2026-11-18T02:53:30.340Z"
+  "updatedAt": "2026-11-18T18:24:43.529Z"
 }

@@ -246,8 +246,9 @@ test('explainer-service aligns rapid beats to timestamps and isolates multi-epis
   );
   assert.equal(
     episodeFlowProjectName(tmpRoot, 'ink-explainer', 'medieval-vacations'),
-    'Ink Explainer · Why Medieval Peasants Had More Vacation'
+    'Ink Explainer · Why Medieval Peasants Had More V'
   );
+  assert.ok(episodeFlowProjectName(tmpRoot, 'ink-explainer', 'medieval-vacations').length <= 48);
 
   const epImgDir = path.join(tmpRoot, 'projects', 'ink-explainer', 'episodes', 'medieval-vacations', 'images');
   fs.mkdirSync(epImgDir, { recursive: true });

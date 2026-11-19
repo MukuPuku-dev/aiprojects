@@ -27,7 +27,9 @@ async function createProject(page, name) {
   const input = page.locator(S.projectTitleInput).first();
   await input.waitFor({ state: 'visible', timeout: 15000 });
   await input.fill(name);
+  const actual = (await input.inputValue()).trim() || name;
   await input.press('Enter');
+  return actual;
 }
 
 /**
@@ -41,15 +43,16 @@ export async function ensureFlowProject(page, name, { log = console.log } = {}) 
   await page.getByRole('button', { name: S.newProjectButton }).first().waitFor({ state: 'visible', timeout: 30000 });
   await page.locator(S.projectCard).first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 
+  let expectedHeading = name;
   const link = await findProjectLink(page, name);
   if (link) {
     log(`Opening Flow project "${name}".`);
     await link.click();
   } else {
     log(`Creating Flow project "${name}".`);
-    await createProject(page, name);
+    expectedHeading = await createProject(page, name);
   }
 
-  await page.waitForFunction(n => document.querySelector('.header-title-heading')?.textContent.trim() === n, name, { timeout: 30000 })
-    .catch(() => { throw new Error(`Flow did not open the project "${name}".`); });
+  await page.waitForFunction(n => document.querySelector('.header-title-heading')?.textContent.trim() === n, expectedHeading, { timeout: 30000 })
+    .catch(() => { throw new Error(`Flow did not open the project "${expectedHeading}".`); });
 }

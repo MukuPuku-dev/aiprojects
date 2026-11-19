@@ -16,8 +16,8 @@ export const SELECTORS = {
   framesRadio: /Frames$/,
   // Frames mode: the Start / End tiles at the left of the prompt box. Tune here if Flow changes.
   frameTile: label => `flow-prompt-box button:has-text("${label}"), flow-prompt-box [role="button"]:has-text("${label}")`,
-  frameUploadItem: /upload/i,
-  frameConfirmButton: /^(Save|Done|Confirm|Add|Crop and save|Use|Select)$/i,
+  frameUploadItem: /upload\s*(?:media|image|file)/i,
+  frameConfirmButton: /^(Add to prompt|Save|Done|Confirm|Add|Crop and save|Use|Select)$/i,
   resultVideo: 'video',
   videoThumbnail: 'flow-video-tile img[alt="Generated video thumbnail"]',
   imageThumbnail: 'flow-image-tile img[alt="Tile displaying a user\'s image"]',
