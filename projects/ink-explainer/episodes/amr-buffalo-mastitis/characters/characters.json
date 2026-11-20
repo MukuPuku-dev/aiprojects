@@ -1,0 +1,26 @@
+{
+  "DOCTOR": {
+    "code": "DOCTOR",
+    "name": "डाक्टर रामकाजी पौडेल",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, Nepali veterinarian, round head, simple black ink outline, wearing a white lab coat, round glasses and a stethoscope, calm trustworthy pose, minimal flat colors",
+    "updatedAt": "2026-11-20T10:09:38.197Z"
+  },
+  "FARMER": {
+    "code": "FARMER",
+    "name": "किसान",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, Nepali hill farmer, round head, simple black ink outline, wearing a dhaka topi and a brown vest over a plain shirt, rolled-up trousers, worried expression, minimal flat colors",
+    "updatedAt": "2026-11-20T10:10:00.033Z"
+  },
+  "NEIGHBOR": {
+    "code": "NEIGHBOR",
+    "name": "छिमेकी",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, middle-aged Nepali village man, round head, simple black ink outline, wearing a gray shawl and a cap, confident casual pose, minimal flat colors",
+    "updatedAt": "2026-11-20T10:10:09.695Z"
+  },
+  "BUFFALO": {
+    "code": "BUFFALO",
+    "name": "भैंसी",
+    "refPrompt": "2D flat stickman style black buffalo full-body on pure white background, simple black ink outline, curved horns, sad tired eyes, swollen udder, minimal flat colors",
+    "updatedAt": "2026-11-20T10:12:40.641Z"
+  }
+}

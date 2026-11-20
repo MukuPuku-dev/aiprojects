@@ -1,0 +1,1836 @@
+{
+  "id": "dolakha-kuhiro-maya",
+  "title": "दोलखाको कुहिरोमा अल्झिएको माया",
+  "subtitle": "एउटा झोक, दुई केटी, एउटै मन्दिर",
+  "hook": "के झोकमा गरेको माया साँचो हुन्छ? दोलखाको कुहिरोमा अल्झिएको एउटा चतुर प्रेमकथा।",
+  "niche": "Romantic Drama / Comedy",
+  "language": "ne",
+  "characters": [
+    {
+      "code": "RAMESH",
+      "name": "रमेश",
+      "role": "Lead",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, young Nepali man, round head, messy black hair, simple blue jacket and grey trousers, bold black ink outline, expressive eyebrows, innocent playful look"
+    },
+    {
+      "code": "RITA",
+      "name": "रिता",
+      "role": "Lead",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, beautiful young Nepali woman, round head, long black hair, red kurta with dark leggings, bold black ink outline, graceful proud posture"
+    },
+    {
+      "code": "SUSMITA",
+      "name": "सुस्मिता",
+      "role": "Lead",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, young Nepali woman, round head, black hair in a long braid, simple green kurta with cream shawl, bold black ink outline, warm smile, clever sparkling eyes"
+    },
+    {
+      "code": "PANDIT",
+      "name": "पण्डितजी",
+      "role": "Support",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, elderly Nepali priest, shaved head with small tuft, white dhoti and orange shawl, red tika on forehead, bold black ink outline, calm expression"
+    }
+  ],
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "कुहिरोको पहिलो नजर",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "intriguing",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "के झोकमा गरेको माया साँचो हुन्छ?",
+          "visual": "Flat ink 2D: giant glowing question mark made of fog hovering over a confused RAMESH stickman, black ink linework, misty hills behind",
+          "dynamic": true,
+          "motionPrompt": "Fast push-in on the question mark as it splits into two silhouettes"
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "dramatic",
+          "characters": [
+            "RAMESH",
+            "RITA",
+            "SUSMITA"
+          ],
+          "narration": "एउटा झोक। दुई केटी।",
+          "visual": "Flat ink 2D: RAMESH in the middle, RITA in red on the left and SUSMITA in green on the right, both looking at him, white fog background",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 3,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "mysterious",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "एउटै मन्दिर, एउटै कुहिरो।",
+          "visual": "Flat ink 2D: wide shot of a lonely RITA stickman walking away into thick fog beside a stone Nepali temple, ink wash style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 4,
+          "cardType": "flat-scene",
+          "label": "दोलखा",
+          "emotion": "warmly",
+          "characters": [],
+          "narration": "दोलखाको यो चिसो हावामा",
+          "visual": "Flat ink 2D: Charikot bazaar covered in light morning fog, Gaurishankar snow peak glowing in the background, cool breeze lines",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 5,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [],
+          "narration": "एउटा अनौठो जादु छ।",
+          "visual": "Flat ink 2D: soft magical sparkles drifting through mountain fog over terraced hills",
+          "dynamic": true,
+          "motionPrompt": "Slow drift through the fog toward the temple steps"
+        },
+        {
+          "beat": 6,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "gently",
+          "characters": [],
+          "narration": "यहाँ कुहिरो मात्र होइन,",
+          "visual": "Flat ink 2D: thick fog curling around bazaar rooftops and prayer flags",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 7,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "gently",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "कहिलेकाहीँ मन पनि अल्झिन्छ।",
+          "visual": "Flat ink 2D: a heart drawn in ink tangled in fog strands, RAMESH small below looking up dreamily",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 8,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "admiring",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "भीमसेन मन्दिरको सिँढीमा रिता थिइन्।",
+          "visual": "Flat ink 2D: RITA stickman on Bhimsen temple stone stairs in morning fog, graceful pose",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 9,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "admiring",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रातो कुर्ता, हातमा पूजाको थाली।",
+          "visual": "Flat ink 2D: close shot of RITA in red kurta carrying a brass puja thali with flowers and incense",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 10,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curious",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "तल बाटोमा रमेश उभिएको थियो।",
+          "visual": "Flat ink 2D: RAMESH standing on the road below the temple stairs, looking up, fog around his feet",
+          "dynamic": true,
+          "motionPrompt": "Camera tilts up from RAMESH to RITA descending the stairs"
+        },
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amused",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "उसले रितालाई देख्यो, ट्वाल्ल पर्‍यो।",
+          "visual": "Flat ink 2D: RAMESH with jaw dropped and wide eyes, floating ink hearts, RITA blurred on the stairs behind",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 12,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "admiring",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिता यो पहाडकी सबैभन्दा सुन्दर फूल।",
+          "visual": "Flat ink 2D: RITA surrounded by a drawn ring of blooming flowers, soft red accent",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 13,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "excited",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "हे भगवान्! मान्छे यति राम्री पनि हुन्छ?",
+          "visual": "Flat ink 2D: RAMESH smiling to himself with hands on cheeks, hearts in his eyes",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 14,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "determined",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "आज जे पर्ला पर्ला, भनिदिन्छु।",
+          "visual": "Flat ink 2D: RAMESH clenching a fist with determined eyebrows, bold ink action lines",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "अधुरो प्रस्ताव",
+      "beats": [
+        {
+          "beat": 15,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [],
+          "narration": "दिउँसो सल्लाघारीको शान्त बाटो।",
+          "visual": "Flat ink 2D: quiet pine forest trail in daytime, tall pine trees, sunbeams through branches",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 16,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिता एक्लै हिँडिरहेकी थिइन्।",
+          "visual": "Flat ink 2D: RITA walking alone along the pine trail, side view",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 17,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "nervous",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "रमेश हस्याङफस्याङ गर्दै अगाडि आयो।",
+          "visual": "Flat ink 2D: RAMESH panting with sweat drops, blocking RITA’s path, motion lines behind him",
+          "dynamic": true,
+          "motionPrompt": "Quick zoom as RAMESH skids to a stop in front of RITA"
+        },
+        {
+          "beat": 18,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "nervous",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "हातमा एउटा रातो गुराँस।",
+          "visual": "Flat ink 2D: close-up of RAMESH’s trembling hand holding a red rhododendron flower",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 19,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "shyly",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "रिता... एकछिन सुन न।",
+          "visual": "Flat ink 2D: RAMESH blushing and scratching his head, RITA turning around",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 20,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "shyly",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "म तिमीलाई धेरै पहिलेदेखि मन पराउँछु।",
+          "visual": "Flat ink 2D: RAMESH with fast heartbeat lines drawn around his chest, blushing",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 21,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "तिमी आयौ भने जाडो पनि न्यानो।",
+          "visual": "Flat ink 2D: RAMESH imagining a warm glowing sun over a cold snowy Charikot landscape",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 22,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopeful",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "के तिमी मेरो जीवनसाथी बन्छ्यौ?",
+          "visual": "Flat ink 2D: RAMESH holding the flower out with both hands, RITA facing him, tense silence",
+          "dynamic": true,
+          "motionPrompt": "Slow push-in on RITA’s face as she hesitates"
+        },
+        {
+          "beat": 23,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "seriously",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिता गम्भीर भइन्, एकछिन चुप।",
+          "visual": "Flat ink 2D: close-up of RITA’s serious face, a single fog line crossing the frame",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 24,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "seriously",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रमेश, तिमी राम्रो मान्छे हौ।",
+          "visual": "Flat ink 2D: RITA speaking with a kind but firm gesture",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 25,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "firmly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "तर म मायाको चक्करमा पर्न चाहन्नँ।",
+          "visual": "Flat ink 2D: RITA pushing away floating ink hearts with her palm",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 26,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "firmly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "मेरो बाटो अर्कै छ। सरी।",
+          "visual": "Flat ink 2D: RITA pointing toward a different forked path in the forest",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 27,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "coldly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिता बाटो लागिन्।",
+          "visual": "Flat ink 2D: RITA walking away, back view, down the trail",
+          "dynamic": true,
+          "motionPrompt": "Camera lowers as the flower slips from RAMESH’s hand toward the ground"
+        },
+        {
+          "beat": 28,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "sadly",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "गुराँसको फूल भुइँमा खस्यो।",
+          "visual": "Flat ink 2D: red rhododendron falling in slow motion onto the pine needles, RAMESH’s feet beside it",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 29,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "bitterly",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रमेशको अनुहारमा निराशा र झोक।",
+          "visual": "Flat ink 2D: RAMESH’s face with downturned mouth, angry eyebrows and a small dark cloud above his head",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 3,
+      "title": "झोकको निर्णय",
+      "beats": [
+        {
+          "beat": 30,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [],
+          "narration": "साँझपख चोकको सानो चिया पसल।",
+          "visual": "Flat ink 2D: small roadside tea shop at dusk in the chowk, steaming kettle, warm lantern light",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 31,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "sulkily",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रमेश एक्लै रिसाएर चिया पिउँदै थियो।",
+          "visual": "Flat ink 2D: RAMESH sitting alone sulking over a glass of tea, steam shaped like a frown",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 32,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "सुस्मिता हँसिलो अनुहार लिएर आइपुगिन्।",
+          "visual": "Flat ink 2D: SUSMITA in green kurta walking to the tea shop with a bright smile",
+          "dynamic": true,
+          "motionPrompt": "Slide sideways as SUSMITA enters the frame and sits beside RAMESH"
+        },
+        {
+          "beat": 33,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "teasingly",
+          "characters": [
+            "SUSMITA",
+            "RAMESH"
+          ],
+          "narration": "के भयो रमेश? अनुहार कुहिरो जस्तै!",
+          "visual": "Flat ink 2D: SUSMITA teasing with a smile, a dark fog cloud drawn over RAMESH’s face",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 34,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "impulsively",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "झोकमा रमेशले सिधै आँखामा हेर्‍यो।",
+          "visual": "Flat ink 2D: close-up of RAMESH’s intense angry eyes staring straight ahead",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 35,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "impulsively",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "सुस्मिता, म तिमीलाई कस्तो लाग्छु?",
+          "visual": "Flat ink 2D: RAMESH leaning toward SUSMITA across the tea table, glass in hand",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 36,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "impulsively",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "के तिमी मसँग माया गर्छ्यौ?",
+          "visual": "Flat ink 2D: RAMESH pointing at his chest, then pointing toward her, ink motion lines",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 37,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "boldly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "म तिमीलाई प्रेम प्रस्ताव राख्दैछु!",
+          "visual": "Flat ink 2D: RAMESH standing and declaring, SUSMITA looking up in surprise, tea glass tipping",
+          "dynamic": true,
+          "motionPrompt": "Snap zoom to SUSMITA’s startled face, then soften"
+        },
+        {
+          "beat": 38,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "सुस्मिता एकछिन अचम्म परिन्।",
+          "visual": "Flat ink 2D: SUSMITA with wide eyes and raised eyebrows, a small exclamation mark above her head",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 39,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "तर आँखामा लुकेको माया झल्कियो।",
+          "visual": "Flat ink 2D: close-up of SUSMITA’s eyes with tiny glowing hearts in the pupils",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 40,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "shyly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "उनी लजाएर बिस्तारै मुस्कुराइन्।",
+          "visual": "Flat ink 2D: SUSMITA blushing and smiling, one hand covering her cheek",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 41,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "softly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "तिमीले कति समय लगायौ रमेश!",
+          "visual": "Flat ink 2D: SUSMITA playfully scolding with a tilted head and a small smile",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 42,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "म त यही दिनको पर्खाइमा थिएँ।",
+          "visual": "Flat ink 2D: SUSMITA looking at a calendar page drawn with ink hearts, wistful",
+          "dynamic": true,
+          "motionPrompt": "Gentle push-in as she says yes and RAMESH freezes"
+        },
+        {
+          "beat": 43,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "SUSMITA",
+            "RAMESH"
+          ],
+          "narration": "मलाई मञ्जुर छ रमेश।",
+          "visual": "Flat ink 2D: SUSMITA gently placing her hand over RAMESH’s hand on the table",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 44,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "dramatic",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "रमेशले सुस्मिताको हात थाम्यो।",
+          "visual": "Flat ink 2D: RAMESH holding SUSMITA’s hand, RAMESH still looking a bit dazed",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 45,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "mysterious",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "तर त्यो झोक सबैभन्दा मिठो यथार्थ बन्दैथियो।",
+          "visual": "Flat ink 2D: RAMESH’s thought bubble showing a dark cloud slowly turning into a golden heart",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 4,
+      "title": "गहिरो प्रेम र वाचा",
+      "beats": [
+        {
+          "beat": 46,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "समय बित्दै गयो। दिन बित्दै गए।",
+          "visual": "Flat ink 2D montage: calendar pages flipping over RAMESH and SUSMITA walking together, seasons changing",
+          "dynamic": true,
+          "motionPrompt": "Calendar pages flip fast, dissolving into the green hills"
+        },
+        {
+          "beat": 47,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "हरिया डाँडामा हात समातेर हिँडे।",
+          "visual": "Flat ink 2D: RAMESH and SUSMITA walking hand in hand across green rolling Dolakha hills",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 48,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "joyfully",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "चियाको चुस्कीसँगै हाँसो साटे।",
+          "visual": "Flat ink 2D: RAMESH and SUSMITA laughing over two tea glasses with rising steam hearts",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 49,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "joyfully",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "पानी पर्दा एउटै छातामा ओतिए।",
+          "visual": "Flat ink 2D: RAMESH and SUSMITA squeezed under one umbrella in the rain, close together",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 50,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "romantically",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "साँझ डाँडामा अस्ताउँदो घाम हेरे।",
+          "visual": "Flat ink 2D: silhouettes of RAMESH and SUSMITA sitting on a ridge watching an orange setting sun",
+          "dynamic": true,
+          "motionPrompt": "Slow pan across the sunset as RAMESH turns to SUSMITA"
+        },
+        {
+          "beat": 51,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "sincerely",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "सुस्मिता, तिमीले साँचो माया सिकायौ।",
+          "visual": "Flat ink 2D: RAMESH holding SUSMITA’s hand and speaking sincerely, glowing ink heart between them",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 52,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "sincerely",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "अब तिमी बिना बाँच्न सक्दिनँ।",
+          "visual": "Flat ink 2D: RAMESH with hand over heart, eyes closed, soft light",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 53,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "SUSMITA",
+            "RAMESH"
+          ],
+          "narration": "सुस्मिताले काँधमा टाउको राखिन्।",
+          "visual": "Flat ink 2D: SUSMITA resting her head on RAMESH’s shoulder at sunset",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 54,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "म तिमीलाई कहिल्यै छोड्दिनँ रमेश।",
+          "visual": "Flat ink 2D: SUSMITA smiling softly with eyes closed, a ribbon of ink linking her hand to his",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 55,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "lovingly",
+          "characters": [
+            "SUSMITA",
+            "RAMESH"
+          ],
+          "narration": "सँगै जिउने, सँगै मर्ने है?",
+          "visual": "Flat ink 2D: SUSMITA and RAMESH interlocking pinky fingers in front of the setting sun",
+          "dynamic": true,
+          "motionPrompt": "Close push-in on the interlocked fingers, glow pulsing"
+        },
+        {
+          "beat": 56,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "solemnly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "यो दोलखाको पहाड साक्षी छ।",
+          "visual": "Flat ink 2D: wide shot of the Dolakha mountains looming over the tiny couple, majestic",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 57,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "joyfully",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "पक्का! सँगै जिउने, सँगै मर्ने।",
+          "visual": "Flat ink 2D: RAMESH raising his hand in a confident promise, big smile",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 5,
+      "title": "रिताको पछुतो",
+      "beats": [
+        {
+          "beat": 58,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "suspensefully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "बजारको कुनाबाट रिताले देखिन्।",
+          "visual": "Flat ink 2D: RITA peeking from behind a bazaar corner wall, partially hidden",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 59,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "रमेश र सुस्मिता हाँसिरहेका थिए।",
+          "visual": "Flat ink 2D: RAMESH and SUSMITA walking through the bazaar laughing together, bright",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 60,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "regretfully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिताको अनुहारमा ईर्ष्या र पछुतो।",
+          "visual": "Flat ink 2D: close-up of RITA’s face with jealous furrowed brows and sad eyes, a green-tinted ink smudge",
+          "dynamic": true,
+          "motionPrompt": "Slow zoom on RITA’s eyes, then wipe to morning fog"
+        },
+        {
+          "beat": 61,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [],
+          "narration": "भोलिपल्ट बिहान पँधेरो नजिकको बाटो।",
+          "visual": "Flat ink 2D: village stone water tap (pandheri) beside a trail on a foggy morning",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 62,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रमेश एक्लै हिँडिरहेको थियो।",
+          "visual": "Flat ink 2D: RAMESH walking alone along the trail, whistling",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 63,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "RITA",
+            "RAMESH"
+          ],
+          "narration": "रिता अचानक उसको अगाडि आइन्।",
+          "visual": "Flat ink 2D: RITA stepping out of the fog directly in front of RAMESH, startled",
+          "dynamic": true,
+          "motionPrompt": "Quick push-in as RITA appears and RAMESH jumps back"
+        },
+        {
+          "beat": 64,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "softly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रमेश... मलाई माफ गर।",
+          "visual": "Flat ink 2D: RITA with lowered head and folded hands, apologetic",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 65,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "remorsefully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "तिम्रो मायाको गहिराइ बुझिनँ।",
+          "visual": "Flat ink 2D: RITA looking at the fallen red rhododendron flower memory in a thought bubble",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 66,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "remorsefully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "तिमीलाई अरूसँग देख्दा महसुस भयो।",
+          "visual": "Flat ink 2D: RITA’s thought bubble showing RAMESH and SUSMITA together, her hand on her chest",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 67,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "emotionally",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "म पनि तिमीलाई नै माया गर्दी रहेछु।",
+          "visual": "Flat ink 2D: RITA with teary eyes and a red heart glowing at her chest",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 68,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "pleadingly",
+          "characters": [
+            "RITA",
+            "RAMESH"
+          ],
+          "narration": "के अझै मेरो लागि ठाउँ छ?",
+          "visual": "Flat ink 2D: RITA looking up hopefully at RAMESH, hands clasped",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 69,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "stunned",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रमेश स्तब्ध भयो, एकछिन थामियो।",
+          "visual": "Flat ink 2D: RAMESH frozen with wide eyes and a question mark above his head",
+          "dynamic": true,
+          "motionPrompt": "Camera splits into two panels showing RITA and SUSMITA"
+        },
+        {
+          "beat": 70,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "conflicted",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "एकातिर रिताको सुन्दर अनुहार।",
+          "visual": "Flat ink 2D: thought bubble on the left with RITA’s glowing beautiful face in red tones",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 71,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "conflicted",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "अर्कोतिर सुस्मिताको माया सम्झियो।",
+          "visual": "Flat ink 2D: thought bubble on the right with SUSMITA’s warm smile in green tones",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 6,
+      "title": "धर्मसङ्कट र लुकामारी",
+      "beats": [
+        {
+          "beat": 72,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "panicked",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "उफ्! कस्तो धर्मसङ्कट!",
+          "visual": "Flat ink 2D: RAMESH holding his head with both hands, spiral lines around him",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 73,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "sincerely",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "सुस्मिता मेरो मुटु हो।",
+          "visual": "Flat ink 2D: RAMESH touching his chest, a green heart glowing inside",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 74,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "conflicted",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "तर रिता पनि पहिलो सपना थिई।",
+          "visual": "Flat ink 2D: RAMESH dreamily looking at a faded red dream cloud with RITA inside",
+          "dynamic": true,
+          "motionPrompt": "Gentle push-in as the dream cloud pulses"
+        },
+        {
+          "beat": 75,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "torn",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "दुवैलाई उत्तिकै माया गर्छु।",
+          "visual": "Flat ink 2D: RAMESH holding a red heart and a green heart, one in each hand, balancing",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 76,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "torn",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "कसैको मन दुखाउन सक्दिनँ।",
+          "visual": "Flat ink 2D: RAMESH shaking his head, sweat drop, both hearts wobbling",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 77,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "awkwardly",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "रमेश रितासँग मुस्कुराउँदै बोल्यो।",
+          "visual": "Flat ink 2D: RAMESH forcing a smile toward RITA, nervous",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 78,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "softly",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रिता, तिमीलाई बिर्सन सकेको थिइनँ।",
+          "visual": "Flat ink 2D: RAMESH looking down shyly with a half smile",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 79,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "awkwardly",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "म तयार छु।",
+          "visual": "Flat ink 2D: RITA’s face lighting up happily as RAMESH nods nervously",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 80,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "comically",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "फोनमा सुस्मितासँग गफ गर्दै थियो।",
+          "visual": "Flat ink 2D comic: RAMESH on his bed talking on a phone, speech bubble with a green heart",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 81,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "comically",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "त्यत्तिकैमा रिताको म्यासेज आयो।",
+          "visual": "Flat ink 2D comic: second phone pinging with a red heart message popping up, RAMESH panicking",
+          "dynamic": true,
+          "motionPrompt": "Quick shake of the phone screen as RAMESH scrambles"
+        },
+        {
+          "beat": 82,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "comically",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "हतार-हतार उसले रिप्लाई गर्‍यो।",
+          "visual": "Flat ink 2D comic: RAMESH typing with both thumbs at lightning speed, sweat drops flying",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 83,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "comically",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "दिउँसो चोकमा सुस्मितासँग भेट।",
+          "visual": "Flat ink 2D comic: RAMESH meeting SUSMITA at the chowk, both smiling in daylight",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 84,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "comically",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "बेलुका डाँडामा रितासँग गफ।",
+          "visual": "Flat ink 2D comic: RAMESH chatting with RITA on a hill at dusk, glancing around nervously",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 7,
+      "title": "सुस्मिताको चतुर आँखा",
+      "beats": [
+        {
+          "beat": 85,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "narrating",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रमेशले दुवै डुङ्गामा खुट्टा राख्यो।",
+          "visual": "Flat ink 2D comic: RAMESH standing with one foot in each of two wobbly boats on a pond, arms flailing",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 86,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "narrating",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "ऊ दुवैलाई खुसी राख्न चाहन्थ्यो।",
+          "visual": "Flat ink 2D: RAMESH juggling a red heart and a green heart, trying hard to smile",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 87,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "wisely",
+          "characters": [],
+          "narration": "तर भन्छन् नि—",
+          "visual": "Flat ink 2D: a wise old-style ink brush scroll unrolling with blank space",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 88,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "wisely",
+          "characters": [],
+          "narration": "माया र आगो कहिल्यै लुक्दैन।",
+          "visual": "Flat ink 2D: a flame and a heart both glowing through a cloth that tries to cover them",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 89,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "suspensefully",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "एकदिन सुस्मिताले दुवैलाई देखिन्।",
+          "visual": "Flat ink 2D: SUSMITA peeking from behind a tree, surprised, seeing something in the distance",
+          "dynamic": true,
+          "motionPrompt": "Slow push-in toward SUSMITA’s eyes as she notices"
+        },
+        {
+          "beat": 90,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "suspensefully",
+          "characters": [
+            "RAMESH",
+            "RITA"
+          ],
+          "narration": "रमेश रितासँग लुकेर हाँसिरहेको थियो।",
+          "visual": "Flat ink 2D: RAMESH and RITA laughing together behind a stone wall, seen from afar",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 91,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hurt",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "सुस्मिताको अनुहारमा चोट देखियो।",
+          "visual": "Flat ink 2D: SUSMITA’s face with sad eyes and a tiny crack drawn across a heart above her head",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 92,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "cleverly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "तर तुरुन्तै आँखामा चतुर चमक।",
+          "visual": "Flat ink 2D: close-up of SUSMITA’s eyes with a sharp clever sparkle, a small smirk",
+          "dynamic": true,
+          "motionPrompt": "Quick zoom to a sparkle in her eye with a ping"
+        },
+        {
+          "beat": 93,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "cleverly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "ए... कुरा यस्तो पो रहेछ!",
+          "visual": "Flat ink 2D: SUSMITA with finger on chin, eyebrow raised, realizing",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 94,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "determined",
+          "characters": [
+            "SUSMITA",
+            "RITA"
+          ],
+          "narration": "रिताले मेरो रमेशलाई खोस्दैछे?",
+          "visual": "Flat ink 2D: SUSMITA pointing toward RITA in the distance with a stern look",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 95,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "determined",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "रमेश सोझो छ, म हार्दिनँ।",
+          "visual": "Flat ink 2D: SUSMITA clenching her fist with a confident stance",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 96,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "cleverly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "अब एउटा जुक्ति लगाउनै पर्छ।",
+          "visual": "Flat ink 2D: SUSMITA with a glowing light bulb above her head, sly grin",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 8,
+      "title": "चतुर जुक्ति",
+      "beats": [
+        {
+          "beat": 97,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "urgently",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "साँझ सुस्मिता हतारिँदै दौडिइन्।",
+          "visual": "Flat ink 2D: SUSMITA running at dusk with motion lines, dramatic posture",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 98,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "urgently",
+          "characters": [
+            "SUSMITA",
+            "RAMESH"
+          ],
+          "narration": "आँखाभरि आँसु, रमेशको घर अगाडि।",
+          "visual": "Flat ink 2D: SUSMITA in front of RAMESH’s house with big teardrops, RAMESH at the door",
+          "dynamic": true,
+          "motionPrompt": "Handheld shake as she bursts in crying"
+        },
+        {
+          "beat": 99,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "panicked",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "रमेश! बर्बाद भयो!",
+          "visual": "Flat ink 2D: SUSMITA with hands raised, dramatic wailing, exclamation lines",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 100,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "alarmed",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "के भयो सुस्मिता? किन रोएको?",
+          "visual": "Flat ink 2D: RAMESH rushing toward her with a worried face",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 101,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tearfully",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "घरमा मेरो लागि केटा आएका छन्।",
+          "visual": "Flat ink 2D: SUSMITA’s thought bubble showing a stranger groom and elders at her house",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 102,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tearfully",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "बाबाले भोलि नै कुरा छिनिदिने!",
+          "visual": "Flat ink 2D: a calendar page marked tomorrow with a red circle and a stern father silhouette",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 103,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "desperately",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "आजै बिहे गरेनौँ भने...",
+          "visual": "Flat ink 2D: SUSMITA clutching RAMESH’s sleeve, big tears, dramatic",
+          "dynamic": true,
+          "motionPrompt": "Slow push-in as RAMESH’s face drops"
+        },
+        {
+          "beat": 104,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "desperately",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "म सधैँका लागि टाढा हुनेछु।",
+          "visual": "Flat ink 2D: SUSMITA slowly fading into fog, her hand reaching out",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 105,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tearfully",
+          "characters": [
+            "SUSMITA",
+            "RAMESH"
+          ],
+          "narration": "सँगै जिउने-मर्ने कसम बिर्सियौ?",
+          "visual": "Flat ink 2D: memory bubble of their sunset pinky promise, her tearful face in front",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 106,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "panicked",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रमेश पूर्ण रूपमा आत्तियो।",
+          "visual": "Flat ink 2D: RAMESH with wide panicked eyes, hair standing on end",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 107,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "panicked",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "सुस्मितालाई गुमाउने डरले सतायो।",
+          "visual": "Flat ink 2D: RAMESH’s thought bubble of the green heart shattering",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 108,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "panicked",
+          "characters": [
+            "RAMESH"
+          ],
+          "narration": "रिताको बारेमा सोच्ने समय नै थिएन।",
+          "visual": "Flat ink 2D: RITA’s small red heart floating away unnoticed behind RAMESH’s head",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 109,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "determined",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "होइन सुस्मिता! कसैको हुन दिन्नँ!",
+          "visual": "Flat ink 2D: RAMESH wiping her tears and standing tall, heroic pose",
+          "dynamic": true,
+          "motionPrompt": "Camera pulls back as he grabs her hand and runs"
+        },
+        {
+          "beat": 110,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "determined",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "हिँड, अहिले नै मन्दिरमा बिहे गरौँ!",
+          "visual": "Flat ink 2D: RAMESH pulling SUSMITA by the hand toward Bhimsen temple in the distance",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 111,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "slyly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "तान्दा सुस्मिताले पछाडि मुस्कुराइन्।",
+          "visual": "Flat ink 2D: being pulled forward, SUSMITA turns her head toward camera with a tiny sly smile",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 112,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "slyly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "विजयी, चतुर, मिठो मुस्कान।",
+          "visual": "Flat ink 2D: close-up of SUSMITA’s triumphant clever smile with a sparkle",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 9,
+      "title": "मन्दिरको सिन्दुर",
+      "beats": [
+        {
+          "beat": 113,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "solemnly",
+          "characters": [],
+          "narration": "दोलखा भीमसेन मन्दिरको प्राङ्गण।",
+          "visual": "Flat ink 2D: wide shot of Dolakha Bhimsen temple courtyard, bells, marigold garlands",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 114,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "solemnly",
+          "characters": [
+            "PANDIT"
+          ],
+          "narration": "घण्टी बज्यो, पण्डितजी मन्त्र पढ्दै।",
+          "visual": "Flat ink 2D: PANDIT chanting beside a small sacred fire, temple bell swinging",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 115,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "रमेशले सुस्मिताको सिउँदोमा सिन्दुर भर्‍यो।",
+          "visual": "Flat ink 2D: RAMESH applying red sindoor in the parting of SUSMITA’s hair, close and gentle",
+          "dynamic": true,
+          "motionPrompt": "Soft push-in as red powder falls and glows"
+        },
+        {
+          "beat": 116,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "tenderly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "गलामा पोते लगाइदियो।",
+          "visual": "Flat ink 2D: RAMESH fastening a pote necklace around SUSMITA’s neck",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 117,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "joyfully",
+          "characters": [
+            "RAMESH",
+            "SUSMITA",
+            "PANDIT"
+          ],
+          "narration": "दुवैको अनुहारमा अपार खुसी।",
+          "visual": "Flat ink 2D: bride and groom beaming, PANDIT blessing with raised hand, petals falling",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 118,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "suspensefully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "ठीक त्यही बेला रिता आइपुगिन्।",
+          "visual": "Flat ink 2D: RITA appearing at the bottom of the temple stairs, small and distant",
+          "dynamic": true,
+          "motionPrompt": "Camera tilts up the stairs following RITA as she climbs"
+        },
+        {
+          "beat": 119,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopefully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "हातमा सानो उपहार बोकेर।",
+          "visual": "Flat ink 2D: RITA holding a small wrapped gift box with a red ribbon, hopeful smile",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 120,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopefully",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "सिँढी चढ्दै टाढैबाट देखिन्।",
+          "visual": "Flat ink 2D: RITA climbing the stone stairs, looking up toward the courtyard",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 121,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "shocked",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "रमेश र सुस्मिता बेहुला-बेहुली!",
+          "visual": "Flat ink 2D: RITA’s point of view of RAMESH and SUSMITA as groom and bride under marigold garlands",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 122,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "heartbroken",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिताको खुट्टा त्यहीँ रोकियो।",
+          "visual": "Flat ink 2D: RITA frozen mid-step on the stairs, shock on her face",
+          "dynamic": true,
+          "motionPrompt": "Slow motion as the gift slips from her hands"
+        },
+        {
+          "beat": 123,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "heartbroken",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "हातबाट उपहार भुइँमा खस्यो।",
+          "visual": "Flat ink 2D: the gift box tumbling down the stone steps, ribbon trailing",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 124,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "heartbroken",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "आँखामा आँसु टिल्पिलाए।",
+          "visual": "Flat ink 2D: close-up of RITA’s eyes welling with a single tear, soft blue ink wash",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 125,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "joyfully",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "दुवै हात समाएर हाँस्दै ओर्लिए।",
+          "visual": "Flat ink 2D: RAMESH and SUSMITA descending the temple steps hand in hand, laughing, happy",
+          "dynamic": true,
+          "motionPrompt": "Camera slides across as couple passes RITA hidden in shadow"
+        },
+        {
+          "beat": 126,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "sadly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "रिता चुपचाप कुहिरोतिर फर्किइन्।",
+          "visual": "Flat ink 2D: RITA turning her back and walking silently toward thick fog",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 127,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "reflectively",
+          "characters": [],
+          "narration": "समयको मूल्य समयमै नबुझे...",
+          "visual": "Flat ink 2D: a large hourglass with sand running out, fog in the background",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 128,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "reflectively",
+          "characters": [],
+          "narration": "हातमा आएको खुसी फुत्किन्छ।",
+          "visual": "Flat ink 2D: a small glowing bird slipping out of open hands into the fog",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 129,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "SUSMITA"
+          ],
+          "narration": "सुस्मिताको बुद्धि र साँचो प्रेमले जित्यो।",
+          "visual": "Flat ink 2D: SUSMITA holding a green heart with a small crown, triumphant yet kind",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 130,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "RAMESH",
+            "SUSMITA"
+          ],
+          "narration": "रमेशले आफ्नो साँचो जीवनसाथी पायो।",
+          "visual": "Flat ink 2D: RAMESH and SUSMITA together under golden light, a ring of green hearts around them",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 131,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "somberly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "अनि रिता... फेरि एक्लै परिन्।",
+          "visual": "Flat ink 2D: lone RITA standing small in a huge empty foggy landscape",
+          "dynamic": true,
+          "motionPrompt": "Slow pull-back as fog swallows RITA"
+        },
+        {
+          "beat": 132,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "somberly",
+          "characters": [
+            "RITA"
+          ],
+          "narration": "दोलखाको चिसो कुहिरोमा हराउँदै।",
+          "visual": "Flat ink 2D: long shot of RITA as a tiny silhouette dissolving into thick fog, Gaurishankar faint behind",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 133,
+          "cardType": "flat-scene",
+          "label": "समाप्त",
+          "emotion": "softly",
+          "characters": [],
+          "narration": "समाप्त।",
+          "visual": "Flat ink 2D: screen fading slowly to black with soft white fog wisps and the Nepali text समाप्त in ink brush lettering",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-11-19T09:36:43.266Z"
+}

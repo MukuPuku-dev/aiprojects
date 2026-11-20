@@ -120,7 +120,7 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
     <label class="field-lbl">Active Episode
       <select id="episode-sel"></select>
     </label>
-    <button type="button" id="btn-toggle-new">＋ New Episode (Gemini)</button>
+    <button type="button" id="btn-toggle-new">＋ New Episode</button>
     <button type="button" id="btn-del-ep" class="hide" title="Delete custom episode">🗑 Delete Episode</button>
   </div>
 
@@ -191,8 +191,8 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
   <section class="panel hide" id="new-episode-panel">
     <div class="row" style="justify-content:space-between;margin-bottom:8px">
       <div>
-        <h2>✨ Create New Rapid-Beat Episode with Gemini</h2>
-        <div class="sub">Writes a complete multi-block script split into 5–10 word spoken clauses (1 illustration every 1.5–2.5s) in its own isolated episode folder.</div>
+        <h2>✨ Create New Rapid-Beat Episode</h2>
+        <div class="sub">Writes a complete multi-block script with a built-in viral opening hook split into 4–8 word spoken clauses (1 illustration every 1.5–2.5s) in its own isolated episode folder.</div>
       </div>
       <button type="button" id="btn-close-new">✕ Close</button>
     </div>
@@ -204,6 +204,19 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
     </div>
     <div class="row">
       <input type="text" id="topic-input" style="flex:1;min-width:240px" placeholder="Enter your English explainer topic...">
+      <select id="ep-ai-provider" title="AI Provider for generating new episodes">
+        <option value="gemini" selected>Gemini (API · Default)</option>
+        <option value="claude">Claude AI (Browser)</option>
+      </select>
+      <select id="ep-hook-style" title="Built-in 3–5s Opening Hook Style (written seamlessly into Beats 1–3)">
+        <option value="auto" selected>🎣 Auto Best Viral Hook</option>
+        <option value="myth-buster">❌ Myth-Buster Hook</option>
+        <option value="shock-contrast">⚡ Shocking Scale Contrast</option>
+        <option value="flash-forward">🔥 High-Stakes Flash-Forward</option>
+        <option value="paradox-question">❓ Visual Paradox Question</option>
+        <option value="hidden-secret">🗺 Hidden Clue / Secret</option>
+        <option value="none">No Extra Hook (Direct Start)</option>
+      </select>
       <select id="block-count-sel" title="Narration Blocks">
         <option value="3">3 Blocks × 6 beats (18 images · ~45s)</option>
         <option value="4" selected>4 Blocks × 8 beats (32 images · ~1m 20s)</option>
@@ -213,12 +226,33 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
       <button type="button" class="primary" id="btn-create-episode">✨ Generate Episode Script</button>
     </div>
     <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
-      <div class="sub" style="margin-bottom:6px"><b>Or paste your own written story</b> (any chapters/script — Gemini converts it into rapid Ink Explainer beats):</div>
+      <div class="sub" style="margin-bottom:6px"><b>Or paste your own written story</b> (any chapters/script — selected AI converts it into rapid Ink Explainer beats with your chosen opening hook):</div>
       <textarea id="paste-story-input" rows="4" style="width:100%" placeholder="Paste your full story text here..."></textarea>
       <div class="row" style="margin-top:6px">
         <button type="button" class="blue" id="btn-convert-story">📋 Convert Pasted Story into Episode</button>
       </div>
     </div>
+    <details id="audio-first-details" style="margin-top:12px;padding-top:10px;border-top:1px solid var(--line)">
+      <summary style="cursor:pointer;font-size:13px"><b>🎙 Optional: Audio-First Mode</b> <span class="sub">(Generate Voiceover First → Auto-Slice Beats from Exact Word Timestamps → Generate Matching Visual Prompts)</span></summary>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:7px">
+        <div class="row">
+          <input type="text" id="af-title" style="flex:1;min-width:220px" placeholder="Episode Title (e.g. Why Potatoes Grow Underground)">
+          <label class="pill-lbl" title="Target duration per visual beat when slicing real spoken timestamps">Beat Pace:
+            <select id="af-beat-sec">
+              <option value="1.8">1.8s (Fast)</option>
+              <option value="2.2" selected>2.2s (Balanced)</option>
+              <option value="2.8">2.8s (Relaxed)</option>
+              <option value="3.5">3.5s (Slow)</option>
+            </select>
+          </label>
+        </div>
+        <textarea id="af-script" rows="5" style="width:100%" placeholder="Paste your spoken narration script here (optional [emotion] tags supported). Separate paragraphs with a blank line to control narration blocks (~40–60s each)..."></textarea>
+        <div class="row">
+          <button type="button" class="ok" id="btn-audio-first">🎙→✨ Generate Audio First &amp; Build Timestamp-Locked Beats</button>
+        </div>
+        <div class="sub" id="af-status" style="color:var(--amber)"></div>
+      </div>
+    </details>
     <div class="sub" id="ep-gen-status" style="margin-top:6px"></div>
   </section>
 
@@ -308,12 +342,29 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
           <input type="number" id="tts-to-blk" min="1" value="4" style="width:54px;padding:2px 6px">
         </label>
         <label class="pill-lbl"><input type="checkbox" id="tts-only-missing" checked> Skip already generated</label>
+        <label class="pill-lbl" title="Choose how many Gemini TTS API calls to make (combines blocks and auto-slices audio back per block)">TTS Calls:
+          <select id="tts-call-count">
+            <option value="auto" selected>1 per block</option>
+            <option value="1">1 call total</option>
+            <option value="2">2 calls</option>
+            <option value="3">3 calls</option>
+            <option value="4">4 calls</option>
+          </select>
+        </label>
       </div>
       <span class="sub" id="tts-plan-badge" style="color:var(--amber);font-weight:700">TTS Plan: calculating…</span>
     </div>
     <div class="row" style="margin-top:8px;padding:8px 10px;background:var(--card2);border:1px solid var(--line);border-radius:9px;justify-content:space-between">
       <div class="row">
         <span class="sub"><b>🎞 Dynamic Beat-Pair Videos (Flow Frames):</b></span>
+        <label class="pill-lbl" title="Flow Frames video clip duration (4s is Flow minimum)">Length:
+          <select id="dyn-duration">
+            <option value="4s" selected>4s</option>
+            <option value="6s">6s</option>
+            <option value="8s">8s</option>
+            <option value="10s">10s</option>
+          </select>
+        </label>
         <button type="button" id="btn-ai-dyn" title="Let Gemini pick key consecutive beat pairs to animate">✨ AI Suggest Pairs</button>
         <button type="button" class="primary" id="btn-batch-dyn" title="Generate Flow Frames videos for all selected pairs whose Start & End images exist">🎬 Generate Selected Pair Videos</button>
         <button type="button" class="danger hide" id="btn-stop-dyn">⏹ Stop</button>
@@ -879,22 +930,24 @@ function renderCast() {
   $("#cast-summary").textContent = `(${readyCount}/${cast.length} references ready)`;
   $("#cast-grid").innerHTML = cast.map((c, idx) => {
     const saved = savedMap[c.code];
-    return `<div class="formula-card" style="display:flex;flex-direction:column;gap:6px">
+    return `<div class="formula-card" data-char-card="${esc(c.code)}" style="display:flex;flex-direction:column;gap:6px">
       <div class="top">
         <span class="badge">${esc(c.code)}</span>
         <b>${esc(c.name)}</b>
         <span class="sub">${esc(c.role || "")}</span>
       </div>
-      <div class="thumb-box" style="aspect-ratio:1/1;max-height:150px">
+      <div class="thumb-box" tabindex="0" data-drop-char="${esc(c.code)}" title="Click and press Ctrl+V to paste a custom character image, or drag &amp; drop an image file here" style="aspect-ratio:1/1;max-height:150px">
         ${saved?.imageUrl
           ? `<img src="${esc(saved.imageUrl)}" alt="${esc(c.name)}" style="object-fit:contain;background:#fff">`
-          : `<span>Not generated yet</span>`}
+          : `<span>Paste (Ctrl+V), drop, upload, or generate</span>`}
       </div>
       <label class="field-lbl">Character Reference Prompt
         <textarea rows="2" class="edit-char-prompt" data-cidx="${idx}">${esc(c.refPrompt || "")}</textarea>
       </label>
       <div class="btns">
-        <button type="button" class="blue" data-act="gen-one-char" data-code="${esc(c.code)}">✨ Generate in Flow</button>
+        <button type="button" class="blue" data-act="gen-one-char" data-code="${esc(c.code)}">✨ Flow</button>
+        <button type="button" data-act="paste-char" data-code="${esc(c.code)}" title="Paste custom character image from clipboard">📋 Paste</button>
+        <button type="button" data-act="upload-char" data-code="${esc(c.code)}" title="Upload custom character image file">📁 Upload</button>
       </div>
     </div>`;
   }).join("");
@@ -1150,10 +1203,31 @@ function updateExportRangeSummary() {
   badge.textContent = `⏱ ${fmtSec(sec / spd)} (${count} beats · ${spd}x)`;
 }
 
+function plannedTtsGroups() {
+  const planned = plannedTtsBlocks();
+  if (!planned.length) return [];
+  const rawChoice = $("#tts-call-count")?.value || "auto";
+  const targetCalls = rawChoice === "auto"
+    ? planned.length
+    : Math.max(1, Math.min(planned.length, Number(rawChoice) || planned.length));
+  const groups = [];
+  const baseSize = Math.floor(planned.length / targetCalls);
+  let extra = planned.length % targetCalls;
+  let cursor = 0;
+  for (let i = 0; i < targetCalls; i++) {
+    const size = baseSize + (extra > 0 ? 1 : 0);
+    if (extra > 0) extra--;
+    if (size > 0) groups.push(planned.slice(cursor, cursor + size));
+    cursor += size;
+  }
+  return groups;
+}
+
 function updateTtsPlanSummary() {
   const ep = inkExplainerActiveEpisode();
   const blocks = ep.blocks || [];
   const planned = plannedTtsBlocks();
+  const groups = plannedTtsGroups();
   const totalWords = planned.reduce((sum, blk) =>
     sum + blk.beats.reduce((w, b) => w + String(b.narration || "").trim().split(/\s+/).filter(Boolean).length, 0)
   , 0);
@@ -1165,14 +1239,54 @@ function updateTtsPlanSummary() {
   if (!planned.length) {
     badge.textContent = `TTS Plan: 0 requests needed · Blocks ${fromB}–${toB} length: ${rangeDur}`;
   } else {
-    const ids = planned.map(b => b.blockId).join(", ");
-    badge.textContent = `TTS Plan: ${planned.length} Gemini TTS request${planned.length === 1 ? "" : "s"} (Blocks ${ids} · ~${totalWords} words) · Blocks ${fromB}–${toB} length: ${rangeDur}`;
+    const groupDesc = groups.map(g => g.length === 1 ? `B${g[0].blockId}` : `B${g[0].blockId}–${g[g.length - 1].blockId}`).join(" + ");
+    badge.textContent = `TTS Plan: ${groups.length} Gemini TTS request${groups.length === 1 ? "" : "s"} (${groupDesc} · ~${totalWords} words) · Blocks ${fromB}–${toB} length: ${rangeDur}`;
+  }
+}
+
+async function generateMultiBlockVoiceover(groupBlocks, callIdx, totalCalls) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to generate TTS"); return false; }
+  if (groupBlocks.length === 1) return generateBlockVoiceover(groupBlocks[0].blockId, true);
+  const ep = inkExplainerActiveEpisode();
+  const label = `Blocks ${groupBlocks[0].blockId}–${groupBlocks[groupBlocks.length - 1].blockId}`;
+  $("#batch-status").textContent = `Synthesizing ${label} in TTS Call ${callIdx}/${totalCalls} (${state.voice} · ${activeLanguage()})…`;
+  try {
+    const r = await fetch("/api/explainer/multi-block-tts", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        episode: ep.id,
+        blocks: groupBlocks.map(b => ({ blockId: b.blockId, beats: b.beats })),
+        voice: state.voice,
+        emotionMode: state.emotionMode || "auto",
+        language: activeLanguage()
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok || !Array.isArray(j.blocks)) throw new Error(j.error || "Gemini multi-block TTS failed");
+    for (const item of j.blocks) {
+      assets.blockAudio[item.blockId] = {
+        url: `${item.audioUrl}?t=${Date.now()}`,
+        duration: item.duration,
+        timestamps: item.timestamps || [],
+        beatTimings: item.beatTimings || [],
+        voice: item.voice
+      };
+    }
+    renderAll();
+    $("#batch-status").textContent = `✓ ${label} aligned & sliced from TTS Call ${callIdx}/${totalCalls}.`;
+    return true;
+  } catch (err) {
+    $("#batch-status").textContent = `${label} TTS error: ${err.message}`;
+    return false;
   }
 }
 
 async function generateAllVoiceovers() {
   if (audioBatchBusy) return;
   const planned = plannedTtsBlocks();
+  const groups = plannedTtsGroups();
   if (!planned.length) {
     toast("All selected blocks already have voiceovers ✓");
     return;
@@ -1180,14 +1294,15 @@ async function generateAllVoiceovers() {
   const totalWords = planned.reduce((sum, blk) =>
     sum + blk.beats.reduce((w, b) => w + String(b.narration || "").trim().split(/\s+/).filter(Boolean).length, 0)
   , 0);
-  if (!confirm(`This will make ${planned.length} Gemini TTS request(s) (Blocks ${planned.map(b => b.blockId).join(", ")}, ~${totalWords} words total).\n\nProceed?`)) {
+  const groupDesc = groups.map(g => g.length === 1 ? `Block ${g[0].blockId}` : `Blocks ${g[0].blockId}–${g[g.length - 1].blockId}`).join(", ");
+  if (!confirm(`This will make ${groups.length} Gemini TTS request(s) (${groupDesc}, ~${totalWords} words total).\n\nProceed?`)) {
     return;
   }
   audioBatchBusy = true;
   $("#btn-gen-all-audio").disabled = true;
   try {
-    for (const blk of planned) {
-      const ok = await generateBlockVoiceover(blk.blockId, true);
+    for (let i = 0; i < groups.length; i++) {
+      const ok = await generateMultiBlockVoiceover(groups[i], i + 1, groups.length);
       if (!ok) break;
     }
     toast("Planned voiceovers complete ✓");
@@ -1380,17 +1495,20 @@ function parseGeminiJson(text) {
 }
 
 async function runEpisodeGenerator(geminiPrompt, btnEl, statusLabel) {
-  if (isFile) { toast("Open via http://127.0.0.1:8787 to call Gemini"); return; }
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to generate episodes"); return; }
+  const provider = $("#ep-ai-provider")?.value || "gemini";
+  const endpoint = provider === "claude" ? "/api/explainer/claude" : "/api/explainer/gemini";
+  const providerLabel = provider === "claude" ? "Claude AI (Browser)" : "Gemini";
   btnEl.disabled = true;
-  $("#ep-gen-status").textContent = statusLabel;
+  $("#ep-gen-status").textContent = statusLabel.replace(/Gemini/g, providerLabel);
   try {
-    const r = await fetch("/api/explainer/gemini", {
+    const r = await fetch(endpoint, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt: geminiPrompt })
     });
     const j = await r.json();
-    if (!r.ok || !j.ok) throw new Error(j.error || "Gemini failed");
+    if (!r.ok || !j.ok) throw new Error(j.error || `${providerLabel} failed`);
     const parsed = parseGeminiJson(j.text);
     const sr = await fetch("/api/explainer/episode", {
       method: "POST",
@@ -1403,9 +1521,9 @@ async function runEpisodeGenerator(geminiPrompt, btnEl, statusLabel) {
     saveState();
     stopPlayback();
     await refreshAssets(true);
-    $("#ep-gen-status").textContent = `✓ Created episode "${sj.episode.title}" (${inkExplainerActiveBeats().length} beats).`;
+    $("#ep-gen-status").textContent = `✓ Created episode "${sj.episode.title}" (${inkExplainerActiveBeats().length} beats) via ${providerLabel}${j.account ? ` (${j.account})` : ""}.`;
     $("#new-episode-panel").classList.add("hide");
-    toast("New episode created ✓");
+    toast(`New episode created via ${providerLabel} ✓`);
   } catch (err) {
     $("#ep-gen-status").textContent = `Error: ${err.message}`;
   } finally {
@@ -1419,8 +1537,9 @@ async function createGeminiEpisode() {
   const totalSel = Number($("#block-count-sel").value || 4);
   const perBlock = totalSel === 3 ? 8 : totalSel === 8 ? 12 : 10;
   const lang = $("#lang-sel")?.value || state.language || "en";
+  const hookStyle = $("#ep-hook-style")?.value || "auto";
   await runEpisodeGenerator(
-    buildInkEpisodeGeneratorPrompt(topic, totalSel, perBlock, lang),
+    buildInkEpisodeGeneratorPrompt(topic, totalSel, perBlock, lang, hookStyle),
     $("#btn-create-episode"),
     `Writing ${totalSel * perBlock} rapid visual beats (${lang === "ne" ? "Nepali" : "English"}) with Gemini…`
   );
@@ -1430,11 +1549,190 @@ async function createEpisodeFromPastedStory() {
   const story = ($("#paste-story-input").value || "").trim();
   if (story.length < 40) { toast("Paste your story text first"); return; }
   const lang = $("#lang-sel")?.value || state.language || "en";
+  const hookStyle = $("#ep-hook-style")?.value || "auto";
   await runEpisodeGenerator(
-    buildInkStoryToEpisodePrompt(story, lang),
+    buildInkStoryToEpisodePrompt(story, lang, hookStyle),
     $("#btn-convert-story"),
     "Converting your story into rapid 4–8 word Ink Explainer beats with Gemini…"
   );
+}
+
+function splitScriptIntoBlocks(rawScript) {
+  const paras = String(rawScript || "").trim().split(/\n\s*\n+/).map(s => s.replace(/\s+/g, " ").trim()).filter(Boolean);
+  const out = [];
+  for (const p of paras) {
+    const words = p.split(/\s+/);
+    if (words.length <= 105) {
+      out.push(p);
+    } else {
+      for (let i = 0; i < words.length; i += 85) {
+        out.push(words.slice(i, i + 85).join(" "));
+      }
+    }
+  }
+  return out;
+}
+
+function sliceTimestampsIntoBeats(rawTimestamps, totalDur, targetSec = 2.2, fallbackText = "") {
+  const words = filterSpokenTimestampWords(rawTimestamps);
+  if (!words.length) {
+    const clean = String(fallbackText || "").replace(/\[[^\]]+\]/g, " ").trim().split(/\s+/).filter(Boolean);
+    const chunkCount = Math.max(1, Math.round((totalDur || 10) / targetSec));
+    const per = Math.max(1, Math.ceil(clean.length / chunkCount));
+    const out = [];
+    for (let i = 0; i < clean.length; i += per) {
+      const s = (i / Math.max(1, clean.length)) * totalDur;
+      const e = Math.min(totalDur, ((i + per) / Math.max(1, clean.length)) * totalDur);
+      out.push({ startSec: Math.round(s * 100) / 100, endSec: Math.round(e * 100) / 100, durationSec: Math.round(Math.max(0.2, e - s) * 100) / 100, narration: clean.slice(i, i + per).join(" ") });
+    }
+    return out;
+  }
+  const beats = [];
+  let startIdx = 0;
+  while (startIdx < words.length) {
+    const startSec = beats.length === 0 ? 0 : Number(words[startIdx].start);
+    let endIdx = startIdx;
+    while (endIdx < words.length - 1) {
+      const wEnd = Number(words[endIdx].end);
+      const elapsed = wEnd - startSec;
+      const wText = String(words[endIdx].word ?? words[endIdx].text ?? "").trim();
+      const isBreak = /[.।?!,;]$/.test(wText);
+      const nextStart = Number(words[endIdx + 1]?.start ?? wEnd);
+      const pauseAfter = nextStart - wEnd;
+      if (elapsed >= targetSec * 1.35) break;
+      if (elapsed >= targetSec * 0.7 && (isBreak || pauseAfter >= 0.22)) break;
+      if (elapsed >= targetSec && (words.length - 1 - endIdx) >= 2) break;
+      endIdx++;
+    }
+    if (words.length - 1 - endIdx === 1) endIdx = words.length - 1;
+    const isLast = endIdx >= words.length - 1;
+    const endSec = isLast ? totalDur : Number(words[endIdx + 1]?.start ?? words[endIdx].end);
+    const narration = words.slice(startIdx, endIdx + 1).map(w => String(w.word ?? w.expected ?? w.text ?? "").trim()).filter(Boolean).join(" ");
+    beats.push({
+      startSec: Math.round(startSec * 100) / 100,
+      endSec: Math.round(Math.max(startSec + 0.2, endSec) * 100) / 100,
+      durationSec: Math.round(Math.max(0.2, endSec - startSec) * 100) / 100,
+      narration
+    });
+    startIdx = endIdx + 1;
+  }
+  return beats;
+}
+
+async function createAudioFirstEpisode() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to use Audio-First Mode"); return; }
+  const title = ($("#af-title").value || "").trim() || "Audio-First Episode";
+  const script = ($("#af-script").value || "").trim();
+  if (script.length < 25) { toast("Paste your spoken narration script first"); return; }
+  const targetSec = Number($("#af-beat-sec")?.value || 2.2);
+  const lang = /[\u0900-\u097F]/.test(script) ? "ne" : ($("#lang-sel")?.value || state.language || "en");
+  const blocksText = splitScriptIntoBlocks(script);
+  const epSlug = (title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 48) || `audio-ep-${Date.now().toString(36)}`);
+  const provider = $("#ep-ai-provider")?.value || "gemini";
+  const endpoint = provider === "claude" ? "/api/explainer/claude" : "/api/explainer/gemini";
+  const providerLabel = provider === "claude" ? "Claude AI (Browser)" : "Gemini";
+
+  const btn = $("#btn-audio-first");
+  btn.disabled = true;
+  const stEl = $("#af-status");
+  try {
+    const timedBlocks = [];
+    let globalBeat = 0;
+    for (let i = 0; i < blocksText.length; i++) {
+      const blkId = i + 1;
+      stEl.textContent = `Step 1/2: Generating voiceover & word timestamps for Block ${blkId}/${blocksText.length}…`;
+      const tr = await fetch("/api/explainer/block-tts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project: PROJECT_ID,
+          episode: epSlug,
+          blockId: blkId,
+          beats: [{ beat: 1, narration: blocksText[i] }],
+          prompt: blocksText[i],
+          voice: state.voice,
+          emotionMode: state.emotionMode || "auto",
+          language: lang
+        })
+      });
+      const tj = await tr.json();
+      if (!tr.ok || !tj.ok) throw new Error(tj.error || `Block ${blkId} TTS failed`);
+      const sliced = sliceTimestampsIntoBeats(tj.timestamps || [], tj.duration || 10, targetSec, blocksText[i]);
+      const beatsWithNum = sliced.map(b => ({ ...b, beat: ++globalBeat }));
+      await fetch("/api/explainer/update-block-timings", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project: PROJECT_ID,
+          episode: epSlug,
+          blockId: blkId,
+          beatTimings: beatsWithNum.map(b => ({ beat: b.beat, startSec: b.startSec, endSec: b.endSec, durationSec: b.durationSec }))
+        })
+      });
+      timedBlocks.push({ blockId: blkId, title: `Block ${blkId}`, beats: beatsWithNum });
+    }
+
+    stEl.textContent = `Step 2/2: Audio ready (${globalBeat} exact timestamp beats). Designing visuals via ${providerLabel}…`;
+    const vr = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ prompt: buildVisualsForTimedBeatsPrompt(title, lang, timedBlocks) })
+    });
+    const vj = await vr.json();
+    if (!vr.ok || !vj.ok) throw new Error(vj.error || `${providerLabel} visual generation failed`);
+    const parsed = parseGeminiJson(vj.text);
+
+    // Guarantee exact beat count & original spoken narration from our audio timestamps
+    const aiBeatMap = new Map();
+    (parsed?.blocks || []).forEach(blk => (blk.beats || []).forEach(b => aiBeatMap.set(Number(b.beat), b)));
+    const finalEpisode = {
+      id: epSlug,
+      title: parsed?.title || title,
+      subtitle: parsed?.subtitle || "Audio-First Rapid-Beat Explainer",
+      language: lang,
+      hook: parsed?.hook || title,
+      niche: parsed?.niche || "Explainer",
+      characters: Array.isArray(parsed?.characters) ? parsed.characters : [],
+      blocks: timedBlocks.map(tb => ({
+        blockId: tb.blockId,
+        title: (parsed?.blocks || []).find(b => Number(b.blockId) === tb.blockId)?.title || tb.title,
+        beats: tb.beats.map(b => {
+          const ai = aiBeatMap.get(b.beat) || {};
+          return {
+            beat: b.beat,
+            cardType: INK_EXPLAINER_CARD_STYLES[ai.cardType] ? ai.cardType : "flat-scene",
+            label: String(ai.label || "").trim(),
+            emotion: "",
+            characters: Array.isArray(ai.characters) ? ai.characters : [],
+            narration: b.narration,
+            visual: String(ai.visual || `2D Ink Explainer scene illustrating: ${b.narration}`).trim(),
+            dynamic: Boolean(ai.dynamic),
+            motionPrompt: String(ai.motionPrompt || "").trim()
+          };
+        })
+      }))
+    };
+
+    const sr = await fetch("/api/explainer/episode", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ project: PROJECT_ID, episode: finalEpisode })
+    });
+    const sj = await sr.json();
+    if (!sr.ok || !sj.ok || !sj.episode) throw new Error(sj.error || "Could not save audio-first episode");
+    state.episodeId = sj.episode.id;
+    saveState();
+    stopPlayback();
+    await refreshAssets(true);
+    stEl.textContent = `✓ Audio-First episode "${sj.episode.title}" ready (${globalBeat} exact timestamp beats + audio already saved)!`;
+    $("#new-episode-panel").classList.add("hide");
+    toast(`Audio-First episode ready (${globalBeat} beats) ✓`);
+  } catch (err) {
+    stEl.textContent = `Audio-First error: ${err.message}`;
+    toast(`Audio-First error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
 }
 
 async function deleteActiveEpisode() {
@@ -2840,10 +3138,98 @@ $("#topic-chips").addEventListener("click", e => {
 });
 $("#btn-create-episode").addEventListener("click", createGeminiEpisode);
 $("#btn-convert-story").addEventListener("click", createEpisodeFromPastedStory);
+$("#btn-audio-first").addEventListener("click", createAudioFirstEpisode);
 $("#btn-gen-cast").addEventListener("click", () => generateEpisodeCharacters());
-$("#cast-grid").addEventListener("click", e => {
-  const b = e.target.closest('button[data-act="gen-one-char"]');
-  if (b) generateEpisodeCharacters([b.dataset.code]);
+async function uploadCharacterImageBlob(code, blobOrFile) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to save character images"); return; }
+  if (!code || !blobOrFile || !blobOrFile.size) return;
+  const ep = inkExplainerActiveEpisode();
+  const cObj = (ep.characters || []).find(c => c.code === code) || { code, name: code, refPrompt: "" };
+  $("#cast-status").textContent = `Saving custom character image for ${cObj.name} (${code})…`;
+  try {
+    const qs = new URLSearchParams({
+      project: PROJECT_ID,
+      episode: ep.id,
+      code: cObj.code,
+      name: cObj.name || cObj.code,
+      refPrompt: cObj.refPrompt || ""
+    });
+    const r = await fetch(`/api/explainer/upload-character-image?${qs.toString()}`, {
+      method: "POST",
+      headers: { "Content-Type": blobOrFile.type || "image/png" },
+      body: blobOrFile
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Upload failed");
+    await refreshAssets(true);
+    $("#cast-status").textContent = `✓ Custom character "${cObj.name}" saved! Flow will automatically upload & attach it as a reference during Step 2.`;
+    toast(`Character "${cObj.name}" saved ✓`);
+  } catch (err) {
+    $("#cast-status").textContent = `Character save failed: ${err.message}`;
+    toast(`Save failed: ${err.message}`);
+  }
+}
+
+$("#cast-grid").addEventListener("click", async e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const act = b.dataset.act;
+  const code = b.dataset.code;
+  if (act === "gen-one-char") {
+    generateEpisodeCharacters([code]);
+  } else if (act === "paste-char") {
+    try {
+      if (navigator.clipboard?.read) {
+        const items = await navigator.clipboard.read();
+        for (const item of items) {
+          const imgType = item.types.find(t => t.startsWith("image/"));
+          if (imgType) {
+            const blob = await item.getType(imgType);
+            await uploadCharacterImageBlob(code, blob);
+            return;
+          }
+        }
+        toast("No image found in clipboard. Copy an image first or click the preview box and press Ctrl+V.");
+      } else {
+        const box = document.querySelector(`[data-drop-char="${CSS.escape(code)}"]`);
+        box?.focus();
+        toast("Click the character box and press Ctrl+V to paste");
+      }
+    } catch {
+      const box = document.querySelector(`[data-drop-char="${CSS.escape(code)}"]`);
+      box?.focus();
+      toast("Click the character box and press Ctrl+V to paste");
+    }
+  } else if (act === "upload-char") {
+    const picker = document.createElement("input");
+    picker.type = "file";
+    picker.accept = "image/*";
+    picker.onchange = () => {
+      if (picker.files?.[0]) uploadCharacterImageBlob(code, picker.files[0]);
+    };
+    picker.click();
+  }
+});
+$("#cast-grid").addEventListener("paste", async e => {
+  const box = e.target.closest("[data-drop-char], [data-char-card]");
+  if (!box) return;
+  const code = box.dataset.dropChar || box.dataset.charCard;
+  const file = [...(e.clipboardData?.files || [])].find(f => f.type.startsWith("image/"));
+  if (!code || !file) return;
+  e.preventDefault();
+  await uploadCharacterImageBlob(code, file);
+});
+$("#cast-grid").addEventListener("dragover", e => {
+  if (e.target.closest("[data-drop-char], [data-char-card]")) e.preventDefault();
+});
+$("#cast-grid").addEventListener("drop", async e => {
+  const box = e.target.closest("[data-drop-char], [data-char-card]");
+  if (!box) return;
+  const code = box.dataset.dropChar || box.dataset.charCard;
+  const file = [...(e.dataTransfer?.files || [])].find(f => f.type.startsWith("image/"));
+  if (!code || !file) return;
+  e.preventDefault();
+  await uploadCharacterImageBlob(code, file);
 });
 $("#cast-grid").addEventListener("change", async e => {
   if (!e.target.classList.contains("edit-char-prompt")) return;
@@ -2940,7 +3326,7 @@ async function generateSingleFramePair(fromBeat) {
         fromBeat,
         toBeat: fromBeat + 1,
         aspect: state.ar,
-        duration: "4s",
+        duration: $("#dyn-duration")?.value || "4s",
         prompt: beat.motionPrompt || `Smooth continuous 2D ink-explainer animation transitioning naturally from (${beat.visual}) to the end frame.`
       })
     });
@@ -2997,7 +3383,7 @@ async function generateBatchDynamicPairs() {
         project: PROJECT_ID,
         episode: ep.id,
         aspect: state.ar,
-        duration: "4s",
+        duration: $("#dyn-duration")?.value || "4s",
         pairs
       })
     });
@@ -3105,6 +3491,7 @@ $("#export-to-beat").addEventListener("input", () => { updateExportRangeSummary(
 $("#tts-from-blk").addEventListener("input", updateTtsPlanSummary);
 $("#tts-to-blk").addEventListener("input", updateTtsPlanSummary);
 $("#tts-only-missing").addEventListener("change", updateTtsPlanSummary);
+$("#tts-call-count").addEventListener("change", updateTtsPlanSummary);
 $("#publish-panel").addEventListener("click", async e => {
   const b = e.target.closest("button[data-copy-target]");
   if (!b) return;

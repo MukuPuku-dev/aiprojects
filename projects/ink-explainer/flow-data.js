@@ -380,7 +380,20 @@ function inkExplainerCaptionFor(index) {
   return `"${ep.title}" — ${b.narration}\n\n#InkExplainer #StickmanExplainer #HumanHistory #VisualStorytelling`;
 }
 
-function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 10, language = "en") {
+function openingHookRule(hookStyle = "auto") {
+  const styles = {
+    auto: "OPENING HOOK (BEATS 1–3): Start Block 1 with a scroll-stopping 3–5 second viral retention hook (choose the strongest of Myth-Buster, Shocking Scale Contrast, High-Stakes Flash-Forward, Visual Paradox Question, or Hidden Map/Prop Secret) that hooks the viewer immediately and flows seamlessly into Beat 4. Mark Beat 1 with \"dynamic\": true and a punchy 'motionPrompt' bridging Beat 1 -> Beat 2.",
+    "myth-buster": "OPENING HOOK (BEATS 1–3 · MYTH-BUSTER): Open Block 1 with a bold 'red-x' beat shattering a common assumption ('Everyone thinks X—that's backwards'), then snap into the real twist in Beat 3. Mark Beat 1 with \"dynamic\": true and a punchy 'motionPrompt' bridging Beat 1 -> Beat 2.",
+    "shock-contrast": "OPENING HOOK (BEATS 1–3 · SHOCKING SCALE CONTRAST): Open Block 1 with a 'split-compare' beat contrasting a tiny underdog against an overwhelming giant force, locking curiosity immediately. Mark Beat 1 with \"dynamic\": true and a punchy 'motionPrompt' bridging Beat 1 -> Beat 2.",
+    "flash-forward": "OPENING HOOK (BEATS 1–3 · HIGH-STAKES FLASH-FORWARD): Drop straight into the most dangerous or dramatic turning point in Beats 1–2, then rewind cleanly into the start of the story on Beat 3. Mark Beat 1 with \"dynamic\": true and a punchy 'motionPrompt' bridging Beat 1 -> Beat 2.",
+    "paradox-question": "OPENING HOOK (BEATS 1–3 · VISUAL PARADOX QUESTION): Open with an intriguing 'whiteboard-prop' visual contradiction and a burning question viewers must stay to answer. Mark Beat 1 with \"dynamic\": true and a punchy 'motionPrompt' bridging Beat 1 -> Beat 2.",
+    "hidden-secret": "OPENING HOOK (BEATS 1–3 · HIDDEN DETAIL / SECRET): Open with a 'map-diagram' or close-up prop pointing out an overlooked clue almost nobody notices, then pull back into the story. Mark Beat 1 with \"dynamic\": true and a punchy 'motionPrompt' bridging Beat 1 -> Beat 2.",
+    none: "Start directly with the story's natural opening without adding a separate teaser hook."
+  };
+  return styles[hookStyle] || styles.auto;
+}
+
+function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 10, language = "en", hookStyle = "auto") {
   const blocks = Math.max(2, Math.min(20, Number(blockCount) || 4));
   const perBlock = Math.max(6, Math.min(14, Number(beatsPerBlock) || 10));
   const cleanTopic = String(topic || "").trim() || "Why Medieval Peasants Actually Had More Free Time Than You";
@@ -391,10 +404,11 @@ function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 1
     `Organize the episode into ${blocks} continuous narration blocks (each ~35-50 seconds of speech so TTS stays well within output limits), and break EACH block into ${perBlock} rapid visual beats (1 image every 1.2–2.2 seconds).`,
     "",
     "CRITICAL RULES:",
-    "1. NEVER put a long multi-clause sentence on one single beat! Split every action into its own beat of ONLY 4 to 8 words (e.g. 'He placed a wooden box in her hands,' = Beat 1; 'Open it on the train,' = Beat 2; 'and watched the van disappear.' = Beat 3).",
-    "2. Keep 'visual' descriptions in clear English for Google Flow 2D ink-cartoon generation even when 'narration' is in Nepali.",
-    "3. Mix the 5 Ink Explainer visual card types across beats ('whiteboard-prop', 'split-compare', 'red-x', 'map-diagram', 'flat-scene').",
-    "4. For roughly 15–25% of key consecutive beat transitions (especially early opening hooks and major action/turning-point moments, WITHOUT overlapping the same beat in two adjacent transitions), set \"dynamic\": true and \"motionPrompt\": \"short English camera & character motion bridging this frame to the next beat\" on the starting beat of the pair.",
+    "1. " + openingHookRule(hookStyle),
+    "2. NEVER put a long multi-clause sentence on one single beat! Split every action into its own beat of ONLY 4 to 8 words (e.g. 'He placed a wooden box in her hands,' = Beat 1; 'Open it on the train,' = Beat 2; 'and watched the van disappear.' = Beat 3).",
+    "3. Keep 'visual' descriptions in clear English for Google Flow 2D ink-cartoon generation even when 'narration' is in Nepali.",
+    "4. Mix the 5 Ink Explainer visual card types across beats ('whiteboard-prop', 'split-compare', 'red-x', 'map-diagram', 'flat-scene').",
+    "5. For roughly 15–25% of key consecutive beat transitions (especially early opening hooks and major action/turning-point moments, WITHOUT overlapping the same beat in two adjacent transitions), set \"dynamic\": true and \"motionPrompt\": \"short English camera & character motion bridging this frame to the next beat\" on the starting beat of the pair.",
     "",
     "Return ONLY valid raw JSON (no markdown fences, no commentary) using this exact schema:",
     "{",
@@ -430,7 +444,7 @@ function buildInkEpisodeGeneratorPrompt(topic, blockCount = 4, beatsPerBlock = 1
   ].join("\n");
 }
 
-function buildInkStoryToEpisodePrompt(storyText, language = "en") {
+function buildInkStoryToEpisodePrompt(storyText, language = "en", hookStyle = "auto") {
   const cleanStory = String(storyText || "").trim();
   const isNepali = language === "ne" || /[\u0900-\u097F]/.test(cleanStory);
   return [
@@ -438,11 +452,12 @@ function buildInkStoryToEpisodePrompt(storyText, language = "en") {
     "Convert the user's FULL written story below into a rapid-beat Ink Explainer episode JSON without losing any plot points, actions, or emotional beats.",
     "",
     "CRITICAL RULES:",
-    "1. Group chapters/sections into narration 'blocks' (~70-110 words per block so Gemini TTS stays fast and never hits output limits).",
-    "2. Break every sentence into short 4 to 8 word visual beats (~1 image every 1.5s) — NEVER put a full multi-action sentence on one image (e.g., placing a box, saying open it on the train, and watching the van disappear MUST be 3 separate beats!).",
-    "3. Write 'visual' prompts in English for Google Flow, keeping 'narration' in the story's language (" + (isNepali ? "Nepali Devanagari" : "English") + ").",
-    "4. For roughly 15–25% of high-impact non-overlapping consecutive beat pairs (early hooks, dramatic action, key emotional shifts), include \"dynamic\": true and \"motionPrompt\": \"short English motion prompt bridging to the next beat\" on the first beat of the pair.",
-    "5. Return ONLY valid raw JSON (no markdown fences) matching this exact schema (define 2-4 recurring characters with 'refPrompt' and tag each beat's 'characters' array + optional 'emotion' delivery cue):",
+    "1. " + openingHookRule(hookStyle),
+    "2. Group chapters/sections into narration 'blocks' (~70-110 words per block so Gemini TTS stays fast and never hits output limits).",
+    "3. Break every sentence into short 4 to 8 word visual beats (~1 image every 1.5s) — NEVER put a full multi-action sentence on one image (e.g., placing a box, saying open it on the train, and watching the van disappear MUST be 3 separate beats!).",
+    "4. Write 'visual' prompts in English for Google Flow, keeping 'narration' in the story's language (" + (isNepali ? "Nepali Devanagari" : "English") + ").",
+    "5. For roughly 15–25% of high-impact non-overlapping consecutive beat pairs (early hooks, dramatic action, key emotional shifts), include \"dynamic\": true and \"motionPrompt\": \"short English motion prompt bridging to the next beat\" on the first beat of the pair.",
+    "6. Return ONLY valid raw JSON (no markdown fences) matching this exact schema (define 2-4 recurring characters with 'refPrompt' and tag each beat's 'characters' array + optional 'emotion' delivery cue):",
     `{ "id": "kebab-case-slug", "title": "Story Title", "subtitle": "Story Subtitle", "language": "${isNepali ? "ne" : "en"}", "hook": "One-sentence hook", "niche": "Story Genre", "characters": [{ "code": "LEAD1", "name": "Name", "role": "Lead", "refPrompt": "2D flat stickman explainer character full-body on pure white background..." }], "blocks": [{ "blockId": 1, "title": "Chapter 1", "beats": [{ "beat": 1, "cardType": "flat-scene", "label": "", "emotion": "warmly", "characters": ["LEAD1"], "narration": "4-8 word spoken clause", "visual": "...", "dynamic": true, "motionPrompt": "Smooth camera push as character reacts" }] }] }`,
     "",
     "USER STORY:",
@@ -492,5 +507,24 @@ function buildOpeningHooksPrompt(episode) {
     "2. Write 'visual' and 'motionPrompt' in clear English for 2D Ink Explainer stickman generation.",
     "3. Mark the first beat of each 2-beat hook with \"dynamic\": true and a punchy 'motionPrompt' connecting Beat 1 -> Beat 2.",
     '4. Return ONLY valid raw JSON: { "hooks": [ { "style": "1. Myth-Buster", "whyItWorks": "Breaks viewer assumption in 2 seconds", "hookText": "...", "beats": [ { "cardType": "red-x", "label": "", "emotion": "dramatically", "narration": "...", "visual": "...", "dynamic": true, "motionPrompt": "..." }, { "cardType": "flat-scene", "label": "", "emotion": "excitedly", "narration": "...", "visual": "..." } ] } ] }'
+  ].join("\n");
+}
+
+function buildVisualsForTimedBeatsPrompt(title, language = "en", timedBlocks = []) {
+  const isNe = language === "ne";
+  return [
+    `You are an expert 2D Ink Explainer visual storyboard director for "${title || "Explainer Episode"}".`,
+    "The voiceover audio has ALREADY been recorded and split into exact timed visual beats below.",
+    "Your job is to design the 2D stickman Ink Explainer visuals for EVERY SINGLE beat below WITHOUT adding, removing, merging, or altering any beat's 'beat' number or 'narration' text.",
+    "",
+    "CRITICAL RULES:",
+    "1. Keep the exact same 'blocks' count, exact same 'beat' numbers, and exact same 'narration' text for every beat.",
+    "2. Define 2-4 recurring 'characters' (with concise English 'refPrompt' on pure white background) and tag each beat's 'characters' array.",
+    "3. Write every beat's 'visual' description in clear English for Google Flow 2D ink-cartoon generation, mixing the 5 card types ('whiteboard-prop', 'split-compare', 'red-x', 'map-diagram', 'flat-scene').",
+    "4. For ~15-25% of high-impact non-overlapping consecutive beat pairs (especially Beat 1->2 and dramatic turns), set \"dynamic\": true and a concise English \"motionPrompt\".",
+    `5. Return ONLY valid raw JSON (no markdown fences): { "title": "${String(title || "Explainer Episode").replace(/"/g, "'")}", "subtitle": "Audio-First Rapid-Beat Explainer", "language": "${isNe ? "ne" : "en"}", "hook": "One-sentence hook", "niche": "Explainer", "characters": [{ "code": "HERO", "name": "Name", "role": "Lead", "refPrompt": "..." }], "blocks": [{ "blockId": 1, "title": "Block 1", "beats": [{ "beat": 1, "cardType": "flat-scene", "label": "", "characters": ["HERO"], "narration": "EXACT ORIGINAL NARRATION", "visual": "...", "dynamic": true, "motionPrompt": "..." }] }] }`,
+    "",
+    "TIMED BEATS FROM RECORDED AUDIO:",
+    JSON.stringify(timedBlocks)
   ].join("\n");
 }

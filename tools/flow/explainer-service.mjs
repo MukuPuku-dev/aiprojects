@@ -394,6 +394,124 @@ export async function generateAndSaveBlockTts({
   };
 }
 
+/** Slices a 16-bit PCM WAV buffer cleanly between startSec and endSec. */
+export function sliceWavPcm16(wavBuffer, startSec, endSec) {
+  const buf = Buffer.isBuffer(wavBuffer) ? wavBuffer : Buffer.from(wavBuffer || []);
+  if (buf.length < 44) return buf;
+  const channels = buf.readUInt16LE(22) || 1;
+  const sampleRate = buf.readUInt32LE(24) || 24000;
+  const bitsPerSample = buf.readUInt16LE(34) || 16;
+  const bytesPerFrame = channels * (bitsPerSample / 8);
+  const dataOffset = 44;
+  const dataLen = Math.max(0, buf.length - dataOffset);
+  const totalFrames = Math.floor(dataLen / bytesPerFrame);
+  const sFrame = Math.max(0, Math.min(totalFrames, Math.floor((Number(startSec) || 0) * sampleRate)));
+  const eFrame = Math.max(sFrame + 1, Math.min(totalFrames, Math.ceil((Number(endSec) || 0) * sampleRate)));
+  const pcmSlice = buf.subarray(dataOffset + sFrame * bytesPerFrame, dataOffset + eFrame * bytesPerFrame);
+  return pcmToWav(pcmSlice, sampleRate, channels, bitsPerSample);
+}
+
+/**
+ * Generates voiceover for multiple consecutive blocks in ONE Gemini TTS call,
+ * aligns word-level timestamps across all beats, and slices the returned WAV
+ * cleanly into individual block-XX.wav and block-XX.json files.
+ */
+export async function generateAndSaveMultiBlockTts({
+  root,
+  project = 'ink-explainer',
+  episodeId = 'ancient-humans-day',
+  blocks = [],
+  voice = 'Kore',
+  emotionMode = 'auto',
+  language = 'en',
+  fetchImpl = fetch
+}) {
+  const proj = validateId(project, 'project identifier');
+  const epId = validateId(episodeId, 'episode identifier');
+  const cleanBlocks = (Array.isArray(blocks) ? blocks : []).filter(b => b && Number.isInteger(Number(b.blockId)) && Array.isArray(b.beats) && b.beats.length > 0);
+  if (!cleanBlocks.length) throw new Error('blocks array with beats is required.');
+  if (cleanBlocks.length === 1) {
+    const one = await generateAndSaveBlockTts({
+      root, project: proj, episodeId: epId,
+      blockId: cleanBlocks[0].blockId, beats: cleanBlocks[0].beats,
+      voice, emotionMode, language, fetchImpl
+    });
+    return { ok: true, blocks: [one] };
+  }
+
+  const combinedBeats = [];
+  const ranges = [];
+  for (const blk of cleanBlocks) {
+    const startIdx = combinedBeats.length;
+    for (const b of blk.beats) combinedBeats.push(b);
+    ranges.push({ blockId: Number(blk.blockId), beats: blk.beats, startIdx, endIdx: combinedBeats.length });
+  }
+
+  const spokenText = buildExpressiveBlockPrompt(combinedBeats, emotionMode);
+  const tts = await fetchTtsAudio({ prompt: spokenText, voice, timestamps: true, language, fetchImpl });
+  const allTimings = alignBeatsToTimestamps(combinedBeats, tts.wordTimestamps, tts.duration);
+  const audioDir = path.join(root, 'projects', proj, 'episodes', epId, 'audio');
+  const results = [];
+
+  for (let i = 0; i < ranges.length; i++) {
+    const r = ranges[i];
+    const sliceTimings = allTimings.slice(r.startIdx, r.endIdx);
+    const blkStart = i === 0 ? 0 : (sliceTimings[0]?.startSec ?? 0);
+    const blkEnd = i === ranges.length - 1 ? tts.duration : (sliceTimings[sliceTimings.length - 1]?.endSec ?? tts.duration);
+    const blkWav = sliceWavPcm16(tts.wavBytes, blkStart, blkEnd);
+    const blkDur = wavDurationSeconds(blkWav) || Math.max(0.2, blkEnd - blkStart);
+
+    const blkTimestamps = (tts.wordTimestamps || [])
+      .filter(ts => ts && ts.start != null && ts.end != null && Number(ts.end) >= blkStart - 0.04 && Number(ts.start) <= blkEnd + 0.04)
+      .map(ts => ({
+        ...ts,
+        start: Math.round(Math.max(0, Math.min(blkDur, Number(ts.start) - blkStart)) * 1000) / 1000,
+        end: Math.round(Math.max(0, Math.min(blkDur, Number(ts.end) - blkStart)) * 1000) / 1000
+      }));
+
+    const blkBeatTimings = sliceTimings.map((bt, idx) => {
+      const s = idx === 0 ? 0 : Math.max(0, Math.min(blkDur, bt.startSec - blkStart));
+      const e = idx === sliceTimings.length - 1 ? blkDur : Math.max(s + 0.05, Math.min(blkDur, bt.endSec - blkStart));
+      return {
+        ...bt,
+        startSec: Math.round(s * 100) / 100,
+        endSec: Math.round(e * 100) / 100,
+        durationSec: Math.round((e - s) * 100) / 100
+      };
+    });
+
+    const num = pad2(r.blockId);
+    const wavFile = path.join(audioDir, `block-${num}.wav`);
+    const metaFile = path.join(audioDir, `block-${num}.json`);
+    writeAtomic(wavFile, blkWav);
+    const meta = {
+      episodeId: epId,
+      blockId: r.blockId,
+      voice: tts.selectedVoice,
+      language: tts.language,
+      mimeType: 'audio/wav',
+      duration: blkDur,
+      timestamps: blkTimestamps,
+      beatTimings: blkBeatTimings,
+      prompt: buildExpressiveBlockPrompt(r.beats, emotionMode),
+      updatedAt: new Date().toISOString()
+    };
+    writeAtomic(metaFile, JSON.stringify(meta, null, 2));
+    results.push({
+      ok: true,
+      episodeId: epId,
+      blockId: r.blockId,
+      audioUrl: `/projects/${proj}/episodes/${epId}/audio/block-${num}.wav`,
+      duration: blkDur,
+      timestamps: blkTimestamps,
+      beatTimings: blkBeatTimings,
+      voice: tts.selectedVoice
+    });
+  }
+
+  return { ok: true, blocks: results };
+}
+
 /** Saves or deletes a rapid-beat episode under projects/<project>/episodes/<episodeId>/episode.json. */
 export function saveEpisode(root, project = 'ink-explainer', episode) {
   const proj = validateId(project, 'project identifier');

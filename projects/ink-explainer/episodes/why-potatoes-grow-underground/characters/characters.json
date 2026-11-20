@@ -1,0 +1,20 @@
+{
+  "HERO": {
+    "code": "HERO",
+    "name": "Asha",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, wearing a simple green farmer’s apron and a small straw hat, curious wide eyes, thin black stick limbs",
+    "updatedAt": "2026-11-19T06:04:53.360Z"
+  },
+  "GUIDE": {
+    "code": "GUIDE",
+    "name": "Professor Kando",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, round glasses, brown lab coat, holding a small pointer stick, friendly smile",
+    "updatedAt": "2026-11-19T06:05:35.389Z"
+  },
+  "POTATO": {
+    "code": "POTATO",
+    "name": "Mr. Aalu",
+    "refPrompt": "2D flat ink-cartoon potato character full-body on pure white background: oval brown potato body with small eyes, thin black ink outlines, tiny stick arms and legs, tiny green sprout on top of head",
+    "updatedAt": "2026-11-19T06:06:07.485Z"
+  }
+}

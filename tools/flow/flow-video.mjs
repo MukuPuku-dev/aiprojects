@@ -43,6 +43,12 @@ async function findFlowPage(browser) {
     await page.goto(FLOW_URL, { waitUntil: 'domcontentloaded' });
   }
   if (/accounts\.google\./.test(page.url())) throw new Error('Google sign-in is showing. Sign in in the Flow Chrome window, then retry.');
+  try {
+    const cdp = await page.context().newCDPSession(page);
+    const { windowId } = await cdp.send('Browser.getWindowForTarget');
+    await cdp.send('Browser.setWindowBounds', { windowId, bounds: { windowState: 'normal' } });
+    await cdp.detach().catch(() => {});
+  } catch {}
   await page.bringToFront().catch(() => {});
   return page;
 }
@@ -543,6 +549,7 @@ async function attachFrame(page, label, file, log) {
       chooser = await chooserWait;
     }
   }
+  const baseName = path.basename(file);
   if (chooser) await chooser.setFiles(file);
   else {
     const input = page.locator('input[type="file"]').first();
@@ -550,6 +557,17 @@ async function attachFrame(page, label, file, log) {
       throw new Error(`Could not upload the ${label} frame (no file chooser). Update selectors.mjs (frameTile/frameUploadItem).`);
     });
     await input.setInputFiles(file);
+  }
+  // Wait for Flow to list the newly uploaded file at the top of the frame picker and explicitly select it
+  const hasTopAsset = await page.waitForFunction(name => {
+    const first = document.querySelector('.cdk-overlay-container button.asset-item');
+    const title = first?.querySelector('.asset-title')?.textContent?.trim() || first?.innerText?.trim() || '';
+    return title.includes(name);
+  }, baseName, { timeout: 15000 }).then(() => true, () => false);
+  if (hasTopAsset) {
+    await page.waitForTimeout(1500);
+    await page.locator('.cdk-overlay-container button.asset-item').first().click().catch(() => {});
+    await page.waitForTimeout(400);
   }
   await clickConfirmIfShown(page);
   await page.waitForFunction(prev => {
@@ -578,6 +596,15 @@ async function configureFrames(page, { model, aspect, duration, startFile, endFi
   }
   await attachFrame(page, 'Start', startFile, log);
   await attachFrame(page, 'End', endFile, log);
+  if (path.resolve(startFile) !== path.resolve(endFile)) {
+    const frameSrcs = await page.locator('flow-prompt-box img').evaluateAll(els => els.map(i => i.src).filter(Boolean));
+    if (frameSrcs.length < 2) {
+      throw new Error(`Expected 2 attached frames in Flow prompt box, found ${frameSrcs.length}.`);
+    }
+    if (frameSrcs[0] === frameSrcs[1]) {
+      throw new Error('Flow attached the same image for both Start and End frames. Aborting before submission.');
+    }
+  }
 }
 
 /**

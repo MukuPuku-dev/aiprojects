@@ -1,0 +1,494 @@
+{
+  "id": "amr-buffalo-mastitis",
+  "title": "थुनलो र एन्टिमाइक्रोबियल रेसिस्टन्स",
+  "subtitle": "जथाभावी एन्टिबायोटिक होइन, परीक्षण पहिले",
+  "hook": "एउटा सुईले तपाईंको भैंसीको औषधि सधैंका लागि बेकार बनाउन सक्छ!",
+  "niche": "Health Awareness / Animal Health Education",
+  "language": "ne",
+  "characters": [
+    {
+      "code": "FARMER",
+      "name": "किसान",
+      "role": "Lead",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, Nepali hill farmer, round head, simple black ink outline, wearing a dhaka topi and a brown vest over a plain shirt, rolled-up trousers, worried expression, minimal flat colors"
+    },
+    {
+      "code": "NEIGHBOR",
+      "name": "छिमेकी",
+      "role": "Supporting",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, middle-aged Nepali village man, round head, simple black ink outline, wearing a gray shawl and a cap, confident casual pose, minimal flat colors"
+    },
+    {
+      "code": "DOCTOR",
+      "name": "डाक्टर रामकाजी पौडेल",
+      "role": "Mentor",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background, Nepali veterinarian, round head, simple black ink outline, wearing a white lab coat, round glasses and a stethoscope, calm trustworthy pose, minimal flat colors"
+    },
+    {
+      "code": "BUFFALO",
+      "name": "भैंसी",
+      "role": "Animal",
+      "refPrompt": "2D flat stickman style black buffalo full-body on pure white background, simple black ink outline, curved horns, sad tired eyes, swollen udder, minimal flat colors"
+    }
+  ],
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "भ्रम र समस्या",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "dramatically",
+          "characters": [
+            "BUFFALO"
+          ],
+          "narration": "एउटा सुईले औषधि बेकार बनाउन सक्छ!",
+          "visual": "Extreme close-up of a giant glowing syringe looming over a tiny sad buffalo on white background, ink style, dramatic red accent",
+          "dynamic": true,
+          "motionPrompt": "Fast zoom-in on the syringe as the buffalo shrinks back"
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "suspensefully",
+          "characters": [
+            "BUFFALO"
+          ],
+          "narration": "कसरी? हेर्नुस् यो कथा।",
+          "visual": "The syringe cracks and shatters into tiny pieces, a large question mark appears above the buffalo, ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 3,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "एउटा किसान, एउटा गोठ।",
+          "visual": "Wide shot of a simple Nepali cattle shed with a thatched roof, the farmer standing at the entrance, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 4,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "worriedly",
+          "characters": [
+            "FARMER",
+            "BUFFALO"
+          ],
+          "narration": "भैंसी बिरामी, किसान चिन्तित।",
+          "visual": "Farmer sitting beside the lying buffalo, hand on his forehead, worried face, sweat drops, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 5,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "concerned",
+          "characters": [
+            "BUFFALO"
+          ],
+          "narration": "थुनलो भएको थियो भैंसीलाई।",
+          "visual": "Close-up of the buffalo’s swollen red udder with small pain marks around it, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 6,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "NEIGHBOR"
+          ],
+          "narration": "तभी छिमेकी गोठमा आए।",
+          "visual": "Neighbor walking into the shed through the doorway, waving one hand, flat ink style",
+          "dynamic": true,
+          "motionPrompt": "Gentle pan following the neighbor as he walks in toward the farmer"
+        },
+        {
+          "beat": 7,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "anxiously",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "दाइ, भैंसीलाई थुनलो भा'छ।",
+          "visual": "Farmer pointing at the buffalo’s udder while looking up at the neighbor, speech bubble with a question mark, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 8,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "desperately",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "के गर्ने होला अब?",
+          "visual": "Farmer with open palms raised, shrugging, big question marks floating around his head, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 9,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "casually",
+          "characters": [
+            "NEIGHBOR"
+          ],
+          "narration": "थुनलो त सामान्य कुरा हो।",
+          "visual": "Neighbor waving his hand dismissively with a relaxed smile, a small ‘normal’ checkmark bubble, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 10,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "confidently",
+          "characters": [
+            "NEIGHBOR"
+          ],
+          "narration": "बजारबाट एन्टिबायोटिक ल्याएर ख्वाउ।",
+          "visual": "Neighbor pointing toward a distant village pharmacy shop, a medicine strip floating beside him, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "confidently",
+          "characters": [
+            "NEIGHBOR"
+          ],
+          "narration": "सुई पनि लाइहाल, निको भइहाल्छ।",
+          "visual": "Neighbor miming an injection with a thumbs-up, a syringe icon and a big green tick bubble above him, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "डाक्टरसँगको भेट",
+      "beats": [
+        {
+          "beat": 12,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopefully",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "किसान औषधि किन्न निस्किए।",
+          "visual": "Farmer walking along a village dirt path with a small bag, hills in the background, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 13,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "FARMER",
+            "DOCTOR"
+          ],
+          "narration": "बाटोमा डाक्टर रामकाजी भेटिए।",
+          "visual": "Farmer stopping on the path as the doctor in a white coat appears ahead and waves, flat ink style",
+          "dynamic": true,
+          "motionPrompt": "Slow push-in as the farmer’s face lights up on seeing the doctor"
+        },
+        {
+          "beat": 14,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "relieved",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "डाक्टर साब, नमस्कार!",
+          "visual": "Farmer with palms pressed together in namaste, smiling with relief, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 15,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "worriedly",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "भैंसीलाई थुनलो भएको छ।",
+          "visual": "Farmer pointing back toward his village, a small sick buffalo icon in a thought bubble, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 16,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hesitantly",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "छिमेकीले एन्टिबायोटिक ख्वाउन भने।",
+          "visual": "Thought bubble showing the neighbor handing over a medicine strip, farmer scratching his head, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 17,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "gratefully",
+          "characters": [
+            "FARMER"
+          ],
+          "narration": "हजुरलाई भेट्दा ढुक्क भएँ।",
+          "visual": "Farmer smiling with a hand on his chest, a small heart icon floating beside him, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 18,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "seriously",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "ओहो! जथाभावी एन्टिबायोटिक चलाउनु हुँदैन।",
+          "visual": "Doctor raising one hand in a stop gesture, a big red cross over a pile of random medicine strips, flat ink style",
+          "dynamic": true,
+          "motionPrompt": "Quick zoom on the red cross stamping down over the pills"
+        },
+        {
+          "beat": 19,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "कुन औषधिले काम गर्छ, थाहा हुँदैन।",
+          "visual": "Many different colored pills scattered in the air with question marks over each one, doctor shaking his head, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 20,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "firmly",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "ल्याबमा परीक्षण नगरी पत्ता लाग्दैन।",
+          "visual": "Doctor pointing to a microscope icon with a lab flask beside it, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 21,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "reassuringly",
+          "characters": [
+            "DOCTOR",
+            "FARMER"
+          ],
+          "narration": "छिमेकीको सल्लाह भन्दा विज्ञान ठीक।",
+          "visual": "Split scene: a faded gossip speech bubble on the left, a glowing science book and microscope on the right, doctor placing a hand on the farmer’s shoulder, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 22,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "DOCTOR",
+            "FARMER"
+          ],
+          "narration": "आउनुस्, भैंसी परीक्षण गरौं।",
+          "visual": "Doctor and farmer walking together toward a small clinic building, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 3,
+      "title": "परीक्षण र सही उपचार",
+      "beats": [
+        {
+          "beat": 23,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "calmly",
+          "characters": [
+            "DOCTOR",
+            "BUFFALO"
+          ],
+          "narration": "क्लिनिकमा डाक्टरले दूध लिए।",
+          "visual": "Doctor in the clinic carefully collecting a milk sample from the buffalo into a small sterile tube, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 24,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "focused",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "नमुना ल्याबमा परीक्षण गरियो।",
+          "visual": "Doctor looking into a microscope with a petri dish and test tubes on the table, flat ink style",
+          "dynamic": true,
+          "motionPrompt": "Smooth zoom through the microscope lens revealing tiny glowing germs"
+        },
+        {
+          "beat": 25,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "रिपोर्टले सही औषधि देखायो।",
+          "visual": "Doctor holding a lab report with a highlighted green check beside one antibiotic name, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 26,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "DOCTOR",
+            "FARMER"
+          ],
+          "narration": "ल हेर्नुस्, यो एन्टिबायोटिक उपयुक्त छ।",
+          "visual": "Doctor showing the report to the farmer, who leans in to look, a green check glowing over one medicine, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 27,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "seriously",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "तोकिएको मात्रा मात्र प्रयोग गर्नुहोला।",
+          "visual": "Close-up of a measuring syringe with exact dose markings highlighted, doctor’s finger pointing at the line, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 28,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "seriously",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "तोकिएको दिनसम्म मात्र दिनुहोस्।",
+          "visual": "Calendar with a few days circled in red and a pill icon above them, doctor holding up fingers to count the days, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 29,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "gravely",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "नत्र रेसिस्टन्सको खतरा हुन्छ।",
+          "visual": "Dark red germs growing larger with armor shields around them, a danger sign flashing, flat ink style",
+          "dynamic": true,
+          "motionPrompt": "Germs swell and armor plates snap on as a red warning pulses"
+        },
+        {
+          "beat": 30,
+          "cardType": "flat-scene",
+          "label": "AMR",
+          "emotion": "seriously",
+          "characters": [
+            "DOCTOR"
+          ],
+          "narration": "यसलाई एन्टिमाइक्रोबियल रेसिस्टन्स भनिन्छ।",
+          "visual": "Bold title card reading ‘AMR’ with a medicine strip crossed out and a shielded germ beside it, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 31,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopefully",
+          "characters": [
+            "FARMER",
+            "BUFFALO"
+          ],
+          "narration": "किसानले सही उपचार सुरु गरे।",
+          "visual": "Farmer giving the buffalo medicine carefully in the shed while following the doctor’s written chart, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 32,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "happily",
+          "characters": [
+            "FARMER",
+            "BUFFALO"
+          ],
+          "narration": "भैंसी निको भई, किसान खुसी।",
+          "visual": "Healthy buffalo standing up with a happy face, farmer smiling and hugging her neck, sparkles around, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 33,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "inspiringly",
+          "characters": [
+            "DOCTOR",
+            "FARMER",
+            "NEIGHBOR"
+          ],
+          "narration": "जथाभावी होइन, जाँचपछि मात्र औषधि।",
+          "visual": "Doctor, farmer and neighbor standing together before a large green check over a lab report, neighbor nodding in agreement, flat ink style",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-11-20T10:08:45.098Z"
+}

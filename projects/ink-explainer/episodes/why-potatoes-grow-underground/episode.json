@@ -1,0 +1,830 @@
+{
+  "id": "why-potatoes-grow-underground",
+  "title": "आलु किन माटोमुनि फल्छ? लुकेको रहस्य",
+  "subtitle": "Rapid-Beat Explainer",
+  "hook": "तपाईंले कहिल्यै सोच्नुभएको छ, आलु किन माटोको मुनि लुकेर बस्छ?",
+  "niche": "History & Human Curiosity",
+  "language": "ne",
+  "characters": [
+    {
+      "code": "HERO",
+      "name": "Asha",
+      "role": "Lead",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, wearing a simple green farmer’s apron and a small straw hat, curious wide eyes, thin black stick limbs"
+    },
+    {
+      "code": "GUIDE",
+      "name": "Professor Kando",
+      "role": "Guide",
+      "refPrompt": "2D flat stickman explainer character full-body on pure white background: round white circle head, thin black ink outlines, round glasses, brown lab coat, holding a small pointer stick, friendly smile"
+    },
+    {
+      "code": "POTATO",
+      "name": "Mr. Aalu",
+      "role": "Mascot",
+      "refPrompt": "2D flat ink-cartoon potato character full-body on pure white background: oval brown potato body with small eyes, thin black ink outlines, tiny stick arms and legs, tiny green sprout on top of head"
+    }
+  ],
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "Block 1 · Hook",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "आशा बारीमा उभिएकी थिइन्,",
+          "visual": "Asha the stickman stands in a green vegetable garden at sunrise, hands on hips, looking at the ground.",
+          "dynamic": true,
+          "motionPrompt": "Slow zoom in on Asha as she bends down toward the soil."
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "हातमा एउटा कोदालो लिएर।",
+          "visual": "Close-up of Asha gripping a wooden hoe with both hands, soil at her feet.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 3,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "HERO",
+            "POTATO"
+          ],
+          "narration": "उनले माटो खनिन्, हल्का।",
+          "visual": "Asha digs gently, small clumps of brown soil flying in the air.",
+          "dynamic": true,
+          "motionPrompt": "Soil bursts upward and the camera tilts down to reveal the hole."
+        },
+        {
+          "beat": 4,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "HERO",
+            "POTATO"
+          ],
+          "narration": "भित्रबाट आलु निस्क्यो!",
+          "visual": "A round potato pops out of the dug soil, Asha jumps back in surprise.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 5,
+          "cardType": "whiteboard-prop",
+          "label": "आलु",
+          "emotion": "curiously",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "फल त हावामा झुण्डिन्छ,",
+          "visual": "Whiteboard with a drawn apple tree, red apples hanging from branches, ink outlines.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 6,
+          "cardType": "whiteboard-prop",
+          "label": "आँप",
+          "emotion": "curiously",
+          "characters": [],
+          "narration": "रुखमा आँप फल्छ,",
+          "visual": "Whiteboard sketch of a mango tree with mangoes dangling from branches.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 7,
+          "cardType": "split-compare",
+          "label": "माथि बनाम तल",
+          "emotion": "puzzled",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "तर आलु किन तल?",
+          "visual": "Split screen: left side fruits hanging above ground, right side potato buried below ground line.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 8,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "thoughtful",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "के यो संयोग मात्र हो?",
+          "visual": "Asha scratches her head with a big question mark floating above her.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 9,
+          "cardType": "red-x",
+          "label": "संयोग",
+          "emotion": "firmly",
+          "characters": [],
+          "narration": "होइन, यसको पछाडि विज्ञान छ।",
+          "visual": "A big red X drawn over the word ‘luck’ on a whiteboard.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 10,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "excited",
+          "characters": [
+            "HERO",
+            "GUIDE"
+          ],
+          "narration": "आउनुहोस्, रहस्य खोलौं।",
+          "visual": "Professor Kando walks into the garden holding a magnifying glass, Asha waves at him.",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "Block 2 · Not a Root",
+      "beats": [
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "GUIDE",
+            "HERO"
+          ],
+          "narration": "प्रोफेसर कान्डो मुस्कुराए,",
+          "visual": "Professor Kando smiles and holds a potato up beside Asha in the garden.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 12,
+          "cardType": "whiteboard-prop",
+          "label": "जरा?",
+          "emotion": "curiously",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "धेरैले आलुलाई जरा सम्झन्छन्।",
+          "visual": "Whiteboard with a drawn carrot and a potato, labeled with a question mark.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 13,
+          "cardType": "red-x",
+          "label": "जरा होइन",
+          "emotion": "firmly",
+          "characters": [],
+          "narration": "तर यो जरा होइन।",
+          "visual": "A red X is drawn across the word ‘root’ next to a potato sketch.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 14,
+          "cardType": "whiteboard-prop",
+          "label": "डंठल",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "यो त एउटा डंठल हो।",
+          "visual": "Whiteboard drawing of a plant stem going underground, swelling into a potato at its end.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 15,
+          "cardType": "map-diagram",
+          "label": "Tuber",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "यसलाई कन्द भनिन्छ।",
+          "visual": "Labeled diagram of a potato plant: leaves, stem, stolon, and tuber, with arrows pointing at each part.",
+          "dynamic": true,
+          "motionPrompt": "Camera pans down the diagram from leaves to the buried tuber."
+        },
+        {
+          "beat": 16,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "आशा छक्क परिन्।",
+          "visual": "Asha with wide eyes and open mouth, small exclamation marks around her head.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 17,
+          "cardType": "whiteboard-prop",
+          "label": "आँखा",
+          "emotion": "curiously",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "आलुमा साना आँखा हुन्छन्,",
+          "visual": "Close-up of a potato with small eye-shaped dots, an arrow pointing to them.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 18,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "ती आँखाबाट नयाँ बिरुवा उम्रिन्छ।",
+          "visual": "Green sprouts grow from the eyes of a potato, drawn in simple ink style.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 19,
+          "cardType": "split-compare",
+          "label": "जरा बनाम कन्द",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "जराले यस्तो गर्दैन।",
+          "visual": "Split screen: left a thin carrot root with no sprouts, right a potato with growing sprouts.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 20,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "HERO",
+            "GUIDE"
+          ],
+          "narration": "अब सुरुवातको कथा सुन्नुहोस्।",
+          "visual": "Asha and Professor Kando sit on a bench, a small book open between them.",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 3,
+      "title": "Block 3 · The Food Factory",
+      "beats": [
+        {
+          "beat": 21,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "आलुको बिरुवा घाममा हुर्कन्छ।",
+          "visual": "A potato plant with green leaves under a bright smiling sun in a garden.",
+          "dynamic": true,
+          "motionPrompt": "Sun rays pulse and the camera tilts down the plant stem."
+        },
+        {
+          "beat": 22,
+          "cardType": "whiteboard-prop",
+          "label": "प्रकाश-संश्लेषण",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "पातले घामबाट खाना बनाउँछ।",
+          "visual": "Whiteboard diagram: sun, leaf, and arrow pointing to a glowing sugar cube.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 23,
+          "cardType": "map-diagram",
+          "label": "चिनी",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "त्यो खाना चिनी हो।",
+          "visual": "Diagram with arrows: sunlight and water entering a leaf, sugar leaving it.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 24,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "चिनी तल तिर बग्छ।",
+          "visual": "Small sugar dots sliding down the stem inside a transparent cutaway plant.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 25,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "explaining",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "जमिनमुनि पुगेपछि स्टार्च बन्छ।",
+          "visual": "Sugar dots arriving at the underground tip and turning into white starch grains.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 26,
+          "cardType": "whiteboard-prop",
+          "label": "स्टार्च",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "स्टार्च भनेको जम्मा गरेको ऊर्जा हो।",
+          "visual": "Whiteboard drawing of a piggy bank filled with glowing energy symbols labeled starch.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 27,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "कन्द फुल्दै जान्छ,",
+          "visual": "Underground potato slowly growing bigger in several drawn stages inside soil.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 28,
+          "cardType": "split-compare",
+          "label": "सानो बनाम ठूलो",
+          "emotion": "excited",
+          "characters": [],
+          "narration": "सानोबाट ठूलो आलु बन्छ।",
+          "visual": "Split screen: left a tiny pea-sized tuber, right a large round potato.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 29,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "आशा हाँसिन् र ताली बजाइन्।",
+          "visual": "Asha claps with a happy face, small stars around her hands.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 30,
+          "cardType": "red-x",
+          "label": "हावा",
+          "emotion": "firmly",
+          "characters": [],
+          "narration": "यो काम हावामा हुँदैन।",
+          "visual": "Red X drawn over a potato floating in the air above the plant.",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 4,
+      "title": "Block 4 · Why Underground",
+      "beats": [
+        {
+          "beat": 31,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "GUIDE",
+            "HERO"
+          ],
+          "narration": "तर माटोमुनि नै किन?",
+          "visual": "Professor Kando points at the soil, Asha tilts her head curiously.",
+          "dynamic": true,
+          "motionPrompt": "Camera dives down through the soil line into the underground cutaway."
+        },
+        {
+          "beat": 32,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "explaining",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "माटोले आलुलाई सुरक्षा दिन्छ।",
+          "visual": "Cutaway of soil with a potato tucked safely inside, a soft protective ring around it.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 33,
+          "cardType": "split-compare",
+          "label": "घाम बनाम माटो",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "घाम लागे आलु हरियो हुन्छ,",
+          "visual": "Split screen: left potato in bright sun turning green, right potato in dark soil staying brown.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 34,
+          "cardType": "red-x",
+          "label": "हरियो आलु",
+          "emotion": "worried",
+          "characters": [],
+          "narration": "हरियो आलु खानु हुँदैन।",
+          "visual": "Red X over a green potato, a small warning triangle beside it.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 35,
+          "cardType": "whiteboard-prop",
+          "label": "सोलानिन",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "त्यसमा सोलानिन नामको विष बढ्छ।",
+          "visual": "Whiteboard drawing of a green potato with a small skull-and-bubble label.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 36,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "माटोमुनि चिसो र अँध्यारो हुन्छ।",
+          "visual": "Potato resting in a dark cool cutaway of soil with a little moon icon.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 37,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "worried",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "भोका चरा माथि घुम्छन्,",
+          "visual": "Hungry stickman birds circling above a garden, eyeing the ground.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 38,
+          "cardType": "red-x",
+          "label": "चरा",
+          "emotion": "firmly",
+          "characters": [],
+          "narration": "तर तिनले आलु देख्दैनन्।",
+          "visual": "Red X over a bird pecking, with the potato hidden deep in the soil.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 39,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "जमिन त प्राकृतिक भण्डार रहेछ।",
+          "visual": "Asha looking at a cutaway garden like a natural storage cellar full of potatoes.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 40,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "अब जाडोको कथा सुन्नुहोस्।",
+          "visual": "Professor Kando holds up a snowflake with a smile.",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 5,
+      "title": "Block 5 · Surviving Winter",
+      "beats": [
+        {
+          "beat": 41,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "somber",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "जाडो आउँछ, माथिको पात सुक्छ।",
+          "visual": "Potato plant with yellow drooping leaves and falling snowflakes in a cold garden.",
+          "dynamic": true,
+          "motionPrompt": "Snow falls as camera slowly pushes down into the frozen soil."
+        },
+        {
+          "beat": 42,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "worried",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "माथि सबै केही मर्छ।",
+          "visual": "Withered brown plant stem lying on white snow.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 43,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopeful",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "तर आलु तल जीवित रहन्छ।",
+          "visual": "Underground cutaway: a potato sleeping safely under a blanket of soil beneath the snow.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 44,
+          "cardType": "split-compare",
+          "label": "माथि बनाम तल",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "माथि हिउँ, तल न्यानो।",
+          "visual": "Split screen: left snowy surface, right warmer underground with potatoes resting.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 45,
+          "cardType": "whiteboard-prop",
+          "label": "ऊर्जा भण्डार",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "स्टार्चले उसलाई ऊर्जा दिन्छ।",
+          "visual": "Whiteboard drawing of a potato with a battery icon inside labeled energy.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 46,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopeful",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "वसन्त आउँछ, गर्मी बढ्छ।",
+          "visual": "Sun appears over melting snow, small flowers peeking out in the garden.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 47,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "आँखाबाट नयाँ अङ्कुर निस्कन्छ।",
+          "visual": "A potato underground sprouting a green shoot that pushes upward toward the light.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 48,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "excited",
+          "characters": [
+            "HERO",
+            "POTATO"
+          ],
+          "narration": "नयाँ बिरुवाले जीवन सुरु गर्छ।",
+          "visual": "A small green plant breaks through the soil, Asha watching with delight.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 49,
+          "cardType": "map-diagram",
+          "label": "जीवन चक्र",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "यही त आलुको जीवन चक्र हो।",
+          "visual": "Circular diagram: plant, tuber, winter rest, sprout, back to plant, with arrows.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 50,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "GUIDE",
+            "HERO"
+          ],
+          "narration": "मानिसले पनि यो बुझ्यो।",
+          "visual": "Professor Kando and Asha look at a farmer’s field with rows of potato plants.",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 6,
+      "title": "Block 6 · Humans and the Potato",
+      "beats": [
+        {
+          "beat": 51,
+          "cardType": "map-diagram",
+          "label": "एन्डिज",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "आलु पहिले एन्डिज पहाडमा उम्रियो।",
+          "visual": "Simple map of South America with a highlighted Andes mountain range and a potato icon.",
+          "dynamic": true,
+          "motionPrompt": "Camera slides along the map toward the Andes mountains."
+        },
+        {
+          "beat": 52,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "किसानहरूले हजारौं वर्ष खेती गरे।",
+          "visual": "Ancient stickman farmers terracing a hillside with simple wooden tools.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 53,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "POTATO"
+          ],
+          "narration": "आलु सागरपारि पुग्यो।",
+          "visual": "A wooden sailing ship carrying sacks of potatoes across blue ink waves.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 54,
+          "cardType": "map-diagram",
+          "label": "विश्व यात्रा",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "संसारभर यसको यात्रा फैलियो।",
+          "visual": "World map with dotted arrows spreading from South America to every continent.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 55,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "hopeful",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "नेपालको पहाडमा पनि आलु फल्यो।",
+          "visual": "Terraced Nepali hillside with small stickman farmers digging potatoes in baskets.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 56,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "HERO"
+          ],
+          "narration": "भोकाएका परिवारको पेट भरियो।",
+          "visual": "A family stickman group eating boiled potatoes happily around a small table.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 57,
+          "cardType": "split-compare",
+          "label": "अन्न बनाम आलु",
+          "emotion": "explaining",
+          "characters": [],
+          "narration": "अन्न नफलेपनि आलुले साथ दियो।",
+          "visual": "Split screen: left dry empty grain field, right healthy potato crop underground.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 58,
+          "cardType": "whiteboard-prop",
+          "label": "सारांश",
+          "emotion": "explaining",
+          "characters": [
+            "GUIDE"
+          ],
+          "narration": "आलुले माटोमुनि ऊर्जा लुकाउँछ।",
+          "visual": "Whiteboard summary: sun, leaf, arrow, potato underground labeled energy stored.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 59,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "HERO",
+            "POTATO"
+          ],
+          "narration": "अब आलु हेर्दा तपाईं मुस्कुराउनुहुनेछ।",
+          "visual": "Asha holds a potato and smiles, Mr. Aalu waves from her hands.",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 60,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "HERO",
+            "GUIDE",
+            "POTATO"
+          ],
+          "narration": "माटोमुनि पनि कथा हुन्छ।",
+          "visual": "Sunset over the garden, Asha, Professor Kando, and Mr. Aalu standing together smiling.",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-11-19T05:17:34.832Z"
+}

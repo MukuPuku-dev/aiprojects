@@ -5,16 +5,40 @@ import { randomUUID } from 'node:crypto';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { generateCharactersInFlow, generateFrameVideo, generateImage, generateImageBatch, generateVideo } from './flow-video.mjs';
-import { resolveRequiredCharacters } from './flow-characters.mjs';
+import { resolveRequiredCharacters, saveWorkspaceCharacter } from './flow-characters.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
 import { createFacebookService } from './facebook.mjs';
 import { createTelegramService, uploadToTelegram } from './telegram.mjs';
 import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
-import { callGeminiText, deleteBeatImage, deleteBeatTransition, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode, shiftEpisodeBeatAssets } from './explainer-service.mjs';
+import { callGeminiText, deleteBeatImage, deleteBeatTransition, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveMultiBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode, shiftEpisodeBeatAssets } from './explainer-service.mjs';
 import { compressImageToJpeg, csvImagesDir, deleteCsvImage, listCsvImages, mapAspectToFlow, sanitizeFileName, sanitizeFolderName } from './csv-images-service.mjs';
 import { searchAndSaveImageBatchInBrowser, searchAndSaveImageInBrowser } from './csv-web-search.mjs';
+import { callClaudeInBrowser } from './claude-browser.mjs';
+import { callGeminiInBrowser } from './gemini-browser.mjs';
 import { uploadToYouTube } from './youtube.mjs';
+import {
+  buildClaudeVerifyPrompt,
+  buildKineticScriptPrompt,
+  buildLoksewaGeneratePrompt,
+  deleteAllLoksewaVideos,
+  deleteLoksewaImage,
+  deleteLoksewaVideo,
+  generateKineticScriptWithGemini,
+  generateLoksewaQuestionsWithGemini,
+  listLoksewaImages,
+  listLoksewaVideos,
+  loksewaImagesDir,
+  normalizeGeneratedKineticScript,
+  normalizeGeneratedLoksewaQuestions,
+  parseClaudeVerifyResponse,
+  resolveLoksewaEndpoint,
+  sanitizeImageFile,
+  sanitizeSetId,
+  saveUploadedLoksewaImage,
+  sendKineticToServer,
+  sendLoksewaToServer
+} from './loksewa-service.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
@@ -60,6 +84,9 @@ const queue = createGenerationQueue(job => {
   if (job.mode === 'frames') return generateFrameVideo(job);
   if (job.mode === 'frames-batch') return job.run();
   if (job.mode === 'csv-image-batch') return job.run();
+  if (job.mode === 'loksewa-image' || job.mode === 'loksewa-image-batch') return job.run();
+  if (job.mode === 'claude') return callClaudeInBrowser(job);
+  if (job.mode === 'gemini-browser') return callGeminiInBrowser(job);
   return job.mode === 'image' ? generateImage(job) : generateVideo(job);
 });
 const tiktok = createTikTokService(ROOT);
@@ -70,10 +97,10 @@ const send = (res, status, body) => {
   res.end(JSON.stringify(body));
 };
 
-function readBody(req) {
+function readBody(req, maxBytes = 1e6) {
   return new Promise((resolve, reject) => {
     let data = '';
-    req.on('data', c => { data += c; if (data.length > 1e6) reject(new Error('Request too large.')); });
+    req.on('data', c => { data += c; if (data.length > maxBytes) reject(new Error('Request too large.')); });
     req.on('end', () => { try { resolve(JSON.parse(data || '{}')); } catch { reject(new Error('Body must be JSON.')); } });
     req.on('error', reject);
   });
@@ -341,6 +368,45 @@ async function handleExplainerRoute(req, res, url) {
       return send(res, 400, { ok: false, error: err.message });
     }
   }
+  if (url.pathname === '/api/explainer/upload-character-image') {
+    if (req.headers.origin !== `http://127.0.0.1:${PORT}`) {
+      return send(res, 403, { ok: false, error: 'Requests must originate from the local studio.' });
+    }
+    try {
+      const project = url.searchParams.get('project') || 'ink-explainer';
+      const episode = url.searchParams.get('episode') || 'ancient-humans-day';
+      const code = String(url.searchParams.get('code') || '').trim();
+      const name = String(url.searchParams.get('name') || code).trim();
+      const refPrompt = String(url.searchParams.get('refPrompt') || '').trim();
+      if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
+      if (!code) throw new Error('Character code is required.');
+      const ct = String(req.headers['content-type'] || '').toLowerCase();
+      const ext = ct.includes('jpeg') || ct.includes('jpg') ? '.jpg' : ct.includes('webp') ? '.webp' : '.png';
+      const chunks = [];
+      let total = 0;
+      await new Promise((resolve, reject) => {
+        req.on('data', c => {
+          total += c.length;
+          if (total > 25 * 1024 * 1024) { reject(new Error('Image too large (max 25MB).')); return; }
+          chunks.push(c);
+        });
+        req.on('end', resolve);
+        req.on('error', reject);
+      });
+      const buf = Buffer.concat(chunks);
+      if (!buf.length) throw new Error('Image file is empty.');
+      const charScope = `${project}/episodes/${episode}`;
+      const saved = saveWorkspaceCharacter(ROOT, charScope, { code, name, refPrompt, imageBuffer: buf, ext });
+      const fileName = saved.imageFile ? path.basename(saved.imageFile) : '';
+      return send(res, 200, {
+        ok: true,
+        code: saved.code,
+        url: fileName ? `/projects/${project}/episodes/${episode}/characters/${fileName}?t=${Date.now()}` : ''
+      });
+    } catch (err) {
+      return send(res, 400, { ok: false, error: err.message });
+    }
+  }
   if (req.headers.origin !== `http://127.0.0.1:${PORT}` || !/^application\/json(?:\s*;|$)/i.test(req.headers['content-type'] || '')) {
     return send(res, 403, { ok: false, error: 'Requests must originate from the local studio.' });
   }
@@ -349,6 +415,14 @@ async function handleExplainerRoute(req, res, url) {
     if (url.pathname === '/api/explainer/gemini') {
       const text = await callGeminiText(body.prompt);
       return send(res, 200, { ok: true, text });
+    }
+    if (url.pathname === '/api/explainer/claude') {
+      const result = await queue.enqueue({
+        mode: 'claude',
+        prompt: body.prompt,
+        log: m => console.log(`[claude-browser] ${m}`)
+      });
+      return send(res, 200, { ok: true, text: result.text, account: result.account || '' });
     }
     if (url.pathname === '/api/explainer/tts') {
       const result = await generateAndSaveTts({
@@ -375,6 +449,33 @@ async function handleExplainerRoute(req, res, url) {
         language: body.language || 'en'
       });
       return send(res, 200, result);
+    }
+    if (url.pathname === '/api/explainer/multi-block-tts') {
+      const result = await generateAndSaveMultiBlockTts({
+        root: ROOT,
+        project: body.project || 'ink-explainer',
+        episodeId: body.episode || body.episodeId || 'ancient-humans-day',
+        blocks: Array.isArray(body.blocks) ? body.blocks : [],
+        voice: body.voice || 'Kore',
+        emotionMode: body.emotionMode || 'auto',
+        language: body.language || 'en'
+      });
+      return send(res, 200, result);
+    }
+    if (url.pathname === '/api/explainer/update-block-timings') {
+      const project = body.project || 'ink-explainer';
+      const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
+      const blockId = Number(body.blockId);
+      if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode) || !Number.isInteger(blockId) || blockId < 1 || blockId > 100) {
+        throw new Error('Invalid project, episode, or blockId.');
+      }
+      const metaPath = path.join(ROOT, 'projects', project, 'episodes', episode, 'audio', `block-${String(blockId).padStart(2, '0')}.json`);
+      if (!fs.existsSync(metaPath)) throw new Error(`Block ${blockId} audio metadata not found.`);
+      const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+      meta.beatTimings = Array.isArray(body.beatTimings) ? body.beatTimings : [];
+      meta.updatedAt = new Date().toISOString();
+      fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2));
+      return send(res, 200, { ok: true, blockId, count: meta.beatTimings.length });
     }
     if (url.pathname === '/api/explainer/episode') {
       const episode = saveEpisode(ROOT, body.project || 'ink-explainer', body.delete ? { delete: true, id: body.id } : (body.episode || body));
@@ -1034,10 +1135,335 @@ async function handleCsvImagesRoute(req, res, url) {
   }
 }
 
+async function handleLoksewaRoute(req, res, url) {
+  try {
+    if (url.pathname === '/api/loksewa/state') {
+      if (req.method !== 'GET') return send(res, 405, { ok: false, error: 'Use GET.' });
+      const setId = sanitizeSetId(url.searchParams.get('setId') || 'nepali-awards');
+      return send(res, 200, {
+        ok: true,
+        setId,
+        images: listLoksewaImages(ROOT, setId),
+        videos: listLoksewaVideos(ROOT)
+      });
+    }
+
+    if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+    const maxBytes = url.pathname === '/api/loksewa/upload-image' ? 15e6 : 2e6;
+    const body = await readBody(req, maxBytes);
+
+    if (url.pathname === '/api/loksewa/upload-image') {
+      const saved = saveUploadedLoksewaImage(ROOT, body.setId, body.filename, body.dataUrl);
+      return send(res, 200, { ok: true, image: saved });
+    }
+
+    if (url.pathname === '/api/loksewa/delete-image') {
+      const result = deleteLoksewaImage(ROOT, body.setId, body.filename);
+      return send(res, 200, { ok: true, ...result });
+    }
+
+    if (url.pathname === '/api/loksewa/delete-video') {
+      const result = deleteLoksewaVideo(ROOT, body.filename);
+      return send(res, 200, { ok: true, ...result });
+    }
+
+    if (url.pathname === '/api/loksewa/delete-all-videos') {
+      const result = deleteAllLoksewaVideos(ROOT);
+      return send(res, 200, { ok: true, ...result });
+    }
+
+    if (url.pathname === '/api/loksewa/gemini-generate') {
+      const generated = await generateLoksewaQuestionsWithGemini({
+        topic: body.topic,
+        language: body.language,
+        count: body.count,
+        difficulty: body.difficulty
+      });
+      return send(res, 200, { ok: true, provider: 'gemini-api', ...generated });
+    }
+
+    if (url.pathname === '/api/loksewa/claude-generate') {
+      const prompt = buildLoksewaGeneratePrompt({
+        topic: body.topic,
+        language: body.language,
+        count: body.count,
+        difficulty: body.difficulty
+      });
+      const claudeRes = await queue.enqueue({
+        mode: 'claude',
+        prompt,
+        log: m => console.log(`[loksewa-claude-gen] ${m}`)
+      });
+      const generated = normalizeGeneratedLoksewaQuestions(claudeRes?.text || '', {
+        topic: body.topic,
+        language: body.language,
+        count: body.count
+      });
+      return send(res, 200, { ok: true, provider: 'claude-browser', account: claudeRes?.account || '', ...generated });
+    }
+
+    if (url.pathname === '/api/loksewa/gemini-browser-generate') {
+      const prompt = buildLoksewaGeneratePrompt({
+        topic: body.topic,
+        language: body.language,
+        count: body.count,
+        difficulty: body.difficulty
+      });
+      const gemRes = await queue.enqueue({
+        mode: 'gemini-browser',
+        prompt,
+        log: m => console.log(`[loksewa-gemini-browser-gen] ${m}`)
+      });
+      const generated = normalizeGeneratedLoksewaQuestions(gemRes?.text || '', {
+        topic: body.topic,
+        language: body.language,
+        count: body.count
+      });
+      return send(res, 200, { ok: true, provider: 'gemini-browser', account: gemRes?.account || '', ...generated });
+    }
+
+    if (url.pathname === '/api/loksewa/verify-claude') {
+      const rawQuestions = Array.isArray(body.questions) ? body.questions : [];
+      const prompt = buildClaudeVerifyPrompt(rawQuestions);
+      const claudeRes = await queue.enqueue({
+        mode: 'claude',
+        prompt,
+        log: m => console.log(`[loksewa-claude] ${m}`)
+      });
+      const parsed = parseClaudeVerifyResponse(claudeRes?.text || '', rawQuestions);
+      return send(res, 200, {
+        ok: true,
+        provider: 'Claude',
+        account: claudeRes?.account || '',
+        ...parsed
+      });
+    }
+
+    if (url.pathname === '/api/loksewa/verify-gemini-browser') {
+      const rawQuestions = Array.isArray(body.questions) ? body.questions : [];
+      const prompt = buildClaudeVerifyPrompt(rawQuestions);
+      const gemRes = await queue.enqueue({
+        mode: 'gemini-browser',
+        prompt,
+        log: m => console.log(`[loksewa-gemini-verify] ${m}`)
+      });
+      const parsed = parseClaudeVerifyResponse(gemRes?.text || '', rawQuestions);
+      return send(res, 200, {
+        ok: true,
+        provider: 'Gemini (Browser)',
+        account: gemRes?.account || '',
+        ...parsed
+      });
+    }
+
+    if (url.pathname === '/api/loksewa/resolve-endpoint') {
+      const endpoint = resolveLoksewaEndpoint(body.spaceUrl);
+      return send(res, 200, { ok: true, endpoint });
+    }
+
+    if (url.pathname === '/api/loksewa/send-to-server') {
+      const result = await sendLoksewaToServer(ROOT, body);
+      return send(res, 200, result);
+    }
+
+    if (url.pathname === '/api/loksewa/kinetic-claude-generate') {
+      const prompt = buildKineticScriptPrompt({ topic: body.topic, language: body.language, count: body.count });
+      const claudeRes = await queue.enqueue({
+        mode: 'claude',
+        prompt,
+        log: m => console.log(`[kinetic-claude-gen] ${m}`)
+      });
+      const script = normalizeGeneratedKineticScript(claudeRes?.text || '', {
+        topic: body.topic,
+        language: body.language,
+        count: body.count
+      });
+      return send(res, 200, { ok: true, provider: 'Claude', ...script });
+    }
+
+    if (url.pathname === '/api/loksewa/kinetic-gemini-browser-generate') {
+      const prompt = buildKineticScriptPrompt({ topic: body.topic, language: body.language, count: body.count });
+      const gemRes = await queue.enqueue({
+        mode: 'gemini-browser',
+        prompt,
+        log: m => console.log(`[kinetic-gemini-browser-gen] ${m}`)
+      });
+      const script = normalizeGeneratedKineticScript(gemRes?.text || '', {
+        topic: body.topic,
+        language: body.language,
+        count: body.count
+      });
+      return send(res, 200, { ok: true, provider: 'Gemini (Browser)', ...script });
+    }
+
+    if (url.pathname === '/api/loksewa/kinetic-gemini-generate') {
+      const script = await generateKineticScriptWithGemini({
+        topic: body.topic,
+        language: body.language,
+        count: body.count
+      });
+      return send(res, 200, { ok: true, provider: 'Gemini API', ...script });
+    }
+
+    if (url.pathname === '/api/loksewa/send-kinetic') {
+      const result = await sendKineticToServer(ROOT, body);
+      return send(res, 200, result);
+    }
+
+    if (url.pathname === '/api/loksewa/stop-batch') {
+      const jobId = typeof body.jobId === 'string' ? body.jobId.trim() : '';
+      const job = jobId ? queue.get(jobId) : null;
+      if (!job) return send(res, 404, { ok: false, error: 'Job not found.' });
+      job.stopRequested = true;
+      return send(res, 200, { ok: true, id: jobId, stopping: true });
+    }
+
+    const project = 'loksewa-sheet';
+    const settings = readSettings();
+    const effective = effectiveSettings(settings, project);
+    const setId = sanitizeSetId(body.setId || 'nepali-awards');
+    const flowProject = `Loksewa Sheet - ${setId}`;
+
+    if (url.pathname === '/api/loksewa/generate-image') {
+      const prompt = typeof body.prompt === 'string' ? body.prompt.trim() : '';
+      if (prompt.length < 10) throw new Error('Image prompt must be at least 10 characters.');
+      const filename = sanitizeImageFile(body.filename || 'q01.jpg');
+      const outDir = loksewaImagesDir(ROOT, setId);
+      fs.mkdirSync(outDir, { recursive: true });
+      const outFile = path.join(outDir, filename);
+      const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
+      const aspect = mapAspectToFlow(body.aspect || '16:9');
+      const day = Math.max(1, Number(body.day) || 1);
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'loksewa-image',
+        day,
+        log: m => console.log(`[loksewa-img ${setId}/${filename}] ${m}`),
+        run: async () => {
+          const resImg = await generateImage({
+            prompt,
+            outFile,
+            model,
+            aspect,
+            flowProject,
+            project,
+            log: m => console.log(`[loksewa-img ${setId}/${filename}] ${m}`)
+          });
+          await compressImageToJpeg(resImg.file || outFile, 85).catch(err => {
+            console.warn(`[loksewa-img] JPEG compression skipped for ${filename}: ${err.message}`);
+          });
+          return resImg;
+        }
+      });
+      return send(res, 202, {
+        ok: true,
+        id: tracked.id,
+        status: tracked.status,
+        file: path.relative(ROOT, outFile).split(path.sep).join('/')
+      });
+    }
+
+    if (url.pathname === '/api/loksewa/generate-batch') {
+      const outDir = loksewaImagesDir(ROOT, setId);
+      fs.mkdirSync(outDir, { recursive: true });
+      const model = typeof body.model === 'string' ? body.model.trim() : effective.image.model;
+      const aspect = mapAspectToFlow(body.aspect || '16:9');
+      const concurrency = Math.max(1, Math.min(8, Number(body.concurrency) || 4));
+      const rawItems = Array.isArray(body.items) ? body.items : [];
+      if (!rawItems.length) throw new Error('items array is required.');
+      const overwrite = Boolean(body.overwrite);
+      const mapped = rawItems.map((it, idx) => {
+        const prompt = typeof it.prompt === 'string' ? it.prompt.trim() : '';
+        if (prompt.length < 10) throw new Error(`Question ${idx + 1} image prompt is too short.`);
+        const filename = sanitizeImageFile(it.filename || `q${String(idx + 1).padStart(2, '0')}.jpg`);
+        const outFile = path.join(outDir, filename);
+        return {
+          day: idx + 1,
+          rowId: String(it.rowId || idx + 1),
+          filename,
+          prompt,
+          outFile,
+          aspect
+        };
+      });
+      const pending = overwrite ? mapped : mapped.filter(it => !fs.existsSync(it.outFile));
+      if (!pending.length) {
+        return send(res, 200, { ok: true, alreadyComplete: true, total: mapped.length, skipped: mapped.length });
+      }
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+
+      let tracked;
+      const savedFiles = [];
+      tracked = queue.submit(jobId, {
+        mode: 'loksewa-image-batch',
+        day: 1,
+        log: m => console.log(`[loksewa-batch ${setId}] ${m}`),
+        run: async () => {
+          const compressionTasks = [];
+          await generateImageBatch({
+            items: pending,
+            model,
+            aspect,
+            flowProject,
+            concurrency,
+            shouldStop: () => Boolean(tracked?.stopRequested),
+            onProgress: p => {
+              tracked.progress = {
+                ...(tracked.progress || {}),
+                total: mapped.length,
+                skipped: mapped.length - pending.length,
+                savedCount: savedFiles.length,
+                inFlight: p.inFlight ?? 0,
+                remaining: Math.max(0, pending.length - savedFiles.length),
+                savedFiles: [...savedFiles]
+              };
+            },
+            onItemSaved: entry => {
+              compressionTasks.push(
+                compressImageToJpeg(entry.file || entry.outFile, 85).catch(err => {
+                  console.warn(`[loksewa-batch] JPEG compression skipped for ${entry.filename}: ${err.message}`);
+                })
+              );
+              if (entry.filename && !savedFiles.includes(entry.filename)) savedFiles.push(entry.filename);
+              tracked.progress = {
+                ...(tracked.progress || {}),
+                total: mapped.length,
+                skipped: mapped.length - pending.length,
+                savedCount: savedFiles.length,
+                lastSavedFile: entry.filename,
+                savedFiles: [...savedFiles]
+              };
+            },
+            log: m => console.log(`[loksewa-batch ${setId}] ${m}`)
+          });
+          await Promise.all(compressionTasks);
+          return { saved: savedFiles, file: pending[0].outFile };
+        }
+      });
+      tracked.progress = {
+        total: mapped.length,
+        skipped: mapped.length - pending.length,
+        savedCount: 0,
+        inFlight: 0,
+        remaining: pending.length,
+        savedFiles: []
+      };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
+    }
+
+    return send(res, 404, { ok: false, error: 'Not found.' });
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
-  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, csvImagesApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, csvImagesApi: 1, loksewaApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
   if (url.pathname === '/api/server') return handleServerControl(req, res);
+  if (url.pathname.startsWith('/api/loksewa/')) return handleLoksewaRoute(req, res, url);
   if (url.pathname.startsWith('/api/csv-images/')) return handleCsvImagesRoute(req, res, url);
   if (url.pathname.startsWith('/api/explainer/')) return handleExplainerRoute(req, res, url);
   if (url.pathname.startsWith('/api/tiktok/')) return handleSocialRoute(req, res, url, '/api/tiktok', tiktok, 'TikTok');

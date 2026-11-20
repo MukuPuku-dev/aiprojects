@@ -119,5 +119,16 @@ const PROJECTS = [
     mark: "🗂️",
     accent: "coral",
     flowNext: false
+  },
+  {
+    name: "Loksewa Sheet Studio",
+    type: "Nepali & English MCQ Video Builder · Flow Images + HF Space",
+    description: "Build Loksewa & GK exam-sheet videos with 6 built-in Nepali/English sets, custom questions, Gemini AI question generation, Google Flow illustration batching, and direct HF Space rendering.",
+    href: "projects/loksewa-sheet/index.html",
+    id: "loksewa-sheet",
+    totalClips: 60,
+    mark: "📝",
+    accent: "gold",
+    flowNext: false
   }
 ];

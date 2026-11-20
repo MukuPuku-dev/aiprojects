@@ -1,0 +1,1792 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Loksewa Sheet Studio · Story Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --card: #16161c;
+      --card-2: #1f1f28;
+      --ink: #f4f3f7;
+      --mut: #a3a0b0;
+      --coral: #ff5b57;
+      --magenta: #d91b88;
+      --gold: #ead7b7;
+      --ok: #5be097;
+      --blue: #7ab8ff;
+      --warn: #ffb84d;
+      --line: #2c2b36;
+      --font: "Noto Sans Devanagari", "Mukta", "Nirmala UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.55 var(--font); }
+    header {
+      position: sticky; top: 0; z-index: 20;
+      background: #0d0d10ee; backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+    }
+    .head-row {
+      max-width: 1260px; margin: 0 auto;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .back { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 13.5px; }
+    .back:hover { text-decoration: underline; }
+    h1 { margin: 0; font-size: 19px; display: flex; align-items: center; gap: 8px; }
+    h1 span { color: var(--coral); }
+    .pill {
+      padding: 3px 10px; border-radius: 99px; font-size: 12px; font-weight: 700;
+      border: 1px solid var(--line); background: var(--card-2); color: var(--mut);
+    }
+    .pill.ready { border-color: #2f7d54; background: #133524; color: var(--ok); }
+    .pill.warn { border-color: #6e4e1c; background: #2c200d; color: var(--warn); }
+    .head-right { margin-left: auto; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+
+    main {
+      max-width: 1260px; margin: 0 auto; padding: 18px;
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .panel {
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 16px;
+    }
+    .panel-head {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 10px; flex-wrap: wrap; margin-bottom: 12px;
+    }
+    .panel-title {
+      margin: 0; font-size: 15.5px; font-weight: 800; color: var(--gold);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .panel-sub { margin: 0; font-size: 12.5px; color: var(--mut); }
+
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .between { justify-content: space-between; }
+
+    button, input, select, textarea {
+      background: #21202a; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 11px; font: inherit;
+    }
+    button, select { cursor: pointer; transition: border-color .15s, background .15s, transform .08s; }
+    button:hover:not(:disabled) { border-color: #4b495c; }
+    button:active:not(:disabled) { transform: translateY(1px); }
+    button.primary { background: var(--coral); border-color: var(--coral); color: #fff; font-weight: 700; }
+    button.primary:hover:not(:disabled) { background: #ff4541; }
+    button.magenta {
+      background: linear-gradient(135deg, #d91b88, #ff5b57);
+      border-color: transparent; color: #fff; font-weight: 800;
+    }
+    button.magenta:hover:not(:disabled) { filter: brightness(1.08); }
+    button.gold { background: var(--gold); border-color: var(--gold); color: #19120a; font-weight: 800; }
+    button.ok { background: #1e6b43; border-color: #2f9660; color: #eafff3; font-weight: 700; }
+    button.ghost { background: transparent; }
+    button.danger { background: #36171b; border-color: #6b262e; color: #ff9a9d; }
+    button.sm { padding: 4px 9px; font-size: 12px; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    /* Set Selector Pills */
+    .set-tabs {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 9px;
+    }
+    .set-tab {
+      text-align: left; padding: 10px 12px; border-radius: 11px;
+      background: #131319; border: 1px solid var(--line);
+      display: flex; flex-direction: column; gap: 3px;
+    }
+    .set-tab:hover { border-color: #4f4c63; }
+    .set-tab.active {
+      border-color: var(--coral); background: #22161c;
+      box-shadow: 0 0 0 1px #ff5b5744;
+    }
+    .set-tab-top { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+    .lang-tag {
+      font-size: 10.5px; font-weight: 800; text-transform: uppercase;
+      padding: 1px 7px; border-radius: 99px;
+    }
+    .lang-tag.ne { background: #2c1733; color: #f59fe0; border: 1px solid #592969; }
+    .lang-tag.en { background: #14273d; color: var(--blue); border: 1px solid #274c77; }
+    .lang-tag.custom { background: #2d2614; color: var(--gold); border: 1px solid #5e4f28; }
+    .set-tab strong { font-size: 13.5px; color: var(--ink); line-height: 1.3; }
+    .set-tab small { font-size: 11.5px; color: var(--mut); }
+
+    /* Form grids */
+    .form-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 11px; align-items: end;
+    }
+    label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--mut); }
+    label.field input, label.field select, label.field textarea { width: 100%; }
+    .check-inline {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; color: var(--ink); cursor: pointer; user-select: none;
+    }
+    .check-inline input { width: auto; accent-color: var(--coral); }
+
+    /* Progress bar */
+    .progress-wrap { margin-top: 10px; }
+    .bar { height: 8px; background: var(--line); border-radius: 99px; overflow: hidden; margin: 6px 0; }
+    .bar i {
+      display: block; height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--magenta), var(--coral), var(--gold));
+      transition: width .3s;
+    }
+    .status-line { font-size: 13px; color: var(--gold); min-height: 20px; }
+    .endpoint-hint {
+      font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; color: var(--ok);
+      word-break: break-all; margin-top: 4px;
+    }
+
+    /* Question Cards */
+    .q-list { display: flex; flex-direction: column; gap: 13px; }
+    .q-card {
+      background: #131319; border: 1px solid var(--line); border-radius: 13px;
+      padding: 14px; display: grid;
+      grid-template-columns: minmax(0, 1fr) 210px;
+      gap: 16px; align-items: start;
+    }
+    .q-card.has-img { border-color: #275c40; }
+    @media (max-width: 820px) {
+      .q-card { grid-template-columns: 1fr; }
+    }
+    .q-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; }
+    .q-num {
+      font-weight: 800; font-size: 12.5px; padding: 2px 9px; border-radius: 7px;
+      background: #2b1826; color: #ff8ed0; border: 1px solid #592548;
+    }
+    .q-input {
+      width: 100%; font-size: 14.5px; font-weight: 600; color: #fff;
+      background: #1a1922; margin-bottom: 10px;
+    }
+    .opts-grid {
+      display: grid; grid-template-columns: 1fr;
+      gap: 7px; margin-bottom: 10px;
+    }
+    .opt-item {
+      display: flex; align-items: center; gap: 6px;
+      background: #1a1922; border: 1px solid var(--line); border-radius: 8px;
+      padding: 4px 6px;
+    }
+    .opt-item.correct {
+      border-color: #2f9660; background: #122a1e;
+    }
+    .opt-letter {
+      font-size: 12px; font-weight: 800; width: 24px; height: 24px;
+      border-radius: 6px; border: 1px solid var(--line);
+      background: #252430; color: var(--mut);
+      display: inline-flex; align-items: center; justify-content: center;
+      padding: 0; flex-shrink: 0;
+    }
+    .opt-item.correct .opt-letter {
+      background: #239055; border-color: #36c276; color: #fff;
+    }
+    .opt-item input {
+      border: none; background: transparent; padding: 4px 4px; width: 100%;
+      font-size: 13.5px;
+    }
+    .opt-item input:focus { outline: none; }
+
+    .prompt-label { font-size: 11.5px; color: var(--mut); display: block; margin-bottom: 4px; }
+    .prompt-input {
+      width: 100%; min-height: 62px; resize: vertical;
+      font-size: 12px; color: #d7d4e2; background: #101016;
+    }
+
+    /* Right-side Image Preview Column */
+    .img-col { display: flex; flex-direction: column; gap: 8px; align-items: stretch; }
+    .img-frame {
+      width: 186px; height: 186px; margin: 0 auto; border-radius: 50%;
+      border: 3px dashed #373545; background: #0c0c10;
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden; position: relative;
+    }
+    .q-card.has-img .img-frame {
+      border-style: solid; border-color: #2f8b5b;
+      box-shadow: 0 8px 24px #00000077, 0 0 0 3px #16161c;
+    }
+    .img-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .img-empty {
+      text-align: center; padding: 14px; color: var(--mut); font-size: 12px;
+    }
+    .img-badge {
+      position: absolute; bottom: 10px; right: 20px;
+      font-size: 10.5px; font-weight: 800; padding: 2px 7px; border-radius: 99px;
+      background: #0e2d1de6; color: var(--ok); border: 1px solid #2e8a59;
+    }
+    .img-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .img-actions button { flex: 1; }
+
+    /* Token Row */
+    .token-wrap { display: flex; gap: 6px; align-items: center; }
+    .token-wrap input { flex: 1; font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+
+    /* Video Result Panel */
+    .video-stage {
+      display: grid; grid-template-columns: 300px minmax(0, 1fr);
+      gap: 18px; align-items: start;
+    }
+    @media (max-width: 760px) { .video-stage { grid-template-columns: 1fr; } }
+    .video-stage video {
+      width: 100%; max-height: 520px; border-radius: 14px;
+      background: #000; border: 1px solid var(--line);
+    }
+    .video-history {
+      display: flex; flex-direction: column; gap: 8px;
+      max-height: 440px; overflow-y: auto;
+    }
+    .vid-row {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px;
+      background: #121218; border: 1px solid var(--line); border-radius: 10px;
+      padding: 8px 11px; font-size: 12.5px;
+    }
+    .vid-row.active { border-color: var(--gold); }
+    .vid-name {
+      font-family: ui-monospace, Consolas, monospace; color: var(--ink);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+
+    /* Claude Fact-Check Review Panel */
+    .pill.err { border-color: #8c2f3b; background: #331419; color: #ff9aa6; }
+    .verify-box {
+      margin-top: 12px; border-radius: 12px; padding: 14px;
+      background: #14141d; border: 1px solid #3c3354;
+      display: none; flex-direction: column; gap: 10px;
+    }
+    .verify-box.show { display: flex; }
+    .verify-item {
+      background: #1a1925; border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+    }
+    .verify-item.wrong { border-color: #7d2c37; background: #211419; }
+    .verify-item.ambiguous { border-color: #705522; background: #211c12; }
+    .verify-item.applied { border-color: #2c6e4b; background: #12241b; opacity: .82; }
+    .verify-diff { font-size: 13px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .verify-old { color: #ff9a9d; text-decoration: line-through; }
+    .verify-new { color: var(--ok); font-weight: 700; }
+    .verify-reason { font-size: 12.5px; color: var(--mut); margin: 0; }
+    .verify-raw {
+      font-family: ui-monospace, Consolas, monospace; font-size: 12px;
+      background: #0e0e14; border: 1px solid var(--line); border-radius: 8px;
+      padding: 10px; max-height: 220px; overflow: auto; white-space: pre-wrap;
+    }
+
+    /* Workspace Mode Switcher */
+    .mode-switcher {
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px; background: var(--card); border: 1px solid var(--line);
+      border-radius: 14px; padding: 8px;
+    }
+    @media (max-width: 640px) { .mode-switcher { grid-template-columns: 1fr; } }
+    .mode-btn {
+      display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+      padding: 11px 14px; border-radius: 10px; border: 1px solid transparent;
+      background: transparent; text-align: left;
+    }
+    .mode-btn strong { font-size: 15px; color: var(--ink); }
+    .mode-btn small { font-size: 12px; color: var(--mut); }
+    .mode-btn:hover { background: #1d1c26; }
+    .mode-btn.active {
+      background: linear-gradient(135deg, #281623, #1d1828);
+      border-color: var(--coral);
+      box-shadow: 0 0 0 1px #ff5b5733;
+    }
+    .mode-btn.active strong { color: var(--gold); }
+    .mode-section { display: none; flex-direction: column; gap: 16px; }
+    .mode-section.active { display: flex; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="head-row">
+      <a class="back" href="../../index.html">← Story Studio</a>
+      <h1>📝 Loksewa <span>Sheet Studio</span></h1>
+      <span id="readinessPill" class="pill warn">0 / 0 images ready</span>
+      <div class="head-right">
+        <button id="btnTopVerifyClaude" class="gold sm" type="button">🤖 Verify in Claude</button>
+        <button id="btnJumpServer" class="ghost sm" type="button">🚀 Server &amp; Render</button>
+        <button id="btnQuickGenImages" class="primary sm" type="button">🎨 Generate All Flow Images</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- WORKSPACE MODE SWITCHER -->
+    <nav class="mode-switcher" aria-label="Video Studio Mode">
+      <button id="tabModeGk" class="mode-btn active" type="button">
+        <strong>📝 GK List Videos Setup</strong>
+        <small>Loksewa &amp; GK MCQ exam-sheet videos (3-per-page + circular photos + timer)</small>
+      </button>
+      <button id="tabModeKinetic" class="mode-btn" type="button">
+        <strong>⚡ Viral Kinetic Text Videos</strong>
+        <small>Hook-driven narrated kinetic typography reels ("5 Beautiful Things About Nepal") + optional photos</small>
+      </button>
+    </nav>
+
+    <!-- ===================== MODE 1: GK LIST VIDEOS SETUP ===================== -->
+    <div id="modeGk" class="mode-section active">
+    <!-- 1. SAMPLE & CUSTOM QUESTION SETS -->
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">📚 Question Sets (Nepali &amp; English)</h2>
+          <p class="panel-sub">Pick a built-in Loksewa/GK set, edit freely, create a custom set, or generate new ones with Gemini.</p>
+        </div>
+        <div class="row">
+          <button id="btnNewCustomSet" class="gold sm" type="button">+ New Custom Set</button>
+          <button id="btnResetSet" class="ghost sm" type="button" title="Restore original built-in questions for this set">↺ Reset Preset</button>
+        </div>
+      </div>
+      <div id="setTabs" class="set-tabs"></div>
+    </section>
+
+    <!-- 2. AI QUESTION GENERATOR (CLAUDE DEFAULT + GEMINI LOCAL BROWSER + GEMINI API) -->
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">✨ Generate Questions with AI</h2>
+          <p class="panel-sub">Default uses <strong>Claude</strong> in your debug Chrome browser, or use <strong>Gemini in local browser</strong> / Gemini API.</p>
+        </div>
+      </div>
+      <div class="form-grid">
+        <label class="field" style="grid-column: span 2;">
+          Topic / Subject
+          <input id="gemTopic" type="text" placeholder="e.g. नेपालको संविधान, World Rivers, Computer GK, Current Affairs 2083">
+        </label>
+        <label class="field">
+          Language
+          <select id="gemLang">
+            <option value="nepali">Nepali (नेपाली)</option>
+            <option value="english">English</option>
+            <option value="bilingual">Bilingual (Nepali + English)</option>
+          </select>
+        </label>
+        <label class="field">
+          Questions
+          <select id="gemCount">
+            <option value="3">3 (1 page)</option>
+            <option value="6">6 (2 pages)</option>
+            <option value="9">9 (3 pages)</option>
+            <option value="10" selected>10 (4 pages)</option>
+            <option value="12">12 (4 pages)</option>
+            <option value="15">15 (5 pages)</option>
+            <option value="18">18 (6 pages)</option>
+            <option value="21">21 (7 pages)</option>
+            <option value="25">25 (9 pages)</option>
+          </select>
+        </label>
+        <label class="field">
+          Difficulty
+          <select id="gemDifficulty">
+            <option value="easy">Easy</option>
+            <option value="medium" selected>Medium (Loksewa)</option>
+            <option value="hard">Hard (Officer Level)</option>
+          </select>
+        </label>
+      </div>
+      <div class="row" style="margin-top:11px;">
+        <button id="btnClaudeGen" class="magenta" type="button">🤖 Generate with Claude (Default)</button>
+        <button id="btnGeminiBrowserGen" class="gold" type="button">🌐 Generate with Gemini (Local Browser)</button>
+        <button id="btnGeminiGen" class="ghost sm" type="button" title="Fast remote Gemini API">⚡ Gemini API</button>
+      </div>
+      <div id="gemStatus" class="status-line" style="margin-top:8px;"></div>
+    </section>
+
+    <!-- 3. FLOW IMAGE GENERATION BAR + QUESTIONS EDITOR -->
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">🎨 Questions &amp; Google Flow Image Pipeline</h2>
+          <p class="panel-sub">Click option letter (A/B/C) to mark the correct answer. Generate realistic photos in Flow before sending to HF Space.</p>
+        </div>
+        <div class="row">
+          <button id="btnVerifyClaude" class="gold sm" type="button" title="Default: Open Claude in debug Chrome to fact-check all questions & answers">🤖 Verify in Claude</button>
+          <button id="btnVerifyGeminiBrowser" class="ghost sm" type="button" title="Open Gemini in local debug Chrome to fact-check all questions & answers">🌐 Verify in Gemini (Browser)</button>
+          <button id="btnAddQuestion" class="ghost sm" type="button">+ Add Question</button>
+          <button id="btnGenMissing" class="primary" type="button">🎨 Generate Missing Images in Flow</button>
+          <button id="btnRegenAll" class="ghost sm" type="button">🔄 Regenerate All</button>
+          <button id="btnStopBatch" class="danger sm" type="button" style="display:none;">⏹ Stop</button>
+        </div>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="bar"><i id="flowBar"></i></div>
+        <div id="flowStatus" class="status-line">Ready to generate question illustrations in Google Flow.</div>
+      </div>
+
+      <!-- Claude Fact-Check Results Drawer -->
+      <div id="verifyBox" class="verify-box"></div>
+
+      <div id="qList" class="q-list" style="margin-top:14px;"></div>
+    </section>
+
+    <!-- 4. HUGGING FACE SERVER & SEND PANEL -->
+    <section id="serverPanel" class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">🚀 Hugging Face Space · Generate Video</h2>
+          <p class="panel-sub">Sends your questions + generated Flow images directly to <code>/texttovideo-loksewa</code> (skipping Cloudflare AI).</p>
+        </div>
+        <span id="serverReadyPill" class="pill warn">Generate all images first</span>
+      </div>
+
+      <div class="form-grid">
+        <label class="field" style="grid-column: span 2;">
+          Hugging Face Space URL
+          <input id="hfSpaceUrl" type="url" value="https://huggingface.co/spaces/mukeshpokharel/explanation-demo" placeholder="https://huggingface.co/spaces/mukeshpokharel/explanation-demo">
+          <span id="resolvedEndpoint" class="endpoint-hint">→ https://mukeshpokharel-explanation-demo.hf.space/texttovideo-loksewa</span>
+        </label>
+        <label class="field" style="grid-column: span 2;">
+          Hugging Face Bearer Token (Private Repo)
+          <div class="token-wrap">
+            <input id="hfToken" type="password" placeholder="hf_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" autocomplete="off">
+            <button id="btnToggleToken" class="ghost sm" type="button">👁 Show</button>
+            <button id="btnClearToken" class="ghost sm" type="button">✕</button>
+          </div>
+        </label>
+      </div>
+
+      <div class="form-grid" style="margin-top:12px;">
+        <label class="field" style="grid-column: span 2;">
+          Video Banner Title
+          <input id="vidTitle" type="text" placeholder="केही महत्वपूर्ण सामान्यज्ञानका MCQs">
+        </label>
+        <label class="field">
+          Part Stamp Label
+          <input id="vidPart" type="text" value="भाग-१" placeholder="भाग-१ or Part-1">
+        </label>
+        <label class="field">
+          Design Variant
+          <select id="vidVariant">
+            <option value="hand" selected>Hand Marker + Flashcards (Recommended)</option>
+            <option value="classic">Classic Highlight + Flashcards</option>
+            <option value="random">Random</option>
+          </select>
+        </label>
+        <label class="field">
+          TTS Voice
+          <select id="vidVoice">
+            <option value="Kore" selected>Kore (Clear Female)</option>
+            <option value="Puck">Puck (Energetic Male)</option>
+            <option value="Charon">Charon (Deep Male)</option>
+            <option value="Aoede">Aoede (Warm Female)</option>
+            <option value="Fenrir">Fenrir (Bold Male)</option>
+          </select>
+        </label>
+        <label class="field">
+          Countdown (sec)
+          <input id="vidCountdown" type="number" min="1" max="15" step="0.5" value="5">
+        </label>
+        <label class="field">
+          Playback Speed
+          <input id="vidSpeed" type="number" min="0.7" max="1.5" step="0.05" value="1.0">
+        </label>
+      </div>
+
+      <div class="row between" style="margin-top:14px;">
+        <div class="row">
+          <label class="check-inline">
+            <input id="chkAllowFallback" type="checkbox">
+            Allow sending with missing images (use Cloudflare fallback)
+          </label>
+          <label class="check-inline">
+            <input id="chkUploadYt" type="checkbox">
+            Upload to YouTube
+          </label>
+          <label class="check-inline">
+            <input id="chkUploadFb" type="checkbox">
+            Upload to Facebook
+          </label>
+          <select id="vidFbPage" title="Optional: choose which Facebook Page to post to" style="padding:5px 8px; font-size:12.5px;">
+            <option value="">FB Page: Default (Loksewa Automatic)</option>
+            <option value="912316931956561">Its My Turn</option>
+            <option value="109014670560862">GK IQ</option>
+            <option value="__custom__">Custom Page ID...</option>
+          </select>
+          <input id="vidFbPageCustom" type="text" placeholder="Enter FB Page ID" style="display:none; width:155px; padding:5px 8px; font-size:12.5px;">
+        </div>
+        <button id="btnSendToServer" class="magenta" type="button" disabled style="padding:10px 20px; font-size:15px;">
+          🚀 Send to Server &amp; Generate Video
+        </button>
+      </div>
+
+      <div id="serverStatus" class="status-line" style="margin-top:10px;"></div>
+    </section>
+    </div> <!-- /#modeGk -->
+
+    <!-- ===================== MODE 2: VIRAL KINETIC TEXT VIDEOS ===================== -->
+    <div id="modeKinetic" class="mode-section">
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">⚡ Sample Viral Kinetic Scripts (English &amp; Nepali)</h2>
+            <p class="panel-sub">Simple, clear, high-retention narrated kinetic typography videos. Every render randomizes theme, layout mix &amp; subtle motion for uniqueness.</p>
+          </div>
+        </div>
+        <div id="kinScriptTabs" class="set-tabs"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">✨ Generate Viral Script with AI</h2>
+            <p class="panel-sub">Enter any general topic (e.g. "5 Beautiful Things About Nepal") — Claude is default, or use Gemini in local browser.</p>
+          </div>
+        </div>
+        <div class="form-grid">
+          <label class="field" style="grid-column: span 2;">
+            Video Topic / Idea
+            <input id="kinAiTopic" type="text" placeholder="e.g. 5 Beautiful Things About Nepal, 5 Daily Psychology Hacks">
+          </label>
+          <label class="field">
+            Language
+            <select id="kinAiLang">
+              <option value="english" selected>English</option>
+              <option value="nepali">Nepali (नेपाली)</option>
+              <option value="bilingual">Bilingual</option>
+            </select>
+          </label>
+          <label class="field">
+            Points / Slides
+            <select id="kinAiCount">
+              <option value="3">3 points (~25s)</option>
+              <option value="5" selected>5 points (~45s · Sweet Spot)</option>
+              <option value="7">7 points (~60s)</option>
+            </select>
+          </label>
+        </div>
+        <div class="row" style="margin-top:11px;">
+          <button id="btnKinGenClaude" class="magenta" type="button">🤖 Generate with Claude (Default)</button>
+          <button id="btnKinGenGemBrowser" class="gold" type="button">🌐 Generate with Gemini (Local Browser)</button>
+          <button id="btnKinGenGemApi" class="ghost sm" type="button">⚡ Gemini API</button>
+        </div>
+        <div id="kinAiStatus" class="status-line" style="margin-top:8px;"></div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2 class="panel-title">🎬 Kinetic Script, Slides &amp; Optional Photos</h2>
+            <p class="panel-sub">Works brilliantly as pure kinetic typography (0 photos required) — or generate/upload photos on any slide for Ken Burns split/backdrop visuals!</p>
+          </div>
+          <div class="row">
+            <button id="btnKinAddSlide" class="ghost sm" type="button">+ Add Slide</button>
+            <button id="btnKinGenAllPhotos" class="primary sm" type="button">🎨 Generate Optional Photos in Flow</button>
+          </div>
+        </div>
+
+        <div class="form-grid" style="margin-bottom:12px;">
+          <label class="field" style="grid-column: span 2;">
+            Video Title
+            <input id="kinTitle" type="text" placeholder="5 Beautiful Things About Nepal">
+          </label>
+          <label class="field">
+            Visual Theme (Uniqueness)
+            <select id="kinTheme">
+              <option value="random" selected>🎲 Random Unique Every Time (Recommended)</option>
+              <option value="claude_coral">Obsidian Coral &amp; Teal (Signature)</option>
+              <option value="obsidian_gold">Obsidian &amp; Champagne Gold</option>
+              <option value="midnight_cobalt">Midnight Cobalt &amp; Electric Cyan</option>
+              <option value="forest_amber">Emerald Pine &amp; Marigold</option>
+              <option value="velvet_rose">Velvet Noir &amp; Hot Rose</option>
+              <option value="slate_terracotta">Studio Slate &amp; Terracotta</option>
+              <option value="editorial_ivory">Editorial Ivory &amp; Vermilion (Light)</option>
+            </select>
+          </label>
+          <label class="field">
+            TTS Voice
+            <select id="kinVoice">
+              <option value="Puck">Puck (Energetic Male)</option>
+              <option value="Kore" selected>Kore (Clear Female)</option>
+              <option value="Charon">Charon (Deep Male)</option>
+              <option value="Aoede">Aoede (Warm Female)</option>
+              <option value="Fenrir">Fenrir (Bold Male)</option>
+            </select>
+          </label>
+          <label class="field">
+            Speed
+            <input id="kinSpeed" type="number" min="0.85" max="1.35" step="0.05" value="1.05">
+          </label>
+        </div>
+
+        <div class="form-grid" style="margin-bottom:14px;">
+          <label class="field" style="grid-column: span 2;">
+            Opening Hook (First 3 seconds)
+            <textarea id="kinHook" style="min-height:54px;" placeholder="Hook narration..."></textarea>
+          </label>
+          <label class="field" style="grid-column: span 2;">
+            Closing Outro / CTA
+            <textarea id="kinOutro" style="min-height:54px;" placeholder="Which one amazed you most? Follow for more..."></textarea>
+          </label>
+        </div>
+
+        <div id="kinSlideList" class="q-list"></div>
+
+        <div class="row between" style="margin-top:16px; padding-top:14px; border-top:1px solid var(--line);">
+          <div class="row">
+            <span class="panel-sub">Uses your HF Space URL &amp; Bearer Token from GK Server panel → <code>/texttovideo-kinetic</code></span>
+            <label class="check-inline"><input id="kinUploadYt" type="checkbox"> Upload YT</label>
+            <label class="check-inline"><input id="kinUploadFb" type="checkbox"> Upload FB</label>
+            <select id="kinFbPage" title="Optional: choose which Facebook Page to post to" style="padding:5px 8px; font-size:12.5px;">
+              <option value="">FB Page: Default (Loksewa Automatic)</option>
+              <option value="912316931956561">Its My Turn</option>
+              <option value="109014670560862">GK IQ</option>
+              <option value="__custom__">Custom Page ID...</option>
+            </select>
+            <input id="kinFbPageCustom" type="text" placeholder="Enter FB Page ID" style="display:none; width:155px; padding:5px 8px; font-size:12.5px;">
+          </div>
+          <button id="btnSendKinetic" class="magenta" type="button" style="padding:10px 22px; font-size:15px;">
+            🚀 Render Viral Kinetic Video
+          </button>
+        </div>
+        <div id="kinStatus" class="status-line" style="margin-top:8px;"></div>
+      </section>
+    </div> <!-- /#modeKinetic -->
+
+    <!-- 5. GENERATED VIDEO PREVIEW & HISTORY -->
+    <section class="panel">
+      <div class="panel-head">
+        <div>
+          <h2 class="panel-title">🎬 Rendered Video Preview</h2>
+          <p class="panel-sub">Videos returned from your Hugging Face Space are automatically saved in <code>projects/loksewa-sheet/videos/</code>.</p>
+        </div>
+        <a id="btnDownloadVideo" href="#" download style="display:none; text-decoration:none;">
+          <button class="ok sm" type="button">⬇ Download MP4</button>
+        </a>
+      </div>
+
+      <div class="video-stage">
+        <div>
+          <video id="videoPlayer" controls playsinline></video>
+          <div id="videoMeta" class="panel-sub" style="margin-top:6px;">No video rendered yet in this session.</div>
+        </div>
+        <div>
+          <div class="row between" style="margin-bottom:8px;">
+            <strong style="font-size:13px; color:var(--gold);">Saved Videos</strong>
+            <button id="btnDeleteAllVideos" type="button" class="danger sm" style="display:none;">🗑 Delete All</button>
+          </div>
+          <div id="videoHistory" class="video-history">
+            <div class="panel-sub">No saved videos yet.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <input id="hiddenFileInput" type="file" accept="image/png,image/jpeg,image/webp" style="display:none;">
+  <input id="kinFileInput" type="file" accept="image/png,image/jpeg,image/webp" style="display:none;">
+  <script src="sample-sets.js"></script>
+  <script src="kinetic-samples.js"></script>
+  <script src="kinetic-ui.js"></script>
+  <script>
+    (() => {
+      const STORAGE_SETS_KEY = 'loksewa_sheet_sets_v3';
+      const STORAGE_CFG_KEY = 'loksewa_sheet_cfg_v1';
+      const LETTERS = ['A', 'B', 'C'];
+
+      const $ = id => document.getElementById(id);
+
+      let sets = loadSets();
+      let activeSetId = sets[0]?.id || 'nepali-awards';
+      let imageMap = new Map(); // filename -> { name, url, size, mtimeMs }
+      let videosList = [];
+      let verifyByIdx = new Map(); // qIdx -> Claude verification item
+      let lastVerifyMeta = null;
+      let activeJobId = null;
+      let pollTimer = null;
+      let uploadTargetFilename = null;
+
+      function openGoogleVerify(q) {
+        const opts = (q.options || []).map(o => String(o || '').trim()).filter(Boolean);
+        const query = [String(q.question || '').trim(), opts.join(' ')].filter(Boolean).join(' ');
+        if (!query) return;
+        const url = `https://www.google.com/search?q=${encodeURIComponent(query)}`;
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+
+      function clone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      }
+
+      function loadSets() {
+        const defaults = clone(window.LOKSEWA_SAMPLE_SETS || []);
+        try {
+          const raw = localStorage.getItem(STORAGE_SETS_KEY);
+          if (!raw) return defaults;
+          const saved = JSON.parse(raw);
+          if (!Array.isArray(saved) || !saved.length) return defaults;
+          // Ensure any newly added built-in sets are also present
+          const byId = new Map(saved.map(s => [s.id, s]));
+          for (const d of defaults) {
+            if (!byId.has(d.id)) saved.push(d);
+          }
+          return saved;
+        } catch {
+          return defaults;
+        }
+      }
+
+      function persistSets() {
+        try {
+          localStorage.setItem(STORAGE_SETS_KEY, JSON.stringify(sets));
+        } catch { /* ignore quota */ }
+      }
+
+      function getSelectedFbPageId(selId, customId) {
+        const val = $(selId)?.value || '';
+        if (val === '__custom__') return ($(customId)?.value || '').trim();
+        return val.trim();
+      }
+
+      function syncCustomFbInput(selId, customId) {
+        const inp = $(customId);
+        if (inp) inp.style.display = ($(selId)?.value === '__custom__') ? 'inline-block' : 'none';
+      }
+
+      function loadCfg() {
+        try {
+          const raw = localStorage.getItem(STORAGE_CFG_KEY);
+          if (!raw) return;
+          const cfg = JSON.parse(raw);
+          if (cfg.spaceUrl) $('hfSpaceUrl').value = cfg.spaceUrl;
+          if (typeof cfg.bearerToken === 'string') $('hfToken').value = cfg.bearerToken;
+          if (cfg.variant) $('vidVariant').value = cfg.variant;
+          if (cfg.countdown) $('vidCountdown').value = cfg.countdown;
+          if (cfg.speed) $('vidSpeed').value = cfg.speed;
+          if (typeof cfg.fbPage === 'string') $('vidFbPage').value = cfg.fbPage;
+          if (typeof cfg.fbPageCustom === 'string') $('vidFbPageCustom').value = cfg.fbPageCustom;
+          syncCustomFbInput('vidFbPage', 'vidFbPageCustom');
+        } catch { /* ignore */ }
+      }
+
+      function persistCfg() {
+        try {
+          localStorage.setItem(STORAGE_CFG_KEY, JSON.stringify({
+            spaceUrl: $('hfSpaceUrl').value.trim(),
+            bearerToken: $('hfToken').value.trim(),
+            variant: $('vidVariant').value,
+            countdown: $('vidCountdown').value,
+            speed: $('vidSpeed').value,
+            fbPage: $('vidFbPage').value,
+            fbPageCustom: $('vidFbPageCustom').value.trim()
+          }));
+        } catch { /* ignore */ }
+      }
+
+      function getActiveSet() {
+        return sets.find(s => s.id === activeSetId) || sets[0];
+      }
+
+      function imageFileForIndex(idx) {
+        return `q${String(idx + 1).padStart(2, '0')}.jpg`;
+      }
+
+      function resolveEndpointClientPreview(rawUrl) {
+        let s = String(rawUrl || '').trim();
+        if (!s) s = 'https://huggingface.co/spaces/mukeshpokharel/explanation-demo';
+        if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
+        try {
+          const u = new URL(s);
+          if (/^(www\.)?huggingface\.co$/i.test(u.hostname)) {
+            const m = u.pathname.match(/^\/spaces\/([^/]+)\/([^/]+)/i);
+            if (m) {
+              const owner = m[1].toLowerCase().replace(/[^a-z0-9-]/g, '-');
+              const space = m[2].toLowerCase().replace(/[^a-z0-9-]/g, '-');
+              return `https://${owner}-${space}.hf.space/texttovideo-loksewa`;
+            }
+          }
+          const p = u.pathname.replace(/\/+$/, '');
+          return p.endsWith('/texttovideo-loksewa') ? `${u.origin}${p}` : `${u.origin}${p}/texttovideo-loksewa`;
+        } catch {
+          return 'Invalid URL';
+        }
+      }
+
+      function updateEndpointPreview() {
+        $('resolvedEndpoint').textContent = `→ ${resolveEndpointClientPreview($('hfSpaceUrl').value)}`;
+      }
+
+      function countReadyImages(set) {
+        let ready = 0;
+        for (let i = 0; i < set.questions.length; i += 1) {
+          if (imageMap.has(imageFileForIndex(i))) ready += 1;
+        }
+        return ready;
+      }
+
+      function updateReadinessUI() {
+        const set = getActiveSet();
+        const total = set.questions.length;
+        const ready = countReadyImages(set);
+        const allReady = total > 0 && ready === total;
+        const allowFallback = $('chkAllowFallback').checked;
+
+        const pill = $('readinessPill');
+        pill.textContent = `${ready} / ${total} images ready`;
+        pill.className = `pill ${allReady ? 'ready' : 'warn'}`;
+
+        const sPill = $('serverReadyPill');
+        if (allReady) {
+          sPill.textContent = `✅ All ${total} Flow images ready (Cloudflare skipped)`;
+          sPill.className = 'pill ready';
+        } else if (allowFallback) {
+          sPill.textContent = `⚡ ${ready}/${total} Flow images + Cloudflare fallback`;
+          sPill.className = 'pill warn';
+        } else {
+          sPill.textContent = `⏳ Generate ${total - ready} more image(s) to enable Send`;
+          sPill.className = 'pill warn';
+        }
+
+        $('btnSendToServer').disabled = !(total > 0 && (allReady || allowFallback));
+      }
+
+      function renderSetTabs() {
+        const wrap = $('setTabs');
+        wrap.innerHTML = '';
+        for (const s of sets) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = `set-tab ${s.id === activeSetId ? 'active' : ''}`;
+          const langClass = s.lang === 'English' ? 'en' : (s.lang === 'Nepali' ? 'ne' : 'custom');
+          btn.innerHTML = `
+            <div class="set-tab-top">
+              <span class="lang-tag ${langClass}">${escapeHtml(s.lang || 'Custom')}</span>
+              <small>${s.questions.length} Qs</small>
+            </div>
+            <strong>${escapeHtml(s.name)}</strong>
+            <small>${escapeHtml(s.partLabel || '')} · ${escapeHtml(s.bannerTitle || '')}</small>
+          `;
+          btn.addEventListener('click', () => selectSet(s.id));
+          wrap.appendChild(btn);
+        }
+      }
+
+      function syncSetMetaInputs() {
+        const set = getActiveSet();
+        $('vidTitle').value = set.bannerTitle || '';
+        $('vidPart').value = set.partLabel || 'भाग-१';
+        if (set.voice) $('vidVoice').value = set.voice;
+      }
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function renderQuestions() {
+        const set = getActiveSet();
+        const list = $('qList');
+        list.innerHTML = '';
+
+        set.questions.forEach((q, idx) => {
+          const fname = imageFileForIndex(idx);
+          const savedImg = imageMap.get(fname);
+          const card = document.createElement('div');
+          card.className = `q-card ${savedImg ? 'has-img' : ''}`;
+
+          const vItem = verifyByIdx.get(idx);
+          const vProv = escapeHtml(lastVerifyMeta?.provider || 'Claude');
+          const vBadge = vItem
+            ? (vItem.applied || vItem.status === 'correct'
+              ? `<span class="pill ready">✓ ${vProv} Verified</span>`
+              : `<span class="pill ${vItem.status === 'wrong' ? 'err' : 'warn'}">⚠️ ${vItem.status === 'wrong' ? 'Fix Suggested' : 'Check Needed'}</span>`)
+            : '';
+
+          const left = document.createElement('div');
+          left.innerHTML = `
+            <div class="q-head">
+              <span class="q-num">Q${idx + 1}</span>
+              <span class="pill" style="font-family:monospace;">${fname}</span>
+              ${vBadge}
+              <div class="row" style="margin-left:auto; gap:5px;">
+                <button type="button" class="ghost sm" data-act="google" title="Open Google Search with this question and its options in a new tab">🔍 Google</button>
+                <button type="button" class="ghost sm" data-act="up" ${idx === 0 ? 'disabled' : ''}>↑</button>
+                <button type="button" class="ghost sm" data-act="down" ${idx === set.questions.length - 1 ? 'disabled' : ''}>↓</button>
+                <button type="button" class="danger sm" data-act="del" ${set.questions.length <= 1 ? 'disabled' : ''}>✕</button>
+              </div>
+            </div>
+          `;
+
+          const qInput = document.createElement('input');
+          qInput.className = 'q-input';
+          qInput.value = q.question || '';
+          qInput.placeholder = 'Enter question text (Nepali or English)...';
+          qInput.addEventListener('input', () => {
+            q.question = qInput.value;
+            persistSets();
+          });
+          left.appendChild(qInput);
+
+          const optsGrid = document.createElement('div');
+          optsGrid.className = 'opts-grid';
+          for (let oi = 0; oi < 3; oi += 1) {
+            const optVal = (q.options && q.options[oi]) || '';
+            const isCorrect = optVal && optVal.trim() === (q.answer || '').trim();
+            const optBox = document.createElement('div');
+            optBox.className = `opt-item ${isCorrect ? 'correct' : ''}`;
+
+            const letterBtn = document.createElement('button');
+            letterBtn.type = 'button';
+            letterBtn.className = 'opt-letter';
+            letterBtn.title = 'Click to set as correct answer';
+            letterBtn.textContent = isCorrect ? '✓' : LETTERS[oi];
+            letterBtn.addEventListener('click', () => {
+              q.answer = (q.options[oi] || '').trim();
+              persistSets();
+              renderQuestions();
+            });
+
+            const optInput = document.createElement('input');
+            optInput.value = optVal;
+            optInput.placeholder = `Option ${LETTERS[oi]}`;
+            optInput.addEventListener('input', () => {
+              const wasCorrect = (q.options[oi] || '').trim() === (q.answer || '').trim();
+              q.options[oi] = optInput.value;
+              if (wasCorrect) q.answer = optInput.value.trim();
+              persistSets();
+            });
+
+            optBox.appendChild(letterBtn);
+            optBox.appendChild(optInput);
+            optsGrid.appendChild(optBox);
+          }
+          left.appendChild(optsGrid);
+
+          const pLabel = document.createElement('span');
+          pLabel.className = 'prompt-label';
+          pLabel.textContent = 'Google Flow Image Prompt (English visual description, no text):';
+          left.appendChild(pLabel);
+
+          const pArea = document.createElement('textarea');
+          pArea.className = 'prompt-input';
+          pArea.value = q.imagePrompt || '';
+          pArea.placeholder = 'Describe the visual flashcard illustration for Google Flow...';
+          pArea.addEventListener('input', () => {
+            q.imagePrompt = pArea.value;
+            persistSets();
+          });
+          left.appendChild(pArea);
+
+          left.querySelector('[data-act="google"]').addEventListener('click', () => openGoogleVerify(q));
+          left.querySelector('[data-act="up"]').addEventListener('click', () => {
+            if (idx > 0) {
+              [set.questions[idx - 1], set.questions[idx]] = [set.questions[idx], set.questions[idx - 1]];
+              persistSets();
+              renderQuestions();
+              updateReadinessUI();
+            }
+          });
+          left.querySelector('[data-act="down"]').addEventListener('click', () => {
+            if (idx < set.questions.length - 1) {
+              [set.questions[idx + 1], set.questions[idx]] = [set.questions[idx], set.questions[idx + 1]];
+              persistSets();
+              renderQuestions();
+              updateReadinessUI();
+            }
+          });
+          left.querySelector('[data-act="del"]').addEventListener('click', () => {
+            if (set.questions.length <= 1) return;
+            set.questions.splice(idx, 1);
+            persistSets();
+            renderSetTabs();
+            renderQuestions();
+            updateReadinessUI();
+          });
+
+          // Right image column
+          const right = document.createElement('div');
+          right.className = 'img-col';
+          const frame = document.createElement('div');
+          frame.className = 'img-frame';
+          if (savedImg) {
+            frame.innerHTML = `
+              <img src="${savedImg.url}?t=${savedImg.mtimeMs}" alt="Question ${idx + 1} illustration">
+              <span class="img-badge">✓ Ready</span>
+            `;
+          } else {
+            frame.innerHTML = `<div class="img-empty">No image yet.<br>Generate in Flow or upload.</div>`;
+          }
+          right.appendChild(frame);
+
+          const actions = document.createElement('div');
+          actions.className = 'img-actions';
+
+          const genBtn = document.createElement('button');
+          genBtn.type = 'button';
+          genBtn.className = savedImg ? 'ghost sm' : 'primary sm';
+          genBtn.textContent = savedImg ? '🔄 Regen' : '🎨 Flow';
+          genBtn.addEventListener('click', () => generateSingleImage(idx));
+
+          const upBtn = document.createElement('button');
+          upBtn.type = 'button';
+          upBtn.className = 'ghost sm';
+          upBtn.textContent = '📁 Upload';
+          upBtn.addEventListener('click', () => {
+            uploadTargetFilename = fname;
+            $('hiddenFileInput').value = '';
+            $('hiddenFileInput').click();
+          });
+
+          actions.appendChild(genBtn);
+          actions.appendChild(upBtn);
+
+          if (savedImg) {
+            const clrBtn = document.createElement('button');
+            clrBtn.type = 'button';
+            clrBtn.className = 'danger sm';
+            clrBtn.textContent = '🗑';
+            clrBtn.title = 'Delete saved image';
+            clrBtn.addEventListener('click', () => deleteSingleImage(fname));
+            actions.appendChild(clrBtn);
+          }
+
+          right.appendChild(actions);
+          card.appendChild(left);
+          card.appendChild(right);
+          list.appendChild(card);
+        });
+
+        updateReadinessUI();
+      }
+
+      function clearVideoPlayerIfMatches(urlOrAll) {
+        const player = $('videoPlayer');
+        const currentPath = player.src ? (() => { try { return new URL(player.src, location.origin).pathname; } catch { return ''; } })() : '';
+        if (urlOrAll === true || (urlOrAll && currentPath === urlOrAll)) {
+          player.pause();
+          player.removeAttribute('src');
+          player.load();
+          $('btnDownloadVideo').style.display = 'none';
+          $('videoMeta').textContent = 'No video loaded.';
+        }
+      }
+
+      async function deleteSavedVideo(v) {
+        if (!confirm(`Delete saved video "${v.name}" from disk?`)) return;
+        try {
+          const res = await fetch('/api/loksewa/delete-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename: v.name })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Delete failed.');
+          clearVideoPlayerIfMatches(v.url);
+          await refreshServerState();
+        } catch (err) {
+          $('serverStatus').textContent = `❌ Could not delete video: ${err.message}`;
+        }
+      }
+
+      async function deleteAllSavedVideos() {
+        if (!videosList.length) return;
+        if (!confirm(`Delete all ${videosList.length} saved video(s) from disk?`)) return;
+        try {
+          const res = await fetch('/api/loksewa/delete-all-videos', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({})
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Delete all failed.');
+          clearVideoPlayerIfMatches(true);
+          await refreshServerState();
+        } catch (err) {
+          $('serverStatus').textContent = `❌ Could not delete videos: ${err.message}`;
+        }
+      }
+
+      function renderVideoHistory(selectedUrl = null) {
+        const wrap = $('videoHistory');
+        const delAllBtn = $('btnDeleteAllVideos');
+        if (delAllBtn) delAllBtn.style.display = videosList.length ? 'inline-block' : 'none';
+        if (!videosList.length) {
+          wrap.innerHTML = '<div class="panel-sub">No saved videos yet.</div>';
+          return;
+        }
+        wrap.innerHTML = '';
+        for (const v of videosList) {
+          const row = document.createElement('div');
+          row.className = `vid-row ${selectedUrl === v.url ? 'active' : ''}`;
+          const mb = (v.size / (1024 * 1024)).toFixed(2);
+          row.innerHTML = `
+            <span class="vid-name" title="${escapeHtml(v.name)}">${escapeHtml(v.name)}</span>
+            <div class="row" style="gap:6px; flex-shrink:0;">
+              <span class="panel-sub">${mb} MB</span>
+              <button type="button" class="ghost sm" data-play>▶ Play</button>
+              <a href="${v.url}" download="${escapeHtml(v.name)}" style="text-decoration:none;">
+                <button type="button" class="ghost sm" title="Download MP4">⬇</button>
+              </a>
+              <button type="button" class="danger sm" data-del-vid title="Delete video from disk">🗑</button>
+            </div>
+          `;
+          row.querySelector('[data-play]').addEventListener('click', () => showVideo(v.url, v.name, v.size));
+          row.querySelector('[data-del-vid]').addEventListener('click', () => deleteSavedVideo(v));
+          wrap.appendChild(row);
+        }
+      }
+
+      function showVideo(url, filename, sizeBytes) {
+        const player = $('videoPlayer');
+        player.src = `${url}?t=${Date.now()}`;
+        player.load();
+        const dl = $('btnDownloadVideo');
+        dl.href = url;
+        dl.download = filename || 'loksewa_sheet.mp4';
+        dl.style.display = 'inline-block';
+        const mb = sizeBytes ? ` (${(sizeBytes / (1024 * 1024)).toFixed(2)} MB)` : '';
+        $('videoMeta').textContent = `Loaded: ${filename}${mb}`;
+        renderVideoHistory(url);
+      }
+
+      async function refreshServerState() {
+        const set = getActiveSet();
+        try {
+          const res = await fetch(`/api/loksewa/state?setId=${encodeURIComponent(set.id)}`);
+          const data = await res.json();
+          if (!data.ok) return;
+          imageMap = new Map((data.images || []).map(im => [im.name, im]));
+          videosList = data.videos || [];
+          renderQuestions();
+          renderVideoHistory($('videoPlayer').src ? new URL($('videoPlayer').src, location.origin).pathname : null);
+        } catch (err) {
+          $('flowStatus').textContent = `Could not reach local Flow server: ${err.message}`;
+        }
+      }
+
+      async function selectSet(id) {
+        activeSetId = id;
+        verifyByIdx = new Map();
+        lastVerifyMeta = null;
+        renderVerifyPanel();
+        renderSetTabs();
+        syncSetMetaInputs();
+        await refreshServerState();
+      }
+
+      function applyClaudeFix(idx) {
+        const set = getActiveSet();
+        const q = set.questions[idx];
+        const vItem = verifyByIdx.get(idx);
+        if (!q || !vItem) return;
+
+        if (vItem.correctedQuestion) {
+          q.question = vItem.correctedQuestion;
+        }
+        if (Array.isArray(vItem.correctedOptions) && vItem.correctedOptions.length >= 2) {
+          q.options = vItem.correctedOptions.slice(0, 3);
+          while (q.options.length < 3) q.options.push('');
+        }
+        if (vItem.correctedAnswer) {
+          const matchIdx = q.options.findIndex(o => String(o || '').trim().toLowerCase() === vItem.correctedAnswer.toLowerCase());
+          if (matchIdx >= 0) {
+            q.answer = q.options[matchIdx].trim();
+          } else {
+            // Replace the old wrong answer slot (or last slot) with Claude's corrected answer
+            const oldIdx = q.options.findIndex(o => String(o || '').trim().toLowerCase() === String(q.answer || '').trim().toLowerCase());
+            const targetIdx = oldIdx >= 0 ? oldIdx : Math.min(2, q.options.length - 1);
+            q.options[targetIdx] = vItem.correctedAnswer;
+            q.answer = vItem.correctedAnswer;
+          }
+        }
+        vItem.applied = true;
+        persistSets();
+        renderQuestions();
+        renderVerifyPanel();
+      }
+
+      function applyAllClaudeFixes() {
+        const set = getActiveSet();
+        for (let i = 0; i < set.questions.length; i += 1) {
+          const vItem = verifyByIdx.get(i);
+          if (vItem && !vItem.applied && vItem.status !== 'correct') {
+            applyClaudeFix(i);
+          }
+        }
+      }
+
+      function renderVerifyPanel() {
+        const box = $('verifyBox');
+        if (!lastVerifyMeta) {
+          box.className = 'verify-box';
+          box.innerHTML = '';
+          return;
+        }
+        box.className = 'verify-box show';
+        box.innerHTML = '';
+
+        const set = getActiveSet();
+        const items = [...verifyByIdx.values()].sort((a, b) => a.index - b.index);
+        const pendingFixes = items.filter(it => !it.applied && it.status !== 'correct');
+        const verifiedCount = items.filter(it => it.applied || it.status === 'correct').length;
+
+        const head = document.createElement('div');
+        head.className = 'row between';
+        const vLabel = lastVerifyMeta.provider || 'Claude';
+        head.innerHTML = `
+          <div class="row" style="gap:8px;">
+            <strong style="color:var(--gold); font-size:14px;">🤖 ${escapeHtml(vLabel)} Fact-Check Report</strong>
+            ${lastVerifyMeta.parsed
+              ? `<span class="pill ready">✓ ${verifiedCount} Verified</span>
+                 ${pendingFixes.length ? `<span class="pill err">⚠️ ${pendingFixes.length} Correction(s)</span>` : `<span class="pill ready">All Clear!</span>`}`
+              : `<span class="pill warn">Raw Response</span>`}
+            ${lastVerifyMeta.account ? `<span class="panel-sub">(${escapeHtml(lastVerifyMeta.account)})</span>` : ''}
+          </div>
+          <div class="row" style="gap:6px;">
+            ${pendingFixes.length ? `<button type="button" class="ok sm" id="btnAcceptAllFixes">✅ Accept All Corrections (${pendingFixes.length})</button>` : ''}
+            <button type="button" class="ghost sm" id="btnDismissVerify">✕ Dismiss</button>
+          </div>
+        `;
+        box.appendChild(head);
+
+        head.querySelector('#btnDismissVerify').addEventListener('click', () => {
+          lastVerifyMeta = null;
+          renderVerifyPanel();
+        });
+        const acceptAllBtn = head.querySelector('#btnAcceptAllFixes');
+        if (acceptAllBtn) acceptAllBtn.addEventListener('click', applyAllClaudeFixes);
+
+        if (!lastVerifyMeta.parsed) {
+          const pre = document.createElement('div');
+          pre.className = 'verify-raw';
+          pre.textContent = lastVerifyMeta.rawText || 'Claude returned an empty response.';
+          box.appendChild(pre);
+          return;
+        }
+
+        const issues = items.filter(it => it.status !== 'correct');
+        if (!issues.length) {
+          const okMsg = document.createElement('div');
+          okMsg.className = 'panel-sub';
+          okMsg.style.color = 'var(--ok)';
+          okMsg.textContent = `All ${items.length} question(s) and answers were verified as factually correct by ${vLabel}!`;
+          box.appendChild(okMsg);
+          return;
+        }
+
+        for (const it of issues) {
+          const q = set.questions[it.index] || {};
+          const row = document.createElement('div');
+          row.className = `verify-item ${it.applied ? 'applied' : it.status}`;
+          const statusLabel = it.applied
+            ? '✓ Correction Applied'
+            : (it.status === 'wrong' ? '❌ Incorrect Answer / Fact' : '⚠️ Ambiguous / Needs Review');
+
+          row.innerHTML = `
+            <div class="row between">
+              <div class="row" style="gap:7px;">
+                <span class="q-num">Q${it.index + 1}</span>
+                <strong style="font-size:13px;">${statusLabel}</strong>
+              </div>
+              <div class="row" style="gap:6px;">
+                <button type="button" class="ghost sm" data-v-google>🔍 Google</button>
+                ${!it.applied
+                  ? `<button type="button" class="ok sm" data-v-accept>✓ Accept Fix</button>
+                     <button type="button" class="ghost sm" data-v-ignore>Ignore</button>`
+                  : `<span class="pill ready">Applied</span>`}
+              </div>
+            </div>
+            ${it.correctedQuestion ? `<div class="verify-diff"><span>Question:</span> <span class="verify-old">${escapeHtml(it.currentQuestion)}</span> → <span class="verify-new">${escapeHtml(it.correctedQuestion)}</span></div>` : ''}
+            ${it.correctedOptions?.length ? `<div class="verify-diff"><span>Options:</span> <span class="verify-new">${escapeHtml(it.correctedOptions.join(' | '))}</span></div>` : ''}
+            <div class="verify-diff">
+              <span>Answer:</span>
+              <span class="verify-old">${escapeHtml(it.currentAnswer)}</span>
+              <span>→</span>
+              <span class="verify-new">${escapeHtml(it.correctedAnswer)}</span>
+            </div>
+            ${it.reason ? `<p class="verify-reason">💡 ${escapeHtml(it.reason)}</p>` : ''}
+          `;
+
+          row.querySelector('[data-v-google]').addEventListener('click', () => openGoogleVerify(q));
+          const accBtn = row.querySelector('[data-v-accept]');
+          if (accBtn) accBtn.addEventListener('click', () => applyClaudeFix(it.index));
+          const ignBtn = row.querySelector('[data-v-ignore]');
+          if (ignBtn) {
+            ignBtn.addEventListener('click', () => {
+              it.status = 'correct';
+              renderQuestions();
+              renderVerifyPanel();
+            });
+          }
+          box.appendChild(row);
+        }
+      }
+
+      async function verifyQuestions(mode = 'claude') {
+        const set = getActiveSet();
+        if (!set.questions.length) return;
+        const isGemini = mode === 'gemini-browser';
+        const label = isGemini ? 'Gemini (Browser)' : 'Claude';
+        const endpoint = isGemini ? '/api/loksewa/verify-gemini-browser' : '/api/loksewa/verify-claude';
+
+        const b1 = $('btnVerifyClaude');
+        const b2 = $('btnTopVerifyClaude');
+        const b3 = $('btnVerifyGeminiBrowser');
+        b1.disabled = true;
+        b2.disabled = true;
+        b3.disabled = true;
+        const activeBtn = isGemini ? b3 : b1;
+        const origText = activeBtn.textContent;
+        activeBtn.textContent = `⏳ Checking in ${label}...`;
+        $('flowStatus').textContent = `🤖 Opening ${label} in debug Chrome to fact-check ${set.questions.length} question(s) & answers...`;
+
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              questions: set.questions.map(q => ({
+                question: q.question,
+                options: q.options,
+                answer: q.answer
+              }))
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || `${label} verification failed.`);
+
+          verifyByIdx = new Map();
+          for (const item of (data.results || [])) {
+            verifyByIdx.set(item.index, item);
+          }
+          lastVerifyMeta = {
+            parsed: Boolean(data.parsed),
+            rawText: data.rawText || '',
+            account: data.account || '',
+            provider: data.provider || label
+          };
+          renderQuestions();
+          renderVerifyPanel();
+          $('verifyBox').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+          const wrongCount = (data.results || []).filter(r => r.status !== 'correct').length;
+          $('flowStatus').textContent = data.parsed
+            ? (wrongCount
+              ? `⚠️ ${label} finished checking: ${wrongCount} correction(s) suggested — review & accept below!`
+              : `✅ ${label} verified all ${data.results.length} question(s) as factually correct!`)
+            : `🤖 ${label} replied (see raw verification notes below).`;
+        } catch (err) {
+          $('flowStatus').textContent = `❌ ${label} verification error: ${err.message}`;
+        } finally {
+          b1.disabled = false;
+          b2.disabled = false;
+          b3.disabled = false;
+          activeBtn.textContent = origText;
+        }
+      }
+
+      function setBatchBusy(busy) {
+        $('btnGenMissing').disabled = busy;
+        $('btnRegenAll').disabled = busy;
+        $('btnQuickGenImages').disabled = busy;
+        $('btnStopBatch').style.display = busy ? 'inline-block' : 'none';
+      }
+
+      function startPollingJob(jobId, totalCount) {
+        activeJobId = jobId;
+        setBatchBusy(true);
+        if (pollTimer) clearInterval(pollTimer);
+        pollTimer = setInterval(async () => {
+          try {
+            const r = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+            const job = await r.json();
+            if (!job || !job.ok) return;
+            const prog = job.progress || {};
+            const done = (prog.skipped || 0) + (prog.savedCount || 0);
+            const tot = prog.total || totalCount || 1;
+            const pct = Math.min(100, Math.round((done / tot) * 100));
+            $('flowBar').style.width = `${pct}%`;
+
+            if (prog.lastSavedFile) {
+              await refreshServerState();
+            }
+
+            if (job.status === 'running' || job.status === 'queued') {
+              $('flowStatus').textContent = `🎨 Flow generating images... ${done} / ${tot} ready (in flight: ${prog.inFlight || 0})`;
+            } else if (job.status === 'completed' || job.status === 'done') {
+              clearInterval(pollTimer);
+              pollTimer = null;
+              activeJobId = null;
+              setBatchBusy(false);
+              $('flowBar').style.width = '100%';
+              await refreshServerState();
+              $('flowStatus').textContent = `✅ Flow image generation complete! Ready to send to Hugging Face Space.`;
+            } else if (job.status === 'failed' || job.status === 'error') {
+              clearInterval(pollTimer);
+              pollTimer = null;
+              activeJobId = null;
+              setBatchBusy(false);
+              await refreshServerState();
+              $('flowStatus').textContent = `❌ Flow job error: ${job.error || 'Unknown error'}`;
+            }
+          } catch { /* retry next tick */ }
+        }, 1800);
+      }
+
+      async function generateSingleImage(idx) {
+        const set = getActiveSet();
+        const q = set.questions[idx];
+        const fname = imageFileForIndex(idx);
+        const prompt = (q.imagePrompt || '').trim() ||
+          `Ultra-realistic DSLR editorial photograph representing ${q.answer || q.question}, natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark`;
+        $('flowStatus').textContent = `🎨 Queueing Flow image for Q${idx + 1} (${fname})...`;
+        try {
+          const res = await fetch('/api/loksewa/generate-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              setId: set.id,
+              filename: fname,
+              prompt,
+              aspect: '16:9',
+              day: idx + 1
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Failed to start Flow image job.');
+          startPollingJob(data.id, 1);
+        } catch (err) {
+          $('flowStatus').textContent = `❌ ${err.message}`;
+        }
+      }
+
+      async function generateBatchImages(overwrite = false) {
+        const set = getActiveSet();
+        if (!set.questions.length) return;
+        const items = set.questions.map((q, idx) => ({
+          rowId: String(idx + 1),
+          filename: imageFileForIndex(idx),
+          prompt: (q.imagePrompt || '').trim() ||
+            `Ultra-realistic DSLR editorial photograph representing ${q.answer || q.question}, natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark`
+        }));
+
+        $('flowBar').style.width = '5%';
+        $('flowStatus').textContent = `🚀 Starting Google Flow batch for ${items.length} question image(s)...`;
+        try {
+          const res = await fetch('/api/loksewa/generate-batch', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              setId: set.id,
+              overwrite,
+              aspect: '16:9',
+              concurrency: 4,
+              items
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Batch start failed.');
+          if (data.alreadyComplete) {
+            $('flowBar').style.width = '100%';
+            $('flowStatus').textContent = `✅ All ${data.total} images are already generated!`;
+            await refreshServerState();
+            return;
+          }
+          startPollingJob(data.id, items.length);
+        } catch (err) {
+          $('flowStatus').textContent = `❌ ${err.message}`;
+        }
+      }
+
+      async function deleteSingleImage(filename) {
+        const set = getActiveSet();
+        try {
+          await fetch('/api/loksewa/delete-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ setId: set.id, filename })
+          });
+          await refreshServerState();
+        } catch (err) {
+          $('flowStatus').textContent = `❌ Could not delete ${filename}: ${err.message}`;
+        }
+      }
+
+      async function handleManualUpload(file) {
+        if (!file || !uploadTargetFilename) return;
+        const set = getActiveSet();
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const res = await fetch('/api/loksewa/upload-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                setId: set.id,
+                filename: uploadTargetFilename,
+                dataUrl: reader.result
+              })
+            });
+            const data = await res.json();
+            if (!data.ok) throw new Error(data.error || 'Upload failed.');
+            $('flowStatus').textContent = `✅ Uploaded custom image for ${uploadTargetFilename}.`;
+            await refreshServerState();
+          } catch (err) {
+            $('flowStatus').textContent = `❌ Upload error: ${err.message}`;
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+
+      async function generateQuestionsWithAI(mode = 'claude') {
+        const topic = $('gemTopic').value.trim();
+        if (!topic) {
+          $('gemStatus').textContent = '⚠️ Please enter a topic first.';
+          $('gemTopic').focus();
+          return;
+        }
+        const language = $('gemLang').value;
+        const count = Number($('gemCount').value) || 10;
+        const difficulty = $('gemDifficulty').value;
+
+        const endpointMap = {
+          claude: '/api/loksewa/claude-generate',
+          'gemini-browser': '/api/loksewa/gemini-browser-generate',
+          'gemini-api': '/api/loksewa/gemini-generate'
+        };
+        const labelMap = {
+          claude: 'Claude (Local Browser)',
+          'gemini-browser': 'Gemini (Local Browser)',
+          'gemini-api': 'Gemini API'
+        };
+        const prefixMap = { claude: '🤖', 'gemini-browser': '🌐', 'gemini-api': '⚡' };
+        const endpoint = endpointMap[mode] || endpointMap.claude;
+        const label = labelMap[mode] || labelMap.claude;
+
+        const genBtns = [$('btnClaudeGen'), $('btnGeminiBrowserGen'), $('btnGeminiGen')];
+        genBtns.forEach(b => { b.disabled = true; });
+        $('gemStatus').textContent = `${prefixMap[mode] || '✨'} Asking ${label} to generate ${count} ${language} MCQs on "${topic}"...`;
+        try {
+          const res = await fetch(endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, language, count, difficulty })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || `${label} generation failed.`);
+
+          const slug = topic.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 28) || mode;
+          const newId = `${mode === 'claude' ? 'cld' : 'gem'}-${slug}-${Date.now().toString(36).slice(-4)}`;
+          const newSet = {
+            id: newId,
+            name: `${prefixMap[mode] || '✨'} ${topic}`,
+            lang: language === 'english' ? 'English' : (language === 'nepali' ? 'Nepali' : 'Bilingual'),
+            bannerTitle: data.bannerTitle || topic,
+            partLabel: language === 'english' ? 'Part-1' : 'भाग-१',
+            voice: language === 'english' ? 'Puck' : 'Kore',
+            questions: data.questions
+          };
+          sets.unshift(newSet);
+          persistSets();
+          $('gemStatus').textContent = `✅ ${label} created "${newSet.name}" with ${newSet.questions.length} questions & realistic photo prompts!`;
+          await selectSet(newId);
+        } catch (err) {
+          $('gemStatus').textContent = `❌ ${label} error: ${err.message}`;
+        } finally {
+          genBtns.forEach(b => { b.disabled = false; });
+        }
+      }
+
+      async function sendToServer() {
+        const set = getActiveSet();
+        const spaceUrl = $('hfSpaceUrl').value.trim();
+        const bearerToken = $('hfToken').value.trim();
+        persistCfg();
+
+        const btn = $('btnSendToServer');
+        btn.disabled = true;
+        const origLabel = btn.textContent;
+        btn.textContent = '⏳ Rendering Video on HF Space...';
+        $('serverStatus').textContent = '🚀 Uploading questions + Flow images to your Hugging Face Space and rendering MP4 (typically 30–120s)...';
+
+        try {
+          const questionsPayload = set.questions.map((q, idx) => ({
+            question: q.question,
+            options: q.options,
+            answer: q.answer,
+            imageFile: imageFileForIndex(idx)
+          }));
+
+          const res = await fetch('/api/loksewa/send-to-server', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              spaceUrl,
+              bearerToken,
+              setId: set.id,
+              title: $('vidTitle').value.trim() || set.bannerTitle,
+              part_label: $('vidPart').value.trim() || set.partLabel || 'भाग-१',
+              design_variant: $('vidVariant').value,
+              voice: $('vidVoice').value,
+              countdown_seconds: Number($('vidCountdown').value) || 5,
+              playback_speed: Number($('vidSpeed').value) || 1.0,
+              show_hand_images: true,
+              use_cloudflare_images: $('chkAllowFallback').checked,
+              uploadToYoutube: $('chkUploadYt').checked,
+              uploadToFacebook: $('chkUploadFb').checked,
+              pageId: getSelectedFbPageId('vidFbPage', 'vidFbPageCustom') || undefined,
+              questions: questionsPayload
+            })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Server video generation failed.');
+
+          $('serverStatus').textContent = `🎉 Video ready! Sent ${data.clientImagesSent}/${data.totalQuestions} client Flow image(s) → saved as ${data.filename}`;
+          await refreshServerState();
+          showVideo(data.videoUrl, data.filename, data.size);
+          $('videoPlayer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } catch (err) {
+          $('serverStatus').textContent = `❌ Server error: ${err.message}`;
+        } finally {
+          btn.textContent = origLabel;
+          updateReadinessUI();
+        }
+      }
+
+      // Wire events
+      $('btnNewCustomSet').addEventListener('click', async () => {
+        const name = prompt('Enter a name for your new custom question set:', 'My Custom Loksewa Set');
+        if (!name || !name.trim()) return;
+        const newId = `custom-${Date.now().toString(36)}`;
+        sets.unshift({
+          id: newId,
+          name: name.trim(),
+          lang: 'Custom',
+          bannerTitle: name.trim(),
+          partLabel: 'भाग-१',
+          voice: 'Kore',
+          questions: [
+            {
+              question: '',
+              options: ['', '', ''],
+              answer: '',
+              imagePrompt: 'Ultra-realistic DSLR editorial photograph of ..., natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark'
+            }
+          ]
+        });
+        persistSets();
+        await selectSet(newId);
+      });
+
+      $('btnResetSet').addEventListener('click', async () => {
+        const builtIn = (window.LOKSEWA_SAMPLE_SETS || []).find(s => s.id === activeSetId);
+        if (!builtIn) {
+          alert('This is a custom/Gemini set — only built-in preset sets can be reset.');
+          return;
+        }
+        const idx = sets.findIndex(s => s.id === activeSetId);
+        if (idx >= 0) {
+          sets[idx] = clone(builtIn);
+          persistSets();
+          renderSetTabs();
+          syncSetMetaInputs();
+          renderQuestions();
+        }
+      });
+
+      $('btnAddQuestion').addEventListener('click', () => {
+        const set = getActiveSet();
+        set.questions.push({
+          question: '',
+          options: ['', '', ''],
+          answer: '',
+          imagePrompt: 'Ultra-realistic DSLR editorial photograph of ..., natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark'
+        });
+        persistSets();
+        renderSetTabs();
+        renderQuestions();
+      });
+
+      $('btnClaudeGen').addEventListener('click', () => generateQuestionsWithAI('claude'));
+      $('btnGeminiBrowserGen').addEventListener('click', () => generateQuestionsWithAI('gemini-browser'));
+      $('btnGeminiGen').addEventListener('click', () => generateQuestionsWithAI('gemini-api'));
+      $('gemTopic').addEventListener('keydown', e => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          generateQuestionsWithAI('claude');
+        }
+      });
+      $('btnVerifyClaude').addEventListener('click', () => verifyQuestions('claude'));
+      $('btnTopVerifyClaude').addEventListener('click', () => verifyQuestions('claude'));
+      $('btnVerifyGeminiBrowser').addEventListener('click', () => verifyQuestions('gemini-browser'));
+      $('btnGenMissing').addEventListener('click', () => generateBatchImages(false));
+      $('btnQuickGenImages').addEventListener('click', () => generateBatchImages(false));
+      $('btnRegenAll').addEventListener('click', () => generateBatchImages(true));
+      $('btnStopBatch').addEventListener('click', async () => {
+        if (!activeJobId) return;
+        await fetch('/api/loksewa/stop-batch', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ jobId: activeJobId })
+        });
+        $('flowStatus').textContent = '⏹ Stop requested... finishing current image.';
+      });
+
+      $('btnSendToServer').addEventListener('click', sendToServer);
+      $('btnDeleteAllVideos').addEventListener('click', deleteAllSavedVideos);
+      $('btnJumpServer').addEventListener('click', () => $('serverPanel').scrollIntoView({ behavior: 'smooth' }));
+      $('chkAllowFallback').addEventListener('change', updateReadinessUI);
+
+      $('hfSpaceUrl').addEventListener('input', () => { updateEndpointPreview(); persistCfg(); });
+      $('hfToken').addEventListener('input', persistCfg);
+      $('vidVariant').addEventListener('change', persistCfg);
+      $('vidCountdown').addEventListener('change', persistCfg);
+      $('vidSpeed').addEventListener('change', persistCfg);
+      $('vidFbPage').addEventListener('change', () => { syncCustomFbInput('vidFbPage', 'vidFbPageCustom'); persistCfg(); });
+      $('vidFbPageCustom').addEventListener('input', persistCfg);
+      $('vidTitle').addEventListener('input', () => { getActiveSet().bannerTitle = $('vidTitle').value; persistSets(); });
+      $('vidPart').addEventListener('input', () => { getActiveSet().partLabel = $('vidPart').value; persistSets(); });
+      $('vidVoice').addEventListener('change', () => { getActiveSet().voice = $('vidVoice').value; persistSets(); });
+
+      $('btnToggleToken').addEventListener('click', () => {
+        const inp = $('hfToken');
+        const show = inp.type === 'password';
+        inp.type = show ? 'text' : 'password';
+        $('btnToggleToken').textContent = show ? '🙈 Hide' : '👁 Show';
+      });
+      $('btnClearToken').addEventListener('click', () => {
+        $('hfToken').value = '';
+        persistCfg();
+      });
+      $('hiddenFileInput').addEventListener('change', e => {
+        const file = e.target.files?.[0];
+        if (file) handleManualUpload(file);
+      });
+
+      // Mode switcher (GK List Videos Setup vs Viral Kinetic Text Videos)
+      function switchStudioMode(mode) {
+        const isKin = mode === 'kinetic';
+        $('modeGk').classList.toggle('active', !isKin);
+        $('modeKinetic').classList.toggle('active', isKin);
+        $('tabModeGk').classList.toggle('active', !isKin);
+        $('tabModeKinetic').classList.toggle('active', isKin);
+      }
+      $('tabModeGk').addEventListener('click', () => switchStudioMode('gk'));
+      $('tabModeKinetic').addEventListener('click', () => switchStudioMode('kinetic'));
+
+      window.__loksewaOnVideoRendered = async (url, filename, size) => {
+        await refreshServerState();
+        showVideo(url, filename, size);
+        $('videoPlayer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+
+      // Boot
+      loadCfg();
+      updateEndpointPreview();
+      renderSetTabs();
+      syncSetMetaInputs();
+      refreshServerState();
+      if (typeof window.initKineticStudio === 'function') {
+        window.initKineticStudio();
+      }
+    })();
+  </script>
+</body>
+</html>

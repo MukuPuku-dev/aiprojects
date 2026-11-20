@@ -8,7 +8,13 @@ function homeUrl(current) {
 }
 
 async function headingMatches(page, name) {
-  return page.evaluate(n => document.querySelector('.header-title-heading')?.textContent.trim() === n, name).catch(() => false);
+  if (!name) return false;
+  return page.evaluate(
+    n => location.pathname.includes('/project/')
+      && Boolean(document.querySelector('flow-prompt-box'))
+      && document.querySelector('.header-title-heading')?.textContent.trim() === n,
+    name
+  ).catch(() => false);
 }
 
 async function findProjectLink(page, name) {
@@ -39,20 +45,34 @@ async function createProject(page, name) {
 export async function ensureFlowProject(page, name, { log = console.log } = {}) {
   if (await headingMatches(page, name)) return;
 
-  await page.goto(homeUrl(page.url()), { waitUntil: 'domcontentloaded' });
-  await page.getByRole('button', { name: S.newProjectButton }).first().waitFor({ state: 'visible', timeout: 30000 });
-  await page.locator(S.projectCard).first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+  for (let attempt = 1; attempt <= 2; attempt += 1) {
+    await page.goto(homeUrl(page.url()), { waitUntil: 'domcontentloaded' });
+    await page.getByRole('button', { name: S.newProjectButton }).first().waitFor({ state: 'visible', timeout: 30000 });
+    await page.locator(S.projectCard).first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
 
-  let expectedHeading = name;
-  const link = await findProjectLink(page, name);
-  if (link) {
-    log(`Opening Flow project "${name}".`);
-    await link.click();
-  } else {
-    log(`Creating Flow project "${name}".`);
-    expectedHeading = await createProject(page, name);
+    let expectedHeading = name;
+    const link = await findProjectLink(page, name);
+    if (link) {
+      log(`Opening Flow project "${name}".`);
+      await link.click();
+    } else {
+      log(`Creating Flow project "${name}".`);
+      expectedHeading = await createProject(page, name);
+    }
+
+    const opened = await page.waitForFunction(
+      n => location.pathname.includes('/project/')
+        && Boolean(document.querySelector('flow-prompt-box'))
+        && document.querySelector('.header-title-heading')?.textContent.trim() === n,
+      expectedHeading,
+      { timeout: 30000 }
+    ).then(() => true, () => false);
+
+    if (opened) return;
+    if (attempt < 2) {
+      log(`Flow bounced back to ${page.url()} while opening "${expectedHeading}". Retrying...`);
+    } else {
+      throw new Error(`Flow did not open the project "${expectedHeading}" (stuck on ${page.url()}).`);
+    }
   }
-
-  await page.waitForFunction(n => document.querySelector('.header-title-heading')?.textContent.trim() === n, expectedHeading, { timeout: 30000 })
-    .catch(() => { throw new Error(`Flow did not open the project "${expectedHeading}".`); });
 }

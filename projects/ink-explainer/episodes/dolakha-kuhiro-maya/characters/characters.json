@@ -1,0 +1,26 @@
+{
+  "RAMESH": {
+    "code": "RAMESH",
+    "name": "रमेश",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, young Nepali man, round head, messy black hair, simple blue jacket and grey trousers, bold black ink outline, expressive eyebrows, innocent playful look",
+    "updatedAt": "2026-11-19T09:56:33.864Z"
+  },
+  "RITA": {
+    "code": "RITA",
+    "name": "रिता",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, beautiful young Nepali woman, round head, long black hair, red kurta with dark leggings, bold black ink outline, graceful proud posture",
+    "updatedAt": "2026-11-19T09:56:43.573Z"
+  },
+  "SUSMITA": {
+    "code": "SUSMITA",
+    "name": "सुस्मिता",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, young Nepali woman, round head, black hair in a long braid, simple green kurta with cream shawl, bold black ink outline, warm smile, clever sparkling eyes",
+    "updatedAt": "2026-11-19T09:56:55.973Z"
+  },
+  "PANDIT": {
+    "code": "PANDIT",
+    "name": "पण्डितजी",
+    "refPrompt": "2D flat stickman explainer character full-body on pure white background, elderly Nepali priest, shaved head with small tuft, white dhoti and orange shawl, red tika on forehead, bold black ink outline, calm expression",
+    "updatedAt": "2026-11-19T09:51:11.156Z"
+  }
+}
