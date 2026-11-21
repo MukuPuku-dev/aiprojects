@@ -654,9 +654,12 @@
           <h2 class="panel-title">🎬 Rendered Video Preview</h2>
           <p class="panel-sub">Videos returned from your Hugging Face Space are automatically saved in <code>projects/loksewa-sheet/videos/</code>.</p>
         </div>
-        <a id="btnDownloadVideo" href="#" download style="display:none; text-decoration:none;">
-          <button class="ok sm" type="button">⬇ Download MP4</button>
-        </a>
+        <div class="row" style="gap:8px;">
+          <button id="btnSendLoadedTelegram" class="primary sm" type="button" style="display:none;">✈️ Send to Telegram</button>
+          <a id="btnDownloadVideo" href="#" download style="display:none; text-decoration:none;">
+            <button class="ok sm" type="button">⬇ Download MP4</button>
+          </a>
+        </div>
       </div>
 
       <div class="video-stage">
@@ -665,6 +668,17 @@
           <div id="videoMeta" class="panel-sub" style="margin-top:6px;">No video rendered yet in this session.</div>
         </div>
         <div>
+          <div id="captionBox" style="margin-bottom:14px; background:#121218; border:1px solid var(--line); border-radius:11px; padding:10px;">
+            <div class="row between" style="margin-bottom:6px;">
+              <strong style="font-size:12.5px; color:var(--gold);">📱 TikTok &amp; Facebook Reels Caption (sent with Telegram video)</strong>
+              <div class="row" style="gap:6px;">
+                <button id="btnCopyCaption" type="button" class="ghost sm">📋 Copy</button>
+                <button id="btnSendCaptionTelegram" type="button" class="gold sm" disabled>✈️ Send to Telegram</button>
+              </div>
+            </div>
+            <textarea id="videoCaptionInput" style="width:100%; min-height:110px; font-size:12.5px; line-height:1.45; background:#0d0d12;" placeholder="Play or render a video to auto-fill its ready-to-post TikTok & Facebook Reels caption..."></textarea>
+            <div id="tgStatus" class="status-line" style="margin-top:5px; font-size:12.5px;"></div>
+          </div>
           <div class="row between" style="margin-bottom:8px;">
             <strong style="font-size:13px; color:var(--gold);">Saved Videos</strong>
             <button id="btnDeleteAllVideos" type="button" class="danger sm" style="display:none;">🗑 Delete All</button>
@@ -1056,6 +1070,8 @@
         updateReadinessUI();
       }
 
+      let loadedVideoName = '';
+
       function clearVideoPlayerIfMatches(urlOrAll) {
         const player = $('videoPlayer');
         const currentPath = player.src ? (() => { try { return new URL(player.src, location.origin).pathname; } catch { return ''; } })() : '';
@@ -1063,8 +1079,36 @@
           player.pause();
           player.removeAttribute('src');
           player.load();
+          loadedVideoName = '';
           $('btnDownloadVideo').style.display = 'none';
+          $('btnSendLoadedTelegram').style.display = 'none';
+          $('btnSendCaptionTelegram').disabled = true;
           $('videoMeta').textContent = 'No video loaded.';
+        }
+      }
+
+      async function sendVideoToTelegram(filename, captionText, triggerBtn = null) {
+        if (!filename) return;
+        const caption = typeof captionText === 'string' ? captionText.trim() : ($('videoCaptionInput').value || '').trim();
+        if (triggerBtn) triggerBtn.disabled = true;
+        $('btnSendLoadedTelegram').disabled = true;
+        $('btnSendCaptionTelegram').disabled = true;
+        $('tgStatus').textContent = `✈️ Sending "${filename}" + caption to Telegram...`;
+        try {
+          const res = await fetch('/api/loksewa/send-telegram', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filename, caption })
+          });
+          const data = await res.json();
+          if (!data.ok) throw new Error(data.error || 'Telegram upload failed.');
+          $('tgStatus').textContent = `✅ Sent "${filename}" to Telegram with TikTok & Facebook Reels caption!`;
+        } catch (err) {
+          $('tgStatus').textContent = `❌ Telegram error: ${err.message}`;
+        } finally {
+          if (triggerBtn) triggerBtn.disabled = false;
+          $('btnSendLoadedTelegram').disabled = false;
+          $('btnSendCaptionTelegram').disabled = !loadedVideoName;
         }
       }
 
@@ -1121,26 +1165,42 @@
             <div class="row" style="gap:6px; flex-shrink:0;">
               <span class="panel-sub">${mb} MB</span>
               <button type="button" class="ghost sm" data-play>▶ Play</button>
+              <button type="button" class="gold sm" data-tg title="Send video + Reels caption to Telegram">✈️</button>
               <a href="${v.url}" download="${escapeHtml(v.name)}" style="text-decoration:none;">
                 <button type="button" class="ghost sm" title="Download MP4">⬇</button>
               </a>
               <button type="button" class="danger sm" data-del-vid title="Delete video from disk">🗑</button>
             </div>
           `;
-          row.querySelector('[data-play]').addEventListener('click', () => showVideo(v.url, v.name, v.size));
+          row.querySelector('[data-play]').addEventListener('click', () => showVideo(v.url, v.name, v.size, v.caption));
+          row.querySelector('[data-tg]').addEventListener('click', ev => {
+            showVideo(v.url, v.name, v.size, v.caption);
+            sendVideoToTelegram(v.name, $('videoCaptionInput').value || v.caption, ev.currentTarget);
+          });
           row.querySelector('[data-del-vid]').addEventListener('click', () => deleteSavedVideo(v));
           wrap.appendChild(row);
         }
       }
 
-      function showVideo(url, filename, sizeBytes) {
+      function showVideo(url, filename, sizeBytes, captionText = null) {
         const player = $('videoPlayer');
         player.src = `${url}?t=${Date.now()}`;
         player.load();
+        loadedVideoName = filename || '';
         const dl = $('btnDownloadVideo');
         dl.href = url;
         dl.download = filename || 'loksewa_sheet.mp4';
         dl.style.display = 'inline-block';
+        $('btnSendLoadedTelegram').style.display = loadedVideoName ? 'inline-block' : 'none';
+        $('btnSendCaptionTelegram').disabled = !loadedVideoName;
+
+        const matched = videosList.find(v => v.name === filename);
+        const resolvedCaption = (typeof captionText === 'string' && captionText.trim())
+          ? captionText.trim()
+          : (matched?.caption || '');
+        if (resolvedCaption) {
+          $('videoCaptionInput').value = resolvedCaption;
+        }
         const mb = sizeBytes ? ` (${(sizeBytes / (1024 * 1024)).toFixed(2)} MB)` : '';
         $('videoMeta').textContent = `Loaded: ${filename}${mb}`;
         renderVideoHistory(url);
@@ -1640,7 +1700,7 @@
 
           $('serverStatus').textContent = `🎉 Video ready! Sent ${data.clientImagesSent}/${data.totalQuestions} client Flow image(s) → saved as ${data.filename}`;
           await refreshServerState();
-          showVideo(data.videoUrl, data.filename, data.size);
+          showVideo(data.videoUrl, data.filename, data.size, data.caption);
           $('videoPlayer').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } catch (err) {
           $('serverStatus').textContent = `❌ Server error: ${err.message}`;
@@ -1731,6 +1791,20 @@
 
       $('btnSendToServer').addEventListener('click', sendToServer);
       $('btnDeleteAllVideos').addEventListener('click', deleteAllSavedVideos);
+      $('btnSendLoadedTelegram').addEventListener('click', () => sendVideoToTelegram(loadedVideoName, $('videoCaptionInput').value));
+      $('btnSendCaptionTelegram').addEventListener('click', () => sendVideoToTelegram(loadedVideoName, $('videoCaptionInput').value));
+      $('btnCopyCaption').addEventListener('click', async () => {
+        const txt = $('videoCaptionInput').value.trim();
+        if (!txt) return;
+        try {
+          await navigator.clipboard.writeText(txt);
+          $('tgStatus').textContent = '📋 Copied TikTok & Facebook Reels caption to clipboard!';
+        } catch {
+          $('videoCaptionInput').select();
+          document.execCommand('copy');
+          $('tgStatus').textContent = '📋 Copied caption!';
+        }
+      });
       $('btnJumpServer').addEventListener('click', () => $('serverPanel').scrollIntoView({ behavior: 'smooth' }));
       $('chkAllowFallback').addEventListener('change', updateReadinessUI);
 
@@ -1771,9 +1845,9 @@
       $('tabModeGk').addEventListener('click', () => switchStudioMode('gk'));
       $('tabModeKinetic').addEventListener('click', () => switchStudioMode('kinetic'));
 
-      window.__loksewaOnVideoRendered = async (url, filename, size) => {
+      window.__loksewaOnVideoRendered = async (url, filename, size, caption) => {
         await refreshServerState();
-        showVideo(url, filename, size);
+        showVideo(url, filename, size, caption);
         $('videoPlayer').scrollIntoView({ behavior: 'smooth', block: 'center' });
       };
 

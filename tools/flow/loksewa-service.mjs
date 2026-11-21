@@ -87,6 +87,81 @@ export function listLoksewaImages(root, setId) {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
+function buildDefaultReelsCaptionFromFilename(name) {
+  const clean = String(name || '').replace(/\.mp4$/i, '');
+  if (clean.startsWith('kinetic_')) {
+    return [
+      '⚡ Quick Visual Explainer — Watch till the end! ✨',
+      '',
+      'Which point surprised you the most? Comment below 👇',
+      'Save & follow for more bite-sized knowledge daily!',
+      '',
+      '#facts #knowledge #shorts #reels #tiktok #viral #nepal #learning'
+    ].join('\n');
+  }
+  return [
+    '📝 Loksewa & GK Quick Test — कति वटा मिलाउनुभयो? 🎯',
+    '',
+    'आफ्नो स्कोर कमेन्टमा लेख्नुहोस् 👇',
+    'दैनिक लोकसेवा र सामान्यज्ञानको लागि Follow / Save गर्नुहोस्!',
+    '',
+    '#loksewa #nepal #gk #quiz #loksewaexam #nepali #reels #tiktok #shorts'
+  ].join('\n');
+}
+
+function buildLoksewaReelsCaption({ title, part_label, questions = [] }) {
+  const sampleQ = questions[0]?.question || '';
+  const isNepali = /[\u0900-\u097F]/.test(`${title || ''} ${sampleQ}`);
+  const count = questions.length;
+  if (isNepali) {
+    return [
+      `📝 ${title || 'लोकसेवा सामान्यज्ञान MCQs'}${part_label ? ` (${part_label})` : ''} 🎯`,
+      sampleQ ? `❓ ${sampleQ}` : '',
+      `🔥 जम्मा ${count} महत्वपूर्ण प्रश्नहरू — तपाईंले कति वटा मिलाउनुभयो? कमेन्टमा लेख्नुहोस् 👇`,
+      'दैनिक लोकसेवा तयारी र GK भिडियोको लागि Follow & Save गर्नुहोस्!',
+      '',
+      '#loksewa #loksewanepal #gknepal #nepali #quiz #pscnepal #loksewaexam #reels #tiktoknepal #shorts'
+    ].filter(Boolean).join('\n');
+  }
+  return [
+    `🧠 ${title || 'General Knowledge MCQ Challenge'}${part_label ? ` · ${part_label}` : ''} 🎯`,
+    sampleQ ? `❓ ${sampleQ}` : '',
+    `🔥 ${count} quick questions — how many did you score? Drop your score below 👇`,
+    'Save & follow for daily brain-boosting GK quizzes!',
+    '',
+    '#gk #quiz #trivia #generalknowledge #quiztime #reels #tiktok #shorts #viral'
+  ].filter(Boolean).join('\n');
+}
+
+function buildKineticReelsCaption({ title, hook, slides = [] }) {
+  const isNepali = /[\u0900-\u097F]/.test(`${title || ''} ${hook || ''}`);
+  const pts = slides.slice(0, 3).map(s => s.heading).filter(Boolean);
+  if (isNepali) {
+    return [
+      `⚡ ${title || 'रोचक जानकारी'} ✨`,
+      hook ? hook : '',
+      pts.length ? `👉 ${pts.join(' · ')}...` : '',
+      'तपाईंलाई कुन कुरा सबैभन्दा मन पर्‍यो? कमेन्टमा लेख्नुहोस् 👇',
+      'यस्तै रोचक भिडियोका लागि Follow & Save गर्नुहोस्!',
+      '',
+      '#nepal #nepali #facts #knowledge #reels #tiktoknepal #shorts #viral'
+    ].filter(Boolean).join('\n');
+  }
+  return [
+    `⚡ ${title || 'Must-Know Facts'} ✨`,
+    hook ? hook : '',
+    pts.length ? `👉 ${pts.join(' · ')}...` : '',
+    'Which one amazed you the most? Comment below 👇',
+    'Save & follow for more crisp visual explainers!',
+    '',
+    '#facts #knowledge #didyouknow #learning #reels #tiktok #shorts #viral'
+  ].filter(Boolean).join('\n');
+}
+
+function captionFileForVideo(videoPath) {
+  return `${videoPath}.caption.txt`;
+}
+
 export function listLoksewaVideos(root) {
   const dir = loksewaVideosDir(root);
   if (!fs.existsSync(dir)) return [];
@@ -95,11 +170,18 @@ export function listLoksewaVideos(root) {
     .map(e => {
       const full = path.join(dir, e.name);
       const st = fs.statSync(full);
+      const capPath = captionFileForVideo(full);
+      let caption = '';
+      if (fs.existsSync(capPath)) {
+        try { caption = fs.readFileSync(capPath, 'utf8').trim(); } catch {}
+      }
+      if (!caption) caption = buildDefaultReelsCaptionFromFilename(e.name);
       return {
         name: e.name,
         url: `/projects/loksewa-sheet/videos/${encodeURIComponent(e.name)}`,
         size: st.size,
-        mtimeMs: st.mtimeMs
+        mtimeMs: st.mtimeMs,
+        caption
       };
     })
     .sort((a, b) => b.mtimeMs - a.mtimeMs);
@@ -146,6 +228,8 @@ export function deleteLoksewaVideo(root, filename) {
   const full = path.join(loksewaVideosDir(root), base);
   if (fs.existsSync(full)) {
     fs.unlinkSync(full);
+    const capPath = captionFileForVideo(full);
+    if (fs.existsSync(capPath)) { try { fs.unlinkSync(capPath); } catch {} }
     return { deleted: true, name: base };
   }
   return { deleted: false, name: base };
@@ -157,7 +241,10 @@ export function deleteAllLoksewaVideos(root) {
   let deletedCount = 0;
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.isFile() && /\.mp4$/i.test(entry.name)) {
-      fs.unlinkSync(path.join(dir, entry.name));
+      const full = path.join(dir, entry.name);
+      fs.unlinkSync(full);
+      const capPath = captionFileForVideo(full);
+      if (fs.existsSync(capPath)) { try { fs.unlinkSync(capPath); } catch {} }
       deletedCount += 1;
     }
   }
@@ -420,6 +507,12 @@ export async function sendLoksewaToServer(root, payload) {
   const outName = `loksewa_${safeSet}_${stamp}.mp4`;
   const outPath = path.join(outDir, outName);
   fs.writeFileSync(outPath, buf);
+  const caption = buildLoksewaReelsCaption({
+    title: reqBody.title,
+    part_label: reqBody.part_label,
+    questions: serverQuestions
+  });
+  try { fs.writeFileSync(captionFileForVideo(outPath), caption, 'utf8'); } catch {}
 
   return {
     ok: true,
@@ -427,6 +520,7 @@ export async function sendLoksewaToServer(root, payload) {
     filename: outName,
     videoUrl: `/projects/loksewa-sheet/videos/${encodeURIComponent(outName)}`,
     size: buf.length,
+    caption,
     clientImagesSent,
     totalQuestions: serverQuestions.length
   };
@@ -595,7 +689,14 @@ export async function sendKineticToServer(root, payload) {
   fs.mkdirSync(outDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
   const outName = `kinetic_${safeSet}_${stamp}.mp4`;
-  fs.writeFileSync(path.join(outDir, outName), buf);
+  const outPath = path.join(outDir, outName);
+  fs.writeFileSync(outPath, buf);
+  const caption = buildKineticReelsCaption({
+    title: reqBody.title,
+    hook: reqBody.hook,
+    slides: serverSlides
+  });
+  try { fs.writeFileSync(captionFileForVideo(outPath), caption, 'utf8'); } catch {}
 
   return {
     ok: true,
@@ -603,6 +704,7 @@ export async function sendKineticToServer(root, payload) {
     filename: outName,
     videoUrl: `/projects/loksewa-sheet/videos/${encodeURIComponent(outName)}`,
     size: buf.length,
+    caption,
     clientImagesSent,
     totalSlides: serverSlides.length
   };

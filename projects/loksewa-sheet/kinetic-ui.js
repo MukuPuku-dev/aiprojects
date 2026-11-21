@@ -358,7 +358,7 @@
       if (!d.ok) throw new Error(d.error || 'Kinetic render failed');
       $('kinStatus').textContent = `🎉 Viral Kinetic Video ready! (${d.totalSlides} slides, ${d.clientImagesSent} photos) → ${d.filename}`;
       if (typeof window.__loksewaOnVideoRendered === 'function') {
-        await window.__loksewaOnVideoRendered(d.videoUrl, d.filename, d.size);
+        await window.__loksewaOnVideoRendered(d.videoUrl, d.filename, d.size, d.caption);
       }
     } catch (err) {
       $('kinStatus').textContent = `❌ Render error: ${err.message}`;
