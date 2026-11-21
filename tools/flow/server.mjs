@@ -17,6 +17,7 @@ import { searchAndSaveImageBatchInBrowser, searchAndSaveImageInBrowser } from '.
 import { callClaudeInBrowser } from './claude-browser.mjs';
 import { callGeminiInBrowser } from './gemini-browser.mjs';
 import { uploadToYouTube } from './youtube.mjs';
+import { appendPurpleStickOutro } from './purplestick-outro.mjs';
 import {
   buildClaudeVerifyPrompt,
   buildKineticScriptPrompt,
@@ -29,6 +30,7 @@ import {
   listLoksewaImages,
   listLoksewaVideos,
   loksewaImagesDir,
+  loksewaVideosDir,
   normalizeGeneratedKineticScript,
   normalizeGeneratedLoksewaQuestions,
   parseClaudeVerifyResponse,
@@ -47,6 +49,7 @@ const MIME = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; cha
 
 function findFfmpegBinary() {
   if (process.env.FFMPEG_PATH && fs.existsSync(process.env.FFMPEG_PATH)) return process.env.FFMPEG_PATH;
+  if (fs.existsSync('C:\\ffmpeg\\bin\\ffmpeg.exe')) return 'C:\\ffmpeg\\bin\\ffmpeg.exe';
   const home = process.env.USERPROFILE || process.env.HOME || '';
   const extDir = path.join(home, '.vscode', 'extensions');
   if (fs.existsSync(extDir)) {
@@ -77,7 +80,7 @@ async function finalizeMp4WithFfmpeg(inputPath, outputMp4Path) {
   }
 }
 
-const queue = createGenerationQueue(job => {
+const queue = createGenerationQueue(async job => {
   if (job.mode === 'youtube') return uploadToYouTube(job);
   if (job.mode === 'characters') return generateCharactersInFlow(job);
   if (job.mode === 'image-batch') return generateImageBatch(job);
@@ -87,7 +90,12 @@ const queue = createGenerationQueue(job => {
   if (job.mode === 'loksewa-image' || job.mode === 'loksewa-image-batch') return job.run();
   if (job.mode === 'claude') return callClaudeInBrowser(job);
   if (job.mode === 'gemini-browser') return callGeminiInBrowser(job);
-  return job.mode === 'image' ? generateImage(job) : generateVideo(job);
+  if (job.mode === 'image') return generateImage(job);
+  const result = await generateVideo(job);
+  if (job.project === 'purplestick' && job.outFile && fs.existsSync(job.outFile)) {
+    await appendPurpleStickOutro(job.outFile, { root: ROOT, log: job.log });
+  }
+  return result;
 });
 const tiktok = createTikTokService(ROOT);
 const facebook = createFacebookService(ROOT);
@@ -1170,6 +1178,24 @@ async function handleLoksewaRoute(req, res, url) {
     if (url.pathname === '/api/loksewa/delete-all-videos') {
       const result = deleteAllLoksewaVideos(ROOT);
       return send(res, 200, { ok: true, ...result });
+    }
+
+    if (url.pathname === '/api/loksewa/send-telegram') {
+      const base = path.basename(String(body.filename || '').trim());
+      if (!base || !/\.mp4$/i.test(base) || base.includes('..')) {
+        throw new Error('A valid .mp4 filename is required.');
+      }
+      const fullPath = path.join(loksewaVideosDir(ROOT), base);
+      if (!fs.existsSync(fullPath)) {
+        throw new Error(`Saved video not found: ${base}`);
+      }
+      const caption = typeof body.caption === 'string' ? body.caption.trim() : '';
+      // Also persist any edited caption back to the sidecar file
+      if (caption) {
+        try { fs.writeFileSync(`${fullPath}.caption.txt`, caption, 'utf8'); } catch {}
+      }
+      await uploadToTelegram({ file: fullPath, caption });
+      return send(res, 200, { ok: true, filename: base });
     }
 
     if (url.pathname === '/api/loksewa/gemini-generate') {

@@ -18,6 +18,7 @@
 *.[hH][eE][iI][cC]
 *.[hH][eE][iI][fF]
 *.mp4
+!projects/purplestick/assets/Breakfast_Club_3s_to_6s.mp4
 *.mov
 *.avi
 *.mkv

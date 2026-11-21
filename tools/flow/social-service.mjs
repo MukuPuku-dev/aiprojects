@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 
-export const SOCIAL_PROJECTS = new Set(['gk-questions', 'daily-motivations', 'teenage-love-vibes', 'maya-photos', 'jindagi-kitaab', 'kam-nalagne', 'sadhu-rani', 'tarkari-katha', 'stickman-lantern', 'ink-explainer']);
+export const SOCIAL_PROJECTS = new Set(['gk-questions', 'daily-motivations', 'teenage-love-vibes', 'maya-photos', 'jindagi-kitaab', 'kam-nalagne', 'sadhu-rani', 'tarkari-katha', 'stickman-lantern', 'ink-explainer', 'purplestick']);
 export const GEMINI_URL = 'https://mukeshpokharel-testing.hf.space/gemini';
 const STANDALONE_FILE = /^[^\\/:*?"<>|\x00-\x1f]+\.(?:mp4|png|jpe?g)$/i;
 const NUMBERED_DAY_FILE = /^day-(?:0[1-9]|[1-9]\d+)\.(?:mp4|png|jpe?g)$/i;
@@ -21,10 +21,12 @@ export async function buildGeminiCaption(context, project, platform = 'TikTok') 
     guidance = 'Write a gripping, emotional Nepali storytelling caption (2 to 3 expressive paragraphs) continuing this silent 2D stickman survival adventure ("The Last Lantern" / अन्तिम लालटिन) about Kiran, Pip, and the Clockwork Owl carrying hope through darkness, and end with 4 to 6 relevant hashtags. Output plain text only.';
   } else if (project === 'ink-explainer') {
     guidance = 'Write a curious, witty, engaging English storytelling caption (2 short punchy paragraphs + a thought-provoking question) matching a viral Ink Explainer documentary style about ancient human life, history, or hidden everyday truths, and end with 4 to 6 relevant English hashtags. Output plain text only.';
+  } else if (project === 'purplestick') {
+    guidance = 'Write a short, punchy, hilarious viral English Facebook Reels / TikTok comedy caption (1 catchy hook line with 😂 emoji + 1 witty call-to-action like tagging a friend) for this PurpleStick 2D stickman comedy skit, and end with 6 to 8 viral hashtags including #PurpleStick #stickman #stickmananimation #funnyreels #viralreels #comedy #memes. Output plain text only.';
   } else {
     guidance = 'Build a strong, encouraging continuation of the supplied original motivational line: include the line and expand its specific message with a few meaningful sentences and practical encouragement. Keep the same intent and tone; do not make unsupported factual claims.';
   }
-  const lang = project === 'ink-explainer' ? 'English' : 'Nepali';
+  const lang = (project === 'ink-explainer' || project === 'purplestick') ? 'English' : 'Nepali';
   const prompt = `Write one ${platform} caption in ${lang}. ${guidance} Include a few relevant hashtags. Output only the caption, without quotation marks or explanations.\n\nVideo details:\n${context}`;
   const response = await fetch(GEMINI_URL, {
     method: 'POST', headers: { 'Content-Type': 'application/json' },

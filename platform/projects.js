@@ -130,5 +130,16 @@ const PROJECTS = [
     mark: "📝",
     accent: "gold",
     flowNext: false
+  },
+  {
+    name: "PurpleStick",
+    type: "9:16 Viral 2D Stickman Comedy Reels · PurpleStick Originals",
+    description: "30 punchy 8–10s vertical 2D stickman comedy skits (couple roasts, classroom traps, dating twists, office fails) with royal-purple stickmen, lip-sync English dialogue, viral captions, and a Custom Skit Maker.",
+    href: "projects/purplestick/index.html",
+    id: "purplestick",
+    totalClips: 30,
+    mark: "🟣",
+    accent: "purple",
+    flowNext: true
   }
 ];

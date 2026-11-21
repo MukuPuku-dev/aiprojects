@@ -870,6 +870,51 @@
       appearance: "SHADOW KING (Antagonist): Towering colossal 2D ink-silhouette stickman entity twice the height of normal stickmen, jagged smoky cloak edges, crown-like twin ink horns, and menacing glowing violet eyes.",
       ref_prompt: "Character reference: clean full-body 2D stickman cartoon turnaround character sheet of SHADOW KING (Antagonist): Towering colossal 2D ink-silhouette stickman entity twice the height of normal stickmen, jagged smoky cloak edges, crown-like twin ink horns, and menacing glowing violet eyes. Plain clean white/light neutral background for easy referencing, ultra-sharp black ink outlines, clear silhouette, expression range chart, no text.",
       image_key: "char-SHADOW_KING"
+    },
+    // PurpleStick (Viral 2D Stickman Comedy Reels cast)
+    {
+      id: "purplestick:PURP_GUY",
+      project_id: "purplestick",
+      project_name: "PurpleStick",
+      code: "PURP_GUY",
+      name: "PurpleStick Guy",
+      role: "Lead Husband / Comedy Guy",
+      appearance: "PURP_GUY (PurpleStick Guy / Husband): Clean 2D vector cartoon stickman with a large perfectly round vibrant royal-purple (#8B3DFF) head, small cute spiky purple hair tuft on top, thick crisp black outlines, huge expressive white cartoon eyes with dynamic black pupils and eyebrows, animated lip-syncing mouth, and a thin solid black stickman body, arms, legs, and flat black oval feet.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of PURP_GUY (PurpleStick Guy): large perfectly round vibrant royal-purple (#8B3DFF) head with small spiky hair tuft, thick crisp black outlines, huge expressive white eyes showing smug, shocked, happy, and dizzy expressions, thin black stickman body. Plain clean white background, no text.",
+      image_key: "char-PURP_GUY"
+    },
+    {
+      id: "purplestick:PURP_GIRL",
+      project_id: "purplestick",
+      project_name: "PurpleStick",
+      code: "PURP_GIRL",
+      name: "PurpleStick Girl",
+      role: "Lead Wife / Sassy Girlfriend",
+      appearance: "PURP_GIRL (PurpleStick Girl / Wife): Clean 2D vector cartoon stickman with a large perfectly round vibrant royal-purple (#8B3DFF) head, sleek dark-brown/black cartoon ponytail, cute curved eyelashes, glossy red-pink cartoon lips, huge expressive white eyes, thick crisp black outlines, and a thin solid black stickman body.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of PURP_GIRL (PurpleStick Girl): large perfectly round vibrant royal-purple (#8B3DFF) head with sleek dark ponytail, cute eyelashes, glossy lips, thick crisp black outlines, huge expressive white eyes showing sassy, starry-eyed, shocked, and furious expressions, thin black stickman body. Plain clean white background, no text.",
+      image_key: "char-PURP_GIRL"
+    },
+    {
+      id: "purplestick:PURP_TEACHER",
+      project_id: "purplestick",
+      project_name: "PurpleStick",
+      code: "PURP_TEACHER",
+      name: "PurpleStick Teacher/Boss",
+      role: "Strict Teacher / Office Boss",
+      appearance: "PURP_TEACHER (PurpleStick Teacher / Boss): Clean 2D vector cartoon stickman with a large round vibrant royal-purple (#8B3DFF) head, expressive furrowed eyebrows and big cartoon eyes, wearing a neat white collared dress shirt with a dark charcoal necktie over a thin black stickman body and legs, thick crisp black outlines.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of PURP_TEACHER: large round vibrant royal-purple (#8B3DFF) head, wearing a neat white dress shirt and dark tie over a thin black stickman body, thick crisp black outlines, expressive strict and furious cartoon expressions. Plain clean white background, no text.",
+      image_key: "char-PURP_TEACHER"
+    },
+    {
+      id: "purplestick:WHITE_KID",
+      project_id: "purplestick",
+      project_name: "PurpleStick",
+      code: "WHITE_KID",
+      name: "Cheeky Student",
+      role: "Smart-Aleck Student Foil",
+      appearance: "WHITE_KID (Cheeky Student / Friend): Clean 2D vector cartoon stickman with a slightly smaller round pure-white head, smug half-lidded expressive cartoon eyes, cheeky smirk, thick crisp black outlines, and a thin solid black stickman body and limbs.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of WHITE_KID: round pure-white head with smug half-lidded cartoon eyes and cheeky smirk, thick crisp black outlines, thin solid black stickman body. Plain clean white background, no text.",
+      image_key: "char-WHITE_KID"
     }
   ];
 

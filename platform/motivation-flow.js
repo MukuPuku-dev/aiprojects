@@ -487,4 +487,29 @@
       }
     });
   }
+
+  if (typeof PURPLESTICK_CLIPS !== "undefined") {
+    attachRunner({
+      project: "purplestick",
+      label: "PurpleStick",
+      href: "projects/purplestick/index.html",
+      kind: "skit",
+      mode: "video",
+      jobKey: "purplestick_flow_job",
+      progressKey: "purplestick-v1",
+      items: PURPLESTICK_CLIPS,
+      doneKey: day => day,
+      buildPayload: (index, state, effective) => {
+        const video = state.picked
+          ? { model: state.model || effective.video.model, aspect: state.ar || "9:16", duration: state.dur || effective.video.duration }
+          : { ...effective.video, aspect: ["9:16", "16:9"].includes(state.ar) ? state.ar : "9:16" };
+        return {
+          mode: "video",
+          prompt: purpleStickPromptFor(index, video.aspect, video.duration, state.overlay !== false),
+          characters: purpleStickCharactersFor(index),
+          ...video
+        };
+      }
+    });
+  }
 })();

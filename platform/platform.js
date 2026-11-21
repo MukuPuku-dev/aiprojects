@@ -19,7 +19,8 @@ const PROGRESS_STORAGE_KEYS = {
   "tarkari-katha": "tarkari-katha-v1",
   "stickman-lantern": "stickman-lantern-v1",
   "ink-explainer": "ink-explainer-v1",
-  "images-from-csv": "images-from-csv-v1"
+  "images-from-csv": "images-from-csv-v1",
+  "purplestick": "purplestick-v1"
 };
 const SERIES_LABELS = {
   "kam-nalagne": "काम नलाग्ने कोही हुँदैन",
@@ -27,7 +28,8 @@ const SERIES_LABELS = {
   "teenage-love-vibes": "Teenage Love Vibes",
   "tarkari-katha": "तरकारीको कथा",
   "stickman-lantern": "The Last Lantern",
-  "ink-explainer": "Ink Explainer"
+  "ink-explainer": "Ink Explainer",
+  "purplestick": "PurpleStick"
 };
 
 function projectIdFromCard(project) {

@@ -93,6 +93,7 @@ main { max-width: 1120px; margin: auto; padding: 0 24px; }
 .project-card::after { position: absolute; top: -50px; right: -44px; width: 145px; height: 145px; border-radius: 50%; background: var(--glow); content: ""; filter: blur(40px); opacity: .14; pointer-events: none; }
 .project-card.coral { --accent: #ff847b; --glow: #ff625a; }
 .project-card.gold { --accent: #ffc568; --glow: #ffad37; }
+.project-card.purple { --accent: #c084fc; --glow: #9333ea; }
 .card-top { display: flex; align-items: center; gap: 10px; }
 .project-mark { display: grid; width: 38px; height: 38px; place-items: center; border: 1px solid color-mix(in srgb, var(--accent) 32%, transparent); border-radius: 11px; color: var(--accent); background: color-mix(in srgb, var(--accent) 9%, transparent); font-size: 17px; font-weight: 750; }
 .project-type { color: #abaab7; font-size: 11px; }

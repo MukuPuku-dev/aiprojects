@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PurpleStick – Viral 2D Stickman Comedy Reels Studio</title>
+<style>
+:root{
+  --bg:#0e0a16;--card:#171124;--ink:#f5f0ff;--mut:#a99bc2;--acc:#a855f7;
+  --acc2:#7c3aed;--gold:#facc15;--ok:#4ade80;--line:#2d2246;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
+header{position:sticky;top:0;background:#0e0a16ee;backdrop-filter:blur(10px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
+h1{margin:0;font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+h1 .brand-pill{background:linear-gradient(135deg,#9333ea,#c084fc);color:#fff;font-weight:900;padding:2px 10px;border-radius:8px;letter-spacing:-.02em;box-shadow:0 2px 12px #9333ea66}
+h2{margin:18px 0 8px;font-size:17px;color:var(--gold)}
+h3{margin:14px 0 6px;font-size:15px;color:#d8b4fe}
+.sub{color:var(--mut);font-size:12px}
+.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc),var(--gold));width:0;transition:width .3s}
+nav,.filters,.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:4px}
+button,select,input[type="text"],textarea{background:#211834;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font:inherit}
+button,select{cursor:pointer}
+button.p{background:linear-gradient(135deg,#9333ea,#a855f7);color:#fff;border-color:#a855f7;font-weight:700}
+button.p:hover{filter:brightness(1.08)}
+button.on{border-color:var(--gold);color:var(--gold)}
+button.tt,button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button.fb,button[data-act="facebook"]{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button.fb:hover,button[data-act="facebook"]:hover{background:#166fe5;border-color:#166fe5}
+button.tg,button[data-act="telegram"]{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
+button.tg:hover,button[data-act="telegram"]:hover{background:#1d8ec4;border-color:#1d8ec4}
+button:disabled{opacity:.45;cursor:not-allowed}
+button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+nav a{color:#d8b4fe;padding:7px 4px;text-decoration:none}
+nav a:hover{text-decoration:underline}
+main{max-width:960px;margin:0 auto;padding:14px}
+.hide{display:none}
+.filters{margin:6px 0 12px}
+.filters button{font-size:13px;padding:5px 11px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;scroll-margin-top:175px}
+.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 6px 24px #9333ea22}
+.card.done{opacity:.74;border-color:#2e5a44}
+.top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.clip-badge{background:var(--acc);color:#fff;font-weight:800;border-radius:7px;padding:1px 9px;font-size:13px}
+.chip{border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--mut)}
+.top label{margin-left:auto;font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center;cursor:pointer}
+.title{font-size:18px;font-weight:800;margin:4px 0 2px;color:#fff}
+.hook-line{color:var(--gold);font-size:13px;font-style:italic;margin:0 0 8px}
+.dl{font-size:15px;line-height:1.65;margin:6px 0 10px;padding:10px 12px;background:#120d1e;border-left:3px solid var(--gold);border-radius:0 8px 8px 0}
+.dl div+div{margin-top:4px}
+.dl b{color:var(--gold)}
+.scene{font-size:13.5px;margin:6px 0 8px}
+.scene b,.react-box b,.sfx-box b{color:#d8b4fe}
+.react-box{font-size:13px;color:#fef08a;background:#1f1633;border-left:3px solid var(--acc);padding:7px 10px;border-radius:0 8px 8px 0;margin:6px 0 8px}
+.sfx-box{font-size:12.5px;color:var(--mut);background:#120d1e;border-left:3px solid var(--ok);padding:6px 10px;border-radius:0 8px 8px 0;margin:6px 0 8px}
+.cap-box{background:#120d1e;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:8px 11px;font-size:13px;line-height:1.55;color:#ede9fe;margin:6px 0 10px;white-space:pre-line}
+.gen{font-size:13px;min-height:1em;margin-top:6px;color:var(--gold)}
+details{margin-top:10px}
+summary{cursor:pointer;color:var(--mut);font-size:13px}
+pre{white-space:pre-wrap;word-break:break-word;background:#0a0711;border:1px solid var(--line);border-radius:10px;padding:11px;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
+.note{border-left:3px solid var(--acc);padding:8px 12px;background:#1b122c;border-radius:0 8px 8px 0;margin:10px 0}
+.grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
+.info-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}
+.field input,.field select,.field textarea{width:100%}
+ul,ol{padding-left:20px}
+li{margin:5px 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--acc);color:#fff;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+#toast.show{opacity:1}
+@media(max-width:600px){header{position:relative}.title{font-size:16px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🟣 <span class="brand-pill">PurpleStick</span> Viral 2D Stickman Comedy Reels <span class="sub" id="st"></span></h1>
+  <div class="sub">Exact RedStick-style 9:16 Vertical Comedy Skits · Royal Purple Stickman Cast · Snappy English Dialogue, Lip-Sync &amp; Slapstick Punchlines</div>
+  <div class="bar"><i id="pb"></i></div>
+  <nav>
+    <button class="p" id="nx">Copy NEXT prompt</button>
+    <button class="p" id="gnx">▶ Generate next skit with Flow</button>
+    <button data-t="clips" class="on">Skits (30)</button>
+    <button data-t="custom">✨ Custom Skit Maker</button>
+    <button data-t="cast">Cast &amp; Sets</button>
+    <button data-t="rules">Viral Guide &amp; CapCut</button>
+    <button id="dl">Download all prompts (.txt)</button>
+    <a href="../../index.html">← All projects</a>
+    <label class="sub">Shape <select id="ar"><option value="9:16">9:16 vertical</option><option value="16:9">16:9 wide</option></select></label>
+    <label class="sub">Model <select id="model"><option>Omni 1.1 Flash</option><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></label>
+    <label class="sub">Length <select id="dur"><option>10s</option><option>8s</option><option>6s</option><option>4s</option></select></label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Include PurpleStick logo + bold yellow/white viral captions inside the Flow prompt (uncheck for clean frame to edit in CapCut)"><input type="checkbox" id="overlayToggle"> Logo &amp; viral captions</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send video &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Workspace setting: ensure &amp; attach required PurpleStick character images in Flow"><input type="checkbox" id="charConsistencyToggle"> Character consistency</label>
+    <span class="sub" id="api"></span>
+  </nav>
+</header>
+
+<main>
+  <section id="clips">
+    <div class="filters" id="filters"></div>
+    <div id="list"></div>
+  </section>
+
+  <section id="custom" class="hide">
+    <div class="info-box">
+      <h2>✨ Custom PurpleStick Skit Maker</h2>
+      <p class="sub" style="margin-top:0">Write any 4–5 line joke and turn it into a ready-to-generate PurpleStick 9:16 comedy video prompt instantly.</p>
+      <div class="form-grid">
+        <label class="field">Skit Title
+          <input type="text" id="cs-title" value="Wife's Savage Gym Reply! 😂" placeholder="e.g. Husband's Shocking Reply! 😂">
+        </label>
+        <label class="field">Character 1
+          <select id="cs-char-a"></select>
+        </label>
+        <label class="field">Character 2
+          <select id="cs-char-b"></select>
+        </label>
+        <label class="field">Background Set
+          <select id="cs-loc"></select>
+        </label>
+      </div>
+      <label class="field" style="margin-bottom:10px">Dialogue Lines (one line per turn — keep it snappy for 8–10s!)
+        <textarea id="cs-dialogue" rows="5">HUSBAND: Babe, I joined the gym today!
+WIFE: Awesome! How much weight did you lose?
+HUSBAND: About $80... right out of my wallet!
+WIFE: SERIOUSLY?!</textarea>
+      </label>
+      <label class="field" style="margin-bottom:12px">Punchline Cartoon Reaction
+        <input type="text" id="cs-reaction" value="Wife's eyebrows snap down in shock and fury while Husband sweats nervously with a goofy grin, quick laugh sting.">
+      </label>
+      <div class="btns">
+        <button type="button" class="p" id="cs-copy">Copy Custom Flow Prompt</button>
+        <button type="button" id="cs-gen">▶ Generate Custom Skit in Flow</button>
+      </div>
+      <div class="gen" id="cs-status"></div>
+      <details open style="margin-top:12px">
+        <summary>Live PurpleStick Flow Prompt Preview</summary>
+        <pre id="cs-preview"></pre>
+      </details>
+    </div>
+  </section>
+
+  <section id="cast" class="hide"></section>
+  <section id="rules" class="hide"></section>
+</main>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="../../platform/project-storage.js"></script>
+<script src="../../platform/workspace-social.js"></script>
+<script src="flow-data.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const PROJECT_ID = "purplestick";
+const KEY = "purplestick-v1";
+const JOB_KEY = "purplestick_flow_job";
+const projectStorage = window.StoryStudioStorage?.createProjectStorage?.({ projectId: PROJECT_ID });
+
+const CATS = PURPLESTICK_CATS;
+const CHARS = PURPLESTICK_CHARS;
+const CHAR_NAMES = PURPLESTICK_CHAR_NAMES;
+const LOCS = PURPLESTICK_LOCS;
+const CLIPS = PURPLESTICK_CLIPS;
+
+let S = { done:{}, ar:"9:16", model:"Omni 1.1 Flash", dur:"10s", overlay:true, filter:"all", cur:0, tab:"clips" };
+const GEN = {};
+try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+const pushCloud = () => {
+  const checked = { ...(S.done || {}) };
+  window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
+    totalClips: CLIPS.length,
+    completedCount: CLIPS.filter((_, i) => checked[i + 1]).length,
+    checked,
+    state: S
+  });
+};
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} pushCloud(); };
+
+function syncFailedStudioJob() {
+  try {
+    const raw = localStorage.getItem(JOB_KEY);
+    if (!raw) return;
+    const job = JSON.parse(raw);
+    if (job && ["failed", "unknown"].includes(job.status) && !job.unchecked) {
+      delete S.done[job.day];
+      save();
+      localStorage.setItem(JOB_KEY, JSON.stringify({ ...job, unchecked: true }));
+    }
+  } catch {}
+}
+syncFailedStudioJob();
+
+let tt;
+function toast(msg) {
+  const el = $("#toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(tt);
+  tt = setTimeout(() => el.classList.remove("show"), 1800);
+}
+
+async function copy(text, msg) {
+  try { await navigator.clipboard.writeText(text); }
+  catch {
+    const a = document.createElement("textarea");
+    a.value = text; a.style.position = "fixed"; a.style.opacity = "0";
+    document.body.append(a); a.select();
+    try { document.execCommand("copy"); } catch {}
+    a.remove();
+  }
+  toast(msg || "Copied ✓");
+}
+
+function catInfo(id) { return CATS.find(a => a.id === id) || CATS[1]; }
+function buildPrompt(i) { return purpleStickPromptFor(i, S.ar, S.dur, S.overlay !== false); }
+
+function renderFilters() {
+  $("#filters").innerHTML = CATS.map(a =>
+    `<button data-f="${a.id}" class="${S.filter === a.id ? "on" : ""}">${esc(a.label)}</button>`
+  ).join("");
+}
+
+function renderList() {
+  $("#list").innerHTML = CLIPS.map((c, i) => ({ c, i }))
+    .filter(({ c }) => S.filter === "all" || c.cat === S.filter)
+    .map(({ c, i }) => {
+      const done = !!S.done[i + 1];
+      const cat = catInfo(c.cat);
+      const lines = c.line ? c.line.split("|") : [];
+      return `<article class="card ${done ? "done" : ""} ${S.cur === i ? "cur" : ""}" id="v${i}" data-i="${i}">
+        <div class="top">
+          <span class="clip-badge">Skit #${i + 1}</span>
+          <span class="chip">${esc(cat.label)}</span>
+          <span class="chip">${esc(c.charList)}</span>
+          <span class="chip">${esc(c.loc)}</span>
+          <label><input type="checkbox" data-done="${i}" ${done ? "checked" : ""}> Made in Flow</label>
+        </div>
+        <div class="title">${esc(c.title)}</div>
+        <p class="hook-line">${esc(c.hook)}</p>
+        <div class="dl">${lines.map(l => {
+          const idx = l.indexOf(":");
+          return idx > 0 ? `<div><b>${esc(l.slice(0, idx))}:</b>${esc(l.slice(idx + 1))}</div>` : `<div>${esc(l)}</div>`;
+        }).join("")}</div>
+        <p class="scene"><b>Animation Timeline:</b> ${esc(c.visual)}</p>
+        <div class="react-box"><b>Punchline Reaction:</b> ${esc(c.reaction)}</div>
+        <div class="sfx-box"><b>Voices &amp; SFX:</b> ${esc(c.sfx)}</div>
+        <div class="cap-box">${esc(c.cap)}</div>
+        <div class="btns">
+          <button class="p" data-act="gen" data-i="${i}">Generate video</button>
+          <button data-act="tiktok" data-i="${i}" title="Post skit to TikTok">♪ Post TikTok</button>
+          <button data-act="facebook" data-i="${i}" title="Post skit to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button>
+          <button data-act="telegram" data-i="${i}" title="Send skit &amp; caption to Telegram">✈ Send Telegram</button>
+          <button data-act="prompt" data-i="${i}">Copy Flow prompt</button>
+          <button data-act="line" data-i="${i}">Copy dialogue</button>
+          <button data-act="cap" data-i="${i}">Copy caption</button>
+        </div>
+        <div class="gen" id="g${i}">${esc(GEN[i] || "")}</div>
+        <details><summary>Show complete PurpleStick Flow prompt</summary><pre>${esc(buildPrompt(i))}</pre></details>
+      </article>`;
+    }).join("");
+}
+
+function progress() {
+  const n = Object.keys(S.done).filter(k => S.done[k]).length;
+  const secs = parseInt(S.dur, 10) || 10;
+  $("#pb").style.width = (n / CLIPS.length * 100) + "%";
+  $("#st").textContent = `${n}/${CLIPS.length} skits made · ${n * secs}s of PurpleStick comedy`;
+}
+
+function nextIndex() {
+  for (let i = 0; i < CLIPS.length; i++) if (!S.done[i + 1]) return i;
+  return -1;
+}
+
+/* ---------- Custom Skit Maker ---------- */
+function initCustomBuilder() {
+  const charOpts = Object.entries(CHAR_NAMES).map(([k, v]) => `<option value="${k}">${esc(v)} (${k})</option>`).join("");
+  $("#cs-char-a").innerHTML = charOpts;
+  $("#cs-char-b").innerHTML = charOpts;
+  $("#cs-char-a").value = "PURP_GUY";
+  $("#cs-char-b").value = "PURP_GIRL";
+  $("#cs-loc").innerHTML = Object.keys(LOCS).map(k => `<option value="${k}">${esc(k)}</option>`).join("");
+  $("#cs-loc").value = "LIVING_ROOM";
+
+  const updatePreview = () => {
+    $("#cs-preview").textContent = getCustomPrompt();
+  };
+  ["#cs-title", "#cs-char-a", "#cs-char-b", "#cs-loc", "#cs-dialogue", "#cs-reaction"].forEach(sel => {
+    $(sel)?.addEventListener("input", updatePreview);
+    $(sel)?.addEventListener("change", updatePreview);
+  });
+  $("#cs-copy").onclick = () => copy(getCustomPrompt(), "Custom PurpleStick prompt copied ✓");
+  $("#cs-gen").onclick = genCustomSkit;
+  updatePreview();
+}
+
+function getCustomPrompt() {
+  return purpleStickCustomPrompt({
+    title: $("#cs-title")?.value.trim(),
+    charA: $("#cs-char-a")?.value,
+    charB: $("#cs-char-b")?.value,
+    loc: $("#cs-loc")?.value,
+    dialogue: $("#cs-dialogue")?.value.trim(),
+    reaction: $("#cs-reaction")?.value.trim(),
+    ar: S.ar,
+    dur: S.dur,
+    includeOverlay: S.overlay !== false
+  });
+}
+
+async function genCustomSkit() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787/projects/purplestick/ to generate"); return; }
+  const btn = $("#cs-gen");
+  const st = $("#cs-status");
+  btn.disabled = true;
+  const customDay = Math.max(31, Number(S.customDay) || 31);
+  st.textContent = `Generating custom PurpleStick skit #${customDay} in Flow… keep the Flow Chrome window open.`;
+  try {
+    const who = [$("#cs-char-a").value, $("#cs-char-b").value].filter(Boolean);
+    const characters = [...new Set(who)].map(code => ({
+      code,
+      name: CHAR_NAMES[code] || code,
+      refPrompt: `Character reference: clean full-body 2D vector cartoon stickman character turnaround sheet of ${CHARS[code] || code} Plain clean white background, thick crisp black outlines, huge expressive eyes, no text.`
+    }));
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        day: customDay,
+        prompt: getCustomPrompt(),
+        model: S.model,
+        aspect: S.ar,
+        duration: S.dur,
+        characters
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Generation failed");
+    S.customDay = customDay + 1;
+    save();
+    st.textContent = "Saved to " + j.file;
+    toast("Custom PurpleStick skit saved ✓");
+  } catch (err) {
+    st.textContent = "Failed: " + err.message;
+    toast("Custom generation failed.");
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+/* ---------- Cast & Sets Cloud Vault ---------- */
+let castAssets = {};
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const im = new Image(), u = URL.createObjectURL(file);
+    im.onload = () => {
+      try {
+        const w = Math.min(1024, im.width || 1024), h = Math.round((im.height || w) * w / (im.width || w));
+        const c = document.createElement("canvas"); c.width = w; c.height = h;
+        c.getContext("2d").drawImage(im, 0, 0, w, h);
+        resolve(c.toDataURL("image/jpeg", 0.85));
+      } catch (err) { reject(err); }
+      finally { URL.revokeObjectURL(u); }
+    };
+    im.onerror = () => { URL.revokeObjectURL(u); reject(new Error("Invalid image")); };
+    im.src = u;
+  });
+}
+
+async function loadCastAssets() {
+  if (!projectStorage) return;
+  const keys = [...Object.keys(CHARS).map(k => "char-" + k), ...Object.keys(LOCS).map(k => "loc-" + k)];
+  await projectStorage.listAssets(keys).catch(() => {});
+  const res = await projectStorage.getAssets(keys).catch(() => ({ assets: {} }));
+  castAssets = res?.assets || {};
+  renderCastAssetsUi();
+}
+
+function renderCastAssetsUi() {
+  const keys = [...Object.keys(CHARS).map(k => "char-" + k), ...Object.keys(LOCS).map(k => "loc-" + k)];
+  keys.forEach(key => {
+    const slot = document.getElementById("ps-img-" + key);
+    if (!slot) return;
+    const url = castAssets[key];
+    slot.innerHTML = url
+      ? `<img src="${url}" alt="${esc(key)}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px">`
+      : `<div class="sub" style="margin-top:6px;padding:10px;border:1px dashed var(--line);border-radius:8px">No cloud reference image yet · Auto-generated on first Flow run (when Character Consistency is on) or upload below</div>`;
+  });
+}
+
+async function saveCastAsset(key, file) {
+  if (!projectStorage || !file) return;
+  try {
+    const dataUrl = await fileToDataUrl(file);
+    await projectStorage.saveAsset(key, dataUrl);
+    castAssets[key] = dataUrl;
+    renderCastAssetsUi();
+    toast("Saved PurpleStick reference to cloud ✓");
+  } catch (err) {
+    toast(err.message || "Could not save reference image");
+  }
+}
+
+function renderCastAndRules() {
+  const charCards = Object.entries(CHARS).map(([code, desc]) => ({
+    key: "char-" + code,
+    title: `${CHAR_NAMES[code] || code} (${code})`,
+    desc
+  }));
+  $("#cast").innerHTML = `
+    <div class="grid-two">
+      <div class="info-box"><h2>🟣 PurpleStick Cast (Cloud Reference Vault)</h2>
+        ${charCards.map(c => `
+          <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+            <p style="margin:0 0 6px"><b>${esc(c.title)}:</b> ${esc(c.desc)}</p>
+            <div class="btns">
+              <button type="button" data-copy-cast="${esc(c.desc)}">Copy Character Prompt</button>
+              <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:6px 9px;background:#211834;border:1px solid var(--line);border-radius:8px">
+                Upload Ref Image <input type="file" accept="image/*" hidden data-cast-up="${esc(c.key)}">
+              </label>
+            </div>
+            <div id="ps-img-${esc(c.key)}"></div>
+          </div>
+        `).join("")}
+      </div>
+      <div class="info-box"><h2>🎨 2D Cartoon Sets (Cloud Synced)</h2>
+        ${Object.entries(LOCS).map(([k, v]) => `
+          <div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)">
+            <p style="margin:0 0 6px"><b>${esc(k)}:</b> ${esc(v)}</p>
+            <div class="btns">
+              <button type="button" data-copy-cast="${esc(v)}">Copy Set Prompt</button>
+              <label style="cursor:pointer;display:inline-flex;align-items:center;gap:4px;font-size:12px;padding:6px 9px;background:#211834;border:1px solid var(--line);border-radius:8px">
+                Upload Ref <input type="file" accept="image/*" hidden data-cast-up="loc-${esc(k)}">
+              </label>
+            </div>
+            <div id="ps-img-loc-${esc(k)}"></div>
+          </div>
+        `).join("")}
+      </div>
+    </div>`;
+  $("#cast").onclick = e => {
+    const btn = e.target.closest("button[data-copy-cast]");
+    if (btn) copy(btn.dataset.copyCast, "Reference prompt copied ✓");
+  };
+  $("#cast").onchange = e => {
+    const inp = e.target.closest("input[data-cast-up]");
+    if (inp && inp.files?.[0]) saveCastAsset(inp.dataset.castUp, inp.files[0]);
+  };
+  renderCastAssetsUi();
+
+  $("#rules").innerHTML = `
+    <div class="info-box">
+      <h2>🟣 PurpleStick Viral Facebook Reels Formula</h2>
+      <div class="note">Built to match the exact viral formula of RedStick (10M–24M view Reels) — rebranded 100% as <b>PurpleStick</b>.</div>
+      <ol>
+        <li><b>Instant 9:16 Hook (0–2s):</b> Start mid-conversation immediately—zero intro, zero title card. The big royal-purple stickman head and pastel background stop the scroll instantly.</li>
+        <li><b>Tight 8–10s Punchline Arc:</b> Setup (0–3s) → Twist/Escalation (3–6s) → Explosive Punchline + Cartoon Shock/Slap/Starry-Eyes Reaction (6–9s).</li>
+        <li><b>Logo &amp; Viral Captions Toggle:</b> Keep <b>Logo &amp; viral captions</b> checked to generate the PurpleStick watermark + bold yellow/white outlined captions straight out of Google Flow. Uncheck it if you prefer a 100% clean frame to add custom CapCut captions.</li>
+        <li><b>Automatic Laughing Meme Outro (Built-in):</b> By default for PurpleStick, every Flow-generated video automatically appends <code>projects/purplestick/assets/Breakfast_Club_3s_to_6s.mp4</code> (letterboxed cleanly into the 9:16 frame with normalized audio) before saving the final MP4!</li>
+        <li><b>Character Consistency:</b> Check <b>Character consistency</b> in the top bar so Google Flow locks your exact PurpleStick Guy, Girl, and Teacher designs across every episode.</li>
+        <li><b>Saved Output:</b> Generated MP4s save to <code>projects/purplestick/videos/day-01.mp4</code> … <code>day-30.mp4</code> and can auto-post to Facebook, TikTok, or Telegram.</li>
+      </ol>
+      <h3>Master PurpleStick Style Lock</h3><pre>${esc(PURPLESTICK_MASTER_STYLE)}</pre>
+      <h3>Audio &amp; Voice Acting Lock</h3><pre>${esc(PURPLESTICK_AUDIO_RULE)}</pre>
+    </div>`;
+}
+
+function showTab(t) {
+  S.tab = t;
+  ["clips", "custom", "cast", "rules"].forEach(id => $("#" + id).classList.toggle("hide", id !== t));
+  document.querySelectorAll("nav button[data-t]").forEach(b => b.classList.toggle("on", b.dataset.t === t));
+  if (t === "cast") loadCastAssets();
+  if (t === "custom") $("#cs-preview").textContent = getCustomPrompt();
+  save();
+}
+
+$("#list").addEventListener("click", e => {
+  const b = e.target.closest("button[data-act]");
+  if (!b) return;
+  const i = +b.dataset.i;
+  S.cur = i; save();
+  if (b.dataset.act === "gen") { genVideo(i); return; }
+  if (b.dataset.act === "tiktok" || b.dataset.act === "facebook" || b.dataset.act === "telegram") { postSocial(b.dataset.act, i); return; }
+  if (b.dataset.act === "prompt") copy(buildPrompt(i), `Skit #${i + 1} prompt copied ✓`);
+  if (b.dataset.act === "line") copy(CLIPS[i].dialogueLines, "Dialogue copied ✓");
+  if (b.dataset.act === "cap") copy(CLIPS[i].cap, "Viral caption copied ✓");
+  document.querySelectorAll(".card.cur").forEach(el => el.classList.remove("cur"));
+  $("#v" + i)?.classList.add("cur");
+});
+
+$("#list").addEventListener("change", e => {
+  const c = e.target.closest("input[data-done]");
+  if (!c) return;
+  const i = +c.dataset.done;
+  if (c.checked) S.done[i + 1] = true; else delete S.done[i + 1];
+  save(); progress();
+  c.closest(".card").classList.toggle("done", c.checked);
+});
+
+$("#filters").addEventListener("click", e => {
+  const b = e.target.closest("button[data-f]");
+  if (!b) return;
+  S.filter = b.dataset.f; save(); renderFilters(); renderList();
+});
+
+document.querySelectorAll("nav button[data-t]").forEach(b => b.onclick = () => showTab(b.dataset.t));
+
+$("#nx").onclick = () => {
+  const i = nextIndex();
+  if (i < 0) { toast("All 30 PurpleStick skits are marked made 🎉"); return; }
+  S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
+  copy(buildPrompt(i), `Skit #${i + 1} prompt copied ✓`);
+  $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
+};
+
+$("#gnx").onclick = () => {
+  const i = nextIndex();
+  if (i < 0) { toast("All 30 PurpleStick skits are marked made 🎉"); return; }
+  S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
+  $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  genVideo(i);
+};
+
+$("#ar").onchange = e => { S.ar = e.target.value; S.picked = true; save(); renderList(); $("#cs-preview").textContent = getCustomPrompt(); };
+$("#model").onchange = e => { S.model = e.target.value; S.picked = true; save(); };
+$("#dur").onchange = e => { S.dur = e.target.value; S.picked = true; save(); progress(); renderList(); $("#cs-preview").textContent = getCustomPrompt(); };
+$("#overlayToggle").onchange = e => { S.overlay = Boolean(e.target.checked); save(); renderList(); $("#cs-preview").textContent = getCustomPrompt(); toast(S.overlay ? "Logo & viral captions enabled ✓" : "Clean frame mode (for CapCut) ✓"); };
+
+$("#dl").onclick = () => {
+  const txt = CLIPS.map((c, i) =>
+    `=== PURPLESTICK SKIT #${i + 1}: ${c.title} (${catInfo(c.cat).label}) ===\n${c.hook}\n\nDIALOGUE:\n${c.dialogueLines}\n\nFLOW PROMPT:\n${buildPrompt(i)}\n\nVIRAL CAPTION:\n${c.cap}\n`
+  ).join("\n\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
+  a.download = "purplestick-prompts.txt";
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+};
+
+const isFile = location.protocol === "file:";
+function setGen(i, msg) { GEN[i] = msg; const el = $("#g" + i); if (el) el.textContent = msg; }
+
+async function checkApi() {
+  const el = $("#api");
+  if (isFile) { el.textContent = "Generator: open via http://127.0.0.1:8787/projects/purplestick/"; return; }
+  try { const r = await fetch("/api/health"); if (!r.ok) throw new Error(); el.textContent = "Generator: online"; }
+  catch { el.textContent = "Generator: offline (double-click Start Story Studio.vbs)"; }
+}
+
+async function applyFlowDefaults() {
+  if (isFile) return;
+  try {
+    const r = await fetch("/api/flow-settings?project=" + PROJECT_ID);
+    const j = await r.json();
+    if (!r.ok || !j.ok) return;
+    const ccToggle = $("#charConsistencyToggle");
+    if (ccToggle) ccToggle.checked = Boolean(j.effective?.characters?.consistency);
+    if (S.picked) return;
+    S.model = j.effective.video.model; S.ar = j.effective.video.aspect || "9:16"; S.dur = j.effective.video.duration || "10s";
+    save();
+    $("#model").value = S.model; $("#dur").value = S.dur; $("#ar").value = S.ar;
+    renderList(); progress();
+  } catch {}
+}
+
+$("#charConsistencyToggle")?.addEventListener("change", async e => {
+  if (isFile) return;
+  const enabled = Boolean(e.target.checked);
+  try {
+    const r = await fetch("/api/flow-settings");
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not load settings.");
+    const doc = j.settings;
+    doc.projects = doc.projects || {};
+    doc.projects[PROJECT_ID] = { ...(doc.projects[PROJECT_ID] || {}), characters: { consistency: enabled } };
+    const sr = await fetch("/api/flow-settings", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(doc)
+    });
+    const sj = await sr.json();
+    if (!sr.ok || !sj.ok) throw new Error(sj.error || "Could not save setting.");
+    toast(`Character consistency ${enabled ? "enabled" : "disabled"} ✓`);
+  } catch (err) {
+    e.target.checked = !enabled;
+    toast("Failed to save character consistency: " + err.message);
+  }
+});
+
+function socialContextFor(i) {
+  const item = CLIPS[i];
+  return `PurpleStick viral 9:16 2D stickman comedy reel #${i + 1}: "${item.title}"\nHook: ${item.hook}\nDialogue:\n${item.dialogueLines}\nPreset viral caption:\n${item.cap}`.slice(0, 4800);
+}
+
+async function postSocial(platform, i) {
+  if (isFile) { toast(`Open via http://127.0.0.1:8787 to post to ${platform}`); return; }
+  const label = platform === "facebook" ? "Facebook" : platform === "telegram" ? "Telegram" : "TikTok";
+  const btn = document.querySelector(`button[data-act="${platform}"][data-i="${i}"]`);
+  if (btn) btn.disabled = true;
+  try {
+    await window.StoryStudioSocial.postMedia({
+      platform,
+      projectId: PROJECT_ID,
+      day: i + 1,
+      context: socialContextFor(i),
+      label: `Skit #${i + 1}`,
+      onStatus: m => setGen(i, m)
+    });
+    setGen(i, `Posted to ${label} ✓`);
+    toast(`Skit #${i + 1} posted to ${label} ✓`);
+  } catch (err) {
+    setGen(i, `${label} failed: ${err.message}`);
+    toast(`${label} upload failed.`);
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+async function genVideo(i) {
+  if (isFile) { toast("Open via http://127.0.0.1:8787/projects/purplestick/ to generate"); return; }
+  const btn = document.querySelector(`button[data-act="gen"][data-i="${i}"]`);
+  const gnxBtn = $("#gnx");
+  if (btn) btn.disabled = true;
+  if (gnxBtn) gnxBtn.disabled = true;
+  setGen(i, "Generating PurpleStick skit in Flow… keep the Flow Chrome window open.");
+  try {
+    const r = await fetch("/api/generate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        project: PROJECT_ID,
+        day: i + 1,
+        prompt: buildPrompt(i),
+        model: S.model,
+        aspect: S.ar,
+        duration: S.dur,
+        characters: purpleStickCharactersFor(i)
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Generation failed");
+    setGen(i, "Saved to " + j.file);
+    S.done[i + 1] = true; save(); progress(); renderList();
+    loadCastAssets();
+    setGen(i, "Saved to " + j.file);
+    toast(`Skit #${i + 1} video saved ✓`);
+    await window.StoryStudioSocial?.autoPostAfterFlow?.({
+      projectId: PROJECT_ID,
+      day: i + 1,
+      context: socialContextFor(i),
+      tiktokEnabled: Boolean($("#autoPostToggle")?.checked),
+      facebookEnabled: Boolean($("#autoPostFacebookToggle")?.checked),
+      telegramEnabled: Boolean($("#autoPostTelegramToggle")?.checked),
+      label: `Skit #${i + 1}`,
+      onStatus: m => setGen(i, m),
+      onToast: toast
+    });
+  } catch (err) {
+    setGen(i, "Failed: " + err.message);
+    toast("Generation failed. See the status line.");
+  } finally {
+    if (btn) btn.disabled = false;
+    if (gnxBtn) gnxBtn.disabled = false;
+  }
+}
+
+window.addEventListener("storage", e => {
+  if (e.key !== KEY && e.key !== JOB_KEY) return;
+  try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+  syncFailedStudioJob();
+  renderList(); progress();
+});
+
+$("#ar").value = S.ar; $("#model").value = S.model; $("#dur").value = S.dur;
+$("#overlayToggle").checked = S.overlay !== false;
+initCustomBuilder();
+renderFilters(); renderList(); renderCastAndRules(); progress(); showTab(S.tab || "clips");
+checkApi(); applyFlowDefaults(); loadCastAssets();
+window.StoryStudioSocial?.initAutoPostToggles?.({
+  projectId: PROJECT_ID,
+  tiktokSelector: "#autoPostToggle",
+  facebookSelector: "#autoPostFacebookToggle",
+  telegramSelector: "#autoPostTelegramToggle",
+  onToast: toast
+});
+window.StoryStudioStorage?.seedDefaultCharacters?.();
+window.StoryStudioStorage?.syncWorkspaceProgress?.({
+  projectId: PROJECT_ID,
+  totalClips: CLIPS.length,
+  readLocal: () => ({ checked: { ...(S.done || {}) }, state: S, hasLocal: Object.keys(S.done || {}).length > 0, completedCount: CLIPS.filter((_, i) => S.done[i + 1]).length }),
+  applyMerged: (checked, mergedState) => {
+    S = Object.assign(S, mergedState || {}, { done: checked || {} });
+    try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
+    renderFilters(); renderList(); progress();
+  }
+});
+</script>
+</body>
+</html>

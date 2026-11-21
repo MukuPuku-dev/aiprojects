@@ -1,5 +1,5 @@
 (() => {
-  const projects = ["gk-questions", "daily-motivations", "teenage-love-vibes", "maya-photos", "jindagi-kitaab", "kam-nalagne", "sadhu-rani", "tarkari-katha", "stickman-lantern"];
+  const projects = ["gk-questions", "daily-motivations", "teenage-love-vibes", "maya-photos", "jindagi-kitaab", "kam-nalagne", "sadhu-rani", "tarkari-katha", "stickman-lantern", "purplestick"];
   const PROJECT_LABELS = {
     "gk-questions": "GK Questions",
     "daily-motivations": "Daily Motivations",
@@ -10,7 +10,8 @@
     "sadhu-rani": "साधु र राडी",
     "tarkari-katha": "तरकारीको कथा",
     "stickman-lantern": "The Last Lantern",
-    "ink-explainer": "Ink Explainer"
+    "ink-explainer": "Ink Explainer",
+    "purplestick": "PurpleStick"
   };
 
   const PLATFORMS = {
@@ -220,6 +221,10 @@
       const scenes = typeof inkExplainerActiveScenes === "function" ? inkExplainerActiveScenes() : INK_EXPLAINER_SCENES;
       const item = scenes[day - 1] || INK_EXPLAINER_SCENES[0];
       return `English Ink Explainer visual story Scene #${day}: "${item.title}" (${item.chapter}).\nNarration: ${item.narration}\nVisual scene: ${item.visual}`.slice(0, 4800);
+    }
+    if (project === "purplestick") {
+      const item = PURPLESTICK_CLIPS[day - 1];
+      return `PurpleStick viral 9:16 2D stickman comedy reel #${day}: "${item.title}"\nHook: ${item.hook}\nDialogue:\n${item.dialogueLines}\nPreset viral caption:\n${item.cap}`.slice(0, 4800);
     }
     const item = VIDEOS[day - 1];
     return `Nepali motivational video, day ${day}. Spoken line: ${item.q}\nMeaning: ${item.en}\nScene: ${item.scene}`;
