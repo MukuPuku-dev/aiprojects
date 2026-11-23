@@ -8,9 +8,9 @@ import { generateCharactersInFlow, generateFrameVideo, generateImage, generateIm
 import { resolveRequiredCharacters, saveWorkspaceCharacter } from './flow-characters.mjs';
 import { createGenerationQueue } from './generation-queue.mjs';
 import { createTikTokService } from './tiktok.mjs';
-import { createFacebookService } from './facebook.mjs';
+import { createFacebookService, uploadToFacebook } from './facebook.mjs';
 import { createTelegramService, uploadToTelegram } from './telegram.mjs';
-import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
+import { ASPECTS, DURATIONS, FLOW_OPTIONS, PROJECT_ID, RESOLUTIONS, UPSCALE_MODES, VIDEO_MODELS, effectiveSettings, listProjects, readSettings, saveSettings, studioProjectName } from './flow-settings.mjs';
 import { callGeminiText, deleteBeatImage, deleteBeatTransition, episodeFlowProjectName, generateAndSaveBlockTts, generateAndSaveMultiBlockTts, generateAndSaveTts, listExplainerAssets, saveBeatImage, saveCustomStory, saveEpisode, shiftEpisodeBeatAssets } from './explainer-service.mjs';
 import { compressImageToJpeg, csvImagesDir, deleteCsvImage, listCsvImages, mapAspectToFlow, sanitizeFileName, sanitizeFolderName } from './csv-images-service.mjs';
 import { searchAndSaveImageBatchInBrowser, searchAndSaveImageInBrowser } from './csv-web-search.mjs';
@@ -18,6 +18,17 @@ import { callClaudeInBrowser } from './claude-browser.mjs';
 import { callGeminiInBrowser } from './gemini-browser.mjs';
 import { uploadToYouTube } from './youtube.mjs';
 import { appendPurpleStickOutro } from './purplestick-outro.mjs';
+import { buildPurpleStickConceptPrompt, parsePurpleStickConcepts } from './purplestick-concepts.mjs';
+import {
+  deleteDownloadedVideo,
+  getDownloadJob,
+  getToolsStatus,
+  listDownloadedVideos,
+  openInDefaultPlayer,
+  openInExplorer,
+  resolveVideoFile,
+  startFacebookDownload
+} from './fb-downloader-service.mjs';
 import {
   buildClaudeVerifyPrompt,
   buildKineticScriptPrompt,
@@ -25,6 +36,7 @@ import {
   deleteAllLoksewaVideos,
   deleteLoksewaImage,
   deleteLoksewaVideo,
+  fetchLoksewaManifest,
   generateKineticScriptWithGemini,
   generateLoksewaQuestionsWithGemini,
   listLoksewaImages,
@@ -41,6 +53,38 @@ import {
   sendKineticToServer,
   sendLoksewaToServer
 } from './loksewa-service.mjs';
+import {
+  HOST_GRID_SPECS,
+  HOST_VIDEO_SPECS,
+  buildAnchorFocusPrompt,
+  buildGridPrompt,
+  exportHostPackToQuizApp,
+  exportHostVideosToQuizApp,
+  findMasterImage,
+  getHostStatus,
+  hostAnchorPath,
+  hostGridsDir,
+  hostProfileDir,
+  hostVideosDir,
+  loadHostConfig,
+  sanitizeHostId,
+  saveHostConfig,
+  saveUploadedHostFile,
+  sliceAllGrids,
+  sliceAndCompressGrid
+} from './live-host-service.mjs';
+import {
+  LIVE4_DOC_PATH,
+  FIRESTORE_PROJECT_ID,
+  fetchLive4Bank,
+  saveLive4Bank,
+  parseRawQuestionsText,
+  buildLive4GeneratePrompt,
+  buildLive4FormatPrompt,
+  parseLive4GeneratedResponse,
+  buildLive4VerifyPrompt,
+  parseLive4VerifyResponse
+} from './live4-questions-service.mjs';
 
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, '..', '..');
@@ -82,18 +126,27 @@ async function finalizeMp4WithFfmpeg(inputPath, outputMp4Path) {
 
 const queue = createGenerationQueue(async job => {
   if (job.mode === 'youtube') return uploadToYouTube(job);
+  if (job.mode === 'facebook-direct') return uploadToFacebook({ file: job.filePath, caption: job.caption || '', beforePost: () => {} });
   if (job.mode === 'characters') return generateCharactersInFlow(job);
   if (job.mode === 'image-batch') return generateImageBatch(job);
   if (job.mode === 'frames') return generateFrameVideo(job);
   if (job.mode === 'frames-batch') return job.run();
   if (job.mode === 'csv-image-batch') return job.run();
   if (job.mode === 'loksewa-image' || job.mode === 'loksewa-image-batch') return job.run();
+  if (job.mode === 'live-host-batch') return job.run();
   if (job.mode === 'claude') return callClaudeInBrowser(job);
   if (job.mode === 'gemini-browser') return callGeminiInBrowser(job);
   if (job.mode === 'image') return generateImage(job);
   const result = await generateVideo(job);
   if (job.project === 'purplestick' && job.outFile && fs.existsSync(job.outFile)) {
-    await appendPurpleStickOutro(job.outFile, { root: ROOT, log: job.log });
+    await appendPurpleStickOutro(job.outFile, {
+      root: ROOT,
+      prompt: job.prompt,
+      dialogueText: job.dialogueText || '',
+      language: job.language || 'en',
+      burnSubtitles: job.burnSubtitles !== false,
+      log: job.log
+    });
   }
   return result;
 });
@@ -154,11 +207,18 @@ function validate(body) {
   const model = body.model || effective.video.model;
   const aspect = body.aspect || effective.video.aspect;
   const duration = body.duration || effective.video.duration;
+  const resolution = body.resolution || effective.video.resolution || '360p';
+  const upscale = body.upscale ?? effective.video.upscale ?? 'auto';
   if (!VIDEO_MODELS.includes(model)) throw new Error('Unknown model: ' + model);
   if (!ASPECTS.includes(aspect)) throw new Error('Unknown aspect: ' + aspect);
   if (!DURATIONS.includes(duration)) throw new Error('Unknown duration: ' + duration);
+  if (!RESOLUTIONS.includes(resolution)) throw new Error('Unknown resolution: ' + resolution);
+  if (typeof upscale !== 'boolean' && !UPSCALE_MODES.includes(upscale)) throw new Error('Unknown upscale mode: ' + upscale);
   const outFile = path.join(ROOT, 'projects', project, 'videos', `day-${String(day).padStart(2, '0')}.mp4`);
-  return { mode: 'video', day, prompt: body.prompt, model, aspect, duration, outFile, flowProject, project, characterConsistency, requiredCharacters };
+  const burnSubtitles = body.burnSubtitles === undefined ? true : Boolean(body.burnSubtitles);
+  const dialogueText = typeof body.dialogueText === 'string' ? body.dialogueText : '';
+  const language = typeof body.language === 'string' && body.language.trim() ? body.language.trim() : 'en';
+  return { mode: 'video', day, prompt: body.prompt, model, aspect, duration, resolution, upscale, outFile, flowProject, project, characterConsistency, requiredCharacters, burnSubtitles, dialogueText, language };
 }
 
 async function handleGenerate(req, res) {
@@ -786,7 +846,7 @@ async function handleExplainerRoute(req, res, url) {
       };
       return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
     }
-    if (url.pathname === '/api/explainer/upload-youtube' || url.pathname === '/api/explainer/send-telegram') {
+    if (url.pathname === '/api/explainer/upload-youtube' || url.pathname === '/api/explainer/upload-facebook' || url.pathname === '/api/explainer/send-telegram') {
       const project = body.project || 'ink-explainer';
       const episode = typeof body.episode === 'string' && body.episode.trim() ? body.episode.trim() : 'ancient-humans-day';
       if (!PROJECT_ID.test(project) || !PROJECT_ID.test(episode)) throw new Error('Invalid project or episode.');
@@ -824,6 +884,18 @@ async function handleExplainerRoute(req, res, url) {
           description: body.description || '',
           visibility: body.visibility || 'unlisted',
           log: m => console.log(`[youtube ${episode}] ${m}`)
+        });
+        return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, fileName });
+      }
+      if (url.pathname === '/api/explainer/upload-facebook') {
+        const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+        if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+        const tracked = queue.submit(jobId, {
+          mode: 'facebook-direct',
+          day: 1,
+          filePath,
+          caption: typeof body.caption === 'string' ? body.caption : '',
+          log: m => console.log(`[facebook ${episode}] ${m}`)
         });
         return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, fileName });
       }
@@ -1283,8 +1355,14 @@ async function handleLoksewaRoute(req, res, url) {
     }
 
     if (url.pathname === '/api/loksewa/resolve-endpoint') {
-      const endpoint = resolveLoksewaEndpoint(body.spaceUrl);
+      const endpointPath = body.endpointPath || (body.endpointMode === 'kinetic' ? '/texttovideo-loksewa-kinetic' : '/texttovideo-loksewa');
+      const endpoint = resolveLoksewaEndpoint(body.spaceUrl, endpointPath);
       return send(res, 200, { ok: true, endpoint });
+    }
+
+    if (url.pathname === '/api/loksewa/fetch-manifest') {
+      const result = await fetchLoksewaManifest(body.spaceUrl, body.bearerToken);
+      return send(res, 200, result);
     }
 
     if (url.pathname === '/api/loksewa/send-to-server') {
@@ -1485,10 +1563,629 @@ async function handleLoksewaRoute(req, res, url) {
   }
 }
 
+async function handlePurpleStickRoute(req, res, url) {
+  try {
+    if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+    const body = await readBody(req, 2e6);
+
+    if (url.pathname === '/api/purplestick/generate-concepts') {
+      const provider = ['claude', 'gemini-browser', 'gemini-api'].includes(body.provider) ? body.provider : 'gemini-api';
+      const language = typeof body.language === 'string' && body.language.trim() ? body.language.trim().toLowerCase() : 'en';
+      const prompt = buildPurpleStickConceptPrompt({
+        theme: body.theme || '',
+        category: body.category || 'all',
+        language,
+        seriesMode: body.seriesMode === 'ongoing' ? 'ongoing' : 'standalone',
+        seriesTitle: body.seriesTitle || '',
+        count: body.count || 3,
+        existingTitles: Array.isArray(body.existingTitles) ? body.existingTitles : [],
+        previousBeats: Array.isArray(body.previousBeats) ? body.previousBeats : []
+      });
+      let rawText = '';
+      let account = '';
+      if (provider === 'claude') {
+        const out = await queue.enqueue({
+          mode: 'claude',
+          prompt,
+          log: m => console.log(`[purplestick-claude] ${m}`)
+        });
+        rawText = out?.text || '';
+        account = out?.account || '';
+      } else if (provider === 'gemini-browser') {
+        const out = await queue.enqueue({
+          mode: 'gemini-browser',
+          prompt,
+          log: m => console.log(`[purplestick-gemini-browser] ${m}`)
+        });
+        rawText = out?.text || '';
+        account = out?.account || '';
+      } else {
+        rawText = await callGeminiText(prompt);
+      }
+      const concepts = parsePurpleStickConcepts(rawText, { fallbackCategory: body.category || 'couple', language });
+      return send(res, 200, { ok: true, provider, account, language, concepts });
+    }
+
+    return send(res, 404, { ok: false, error: 'Not found.' });
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+}
+
+async function handleFbDownloaderRoute(req, res, url) {
+  try {
+    if (url.pathname === '/api/fb-downloader/status' && req.method === 'GET') {
+      return send(res, 200, { ok: true, tools: getToolsStatus(), videos: listDownloadedVideos() });
+    }
+    if (url.pathname === '/api/fb-downloader/videos' && req.method === 'GET') {
+      return send(res, 200, { ok: true, videos: listDownloadedVideos() });
+    }
+    if (url.pathname === '/api/fb-downloader/download' && req.method === 'POST') {
+      const body = await readBody(req);
+      const job = startFacebookDownload({ url: body.url, quality: body.quality });
+      return send(res, 202, { ok: true, job });
+    }
+    if (url.pathname.startsWith('/api/fb-downloader/jobs/') && req.method === 'GET') {
+      const id = decodeURIComponent(url.pathname.slice('/api/fb-downloader/jobs/'.length));
+      const job = getDownloadJob(id);
+      if (!job) return send(res, 404, { ok: false, error: 'Download job not found.' });
+      return send(res, 200, { ok: true, job });
+    }
+    if (url.pathname === '/api/fb-downloader/open-folder' && req.method === 'POST') {
+      const body = await readBody(req);
+      const out = openInExplorer(body.filename || '');
+      return send(res, 200, { ok: true, ...out });
+    }
+    if (url.pathname === '/api/fb-downloader/open-player' && req.method === 'POST') {
+      const body = await readBody(req);
+      const out = openInDefaultPlayer(body.filename || '');
+      return send(res, 200, { ok: true, ...out });
+    }
+    if (url.pathname.startsWith('/api/fb-downloader/videos/') && req.method === 'DELETE') {
+      const filename = decodeURIComponent(url.pathname.slice('/api/fb-downloader/videos/'.length));
+      const out = deleteDownloadedVideo(filename);
+      return send(res, 200, { ok: true, ...out });
+    }
+    if (url.pathname.startsWith('/api/fb-downloader/video/') && (req.method === 'GET' || req.method === 'HEAD')) {
+      const filename = decodeURIComponent(url.pathname.slice('/api/fb-downloader/video/'.length));
+      const filePath = resolveVideoFile(filename);
+      if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+        res.writeHead(404);
+        return res.end('Video not found');
+      }
+      const stat = fs.statSync(filePath);
+      const total = stat.size;
+      const ext = path.extname(filePath).toLowerCase();
+      const contentType = MIME[ext] || (ext === '.mkv' ? 'video/x-matroska' : ext === '.mov' ? 'video/quicktime' : 'video/mp4');
+      const range = req.headers.range;
+      if (range) {
+        const match = range.match(/bytes=(\d*)-(\d*)/);
+        if (!match) {
+          res.writeHead(416, { 'Content-Range': `bytes */${total}` });
+          return res.end();
+        }
+        const start = match[1] ? Number(match[1]) : 0;
+        const end = match[2] ? Math.min(Number(match[2]), total - 1) : total - 1;
+        if (Number.isNaN(start) || Number.isNaN(end) || start > end || start >= total) {
+          res.writeHead(416, { 'Content-Range': `bytes */${total}` });
+          return res.end();
+        }
+        res.writeHead(206, {
+          'Content-Range': `bytes ${start}-${end}/${total}`,
+          'Accept-Ranges': 'bytes',
+          'Content-Length': end - start + 1,
+          'Content-Type': contentType,
+          'Cache-Control': 'no-store'
+        });
+        if (req.method === 'HEAD') return res.end();
+        return fs.createReadStream(filePath, { start, end }).pipe(res);
+      }
+      res.writeHead(200, {
+        'Content-Length': total,
+        'Accept-Ranges': 'bytes',
+        'Content-Type': contentType,
+        'Cache-Control': 'no-store'
+      });
+      if (req.method === 'HEAD') return res.end();
+      return fs.createReadStream(filePath).pipe(res);
+    }
+    return send(res, 404, { ok: false, error: 'Not found.' });
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+}
+
+async function handleLiveHostRoute(req, res, url) {
+  try {
+    if (url.pathname === '/api/live-host/status' && req.method === 'GET') {
+      const hostId = url.searchParams.get('hostId') || 'default-host';
+      return send(res, 200, { ok: true, ...getHostStatus(ROOT, hostId) });
+    }
+    if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+    const body = await readBody(req);
+    const hostId = sanitizeHostId(body.hostId || 'default-host');
+    const charProject = `live-host-studio-${hostId}`;
+    const flowProject = `Live Host White - ${hostId}`;
+    const effective = effectiveSettings(readSettings(), 'live-host-studio');
+
+    if (url.pathname === '/api/live-host/save-config') {
+      const config = saveHostConfig(ROOT, hostId, {
+        presetId: body.presetId,
+        name: body.name,
+        masterPrompt: body.masterPrompt,
+        jpegQuality: Number(body.jpegQuality) || 82,
+        frameSize: Number(body.frameSize) || 384,
+        edgeTrimPercent: Number(body.edgeTrimPercent) ?? 3.5,
+        exportTargetDir: body.exportTargetDir
+      });
+      return send(res, 200, { ok: true, config });
+    }
+
+    if (url.pathname === '/api/live-host/upload') {
+      const saved = saveUploadedHostFile(ROOT, hostId, body.kind || 'grid', body.gridId || '', body.dataUrl);
+      let sliceResult = null;
+      if ((body.kind || 'grid') === 'grid' && body.autoSlice !== false) {
+        const cfg = loadHostConfig(ROOT, hostId);
+        sliceResult = await sliceAndCompressGrid(ROOT, hostId, body.gridId, {
+          jpegQuality: cfg.jpegQuality,
+          frameSize: cfg.frameSize,
+          edgeTrimPercent: cfg.edgeTrimPercent
+        });
+      }
+      return send(res, 200, { ok: true, ...saved, sliceResult });
+    }
+
+    if (url.pathname === '/api/live-host/generate-master') {
+      const cfg = saveHostConfig(ROOT, hostId, {
+        ...(body.name ? { name: body.name } : {}),
+        ...(body.masterPrompt ? { masterPrompt: body.masterPrompt } : {})
+      });
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+      const tracked = queue.submit(jobId, {
+        mode: 'characters',
+        flowProject,
+        charProject,
+        characters: [{ code: 'HOST', name: cfg.name || 'Live Host', refPrompt: cfg.masterPrompt }],
+        log: m => console.log(`[live-host master ${hostId}] ${m}`)
+      });
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status });
+    }
+
+    if (url.pathname === '/api/live-host/redevelop-white') {
+      const cfg = loadHostConfig(ROOT, hostId);
+      const model = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : effective.image.model;
+      const aspect = body.aspect === '9:16' ? '9:16' : '16:9';
+      const rawRefProject = `live-host-raw-${hostId}`;
+      const charDir = path.join(ROOT, 'projects', charProject, 'characters');
+      const rawDir = path.join(ROOT, 'projects', rawRefProject, 'characters');
+      fs.mkdirSync(charDir, { recursive: true });
+      fs.mkdirSync(rawDir, { recursive: true });
+
+      // Preserve the original uploaded sheet as RAW_REF if not already preserved
+      let rawRefFile = null;
+      for (const ext of ['.jpg', '.png', '.jpeg', '.webp']) {
+        const p = path.join(rawDir, `RAW_REF${ext}`);
+        if (fs.existsSync(p)) { rawRefFile = p; break; }
+      }
+      if (!rawRefFile) {
+        const existingMaster = findMasterImage(ROOT, hostId);
+        if (!existingMaster) throw new Error(`No reference image found for ${hostId}.`);
+        const ext = path.extname(existingMaster) || '.jpg';
+        rawRefFile = path.join(rawDir, `RAW_REF${ext}`);
+        fs.copyFileSync(existingMaster, rawRefFile);
+      }
+
+      const cleanMasterOut = path.join(charDir, 'HOST.png');
+      const whiteMasterPrompt = [
+        `Ultra-realistic single chest-up studio portrait photograph of the EXACT same person @RAW_REF (preserve their exact face, eyes, hair, smile, and clothing).`,
+        `STRIP AND REMOVE ALL BACKGROUND COMPLETELY — place the subject on a 100% PURE SOLID SEAMLESS BRIGHT WHITE STUDIO BACKGROUND (#FFFFFF).`,
+        `NO mountains, NO trees, NO sky, NO outdoor scenery, NO horizontal lines, NO multiple views, NO collage, NO text labels, NO watermark.`,
+        `Single front-facing portrait seated facing a 4K webcam straight-on, soft even studio lighting, centered head and shoulders with generous white headroom around the head for circular cropping.`,
+        cfg.masterPrompt || ''
+      ].join(' ');
+
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+
+      const chainGrids = body.chainGrids !== false;
+      const tracked = queue.submit(jobId, {
+        mode: 'live-host-batch',
+        run: async () => {
+          // Step 1: Generate the clean pure-white Master Portrait using @RAW_REF
+          tracked.progress = { phase: 'master-white', total: chainGrids ? 9 : 1, savedCount: 0, remaining: chainGrids ? 9 : 1 };
+          await generateImage({
+            prompt: whiteMasterPrompt,
+            outFile: cleanMasterOut,
+            model,
+            aspect: '16:9',
+            flowProject: `Live Host MasterWhite - ${hostId}`,
+            project: 'live-host-studio',
+            charProject: rawRefProject,
+            characterConsistency: true,
+            requiredCharacters: [{ code: 'RAW_REF', name: `${cfg.name || hostId} Raw`, refPrompt: cfg.masterPrompt }],
+            log: m => console.log(`[live-host white-master ${hostId}] ${m}`)
+          });
+
+          // Remove any old non-png HOST.jpg so Flow always picks the brand-new pure-white HOST.png
+          for (const oldExt of ['.jpg', '.jpeg', '.webp']) {
+            const oldPath = path.join(charDir, `HOST${oldExt}`);
+            if (fs.existsSync(oldPath)) {
+              try { fs.unlinkSync(oldPath); } catch {}
+            }
+          }
+
+          if (!chainGrids) return { master: cleanMasterOut };
+
+          // Step 2: Generate all 8x 3x3 expression grids locked to the brand-new pure-white @HOST
+          const gridsDir = hostGridsDir(ROOT, hostId);
+          fs.mkdirSync(gridsDir, { recursive: true });
+          const items = HOST_GRID_SPECS.map((spec, idx) => ({
+            day: idx + 1,
+            gridId: spec.id,
+            prompt: buildGridPrompt(spec, cfg.masterPrompt),
+            outFile: path.join(gridsDir, `${spec.id}.png`),
+            characters: [{ code: 'HOST', name: cfg.name || 'Live Host', refPrompt: cfg.masterPrompt }]
+          }));
+
+          return generateImageBatch({
+            flowProject,
+            charProject,
+            characters: [{ code: 'HOST', name: cfg.name || 'Live Host', refPrompt: cfg.masterPrompt }],
+            items,
+            model,
+            aspect,
+            maxInFlight: Number(body.maxInFlight) || 2,
+            onProgress: p => {
+              tracked.progress = {
+                ...(tracked.progress || {}),
+                ...p,
+                phase: 'grids',
+                total: 9,
+                savedCount: 1 + (p.savedCount || 0)
+              };
+            },
+            onItemSaved: async entry => {
+              try {
+                await sliceAndCompressGrid(ROOT, hostId, entry.gridId, {
+                  jpegQuality: cfg.jpegQuality,
+                  frameSize: cfg.frameSize,
+                  edgeTrimPercent: cfg.edgeTrimPercent
+                });
+              } catch (err) {
+                console.warn(`[live-host slice ${entry.gridId}] ${err.message}`);
+              }
+            },
+            log: m => console.log(`[live-host white-grids ${hostId}] ${m}`)
+          });
+        }
+      });
+      tracked.progress = { phase: 'queued', total: chainGrids ? 9 : 1, savedCount: 0, remaining: chainGrids ? 9 : 1 };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
+    }
+
+    if (url.pathname === '/api/live-host/generate-grids') {
+      const cfg = loadHostConfig(ROOT, hostId);
+      const requestedIds = Array.isArray(body.gridIds) && body.gridIds.length
+        ? new Set(body.gridIds.map(String))
+        : null;
+      const overwrite = Boolean(body.overwrite);
+      const model = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : effective.image.model;
+      const aspect = body.aspect === '9:16' ? '9:16' : '16:9';
+      const gridsDir = hostGridsDir(ROOT, hostId);
+      fs.mkdirSync(gridsDir, { recursive: true });
+
+      const specs = HOST_GRID_SPECS.filter(s => !requestedIds || requestedIds.has(s.id) || requestedIds.has(s.state));
+      const items = specs.map((spec, idx) => {
+        const outFile = path.join(gridsDir, `${spec.id}.png`);
+        return {
+          day: idx + 1,
+          gridId: spec.id,
+          prompt: buildGridPrompt(spec, cfg.masterPrompt),
+          outFile,
+          characters: [{ code: 'HOST', name: cfg.name || 'Live Host', refPrompt: cfg.masterPrompt }]
+        };
+      });
+      const pending = overwrite ? items : items.filter(it => !fs.existsSync(it.outFile));
+      if (!pending.length) {
+        return send(res, 200, { ok: true, alreadyComplete: true, total: items.length });
+      }
+
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+
+      const tracked = queue.submit(jobId, {
+        mode: 'live-host-batch',
+        run: async () => {
+          const result = await generateImageBatch({
+            flowProject,
+            charProject,
+            characters: [{ code: 'HOST', name: cfg.name || 'Live Host', refPrompt: cfg.masterPrompt }],
+            items: pending,
+            model,
+            aspect,
+            maxInFlight: Number(body.maxInFlight) || 2,
+            onProgress: p => { tracked.progress = { ...(tracked.progress || {}), ...p, total: pending.length }; },
+            onItemSaved: async entry => {
+              try {
+                await sliceAndCompressGrid(ROOT, hostId, entry.gridId, {
+                  jpegQuality: cfg.jpegQuality,
+                  frameSize: cfg.frameSize,
+                  edgeTrimPercent: cfg.edgeTrimPercent
+                });
+              } catch (err) {
+                console.warn(`[live-host slice ${entry.gridId}] ${err.message}`);
+              }
+            },
+            log: m => console.log(`[live-host batch ${hostId}] ${m}`)
+          });
+          return result;
+        }
+      });
+      tracked.progress = { total: pending.length, savedCount: 0, inFlight: 0, remaining: pending.length };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
+    }
+
+    if (url.pathname === '/api/live-host/slice') {
+      const cfg = loadHostConfig(ROOT, hostId);
+      const opts = {
+        jpegQuality: Number(body.jpegQuality) || cfg.jpegQuality,
+        frameSize: Number(body.frameSize) || cfg.frameSize,
+        edgeTrimPercent: body.edgeTrimPercent !== undefined ? Number(body.edgeTrimPercent) : cfg.edgeTrimPercent
+      };
+      if (body.gridId) {
+        const resSlice = await sliceAndCompressGrid(ROOT, hostId, body.gridId, opts);
+        return send(res, 200, { ok: true, results: [resSlice] });
+      }
+      const results = await sliceAllGrids(ROOT, hostId, opts);
+      return send(res, 200, { ok: true, results });
+    }
+
+    if (url.pathname === '/api/live-host/export') {
+      const cfg = loadHostConfig(ROOT, hostId);
+      const targetDir = body.exportTargetDir || cfg.exportTargetDir;
+      const result = exportHostPackToQuizApp(ROOT, hostId, targetDir);
+      return send(res, 200, { ok: true, ...result });
+    }
+
+    if (url.pathname === '/api/live-host/generate-videos') {
+      const cfg = loadHostConfig(ROOT, hostId);
+      const model = typeof body.model === 'string' && body.model.trim() ? body.model.trim() : 'Omni 1.2 Flash';
+      const imageModel = effective.image.model;
+      const aspect = body.aspect === '9:16' ? '9:16' : '16:9';
+      const resolution = typeof body.resolution === 'string' && body.resolution.trim() ? body.resolution.trim() : '360p';
+      const preferredAccount = typeof body.preferredAccount === 'string' && body.preferredAccount.trim()
+        ? body.preferredAccount.trim()
+        : 'mukesh.inaruwa@gmail.com';
+      const overwrite = Boolean(body.overwrite);
+      const regenerateAnchor = Boolean(body.regenerateAnchor);
+      const requested = Array.isArray(body.clipIds) && body.clipIds.length ? new Set(body.clipIds.map(String)) : null;
+
+      const anchorFile = hostAnchorPath(ROOT, hostId);
+      const anchorSqFile = path.join(hostProfileDir(ROOT, hostId), 'anchor_focus_sq.jpg');
+      const rawRefProject = `live-host-raw-${hostId}`;
+      const outDir = hostVideosDir(ROOT, hostId);
+      fs.mkdirSync(outDir, { recursive: true });
+      const specs = HOST_VIDEO_SPECS.filter(s => !requested || requested.has(s.id));
+
+      const jobId = (typeof body.id === 'string' && body.id.trim()) ? body.id.trim() : randomUUID();
+      if (queue.get(jobId)) return send(res, 409, { ok: false, error: 'Job ID already exists.' });
+
+      const videoFlowProject = `Live Operator Study - ${hostId}`;
+      const tracked = queue.submit(jobId, {
+        mode: 'live-host-batch',
+        run: async () => {
+          const bin = findFfmpegBinary();
+          const needAnchor = regenerateAnchor || !fs.existsSync(anchorFile);
+          const pending = overwrite
+            ? specs
+            : specs.filter(s => !fs.existsSync(path.join(outDir, `${s.id}.mp4`)));
+          const totalSteps = (needAnchor ? 1 : 0) + pending.length;
+          let done = 0;
+
+          // Step 1: Generate serious off-axis Neutral Study Room ANCHOR_FOCUS.png
+          if (needAnchor) {
+            tracked.progress = { phase: 'anchor_focus', total: totalSteps, savedCount: 0, remaining: totalSteps };
+            await generateImage({
+              prompt: buildAnchorFocusPrompt(cfg),
+              outFile: anchorFile,
+              model: imageModel,
+              aspect: '16:9',
+              flowProject: videoFlowProject,
+              project: 'live-host-studio',
+              charProject: rawRefProject,
+              characterConsistency: true,
+              requiredCharacters: [{ code: 'RAW_REF', name: `${cfg.name || hostId} Raw`, refPrompt: cfg.masterPrompt }],
+              log: m => console.log(`[live-operator anchor ${hostId}] ${m}`)
+            });
+            // Crop square anchor still for instant fallback
+            try {
+              await runFfmpegArgs(bin, [
+                '-y', '-i', anchorFile,
+                '-vf', 'crop=min(iw\\,ih):min(iw\\,ih):(iw-min(iw\\,ih))/2:0,scale=480:480:flags=lanczos',
+                '-q:v', '3',
+                anchorSqFile
+              ]);
+            } catch (e) {
+              console.warn(`[live-operator anchor crop] ${e.message}`);
+            }
+            done++;
+            exportHostVideosToQuizApp(ROOT, hostId, cfg.exportTargetDir);
+          }
+
+          // Step 2: Generate all 6 continuous 6s-8s Omni 1.2 Flash clips anchored to ANCHOR_FOCUS.png
+          for (const spec of pending) {
+            tracked.progress = { phase: spec.id, total: totalSteps, savedCount: done, remaining: totalSteps - done };
+            const rawOut = path.join(outDir, `${spec.id}.mp4`);
+            await generateFrameVideo({
+              prompt: spec.prompt,
+              outFile: rawOut,
+              model,
+              aspect,
+              duration: spec.duration || '6s',
+              resolution,
+              upscale: 'off',
+              preferredAccount,
+              minCredits: 6,
+              startFile: anchorFile,
+              endFile: anchorFile,
+              flowProject: videoFlowProject,
+              log: m => console.log(`[live-operator ${hostId}/${spec.id}] ${m}`)
+            });
+
+            // Center-crop 16:9 360p clip to a crisp square 360x360 muted faststart MP4
+            const sqOut = path.join(outDir, `${spec.id}_sq.mp4`);
+            try {
+              await runFfmpegArgs(bin, [
+                '-y', '-i', rawOut,
+                '-vf', 'crop=min(iw\\,ih):min(iw\\,ih):(iw-min(iw\\,ih))/2:0,scale=360:360:flags=lanczos',
+                '-an', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '22',
+                '-pix_fmt', 'yuv420p', '-movflags', '+faststart',
+                sqOut
+              ]);
+            } catch (cropErr) {
+              console.warn(`[live-operator crop ${spec.id}] ${cropErr.message}`);
+            }
+
+            done++;
+            tracked.progress = { phase: spec.id, total: totalSteps, savedCount: done, remaining: totalSteps - done };
+            exportHostVideosToQuizApp(ROOT, hostId, cfg.exportTargetDir);
+          }
+          return exportHostVideosToQuizApp(ROOT, hostId, cfg.exportTargetDir);
+        }
+      });
+      tracked.progress = { phase: 'queued', total: specs.length + 1, savedCount: 0, remaining: specs.length + 1 };
+      return send(res, 202, { ok: true, id: tracked.id, status: tracked.status, progress: tracked.progress });
+    }
+
+    return send(res, 404, { ok: false, error: 'Not found.' });
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+}
+
+async function handleLive4QuestionsRoute(req, res, url) {
+  try {
+    if (req.method === 'GET' && url.pathname === '/api/live4-questions/queue') {
+      const bank = await fetchLive4Bank();
+      return send(res, 200, {
+        ok: true,
+        projectId: FIRESTORE_PROJECT_ID,
+        docPath: LIVE4_DOC_PATH,
+        ...bank
+      });
+    }
+
+    if (req.method !== 'POST') return send(res, 405, { ok: false, error: 'Use POST.' });
+    const body = await readBody(req, 6e6);
+
+    if (url.pathname === '/api/live4-questions/save') {
+      const saved = await saveLive4Bank({
+        questions: Array.isArray(body.questions) ? body.questions : [],
+        topicText: typeof body.topicText === 'string' ? body.topicText : undefined
+      });
+      return send(res, 200, {
+        ok: true,
+        projectId: FIRESTORE_PROJECT_ID,
+        docPath: LIVE4_DOC_PATH,
+        ...saved
+      });
+    }
+
+    if (url.pathname === '/api/live4-questions/parse') {
+      const parsed = parseRawQuestionsText(body.text || '', {
+        category: body.category || 'सामान्य ज्ञान',
+        difficulty: body.difficulty || 'Medium'
+      });
+      return send(res, 200, { ok: true, ...parsed });
+    }
+
+    if (url.pathname === '/api/live4-questions/format-claude' || url.pathname === '/api/live4-questions/format-gemini-browser') {
+      const mode = url.pathname.endsWith('format-claude') ? 'claude' : 'gemini-browser';
+      const prompt = buildLive4FormatPrompt(body.text || '', {
+        language: body.language || 'Nepali',
+        category: body.category || 'सामान्य ज्ञान',
+        difficulty: body.difficulty || 'Medium'
+      });
+      const aiRes = await queue.enqueue({
+        mode,
+        prompt,
+        log: m => console.log(`[live4-${mode}-format] ${m}`)
+      });
+      const generated = parseLive4GeneratedResponse(aiRes?.text || '', {
+        category: body.category || 'सामान्य ज्ञान',
+        difficulty: body.difficulty || 'Medium'
+      });
+      return send(res, 200, {
+        ok: true,
+        provider: mode === 'claude' ? 'Claude Browser' : 'Gemini Browser',
+        account: aiRes?.account || '',
+        ...generated
+      });
+    }
+
+    if (url.pathname === '/api/live4-questions/generate-claude' || url.pathname === '/api/live4-questions/generate-gemini-browser') {
+      const mode = url.pathname.endsWith('generate-claude') ? 'claude' : 'gemini-browser';
+      const prompt = buildLive4GeneratePrompt({
+        topic: body.topic,
+        language: body.language,
+        count: body.count,
+        difficulty: body.difficulty,
+        typeCounts: body.typeCounts && typeof body.typeCounts === 'object' ? body.typeCounts : null,
+        diverseFields: body.diverseFields !== false,
+        seedContent: typeof body.seedContent === 'string' ? body.seedContent : '',
+        existingQuestions: Array.isArray(body.existingQuestions) ? body.existingQuestions : []
+      });
+      const aiRes = await queue.enqueue({
+        mode,
+        prompt,
+        log: m => console.log(`[live4-${mode}-gen] ${m}`)
+      });
+      const generated = parseLive4GeneratedResponse(aiRes?.text || '', {
+        category: body.category || 'सामान्य ज्ञान',
+        difficulty: body.difficulty || 'Medium'
+      });
+      return send(res, 200, {
+        ok: true,
+        provider: mode === 'claude' ? 'Claude Browser' : 'Gemini Browser',
+        account: aiRes?.account || '',
+        ...generated
+      });
+    }
+
+    if (url.pathname === '/api/live4-questions/verify-claude' || url.pathname === '/api/live4-questions/verify-gemini-browser') {
+      const mode = url.pathname.endsWith('verify-claude') ? 'claude' : 'gemini-browser';
+      const rawQuestions = Array.isArray(body.questions) ? body.questions : [];
+      if (!rawQuestions.length) throw new Error('No questions provided to fact-check.');
+      const prompt = buildLive4VerifyPrompt(rawQuestions);
+      const aiRes = await queue.enqueue({
+        mode,
+        prompt,
+        log: m => console.log(`[live4-${mode}-verify] ${m}`)
+      });
+      const verified = parseLive4VerifyResponse(aiRes?.text || '', rawQuestions);
+      return send(res, 200, {
+        ok: true,
+        provider: mode === 'claude' ? 'Claude Browser' : 'Gemini Browser',
+        account: aiRes?.account || '',
+        ...verified
+      });
+    }
+
+    return send(res, 404, { ok: false, error: 'Not found.' });
+  } catch (err) {
+    return send(res, 400, { ok: false, error: err.message });
+  }
+}
+
 const server = http.createServer(async (req, res) => {
   const url = new URL(req.url, `http://127.0.0.1:${PORT}`);
-  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, csvImagesApi: 1, loksewaApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
+  if (url.pathname === '/api/health') return send(res, 200, { ok: true, service: 'aiprojects-flow', root: ROOT, jobApi: 1, tiktokApi: 1, facebookApi: 1, telegramApi: 1, flowProjectApi: 1, serverApi: 1, explainerApi: 1, csvImagesApi: 1, loksewaApi: 1, purplestickApi: 1, fbDownloaderApi: 1, liveHostApi: 1, live4QuestionsApi: 1, busy: queue.busy() || tiktok.busy() || facebook.busy() || telegram.busy(), models: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS });
   if (url.pathname === '/api/server') return handleServerControl(req, res);
+  if (url.pathname.startsWith('/api/live4-questions/')) return handleLive4QuestionsRoute(req, res, url);
+  if (url.pathname.startsWith('/api/live-host/')) return handleLiveHostRoute(req, res, url);
+  if (url.pathname.startsWith('/api/fb-downloader/')) return handleFbDownloaderRoute(req, res, url);
+  if (url.pathname.startsWith('/api/purplestick/')) return handlePurpleStickRoute(req, res, url);
   if (url.pathname.startsWith('/api/loksewa/')) return handleLoksewaRoute(req, res, url);
   if (url.pathname.startsWith('/api/csv-images/')) return handleCsvImagesRoute(req, res, url);
   if (url.pathname.startsWith('/api/explainer/')) return handleExplainerRoute(req, res, url);

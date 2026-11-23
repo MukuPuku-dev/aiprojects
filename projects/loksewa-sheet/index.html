@@ -164,8 +164,11 @@
       background: #1a1922; margin-bottom: 10px;
     }
     .opts-grid {
-      display: grid; grid-template-columns: 1fr;
+      display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 7px; margin-bottom: 10px;
+    }
+    @media (max-width: 620px) {
+      .opts-grid { grid-template-columns: 1fr; }
     }
     .opt-item {
       display: flex; align-items: center; gap: 6px;
@@ -204,6 +207,17 @@
       border: 3px dashed #373545; background: #0c0c10;
       display: flex; align-items: center; justify-content: center;
       overflow: hidden; position: relative;
+      cursor: pointer; transition: border-color .15s, box-shadow .15s;
+    }
+    .img-frame:focus,
+    .img-frame.paste-ready {
+      outline: none;
+      border-style: solid; border-color: var(--gold);
+      box-shadow: 0 0 0 3px #ffb74d33;
+    }
+    .img-frame.drag-over {
+      border-style: dashed; border-color: var(--coral);
+      box-shadow: 0 0 0 3px #ff5b5744;
     }
     .q-card.has-img .img-frame {
       border-style: solid; border-color: #2f8b5b;
@@ -401,7 +415,7 @@
       <div class="panel-head">
         <div>
           <h2 class="panel-title">🎨 Questions &amp; Google Flow Image Pipeline</h2>
-          <p class="panel-sub">Click option letter (A/B/C) to mark the correct answer. Generate realistic photos in Flow before sending to HF Space.</p>
+          <p class="panel-sub">Click option letter (A/B/C/D) to mark the correct answer. Generate realistic photos in Flow before sending to HF Space.</p>
         </div>
         <div class="row">
           <button id="btnVerifyClaude" class="gold sm" type="button" title="Default: Open Claude in debug Chrome to fact-check all questions & answers">🤖 Verify in Claude</button>
@@ -429,7 +443,7 @@
       <div class="panel-head">
         <div>
           <h2 class="panel-title">🚀 Hugging Face Space · Generate Video</h2>
-          <p class="panel-sub">Sends your questions + generated Flow images directly to <code>/texttovideo-loksewa</code> (skipping Cloudflare AI).</p>
+          <p id="serverPanelSub" class="panel-sub">Sends your questions + generated Flow images directly to <code>/texttovideo-loksewa</code> (skipping Cloudflare AI).</p>
         </div>
         <span id="serverReadyPill" class="pill warn">Generate all images first</span>
       </div>
@@ -460,13 +474,16 @@
           <input id="vidPart" type="text" value="भाग-१" placeholder="भाग-१ or Part-1">
         </label>
         <label class="field">
-          Design Variant
-          <select id="vidVariant">
-            <option value="hand" selected>Hand Marker + Flashcards (Recommended)</option>
-            <option value="classic">Classic Highlight + Flashcards</option>
-            <option value="random">Random</option>
-          </select>
+          Video Endpoint / Style
+          <div class="token-wrap">
+            <select id="vidEndpoint" style="flex:1;">
+              <option value="loksewa_sheet" selected>📝 Loksewa Sheet QA (/texttovideo-loksewa)</option>
+              <option value="loksewa_kinetic">⚡ Loksewa Kinetic QA (/texttovideo-loksewa-kinetic)</option>
+            </select>
+            <button id="btnSyncEndpoints" class="ghost sm" type="button" title="Fetch latest endpoints &amp; parameters from server /client-manifest">🔄 Sync</button>
+          </div>
         </label>
+        <div id="dynamicEndpointParams" style="display:contents;"></div>
         <label class="field">
           TTS Voice
           <select id="vidVoice">
@@ -489,7 +506,7 @@
 
       <div class="row between" style="margin-top:14px;">
         <div class="row">
-          <label class="check-inline">
+          <label id="chkAllowFallbackWrap" class="check-inline">
             <input id="chkAllowFallback" type="checkbox">
             Allow sending with missing images (use Cloudflare fallback)
           </label>
@@ -571,7 +588,7 @@
         <div class="panel-head">
           <div>
             <h2 class="panel-title">🎬 Kinetic Script, Slides &amp; Optional Photos</h2>
-            <p class="panel-sub">Works brilliantly as pure kinetic typography (0 photos required) — or generate/upload photos on any slide for Ken Burns split/backdrop visuals!</p>
+            <p class="panel-sub">Works brilliantly as pure kinetic typography (0 photos required) — or generate, upload, paste (Ctrl+V), or drop photos on any slide for Ken Burns split/backdrop visuals!</p>
           </div>
           <div class="row">
             <button id="btnKinAddSlide" class="ghost sm" type="button">+ Add Slide</button>
@@ -700,7 +717,66 @@
     (() => {
       const STORAGE_SETS_KEY = 'loksewa_sheet_sets_v3';
       const STORAGE_CFG_KEY = 'loksewa_sheet_cfg_v1';
-      const LETTERS = ['A', 'B', 'C'];
+      const STORAGE_MANIFEST_KEY = 'loksewa_server_manifest_v1';
+      const LETTERS = ['A', 'B', 'C', 'D'];
+
+      const DEFAULT_ENDPOINTS = [
+        {
+          id: 'loksewa_sheet',
+          label: 'Loksewa Sheet QA',
+          short_label: 'Loksewa QA',
+          description: 'Exam-sheet style 4-option MCQ video with marker hand & circular photo medallions.',
+          path: '/texttovideo-loksewa',
+          include_options: true,
+          include_images: true,
+          images_required: true,
+          output_prefix: 'loksewa',
+          default_params: { design_variant: 'hand' },
+          params: [
+            {
+              key: 'design_variant',
+              label: 'Design Variant',
+              type: 'select',
+              default: 'hand',
+              options: [
+                { value: 'hand', label: 'Hand Marker + Flashcards (Recommended)' },
+                { value: 'classic', label: 'Classic Highlight + Flashcards' },
+                { value: 'random', label: 'Random' }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'loksewa_kinetic',
+          label: 'Loksewa Kinetic QA',
+          short_label: 'Kinetic QA',
+          description: 'High-energy commercial kinetic motion-graphics 4-option MCQ video (optional photo medallions).',
+          path: '/texttovideo-loksewa-kinetic',
+          include_options: true,
+          include_images: true,
+          images_required: false,
+          output_prefix: 'loksewa_kinetic',
+          default_params: { theme: 'random' },
+          params: [
+            {
+              key: 'theme',
+              label: 'Kinetic Theme',
+              type: 'select',
+              default: 'random',
+              options: [
+                { value: 'random', label: '🎲 Random Commercial Theme (Recommended)' },
+                { value: 'periwinkle_pop', label: 'Periwinkle Pop & Midnight Indigo (Signature)' },
+                { value: 'sky_cobalt', label: 'Ice Sky & Electric Cobalt' },
+                { value: 'lilac_emerald', label: 'Lilac Pearl & Royal Violet' },
+                { value: 'apricot_indigo', label: 'Cloud Ivory & Sunset Indigo' }
+              ]
+            }
+          ]
+        }
+      ];
+
+      let serverManifest = loadManifest();
+      let endpointParamValues = {};
 
       const $ = id => document.getElementById(id);
 
@@ -761,6 +837,143 @@
         if (inp) inp.style.display = ($(selId)?.value === '__custom__') ? 'inline-block' : 'none';
       }
 
+      function loadManifest() {
+        try {
+          const raw = localStorage.getItem(STORAGE_MANIFEST_KEY);
+          if (raw) {
+            const parsed = JSON.parse(raw);
+            if (parsed && Array.isArray(parsed.endpoints) && parsed.endpoints.length) {
+              return parsed;
+            }
+          }
+        } catch { /* ignore */ }
+        return { manifest_version: 'local-default', endpoints: clone(DEFAULT_ENDPOINTS) };
+      }
+
+      function getAvailableEndpoints() {
+        const list = Array.isArray(serverManifest?.endpoints) && serverManifest.endpoints.length
+          ? serverManifest.endpoints
+          : DEFAULT_ENDPOINTS;
+        return list.filter(ep => !ep.category || ep.category === 'question_video');
+      }
+
+      function getSelectedEndpointDef() {
+        const eps = getAvailableEndpoints();
+        const curId = $('vidEndpoint')?.value || '';
+        return eps.find(e => e.id === curId) || eps[0] || DEFAULT_ENDPOINTS[0];
+      }
+
+      function renderEndpointDropdown(preferredId = null) {
+        const sel = $('vidEndpoint');
+        const eps = getAvailableEndpoints();
+        const prev = preferredId || sel.value;
+        sel.innerHTML = '';
+        for (const ep of eps) {
+          const opt = document.createElement('option');
+          opt.value = ep.id;
+          const prefix = ep.path?.includes('kinetic') ? '⚡' : (ep.path?.includes('viral') ? '🔥' : '📝');
+          opt.textContent = `${prefix} ${ep.label || ep.id} (${ep.path})`;
+          sel.appendChild(opt);
+        }
+        const migrated = prev === 'kinetic' ? 'loksewa_kinetic' : (prev === 'sheet' ? 'loksewa_sheet' : prev);
+        if (eps.some(e => e.id === migrated)) {
+          sel.value = migrated;
+        } else if (eps.length) {
+          sel.value = eps[0].id;
+        }
+      }
+
+      function renderDynamicEndpointParams() {
+        const host = $('dynamicEndpointParams');
+        host.innerHTML = '';
+        const ep = getSelectedEndpointDef();
+        const params = Array.isArray(ep?.params) ? ep.params : [];
+        if (!endpointParamValues[ep.id]) endpointParamValues[ep.id] = {};
+        const savedMap = endpointParamValues[ep.id];
+
+        for (const p of params) {
+          const key = p.key;
+          if (!key) continue;
+          const curVal = savedMap[key] !== undefined ? savedMap[key] : p.default;
+          savedMap[key] = curVal;
+
+          const field = document.createElement('label');
+          field.className = 'field';
+          const lblText = document.createTextNode(p.label || key);
+          field.appendChild(lblText);
+
+          if (p.type === 'select' && Array.isArray(p.options)) {
+            const s = document.createElement('select');
+            for (const o of p.options) {
+              const opt = document.createElement('option');
+              opt.value = String(o.value ?? '');
+              opt.textContent = String(o.label ?? o.value ?? '');
+              s.appendChild(opt);
+            }
+            if (curVal !== undefined) s.value = String(curVal);
+            s.addEventListener('change', () => {
+              savedMap[key] = s.value;
+              persistCfg();
+            });
+            field.appendChild(s);
+          } else if (p.type === 'bool') {
+            const s = document.createElement('select');
+            s.innerHTML = '<option value="true">Yes (Enabled)</option><option value="false">No (Disabled)</option>';
+            s.value = curVal === false ? 'false' : 'true';
+            s.addEventListener('change', () => {
+              savedMap[key] = s.value === 'true';
+              persistCfg();
+            });
+            field.appendChild(s);
+          } else {
+            const inp = document.createElement('input');
+            inp.type = p.type === 'number' ? 'number' : 'text';
+            inp.value = curVal !== undefined ? String(curVal) : '';
+            inp.addEventListener('input', () => {
+              savedMap[key] = p.type === 'number' ? Number(inp.value) : inp.value;
+              persistCfg();
+            });
+            field.appendChild(inp);
+          }
+          host.appendChild(field);
+        }
+      }
+
+      async function syncEndpointsFromServer() {
+        const btn = $('btnSyncEndpoints');
+        const orig = btn.textContent;
+        btn.disabled = true;
+        btn.textContent = '⏳';
+        $('serverStatus').textContent = '🔄 Checking /client-manifest on Hugging Face Space for new endpoints...';
+        try {
+          const res = await fetch('/api/loksewa/fetch-manifest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              spaceUrl: $('hfSpaceUrl').value.trim(),
+              bearerToken: $('hfToken').value.trim()
+            })
+          });
+          const data = await res.json();
+          if (!data.ok || !data.manifest) throw new Error(data.error || 'Could not fetch manifest.');
+          const prevVersion = serverManifest?.manifest_version || '';
+          serverManifest = data.manifest;
+          localStorage.setItem(STORAGE_MANIFEST_KEY, JSON.stringify(serverManifest));
+          renderEndpointDropdown();
+          syncEndpointModeUI();
+          persistCfg();
+          const count = getAvailableEndpoints().length;
+          $('serverStatus').textContent = prevVersion && prevVersion === serverManifest.manifest_version
+            ? `✅ Endpoints already up to date (${serverManifest.manifest_version} · ${count} endpoint(s)).`
+            : `🎉 Synced ${count} server endpoint(s) (${serverManifest.manifest_version})!`;
+        } catch (err) {
+          $('serverStatus').textContent = `❌ Endpoint sync error: ${err.message}`;
+        } finally {
+          btn.disabled = false;
+          btn.textContent = orig;
+        }
+      }
+
       function loadCfg() {
         try {
           const raw = localStorage.getItem(STORAGE_CFG_KEY);
@@ -768,7 +981,10 @@
           const cfg = JSON.parse(raw);
           if (cfg.spaceUrl) $('hfSpaceUrl').value = cfg.spaceUrl;
           if (typeof cfg.bearerToken === 'string') $('hfToken').value = cfg.bearerToken;
-          if (cfg.variant) $('vidVariant').value = cfg.variant;
+          if (cfg.endpointParamValues && typeof cfg.endpointParamValues === 'object') {
+            endpointParamValues = cfg.endpointParamValues;
+          }
+          renderEndpointDropdown(cfg.endpointId || cfg.endpointMode || 'loksewa_sheet');
           if (cfg.countdown) $('vidCountdown').value = cfg.countdown;
           if (cfg.speed) $('vidSpeed').value = cfg.speed;
           if (typeof cfg.fbPage === 'string') $('vidFbPage').value = cfg.fbPage;
@@ -782,13 +998,19 @@
           localStorage.setItem(STORAGE_CFG_KEY, JSON.stringify({
             spaceUrl: $('hfSpaceUrl').value.trim(),
             bearerToken: $('hfToken').value.trim(),
-            variant: $('vidVariant').value,
+            endpointId: $('vidEndpoint').value,
+            endpointParamValues,
             countdown: $('vidCountdown').value,
             speed: $('vidSpeed').value,
             fbPage: $('vidFbPage').value,
             fbPageCustom: $('vidFbPageCustom').value.trim()
           }));
         } catch { /* ignore */ }
+      }
+
+      function isLoksewaSheetStrictImages() {
+        const ep = getSelectedEndpointDef();
+        return ep.id === 'loksewa_sheet' || ep.path === '/texttovideo-loksewa';
       }
 
       function getActiveSet() {
@@ -800,6 +1022,8 @@
       }
 
       function resolveEndpointClientPreview(rawUrl) {
+        const ep = getSelectedEndpointDef();
+        const targetPath = ep?.path || '/texttovideo-loksewa';
         let s = String(rawUrl || '').trim();
         if (!s) s = 'https://huggingface.co/spaces/mukeshpokharel/explanation-demo';
         if (!/^https?:\/\//i.test(s)) s = `https://${s}`;
@@ -810,14 +1034,26 @@
             if (m) {
               const owner = m[1].toLowerCase().replace(/[^a-z0-9-]/g, '-');
               const space = m[2].toLowerCase().replace(/[^a-z0-9-]/g, '-');
-              return `https://${owner}-${space}.hf.space/texttovideo-loksewa`;
+              return `https://${owner}-${space}.hf.space${targetPath}`;
             }
           }
-          const p = u.pathname.replace(/\/+$/, '');
-          return p.endsWith('/texttovideo-loksewa') ? `${u.origin}${p}` : `${u.origin}${p}/texttovideo-loksewa`;
+          const p = u.pathname
+            .replace(/\/+$/, '')
+            .replace(/\/(?:texttovideo-[a-z0-9_-]+|client-manifest)$/i, '');
+          return `${u.origin}${p}${targetPath}`;
         } catch {
           return 'Invalid URL';
         }
+      }
+
+      function syncEndpointModeUI() {
+        const ep = getSelectedEndpointDef();
+        const strictSheet = isLoksewaSheetStrictImages();
+        renderDynamicEndpointParams();
+        $('chkAllowFallbackWrap').style.display = strictSheet ? 'inline-flex' : 'none';
+        $('serverPanelSub').innerHTML = `${escapeHtml(ep.description || 'Sends your questions to the selected endpoint.')} (<code>${escapeHtml(ep.path)}</code>)`;
+        updateEndpointPreview();
+        updateReadinessUI();
       }
 
       function updateEndpointPreview() {
@@ -838,12 +1074,29 @@
         const ready = countReadyImages(set);
         const allReady = total > 0 && ready === total;
         const allowFallback = $('chkAllowFallback').checked;
+        const strictSheet = isLoksewaSheetStrictImages();
+        const ep = getSelectedEndpointDef();
 
         const pill = $('readinessPill');
         pill.textContent = `${ready} / ${total} images ready`;
         pill.className = `pill ${allReady ? 'ready' : 'warn'}`;
 
         const sPill = $('serverReadyPill');
+        if (!strictSheet) {
+          if (ep.include_images === false) {
+            sPill.textContent = `⚡ Ready · ${ep.short_label || ep.label} (no images needed)`;
+          } else if (allReady) {
+            sPill.textContent = `⚡ All ${total} Flow photos ready (${ep.short_label || ep.label})`;
+          } else if (ready > 0) {
+            sPill.textContent = `⚡ Ready · ${ready}/${total} Flow photos (optional)`;
+          } else {
+            sPill.textContent = `⚡ Ready · Works with 0 photos (optional Flow photos)`;
+          }
+          sPill.className = 'pill ready';
+          $('btnSendToServer').disabled = !(total > 0);
+          return;
+        }
+
         if (allReady) {
           sPill.textContent = `✅ All ${total} Flow images ready (Cloudflare skipped)`;
           sPill.className = 'pill ready';
@@ -940,7 +1193,9 @@
 
           const optsGrid = document.createElement('div');
           optsGrid.className = 'opts-grid';
-          for (let oi = 0; oi < 3; oi += 1) {
+          if (!Array.isArray(q.options)) q.options = ['', '', '', ''];
+          while (q.options.length < 4) q.options.push('');
+          for (let oi = 0; oi < 4; oi += 1) {
             const optVal = (q.options && q.options[oi]) || '';
             const isCorrect = optVal && optVal.trim() === (q.answer || '').trim();
             const optBox = document.createElement('div');
@@ -1241,8 +1496,8 @@
           q.question = vItem.correctedQuestion;
         }
         if (Array.isArray(vItem.correctedOptions) && vItem.correctedOptions.length >= 2) {
-          q.options = vItem.correctedOptions.slice(0, 3);
-          while (q.options.length < 3) q.options.push('');
+          q.options = vItem.correctedOptions.slice(0, 4);
+          while (q.options.length < 4) q.options.push('');
         }
         if (vItem.correctedAnswer) {
           const matchIdx = q.options.findIndex(o => String(o || '').trim().toLowerCase() === vItem.correctedAnswer.toLowerCase());
@@ -1251,7 +1506,7 @@
           } else {
             // Replace the old wrong answer slot (or last slot) with Claude's corrected answer
             const oldIdx = q.options.findIndex(o => String(o || '').trim().toLowerCase() === String(q.answer || '').trim().toLowerCase());
-            const targetIdx = oldIdx >= 0 ? oldIdx : Math.min(2, q.options.length - 1);
+            const targetIdx = oldIdx >= 0 ? oldIdx : Math.min(3, q.options.length - 1);
             q.options[targetIdx] = vItem.correctedAnswer;
             q.answer = vItem.correctedAnswer;
           }
@@ -1658,20 +1913,25 @@
         const set = getActiveSet();
         const spaceUrl = $('hfSpaceUrl').value.trim();
         const bearerToken = $('hfToken').value.trim();
+        const ep = getSelectedEndpointDef();
+        const extraParams = {
+          ...(ep.default_params || {}),
+          ...(endpointParamValues[ep.id] || {})
+        };
         persistCfg();
 
         const btn = $('btnSendToServer');
         btn.disabled = true;
         const origLabel = btn.textContent;
-        btn.textContent = '⏳ Rendering Video on HF Space...';
-        $('serverStatus').textContent = '🚀 Uploading questions + Flow images to your Hugging Face Space and rendering MP4 (typically 30–120s)...';
+        btn.textContent = `⏳ Rendering ${ep.short_label || ep.label}...`;
+        $('serverStatus').textContent = `🚀 Sending questions to ${ep.path} and rendering MP4 (typically 30–120s)...`;
 
         try {
           const questionsPayload = set.questions.map((q, idx) => ({
             question: q.question,
-            options: q.options,
+            options: ep.include_options === false ? undefined : (q.options || []).map(o => String(o || '').trim()).filter(Boolean),
             answer: q.answer,
-            imageFile: imageFileForIndex(idx)
+            imageFile: ep.include_images === false ? undefined : imageFileForIndex(idx)
           }));
 
           const res = await fetch('/api/loksewa/send-to-server', {
@@ -1680,14 +1940,17 @@
             body: JSON.stringify({
               spaceUrl,
               bearerToken,
+              endpointMode: ep.id === 'loksewa_kinetic' ? 'kinetic' : ep.id,
+              endpointPath: ep.path,
+              outputPrefix: ep.output_prefix || ep.id,
+              extraParams,
               setId: set.id,
               title: $('vidTitle').value.trim() || set.bannerTitle,
               part_label: $('vidPart').value.trim() || set.partLabel || 'भाग-१',
-              design_variant: $('vidVariant').value,
               voice: $('vidVoice').value,
               countdown_seconds: Number($('vidCountdown').value) || 5,
               playback_speed: Number($('vidSpeed').value) || 1.0,
-              show_hand_images: true,
+              show_hand_images: extraParams.show_hand_images !== false,
               use_cloudflare_images: $('chkAllowFallback').checked,
               uploadToYoutube: $('chkUploadYt').checked,
               uploadToFacebook: $('chkUploadFb').checked,
@@ -1698,7 +1961,7 @@
           const data = await res.json();
           if (!data.ok) throw new Error(data.error || 'Server video generation failed.');
 
-          $('serverStatus').textContent = `🎉 Video ready! Sent ${data.clientImagesSent}/${data.totalQuestions} client Flow image(s) → saved as ${data.filename}`;
+          $('serverStatus').textContent = `🎉 ${ep.label || 'Video'} ready! Sent ${data.clientImagesSent}/${data.totalQuestions} client Flow image(s) → saved as ${data.filename}`;
           await refreshServerState();
           showVideo(data.videoUrl, data.filename, data.size, data.caption);
           $('videoPlayer').scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -1725,7 +1988,7 @@
           questions: [
             {
               question: '',
-              options: ['', '', ''],
+              options: ['', '', '', ''],
               answer: '',
               imagePrompt: 'Ultra-realistic DSLR editorial photograph of ..., natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark'
             }
@@ -1755,7 +2018,7 @@
         const set = getActiveSet();
         set.questions.push({
           question: '',
-          options: ['', '', ''],
+          options: ['', '', '', ''],
           answer: '',
           imagePrompt: 'Ultra-realistic DSLR editorial photograph of ..., natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark'
         });
@@ -1810,7 +2073,8 @@
 
       $('hfSpaceUrl').addEventListener('input', () => { updateEndpointPreview(); persistCfg(); });
       $('hfToken').addEventListener('input', persistCfg);
-      $('vidVariant').addEventListener('change', persistCfg);
+      $('vidEndpoint').addEventListener('change', () => { syncEndpointModeUI(); persistCfg(); });
+      $('btnSyncEndpoints').addEventListener('click', syncEndpointsFromServer);
       $('vidCountdown').addEventListener('change', persistCfg);
       $('vidSpeed').addEventListener('change', persistCfg);
       $('vidFbPage').addEventListener('change', () => { syncCustomFbInput('vidFbPage', 'vidFbPageCustom'); persistCfg(); });
@@ -1852,8 +2116,9 @@
       };
 
       // Boot
+      renderEndpointDropdown();
       loadCfg();
-      updateEndpointPreview();
+      syncEndpointModeUI();
       renderSetTabs();
       syncSetMetaInputs();
       refreshServerState();
@@ -1862,5 +2127,6 @@
       }
     })();
   </script>
+  <script src="../../platform/server-control.js"></script>
 </body>
 </html>

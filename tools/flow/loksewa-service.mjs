@@ -36,14 +36,18 @@ export function loksewaVideosDir(root) {
 }
 
 /**
- * Normalizes a Hugging Face Space URL into the direct `.hf.space/texttovideo-loksewa` API URL.
+ * Normalizes a Hugging Face Space URL into the direct `.hf.space/<endpointPath>` API URL.
  * Accepts:
  *   - https://huggingface.co/spaces/mukeshpokharel/explanation-demo
  *   - https://mukeshpokharel-explanation-demo.hf.space
  *   - https://mukeshpokharel-explanation-demo.hf.space/texttovideo-loksewa
+ *   - https://mukeshpokharel-explanation-demo.hf.space/texttovideo-loksewa-kinetic
  *   - http://127.0.0.1:7860
  */
-export function resolveLoksewaEndpoint(rawUrl) {
+export function resolveLoksewaEndpoint(rawUrl, endpointPath = '/texttovideo-loksewa') {
+  const targetPath = String(endpointPath || '/texttovideo-loksewa').startsWith('/')
+    ? String(endpointPath || '/texttovideo-loksewa')
+    : `/${endpointPath}`;
   let s = String(rawUrl || '').trim();
   if (!s) {
     s = 'https://huggingface.co/spaces/mukeshpokharel/explanation-demo';
@@ -59,13 +63,35 @@ export function resolveLoksewaEndpoint(rawUrl) {
     }
     const owner = m[1].toLowerCase().replace(/[^a-z0-9-]/g, '-');
     const space = m[2].toLowerCase().replace(/[^a-z0-9-]/g, '-');
-    return `https://${owner}-${space}.hf.space/texttovideo-loksewa`;
+    return `https://${owner}-${space}.hf.space${targetPath}`;
   }
-  const basePath = u.pathname.replace(/\/+$/, '');
-  if (basePath.endsWith('/texttovideo-loksewa')) {
-    return `${u.origin}${basePath}`;
+  const basePath = u.pathname
+    .replace(/\/+$/, '')
+    .replace(/\/(?:texttovideo-[a-z0-9_-]+|client-manifest)$/i, '');
+  return `${u.origin}${basePath}${targetPath}`;
+}
+
+export async function fetchLoksewaManifest(spaceUrl, bearerToken = '') {
+  const endpoint = resolveLoksewaEndpoint(spaceUrl, '/client-manifest');
+  const token = String(bearerToken || '').trim();
+  const headers = { Accept: 'application/json' };
+  if (token) {
+    headers.Authorization = token.toLowerCase().startsWith('bearer ') ? token : `Bearer ${token}`;
   }
-  return `${u.origin}${basePath}/texttovideo-loksewa`;
+  const response = await fetch(endpoint, {
+    method: 'GET',
+    headers,
+    signal: AbortSignal.timeout(30 * 1000)
+  });
+  if (!response.ok) {
+    const errText = await response.text().catch(() => '');
+    throw new Error(`Manifest fetch failed (HTTP ${response.status}): ${errText.slice(0, 300) || response.statusText}`);
+  }
+  const manifest = await response.json();
+  if (!manifest || !Array.isArray(manifest.endpoints)) {
+    throw new Error('Server returned an invalid /client-manifest payload.');
+  }
+  return { ok: true, endpoint, manifest };
 }
 
 export function listLoksewaImages(root, setId) {
@@ -347,13 +373,13 @@ export function buildLoksewaGeneratePrompt({ topic, language = 'nepali', count =
     `Language: ${langLabel}. Difficulty: ${difficulty}.`,
     `Rules:`,
     `- Each question must be concise (1 short sentence) and factually 100% accurate.`,
-    `- Provide exactly 3 concise options in "options" (no "A)" or "1." prefixes).`,
-    `- "answer" MUST exactly match one of the 3 strings in "options".`,
+    `- Provide exactly 4 concise options in "options" (no "A)" or "1." prefixes).`,
+    `- "answer" MUST exactly match one of the 4 strings in "options".`,
     `- "imagePrompt" MUST be a short English visual scene description (8-16 words only, NO boilerplate) for a realistic photograph representing the question topic without revealing text.`,
     `- Provide a short "bannerTitle" in ${langLabel} (max 38 characters).`,
     `- Do NOT put double quotes inside values; use single quotes if needed.`,
     `Return ONLY compact valid JSON using plain ASCII double quotes (no markdown fences, no extra text):`,
-    `{"bannerTitle":"...","questions":[{"question":"...","options":["...","...","..."],"answer":"...","imagePrompt":"..."}]}`
+    `{"bannerTitle":"...","questions":[{"question":"...","options":["...","...","...","..."],"answer":"...","imagePrompt":"..."}]}`
   ].join('\n');
 }
 
@@ -371,12 +397,12 @@ export function normalizeGeneratedLoksewaQuestions(rawText, { topic, language = 
       ? item.options.map(o => String(o || '').replace(/^[A-Da-d1-4][\)\.\:\-\s]+/, '').trim()).filter(Boolean)
       : [];
     let ans = String(item?.answer || '').replace(/^[A-Da-d1-4][\)\.\:\-\s]+/, '').trim();
-    if (!opts.includes(ans) && opts.length >= 3) {
+    if (!opts.includes(ans) && opts.length >= 4) {
       const idxMatch = opts.findIndex(o => o.toLowerCase() === ans.toLowerCase());
       if (idxMatch >= 0) ans = opts[idxMatch];
       else opts[0] = ans || opts[0];
     }
-    while (opts.length < 3) opts.push(`Option ${opts.length + 1}`);
+    while (opts.length < 4) opts.push(`Option ${opts.length + 1}`);
     const rawVisual = String(item?.imagePrompt || '').trim();
     const imagePrompt = rawVisual
       ? (/ultra-realistic|photograph/i.test(rawVisual)
@@ -385,7 +411,7 @@ export function normalizeGeneratedLoksewaQuestions(rawText, { topic, language = 
       : `Ultra-realistic DSLR editorial photograph representing ${cleanTopic} quiz item ${idx + 1}, natural lighting, crisp sharp focus, shallow depth of field, centered subject, no text, no letters, no numbers, no watermark`;
     return {
       question: qText,
-      options: opts.slice(0, 3),
+      options: opts.slice(0, 4),
       answer: ans || opts[0],
       imagePrompt
     };
@@ -412,11 +438,16 @@ export async function generateLoksewaQuestionsWithGemini({ topic, language = 'ne
 
 /**
  * Proxies the Loksewa Sheet payload + base64-encoded Flow images to the user's
- * Hugging Face Space `/texttovideo-loksewa` endpoint with optional Bearer token,
- * saves the returned MP4 locally, and returns its local URL.
+ * Hugging Face Space `/texttovideo-loksewa` or `/texttovideo-loksewa-kinetic`
+ * endpoint with optional Bearer token, saves the returned MP4 locally, and returns its local URL.
  */
 export async function sendLoksewaToServer(root, payload) {
-  const endpoint = resolveLoksewaEndpoint(payload.spaceUrl);
+  const isKinetic = String(payload.endpointMode || '').trim().toLowerCase() === 'kinetic';
+  const rawCustomPath = typeof payload.endpointPath === 'string' && payload.endpointPath.trim()
+    ? payload.endpointPath.trim()
+    : (isKinetic ? '/texttovideo-loksewa-kinetic' : '/texttovideo-loksewa');
+  const endpointPath = rawCustomPath.startsWith('/') ? rawCustomPath : `/${rawCustomPath}`;
+  const endpoint = resolveLoksewaEndpoint(payload.spaceUrl, endpointPath);
   const token = String(payload.bearerToken || '').trim();
   const safeSet = sanitizeSetId(payload.setId);
   const rawQuestions = Array.isArray(payload.questions) ? payload.questions : [];
@@ -447,6 +478,10 @@ export async function sendLoksewaToServer(root, payload) {
     }
   }
 
+  const extraParams = (payload.extraParams && typeof payload.extraParams === 'object' && !Array.isArray(payload.extraParams))
+    ? payload.extraParams
+    : {};
+
   const reqBody = {
     questions: serverQuestions,
     title: payload.title || undefined,
@@ -454,9 +489,14 @@ export async function sendLoksewaToServer(root, payload) {
     countdown_seconds: Number(payload.countdown_seconds) || 5.0,
     playback_speed: Number(payload.playback_speed) || 1.0,
     voice: payload.voice || 'Kore',
-    design_variant: payload.design_variant || 'hand',
-    show_hand_images: payload.show_hand_images !== false,
-    use_cloudflare_images: payload.use_cloudflare_images !== false,
+    ...(isKinetic
+      ? { theme: String(payload.theme || 'random').trim() || 'random' }
+      : {
+        design_variant: payload.design_variant || 'hand',
+        show_hand_images: payload.show_hand_images !== false,
+        use_cloudflare_images: payload.use_cloudflare_images !== false
+      }),
+    ...extraParams,
     uploadToFacebook: Boolean(payload.uploadToFacebook),
     uploadToYoutube: Boolean(payload.uploadToYoutube),
     schedule: Boolean(payload.schedule),
@@ -504,7 +544,10 @@ export async function sendLoksewaToServer(root, payload) {
   const outDir = loksewaVideosDir(root);
   fs.mkdirSync(outDir, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-  const outName = `loksewa_${safeSet}_${stamp}.mp4`;
+  const rawPrefix = String(payload.outputPrefix || (isKinetic ? 'loksewa_kinetic' : 'loksewa'))
+    .replace(/[^a-zA-Z0-9_-]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'loksewa';
+  const outName = `${rawPrefix}_${safeSet}_${stamp}.mp4`;
   const outPath = path.join(outDir, outName);
   fs.writeFileSync(outPath, buf);
   const caption = buildLoksewaReelsCaption({
@@ -517,6 +560,8 @@ export async function sendLoksewaToServer(root, payload) {
   return {
     ok: true,
     endpoint,
+    endpointPath,
+    endpointMode: isKinetic ? 'kinetic' : (payload.endpointMode || 'sheet'),
     filename: outName,
     videoUrl: `/projects/loksewa-sheet/videos/${encodeURIComponent(outName)}`,
     size: buf.length,
@@ -735,7 +780,7 @@ export function buildClaudeVerifyPrompt(questions = []) {
     '    "index": 0,',
     '    "status": "correct" | "wrong" | "ambiguous",',
     '    "correctedQuestion": "only include if question text itself needs correction, otherwise empty string",',
-    '    "correctedOptions": ["opt1", "opt2", "opt3"], // only include if options need fixing, otherwise omit or []',
+    '    "correctedOptions": ["opt1", "opt2", "opt3", "opt4"], // only include if options need fixing, otherwise omit or []',
     '    "correctedAnswer": "exact correct answer string (must match one of the options, or correctedOptions if provided)",',
     '    "reason": "short 1-sentence factual explanation"',
     '  }',
@@ -783,7 +828,7 @@ export function parseClaudeVerifyResponse(rawText, questions = []) {
         currentOptions: Array.isArray(orig.options) ? orig.options : [],
         currentAnswer: String(orig.answer || ''),
         correctedQuestion: correctedQuestion && correctedQuestion !== String(orig.question || '').trim() ? correctedQuestion : '',
-        correctedOptions: correctedOptions.length >= 2 ? correctedOptions.slice(0, 3) : [],
+        correctedOptions: correctedOptions.length >= 2 ? correctedOptions.slice(0, 4) : [],
         correctedAnswer: correctedAnswer || String(orig.answer || ''),
         reason
       };
