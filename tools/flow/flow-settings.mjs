@@ -8,16 +8,19 @@ export const SETTINGS_FILE = path.join(HERE, 'settings.json');
 export const PROJECT_ID = /^[a-z0-9-]+$/;
 
 export const VIDEO_MODELS = ['Omni 1.1 Flash', 'Omni 1.2 Flash', 'Veo 3.1 - Lite', 'Veo 3.1 - Fast', 'Veo 3.1 - Quality'];
-export const DURATIONS = ['4s', '6s', '8s', '10s'];
+export const DURATIONS = ['3s', '4s', '5s', '6s', '7s', '8s', '9s', '10s'];
 export const ASPECTS = ['9:16', '16:9'];
-export const FLOW_OPTIONS = { videoModels: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS };
+export const RESOLUTIONS = ['360p', '720p'];
+export const UPSCALE_MODES = ['auto', 'on', 'off'];
+export const PRO_UPSCALE_ACCOUNTS = ['mukesh.inaruwa@gmail.com'];
+export const FLOW_OPTIONS = { videoModels: VIDEO_MODELS, durations: DURATIONS, aspects: ASPECTS, resolutions: RESOLUTIONS, upscaleModes: UPSCALE_MODES };
 
 export const DEFAULT_TELEGRAM_BOT_TOKEN = 'PASTE_YOUR_BOTFATHER_TOKEN_HERE';
 export const DEFAULT_TELEGRAM_CHAT_ID = '7223190114';
 
 // An empty image model means "keep whatever model Flow currently has selected".
 const DEFAULTS = {
-  video: { model: VIDEO_MODELS[0], aspect: '9:16', duration: '10s' },
+  video: { model: VIDEO_MODELS[0], aspect: '9:16', duration: '10s', resolution: '360p', upscale: 'auto' },
   image: { model: '', aspect: '9:16' },
   tiktok: { autoPost: false },
   facebook: { autoPost: false },
@@ -41,7 +44,9 @@ const choice = (allowed, label) => value => {
 const VIDEO_FIELDS = {
   model: choice(VIDEO_MODELS, 'video model'),
   aspect: choice(ASPECTS, 'aspect'),
-  duration: choice(DURATIONS, 'duration')
+  duration: choice(DURATIONS, 'duration'),
+  resolution: choice(RESOLUTIONS, 'resolution'),
+  upscale: choice(UPSCALE_MODES, 'upscale mode')
 };
 const IMAGE_FIELDS = {
   model: value => {

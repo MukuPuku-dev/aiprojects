@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Quiz App Live 4 Questions · Story Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --card: #16161c;
+      --card-2: #1f1f28;
+      --ink: #f3f2f6;
+      --mut: #a3a0b0;
+      --coral: #ff5b57;
+      --gold: #ead7b7;
+      --ok: #3fd18a;
+      --ok-bg: #123324;
+      --blue: #7ab8ff;
+      --warn: #ffb84d;
+      --warn-bg: #332510;
+      --err: #ff6b6b;
+      --err-bg: #36171a;
+      --line: #2c2b36;
+      --font: "Noto Sans Devanagari", "Mukta", "Nirmala UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.5 var(--font); }
+    header {
+      position: sticky; top: 0; z-index: 30;
+      background: #0d0d10f0; backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+    }
+    .head-row {
+      max-width: 1320px; margin: 0 auto;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .back { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 13px; }
+    .back:hover { text-decoration: underline; }
+    h1 { margin: 0; font-size: 19px; letter-spacing: -0.01em; }
+    h1 span { color: var(--gold); }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700;
+      border: 1px solid var(--line); background: var(--card-2); color: var(--mut);
+    }
+    .pill.ok { background: var(--ok-bg); border-color: #266b49; color: var(--ok); }
+    .pill.warn { background: var(--warn-bg); border-color: #704d18; color: var(--warn); }
+    .pill.live { background: #2c1416; border-color: #7d2529; color: #ff8080; }
+    .head-actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+
+    main { max-width: 1320px; margin: 0 auto; padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+    }
+    .panel-title {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      margin: 0 0 12px;
+    }
+    .panel-title h2 { margin: 0; font-size: 15px; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .grid-2 { display: grid; grid-template-columns: 1.15fr 1fr; gap: 16px; }
+    @media (max-width: 980px) { .grid-2 { grid-template-columns: 1fr; } }
+
+    button, input, select, textarea {
+      background: #22212b; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 11px; font: inherit;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none; border-color: var(--gold);
+    }
+    button, select { cursor: pointer; }
+    button { transition: transform .06s ease, filter .15s ease; }
+    button:hover:not(:disabled) { filter: brightness(1.12); }
+    button:active:not(:disabled) { transform: scale(.98); }
+    button.primary { background: var(--coral); border-color: var(--coral); color: #fff; font-weight: 700; }
+    button.gold { background: var(--gold); border-color: var(--gold); color: #19130b; font-weight: 700; }
+    button.ok { background: #197a4b; border-color: #27a367; color: #fff; font-weight: 700; }
+    button.blue { background: #1e4b85; border-color: #3673c2; color: #fff; font-weight: 700; }
+    button.purple { background: #5a3491; border-color: #7b4fc2; color: #fff; font-weight: 700; }
+    button.danger { background: #5c1c22; border-color: #8f2d36; color: #ffd4d4; font-weight: 700; }
+    button.ghost { background: transparent; }
+    button.sm { padding: 4px 8px; font-size: 12px; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+
+    label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--mut); }
+    label.field input, label.field select { width: 100%; }
+    textarea { width: 100%; resize: vertical; }
+
+    .status-bar {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 10px 14px; border-radius: 10px;
+      background: var(--card-2); border: 1px solid var(--line);
+      font-size: 13px;
+    }
+    .status-bar.ok { background: var(--ok-bg); border-color: #266b49; color: #b7f5d5; }
+    .status-bar.err { background: var(--err-bg); border-color: #822b32; color: #ffc5c5; }
+    .status-bar.busy { background: #192438; border-color: #2c4a7d; color: #b7d7ff; }
+
+    .hint { font-size: 12px; color: var(--mut); }
+    .mono { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+
+    /* Question Cards */
+    .q-list { display: flex; flex-direction: column; gap: 12px; }
+    .q-card {
+      background: var(--card-2); border: 1px solid var(--line); border-radius: 12px;
+      padding: 13px 14px; display: flex; flex-direction: column; gap: 10px;
+    }
+    .q-card.v-ok { border-color: #246345; }
+    .q-card.v-warn { border-color: #7d561b; }
+    .q-card.v-fix { border-color: #9e3139; background: #23181d; }
+
+    .q-head {
+      display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    }
+    .q-num {
+      background: var(--gold); color: #19130b; font-weight: 800;
+      padding: 2px 9px; border-radius: 7px; font-size: 12px;
+    }
+    .q-head input.cat-inp { width: 130px; padding: 4px 8px; font-size: 12px; }
+    .q-head select.mini-sel { padding: 4px 8px; font-size: 12px; }
+    .q-tools { margin-left: auto; display: flex; gap: 5px; flex-wrap: wrap; }
+
+    .q-text { min-height: 54px; font-weight: 600; font-size: 14px; }
+
+    .opt-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    @media (max-width: 720px) { .opt-grid { grid-template-columns: 1fr; } }
+
+    .opt-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 8px; border-radius: 8px;
+      background: #17171f; border: 1px solid var(--line);
+    }
+    .opt-row.is-correct {
+      background: #122d20; border-color: #2d8a59;
+    }
+    .opt-btn {
+      width: 28px; height: 28px; padding: 0; flex-shrink: 0;
+      border-radius: 7px; font-weight: 800; font-size: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .opt-row.is-correct .opt-btn {
+      background: var(--ok); border-color: var(--ok); color: #092115;
+    }
+    .opt-row input {
+      flex: 1; background: transparent; border: none; padding: 4px 4px; font-size: 13px;
+    }
+    .opt-row input:focus { outline: none; }
+
+    .exp-row { display: flex; align-items: center; gap: 8px; }
+    .exp-row span { font-size: 12px; color: var(--blue); font-weight: 700; white-space: nowrap; }
+    .exp-row input { flex: 1; font-size: 12.5px; padding: 5px 9px; }
+
+    .verify-banner {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      padding: 8px 10px; border-radius: 8px; font-size: 12.5px;
+    }
+    .verify-banner.ok { background: var(--ok-bg); color: #b5f5d4; border: 1px solid #266b49; }
+    .verify-banner.warn { background: var(--warn-bg); color: #ffe0ad; border: 1px solid #7d561b; }
+    .verify-banner.fix { background: var(--err-bg); color: #ffd1d1; border: 1px solid #8f2d36; }
+
+    .empty-box {
+      text-align: center; padding: 36px 20px; color: var(--mut);
+      border: 1px dashed var(--line); border-radius: 12px;
+    }
+
+    .type-mix-box {
+      background: #1b1a24; border: 1px solid var(--line); border-radius: 10px;
+      padding: 10px 12px; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px;
+    }
+    .type-mix-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+      font-size: 12px; color: var(--mut);
+    }
+    .type-mix-head strong { color: var(--gold); font-size: 12.5px; }
+    .type-mix-grid {
+      display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px;
+    }
+    @media (max-width: 640px) { .type-mix-grid { grid-template-columns: repeat(2, 1fr); } }
+    .type-mix-grid label.field { font-size: 11px; gap: 3px; }
+    .type-mix-grid input { padding: 4px 6px; font-size: 12.5px; text-align: center; }
+    .check-row {
+      display: flex; align-items: center; gap: 7px; font-size: 12px; color: var(--ink);
+      cursor: pointer; user-select: none;
+    }
+    .check-row input[type="checkbox"] { width: auto; padding: 0; margin: 0; accent-color: var(--gold); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="head-row">
+      <a class="back" href="../../index.html">← Story Studio</a>
+      <h1>📡 Quiz App <span>Live 4 Questions</span></h1>
+      <span id="docPill" class="pill mono">loksewa-info / live4_question_banks/main</span>
+      <span id="revPill" class="pill">rev —</span>
+      <span id="dirtyPill" class="pill ok">✓ Synced</span>
+      <div class="head-actions">
+        <button id="btnPull" class="ghost" title="Reload latest queue from Firestore">↻ Pull from Live</button>
+        <button id="btnCopyJson" class="ghost" title="Copy Live 4 JSON to clipboard">📋 Copy JSON</button>
+        <button id="btnPush" class="ok" title="Save directly to Firestore — Live 4 updates mid-show with zero disruption">🚀 Push Live Update</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Live Status & Topic Banner -->
+    <div id="statusBar" class="status-bar">
+      <span>Connecting to Firestore <span class="mono">live4_question_banks/main</span>…</span>
+    </div>
+
+    <section class="panel">
+      <div class="panel-title">
+        <h2>📺 Live 4 Show Control & Mid-Show Sync</h2>
+        <span class="pill live">● Mid-Show Hot-Update Ready</span>
+      </div>
+      <div class="row" style="align-items:flex-end;">
+        <label class="field" style="flex:1; min-width:260px;">
+          Live Show Topic Banner (shown in Live 4 header)
+          <input id="topicBannerInput" type="text" placeholder="e.g. लोकसेवा सामान्य ज्ञान महासंग्राम · भाग १">
+        </label>
+        <div class="hint" style="max-width:460px;">
+          Changes pushed here save straight to Firestore <span class="mono">live4_question_banks/main</span>.
+          If Live 4 is already streaming, the <b>currently playing question finishes untouched</b> and all upcoming questions update live automatically.
+        </div>
+      </div>
+    </section>
+
+    <!-- AI Generator + Copy-Paste Auto-Formatter -->
+    <div class="grid-2">
+      <!-- AI Generate & Fact-Check -->
+      <section class="panel">
+        <div class="panel-title">
+          <h2>🤖 AI Generate & Fact-Check (Claude / Gemini Browser)</h2>
+          <span class="hint">Uses your logged-in browser sessions</span>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:10px;">
+          <label class="field" style="grid-column: 1 / -1;">
+            Topic / Syllabus Focus
+            <input id="genTopic" type="text" value="नेपालको भूगोल, इतिहास, संविधान र विश्व सामान्य ज्ञान (Loksewa GK)">
+          </label>
+          <label class="field">
+            Language
+            <select id="genLang">
+              <option value="Nepali" selected>Nepali (नेपाली)</option>
+              <option value="English">English</option>
+              <option value="Mixed Nepali & English">Mixed Nepali & English</option>
+            </select>
+          </label>
+          <label class="field">
+            Difficulty
+            <select id="genDiff">
+              <option value="Easy">Easy</option>
+              <option value="Medium" selected>Medium (Loksewa Kharidar/Nayab Subba)</option>
+              <option value="Hard">Hard (Section Officer)</option>
+            </select>
+          </label>
+          <label class="field">
+            Question Count
+            <input id="genCount" type="number" min="1" max="100" value="10">
+          </label>
+          <label class="field">
+            When Generated
+            <select id="genInsertMode">
+              <option value="append" selected>Append to Queue</option>
+              <option value="replace">Replace Queue</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="type-mix-box">
+          <div class="type-mix-head">
+            <span><strong>Question Type Mix</strong> <span id="typeMixHint">(Default: 60% Direct · 40% Other)</span></span>
+            <div class="row" style="gap:5px;">
+              <button type="button" id="btnPreset6040" class="ghost sm" title="60% Direct, 40% mixed types">60/40 Mix</button>
+              <button type="button" id="btnPresetEven" class="ghost sm" title="Even split across all 5 types">Even Mix</button>
+              <button type="button" id="btnPresetDirect" class="ghost sm" title="100% Direct questions">100% Direct</button>
+            </div>
+          </div>
+          <div class="type-mix-grid">
+            <label class="field">DIRECT<input id="typeCountDIRECT" type="number" min="0" max="100" value="6"></label>
+            <label class="field">STATEMENTS<input id="typeCountSTATEMENTS" type="number" min="0" max="100" value="1"></label>
+            <label class="field">MATCH<input id="typeCountMATCH" type="number" min="0" max="100" value="1"></label>
+            <label class="field">ASSERTION<input id="typeCountASSERTION" type="number" min="0" max="100" value="1"></label>
+            <label class="field">SEQUENCE<input id="typeCountSEQUENCE" type="number" min="0" max="100" value="1"></label>
+          </div>
+          <label class="check-row">
+            <input id="genDiverseFields" type="checkbox" checked>
+            <span>Cover diverse fields (Geography, History, Constitution, Economy, Science, Culture, World GK)</span>
+          </label>
+        </div>
+
+        <label class="field" style="margin-bottom:10px;">
+          <span style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+            <span>Your Own Questions / Facts / Notes (Optional — AI uses these first &amp; fills the rest)</span>
+            <button type="button" id="btnClearSeed" class="ghost sm" style="padding:2px 7px; font-size:11px;">Clear</button>
+          </span>
+          <textarea id="genSeedInput" rows="4" placeholder="Paste any of your own questions, facts, current affairs, or rough notes here...
+The AI will format/use them in the designated question types above, and if there aren't enough to reach the target count, it will generate additional diverse questions automatically."></textarea>
+        </label>
+
+        <div class="row" style="margin-bottom:10px;">
+          <button id="btnGenClaude" class="purple">✨ Generate via Claude Browser</button>
+          <button id="btnGenGemini" class="blue">✨ Generate via Gemini Browser</button>
+        </div>
+
+        <div style="border-top:1px solid var(--line); padding-top:10px;">
+          <div class="row">
+            <button id="btnVerifyClaude" class="gold">✅ Fact-Check Queue (Claude)</button>
+            <button id="btnVerifyGemini" class="gold">✅ Fact-Check Queue (Gemini Browser)</button>
+            <button id="btnApplyAllFixes" class="ok" style="display:none;">🔧 Apply All AI Fixes</button>
+          </div>
+          <div id="verifySummary" class="hint" style="margin-top:6px;"></div>
+        </div>
+      </section>
+
+      <!-- Copy-Paste & Auto-Format -->
+      <section class="panel">
+        <div class="panel-title">
+          <h2>📋 Copy-Paste & Auto-Format Questions</h2>
+          <select id="pasteInsertMode" style="padding:4px 8px; font-size:12px;">
+            <option value="append" selected>Append to Queue</option>
+            <option value="replace">Replace Queue</option>
+          </select>
+        </div>
+        <textarea id="pasteInput" rows="7" placeholder="Paste raw questions in ANY format:
+1. नेपालको राजधानी कुन हो?
+A) पोखरा   B) काठमाडौं   C) ललितपुर   D) विराटनगर
+Ans: B
+
+OR paste Nepali options (क, ख, ग, घ), starred answers (*), JSON arrays, or messy Q&A notes and click Instant Format or AI Format!"></textarea>
+        <div class="row" style="margin-top:10px;">
+          <button id="btnParseLocal" class="gold">⚡ Instant Auto-Format</button>
+          <button id="btnFormatClaude" class="purple">🧠 AI Format (Claude)</button>
+          <button id="btnFormatGemini" class="blue">🧠 AI Format (Gemini)</button>
+          <button id="btnClearPaste" class="ghost sm">Clear</button>
+        </div>
+        <div id="pasteResult" class="hint" style="margin-top:6px;"></div>
+      </section>
+    </div>
+
+    <!-- Interactive Question Queue -->
+    <section class="panel">
+      <div class="panel-title">
+        <h2>📝 Live 4 Question Queue (<span id="qCount">0</span>)</h2>
+        <div class="row">
+          <input id="searchInput" type="search" placeholder="Filter questions…" style="width:200px; padding:5px 9px; font-size:12.5px;">
+          <button id="btnAddBlank" class="ok sm">+ Add Question</button>
+          <button id="btnRandomize" class="blue sm" title="Shuffle the order of all questions in the queue">🔀 Randomize</button>
+          <button id="btnDedupe" class="ghost sm" title="Remove exact duplicate questions">🧹 Remove Dupes</button>
+          <button id="btnClearAll" class="danger sm">🗑 Clear Queue</button>
+        </div>
+      </div>
+
+      <div id="questionList" class="q-list"></div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      questions: [],
+      topicText: '',
+      revision: 0,
+      updatedAt: '',
+      dirty: false,
+      busy: false,
+      verifyMap: new Map(), // index -> { status, issue, fixedQuestion }
+      search: ''
+    };
+
+    const $ = id => document.getElementById(id);
+
+    function setStatus(text, kind = '') {
+      const el = $('statusBar');
+      el.className = 'status-bar' + (kind ? ' ' + kind : '');
+      el.innerHTML = text;
+    }
+
+    function setBusy(busy, msg = '') {
+      state.busy = busy;
+      const ids = [
+        'btnPull', 'btnPush', 'btnGenClaude', 'btnGenGemini',
+        'btnVerifyClaude', 'btnVerifyGemini', 'btnParseLocal',
+        'btnFormatClaude', 'btnFormatGemini'
+      ];
+      ids.forEach(id => { const el = $(id); if (el) el.disabled = busy; });
+      if (busy && msg) setStatus(`⏳ ${escapeHtml(msg)}`, 'busy');
+    }
+
+    const DRAFT_STORAGE_KEY = 'storystudio.live4_questions.draft.v1';
+
+    function saveLocalDraft() {
+      try {
+        localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify({
+          questions: state.questions,
+          topicText: state.topicText,
+          baseRevision: state.revision,
+          savedAt: new Date().toISOString()
+        }));
+      } catch {
+        // Ignore storage quota or private-mode errors
+      }
+    }
+
+    function loadLocalDraft() {
+      try {
+        const raw = localStorage.getItem(DRAFT_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        if (!parsed || !Array.isArray(parsed.questions)) return null;
+        return parsed;
+      } catch {
+        return null;
+      }
+    }
+
+    function clearLocalDraft() {
+      try {
+        localStorage.removeItem(DRAFT_STORAGE_KEY);
+      } catch {
+        // Ignore
+      }
+    }
+
+    function markDirty(isDirty = true) {
+      state.dirty = isDirty;
+      const pill = $('dirtyPill');
+      if (isDirty) {
+        saveLocalDraft();
+        pill.className = 'pill warn';
+        pill.textContent = '● Unsaved Draft (Local)';
+      } else {
+        clearLocalDraft();
+        pill.className = 'pill ok';
+        pill.textContent = '✓ Synced';
+      }
+    }
+
+    function escapeHtml(s) {
+      return String(s ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    async function api(path, opts = {}) {
+      const res = await fetch(path, {
+        headers: { 'Content-Type': 'application/json', ...(opts.headers || {}) },
+        ...opts
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || data.ok === false) {
+        throw new Error(data.error || `Request failed (${res.status})`);
+      }
+      return data;
+    }
+
+    function updateMetaUI() {
+      $('revPill').textContent = state.revision ? `rev ${state.revision}` : 'rev —';
+      $('qCount').textContent = String(state.questions.length);
+      $('topicBannerInput').value = state.topicText || '';
+
+      let fixCount = 0;
+      for (const v of state.verifyMap.values()) {
+        if (v && v.fixedQuestion && (v.status === 'fix' || v.status === 'warn')) fixCount++;
+      }
+      const applyBtn = $('btnApplyAllFixes');
+      if (fixCount > 0) {
+        applyBtn.style.display = 'inline-flex';
+        applyBtn.textContent = `🔧 Apply All AI Fixes (${fixCount})`;
+      } else {
+        applyBtn.style.display = 'none';
+      }
+    }
+
+    function renderQuestions() {
+      updateMetaUI();
+      const wrap = $('questionList');
+      const filter = state.search.trim().toLowerCase();
+
+      if (!state.questions.length) {
+        wrap.innerHTML = `<div class="empty-box">No questions in queue yet. Generate with Claude/Gemini, paste raw MCQs above, or click <b>+ Add Question</b>.</div>`;
+        return;
+      }
+
+      const LETTERS = ['A', 'B', 'C', 'D'];
+      const frag = document.createDocumentFragment();
+
+      state.questions.forEach((q, idx) => {
+        if (filter) {
+          const blob = `${q.questionText} ${(q.options || []).join(' ')} ${q.category || ''} ${q.explanation || ''}`.toLowerCase();
+          if (!blob.includes(filter)) return;
+        }
+
+        const v = state.verifyMap.get(idx);
+        const card = document.createElement('div');
+        card.className = 'q-card' + (v ? ` v-${v.status}` : '');
+
+        const optsHtml = [0, 1, 2, 3].map(oi => {
+          const isCorrect = Number(q.correctAnswerIndex) === oi;
+          return `
+            <div class="opt-row ${isCorrect ? 'is-correct' : ''}">
+              <button type="button" class="opt-btn" data-act="setCorrect" data-idx="${idx}" data-oi="${oi}" title="Mark option ${LETTERS[oi]} as correct">
+                ${isCorrect ? '✓' : LETTERS[oi]}
+              </button>
+              <input type="text" value="${escapeHtml(q.options?.[oi] || '')}" placeholder="Option ${LETTERS[oi]}" data-field="opt" data-idx="${idx}" data-oi="${oi}">
+            </div>
+          `;
+        }).join('');
+
+        let verifyHtml = '';
+        if (v) {
+          const icon = v.status === 'ok' ? '✅' : v.status === 'fix' ? '🔧' : '⚠️';
+          verifyHtml = `
+            <div class="verify-banner ${v.status}">
+              <span><b>${icon} ${v.status.toUpperCase()}:</b> ${escapeHtml(v.issue || 'Checked')}</span>
+              ${v.fixedQuestion ? `<button type="button" class="ok sm" data-act="applyFix" data-idx="${idx}">Apply Fix</button>` : ''}
+            </div>
+          `;
+        }
+
+        card.innerHTML = `
+          <div class="q-head">
+            <span class="q-num">#${idx + 1}</span>
+            <input class="cat-inp" type="text" value="${escapeHtml(q.category || 'सामान्य ज्ञान')}" placeholder="Category" data-field="category" data-idx="${idx}">
+            <select class="mini-sel" data-field="difficulty" data-idx="${idx}">
+              ${['Easy', 'Medium', 'Hard', 'Sample'].map(d => `<option value="${d}" ${q.difficulty === d ? 'selected' : ''}>${d}</option>`).join('')}
+            </select>
+            <select class="mini-sel" data-field="questionType" data-idx="${idx}">
+              ${['DIRECT', 'STATEMENTS', 'MATCH', 'ASSERTION', 'SEQUENCE'].map(t => `<option value="${t}" ${(q.questionType || 'DIRECT') === t ? 'selected' : ''}>${t}</option>`).join('')}
+            </select>
+            <div class="q-tools">
+              <button type="button" class="ghost sm" data-act="up" data-idx="${idx}" ${idx === 0 ? 'disabled' : ''} title="Move up">↑</button>
+              <button type="button" class="ghost sm" data-act="down" data-idx="${idx}" ${idx === state.questions.length - 1 ? 'disabled' : ''} title="Move down">↓</button>
+              <button type="button" class="ghost sm" data-act="dup" data-idx="${idx}" title="Duplicate">⧉</button>
+              <button type="button" class="danger sm" data-act="del" data-idx="${idx}" title="Delete question">🗑</button>
+            </div>
+          </div>
+          <textarea class="q-text" rows="2" placeholder="Question text..." data-field="questionText" data-idx="${idx}">${escapeHtml(q.questionText || '')}</textarea>
+          <div class="opt-grid">${optsHtml}</div>
+          <div class="exp-row">
+            <span>✎ Margin Note:</span>
+            <input type="text" value="${escapeHtml(q.explanation || '')}" placeholder="1-line explanation shown after reveal..." data-field="explanation" data-idx="${idx}">
+          </div>
+          ${verifyHtml}
+        `;
+
+        frag.appendChild(card);
+      });
+
+      wrap.innerHTML = '';
+      wrap.appendChild(frag);
+    }
+
+    /* ---------------- Event Delegation on Question List ---------------- */
+
+    $('questionList').addEventListener('input', e => {
+      const el = e.target;
+      const idx = Number(el.dataset.idx);
+      const field = el.dataset.field;
+      if (!Number.isInteger(idx) || !state.questions[idx] || !field) return;
+
+      const q = state.questions[idx];
+      if (field === 'opt') {
+        const oi = Number(el.dataset.oi);
+        q.options[oi] = el.value;
+      } else {
+        q[field] = el.value;
+      }
+      markDirty(true);
+    });
+
+    $('questionList').addEventListener('change', e => {
+      const el = e.target;
+      const idx = Number(el.dataset.idx);
+      const field = el.dataset.field;
+      if (!Number.isInteger(idx) || !state.questions[idx] || !field) return;
+      state.questions[idx][field] = el.value;
+      markDirty(true);
+    });
+
+    $('questionList').addEventListener('click', e => {
+      const btn = e.target.closest('button[data-act]');
+      if (!btn) return;
+      const act = btn.dataset.act;
+      const idx = Number(btn.dataset.idx);
+      if (!Number.isInteger(idx) || !state.questions[idx]) return;
+
+      if (act === 'setCorrect') {
+        state.questions[idx].correctAnswerIndex = Number(btn.dataset.oi);
+        markDirty(true);
+        renderQuestions();
+      } else if (act === 'up' && idx > 0) {
+        [state.questions[idx - 1], state.questions[idx]] = [state.questions[idx], state.questions[idx - 1]];
+        state.verifyMap.clear();
+        markDirty(true);
+        renderQuestions();
+      } else if (act === 'down' && idx < state.questions.length - 1) {
+        [state.questions[idx + 1], state.questions[idx]] = [state.questions[idx], state.questions[idx + 1]];
+        state.verifyMap.clear();
+        markDirty(true);
+        renderQuestions();
+      } else if (act === 'dup') {
+        const copy = JSON.parse(JSON.stringify(state.questions[idx]));
+        state.questions.splice(idx + 1, 0, copy);
+        state.verifyMap.clear();
+        markDirty(true);
+        renderQuestions();
+      } else if (act === 'del') {
+        state.questions.splice(idx, 1);
+        state.verifyMap.clear();
+        markDirty(true);
+        renderQuestions();
+      } else if (act === 'applyFix') {
+        const v = state.verifyMap.get(idx);
+        if (v && v.fixedQuestion) {
+          state.questions[idx] = v.fixedQuestion;
+          state.verifyMap.set(idx, { status: 'ok', issue: 'AI fix applied.' });
+          markDirty(true);
+          renderQuestions();
+        }
+      }
+    });
+
+    /* ---------------- Actions ---------------- */
+
+    async function pullFromFirestore({ respectDraft = false } = {}) {
+      if (!respectDraft && state.dirty) {
+        const ok = confirm('You have unsaved local draft changes. Pulling from Live Firestore will replace your local draft. Continue?');
+        if (!ok) return;
+      }
+
+      const draft = respectDraft ? loadLocalDraft() : null;
+      if (draft) {
+        state.questions = draft.questions;
+        state.topicText = draft.topicText || '';
+        state.verifyMap.clear();
+        markDirty(true);
+        renderQuestions();
+      }
+
+      setBusy(true, 'Loading Live 4 queue from Firestore…');
+      try {
+        const data = await api('/api/live4-questions/queue');
+        state.revision = data.revision || 0;
+        state.updatedAt = data.updatedAt || '';
+
+        if (draft) {
+          renderQuestions();
+          const savedLabel = draft.savedAt ? ` · saved ${new Date(draft.savedAt).toLocaleString()}` : '';
+          setStatus(
+            `💾 Restored unsaved local draft (<b>${state.questions.length}</b> questions${savedLabel}). Click <b>Push Live Update</b> to publish to Firestore, or <b>Pull from Live</b> to discard draft.`,
+            'ok'
+          );
+        } else {
+          state.questions = Array.isArray(data.questions) ? data.questions : [];
+          state.topicText = data.topicText || '';
+          state.verifyMap.clear();
+          markDirty(false);
+          renderQuestions();
+          setStatus(
+            `✅ Loaded <b>${state.questions.length}</b> questions from Firestore <span class="mono">${escapeHtml(data.docPath)}</span> (rev ${state.revision}${state.updatedAt ? ' · ' + new Date(state.updatedAt).toLocaleString() : ''}).`,
+            'ok'
+          );
+        }
+      } catch (err) {
+        if (draft) {
+          setStatus(
+            `💾 Restored unsaved local draft (<b>${state.questions.length}</b> questions). Firestore sync check failed: ${escapeHtml(err.message)}`,
+            'err'
+          );
+        } else {
+          setStatus(`❌ Failed to load Firestore queue: ${escapeHtml(err.message)}`, 'err');
+        }
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function pushToFirestore() {
+      if (!state.questions.length) {
+        setStatus('❌ Cannot push an empty queue. Add at least 1 question first.', 'err');
+        return;
+      }
+      setBusy(true, `Pushing ${state.questions.length} questions live to Firestore…`);
+      try {
+        const data = await api('/api/live4-questions/save', {
+          method: 'POST',
+          body: JSON.stringify({
+            questions: state.questions,
+            topicText: $('topicBannerInput').value.trim()
+          })
+        });
+        state.questions = data.questions || state.questions;
+        state.revision = data.revision || state.revision;
+        state.updatedAt = data.updatedAt || '';
+        state.topicText = data.topicText || '';
+        markDirty(false);
+        renderQuestions();
+        setStatus(
+          `🚀 Live 4 updated! Saved <b>${data.count}</b> questions to Firestore (rev ${data.revision}). Ongoing live shows will pick up all upcoming changes automatically with zero interruption.`,
+          'ok'
+        );
+      } catch (err) {
+        setStatus(`❌ Push failed: ${escapeHtml(err.message)}`, 'err');
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    function insertQuestions(newQuestions, mode, newTopicText = '') {
+      if (!Array.isArray(newQuestions) || !newQuestions.length) return;
+      if (mode === 'replace') {
+        state.questions = newQuestions;
+      } else {
+        state.questions = [...state.questions, ...newQuestions];
+      }
+      if (newTopicText && (!$('topicBannerInput').value.trim() || mode === 'replace')) {
+        state.topicText = newTopicText;
+      }
+      state.verifyMap.clear();
+      markDirty(true);
+      renderQuestions();
+    }
+
+    const QUESTION_TYPES = ['DIRECT', 'STATEMENTS', 'MATCH', 'ASSERTION', 'SEQUENCE'];
+    const OTHER_TYPES = ['STATEMENTS', 'MATCH', 'ASSERTION', 'SEQUENCE'];
+    const MAX_GEN_QUESTIONS = 100;
+    let activeTypePreset = '6040'; // '6040' | 'even' | 'direct' | 'custom'
+
+    function getTypeCountsFromUI() {
+      const counts = {};
+      for (const t of QUESTION_TYPES) {
+        counts[t] = Math.max(0, Math.min(MAX_GEN_QUESTIONS, Math.floor(Number($(`typeCount${t}`).value) || 0)));
+      }
+      return counts;
+    }
+
+    function setTypeCountsInUI(counts, presetLabel = null, { syncGenCount = true } = {}) {
+      let total = 0;
+      for (const t of QUESTION_TYPES) {
+        const val = Math.max(0, Math.min(MAX_GEN_QUESTIONS, Math.floor(Number(counts[t]) || 0)));
+        $(`typeCount${t}`).value = String(val);
+        total += val;
+      }
+      if (syncGenCount && total > 0) $('genCount').value = String(Math.min(MAX_GEN_QUESTIONS, total));
+      const directPct = total > 0 ? Math.round((counts.DIRECT / total) * 100) : 0;
+      const otherPct = total > 0 ? 100 - directPct : 0;
+      $('typeMixHint').textContent = presetLabel
+        ? `(${presetLabel})`
+        : `(${directPct}% Direct · ${otherPct}% Other · Total ${total})`;
+    }
+
+    function applyTypePreset(preset, totalCount, { syncGenCount = true } = {}) {
+      const n = Math.max(1, Math.min(MAX_GEN_QUESTIONS, Math.floor(Number(totalCount) || Number($('genCount').value) || 10)));
+      activeTypePreset = preset;
+      const counts = { DIRECT: 0, STATEMENTS: 0, MATCH: 0, ASSERTION: 0, SEQUENCE: 0 };
+      if (preset === 'direct') {
+        counts.DIRECT = n;
+        setTypeCountsInUI(counts, `100% Direct · Total ${n}`, { syncGenCount });
+      } else if (preset === 'even') {
+        for (let i = 0; i < n; i++) counts[QUESTION_TYPES[i % QUESTION_TYPES.length]] += 1;
+        setTypeCountsInUI(counts, `Even Mix · Total ${n}`, { syncGenCount });
+      } else {
+        // Default 60% Direct / 40% Other
+        counts.DIRECT = Math.round(n * 0.6);
+        const rem = Math.max(0, n - counts.DIRECT);
+        for (let i = 0; i < rem; i++) counts[OTHER_TYPES[i % OTHER_TYPES.length]] += 1;
+        setTypeCountsInUI(counts, `60% Direct · 40% Other · Total ${n}`, { syncGenCount });
+      }
+    }
+
+    async function generateWithAI(endpoint, providerLabel) {
+      const topic = $('genTopic').value.trim() || 'नेपाल र विश्व सामान्य ज्ञान';
+      const language = $('genLang').value;
+      const difficulty = $('genDiff').value;
+      const typeCounts = getTypeCountsFromUI();
+      const totalFromTypes = QUESTION_TYPES.reduce((s, t) => s + typeCounts[t], 0);
+      const count = totalFromTypes > 0
+        ? Math.min(MAX_GEN_QUESTIONS, totalFromTypes)
+        : Math.max(1, Math.min(MAX_GEN_QUESTIONS, Number($('genCount').value) || 10));
+      const mode = $('genInsertMode').value;
+      const diverseFields = $('genDiverseFields').checked;
+      const seedContent = $('genSeedInput').value.trim();
+
+      const mixSummary = QUESTION_TYPES
+        .filter(t => typeCounts[t] > 0)
+        .map(t => `${typeCounts[t]} ${t}`)
+        .join(', ');
+
+      setBusy(true, `Generating ${count} questions (${mixSummary || '60/40 mix'}${seedContent ? ' + your seed notes' : ''}) via ${providerLabel}… (check browser window if needed)`);
+      try {
+        const data = await api(endpoint, {
+          method: 'POST',
+          body: JSON.stringify({
+            topic,
+            language,
+            difficulty,
+            count,
+            typeCounts: totalFromTypes > 0 ? typeCounts : null,
+            diverseFields,
+            seedContent,
+            existingQuestions: state.questions
+          })
+        });
+        insertQuestions(data.questions, mode, data.topicText || '');
+        setStatus(
+          `✨ ${escapeHtml(providerLabel)} generated <b>${data.questions.length}</b> questions (${mode === 'replace' ? 'replaced queue' : 'appended to queue'}). Review & click <b>Push Live Update</b> when ready.`,
+          'ok'
+        );
+      } catch (err) {
+        setStatus(`❌ ${escapeHtml(providerLabel)} generation failed: ${escapeHtml(err.message)}`, 'err');
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function verifyWithAI(endpoint, providerLabel) {
+      if (!state.questions.length) {
+        setStatus('❌ Queue is empty — nothing to fact-check.', 'err');
+        return;
+      }
+      setBusy(true, `Fact-checking ${state.questions.length} questions via ${providerLabel}…`);
+      try {
+        const data = await api(endpoint, {
+          method: 'POST',
+          body: JSON.stringify({ questions: state.questions })
+        });
+        state.verifyMap.clear();
+        let okN = 0, warnN = 0, fixN = 0;
+        (data.results || []).forEach(r => {
+          state.verifyMap.set(r.index, r);
+          if (r.status === 'ok') okN++;
+          else if (r.status === 'fix') fixN++;
+          else warnN++;
+        });
+        $('verifySummary').textContent =
+          `${providerLabel}: ${okN} verified OK · ${warnN} warnings · ${fixN} fixes suggested.` +
+          (data.summary ? ` — ${data.summary}` : '');
+        renderQuestions();
+        setStatus(
+          `✅ Fact-check complete (${escapeHtml(providerLabel)}): <b>${okN}</b> OK, <b>${warnN}</b> warnings, <b>${fixN}</b> fixes suggested.`,
+          fixN > 0 ? '' : 'ok'
+        );
+      } catch (err) {
+        setStatus(`❌ ${escapeHtml(providerLabel)} fact-check failed: ${escapeHtml(err.message)}`, 'err');
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    async function handleParse(endpoint, label) {
+      const text = $('pasteInput').value.trim();
+      if (!text) {
+        $('pasteResult').textContent = 'Paste some questions first.';
+        return;
+      }
+      const mode = $('pasteInsertMode').value;
+      setBusy(true, `Formatting pasted text via ${label}…`);
+      try {
+        const data = await api(endpoint, {
+          method: 'POST',
+          body: JSON.stringify({
+            text,
+            language: $('genLang').value,
+            difficulty: $('genDiff').value
+          })
+        });
+        const qs = data.questions || [];
+        if (!qs.length) {
+          $('pasteResult').textContent = 'No complete 4-option MCQs detected. Try AI Format (Claude / Gemini) for messy text!';
+          setStatus('⚠️ Instant parser found 0 complete MCQs — try AI Format (Claude or Gemini).', 'err');
+        } else {
+          insertQuestions(qs, mode);
+          const warnNote = data.warnings?.length ? ` (${data.warnings.length} skipped)` : '';
+          $('pasteResult').textContent = `Formatted & ${mode === 'replace' ? 'replaced with' : 'appended'} ${qs.length} questions${warnNote}.`;
+          setStatus(`✅ Formatted <b>${qs.length}</b> pasted questions via ${escapeHtml(label)}.`, 'ok');
+        }
+      } catch (err) {
+        $('pasteResult').textContent = `Error: ${err.message}`;
+        setStatus(`❌ Format failed: ${escapeHtml(err.message)}`, 'err');
+      } finally {
+        setBusy(false);
+      }
+    }
+
+    /* ---------------- Wire Buttons ---------------- */
+
+    $('btnPull').addEventListener('click', () => pullFromFirestore({ respectDraft: false }));
+    $('btnPush').addEventListener('click', pushToFirestore);
+    $('btnCopyJson').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(JSON.stringify(state.questions, null, 2));
+        setStatus(`📋 Copied ${state.questions.length} Live 4 questions as JSON to clipboard.`, 'ok');
+      } catch {
+        setStatus('❌ Clipboard copy blocked by browser.', 'err');
+      }
+    });
+
+    $('topicBannerInput').addEventListener('input', e => {
+      state.topicText = e.target.value;
+      markDirty(true);
+    });
+
+    $('genCount').addEventListener('input', () => {
+      const raw = $('genCount').value.trim();
+      if (!raw) return;
+      const preset = activeTypePreset === 'custom' ? '6040' : activeTypePreset;
+      applyTypePreset(preset, raw, { syncGenCount: false });
+    });
+    $('genCount').addEventListener('change', () => {
+      const preset = activeTypePreset === 'custom' ? '6040' : activeTypePreset;
+      applyTypePreset(preset, $('genCount').value, { syncGenCount: true });
+    });
+    $('btnPreset6040').addEventListener('click', () => applyTypePreset('6040', $('genCount').value));
+    $('btnPresetEven').addEventListener('click', () => applyTypePreset('even', $('genCount').value));
+    $('btnPresetDirect').addEventListener('click', () => applyTypePreset('direct', $('genCount').value));
+    QUESTION_TYPES.forEach(t => {
+      $(`typeCount${t}`).addEventListener('input', () => {
+        activeTypePreset = 'custom';
+        setTypeCountsInUI(getTypeCountsFromUI());
+      });
+    });
+    applyTypePreset('6040', $('genCount').value);
+    $('btnClearSeed').addEventListener('click', () => { $('genSeedInput').value = ''; });
+
+    $('btnGenClaude').addEventListener('click', () => generateWithAI('/api/live4-questions/generate-claude', 'Claude Browser'));
+    $('btnGenGemini').addEventListener('click', () => generateWithAI('/api/live4-questions/generate-gemini-browser', 'Gemini Browser'));
+    $('btnVerifyClaude').addEventListener('click', () => verifyWithAI('/api/live4-questions/verify-claude', 'Claude Browser'));
+    $('btnVerifyGemini').addEventListener('click', () => verifyWithAI('/api/live4-questions/verify-gemini-browser', 'Gemini Browser'));
+
+    $('btnApplyAllFixes').addEventListener('click', () => {
+      let applied = 0;
+      for (const [idx, v] of state.verifyMap.entries()) {
+        if (v && v.fixedQuestion && (v.status === 'fix' || v.status === 'warn') && state.questions[idx]) {
+          state.questions[idx] = v.fixedQuestion;
+          state.verifyMap.set(idx, { status: 'ok', issue: 'AI fix applied.' });
+          applied++;
+        }
+      }
+      if (applied > 0) {
+        markDirty(true);
+        renderQuestions();
+        setStatus(`🔧 Applied <b>${applied}</b> AI fixes. Click <b>Push Live Update</b> to publish to Firestore.`, 'ok');
+      }
+    });
+
+    $('btnParseLocal').addEventListener('click', () => handleParse('/api/live4-questions/parse', 'Instant Parser'));
+    $('btnFormatClaude').addEventListener('click', () => handleParse('/api/live4-questions/format-claude', 'Claude Browser'));
+    $('btnFormatGemini').addEventListener('click', () => handleParse('/api/live4-questions/format-gemini-browser', 'Gemini Browser'));
+    $('btnClearPaste').addEventListener('click', () => { $('pasteInput').value = ''; $('pasteResult').textContent = ''; });
+
+    $('searchInput').addEventListener('input', e => {
+      state.search = e.target.value;
+      renderQuestions();
+    });
+
+    $('btnAddBlank').addEventListener('click', () => {
+      state.questions.push({
+        questionText: '',
+        options: ['', '', '', ''],
+        correctAnswerIndex: 0,
+        category: 'सामान्य ज्ञान',
+        difficulty: 'Medium',
+        questionType: 'DIRECT',
+        explanation: '',
+        extraInformation: [{ format: 'fact', title: 'मुख्य तथ्य', content: 'महत्वपूर्ण लोकसेवा प्रश्न।' }]
+      });
+      markDirty(true);
+      renderQuestions();
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+
+    $('btnRandomize').addEventListener('click', () => {
+      if (state.questions.length < 2) {
+        setStatus('ℹ️ Need at least 2 questions in the queue to randomize.', '');
+        return;
+      }
+      const paired = state.questions.map((q, idx) => ({
+        q,
+        verify: state.verifyMap.get(idx)
+      }));
+      for (let i = paired.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [paired[i], paired[j]] = [paired[j], paired[i]];
+      }
+      state.questions = paired.map(item => item.q);
+      state.verifyMap.clear();
+      paired.forEach((item, newIdx) => {
+        if (item.verify) state.verifyMap.set(newIdx, item.verify);
+      });
+      markDirty(true);
+      renderQuestions();
+      setStatus(`🔀 Randomized order of <b>${state.questions.length}</b> questions. Click <b>Push Live Update</b> to update Live 4.`, 'ok');
+    });
+
+    $('btnDedupe').addEventListener('click', () => {
+      const seen = new Set();
+      const before = state.questions.length;
+      state.questions = state.questions.filter(q => {
+        const key = String(q.questionText || '').trim().toLowerCase();
+        if (!key || seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+      const removed = before - state.questions.length;
+      if (removed > 0) {
+        state.verifyMap.clear();
+        markDirty(true);
+        renderQuestions();
+        setStatus(`🧹 Removed <b>${removed}</b> duplicate question(s).`, 'ok');
+      } else {
+        setStatus('✨ No duplicate questions found.', 'ok');
+      }
+    });
+
+    $('btnClearAll').addEventListener('click', () => {
+      if (!state.questions.length) return;
+      if (!confirm(`Clear all ${state.questions.length} questions from the editor? (Firestore won't change until you push.)`)) return;
+      state.questions = [];
+      state.verifyMap.clear();
+      markDirty(true);
+      renderQuestions();
+    });
+
+    // Initial load: restore any unsaved local draft first, otherwise load from Firestore
+    pullFromFirestore({ respectDraft: true });
+  </script>
+</body>
+</html>

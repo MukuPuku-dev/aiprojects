@@ -64,7 +64,7 @@ async function extractLatestGeminiResponse(page) {
       }
     }
 
-    const raw = (last.innerText || '').trim();
+    const raw = (last.innerText || '').trim().replace(/[\u201C\u201D]/g, '"');
     return raw;
   });
 }

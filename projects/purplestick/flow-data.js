@@ -17,8 +17,8 @@ const PURPLESTICK_CATS = [
 ];
 
 const PURPLESTICK_CHARS = {
-  PURP_GUY: "PURP_GUY (PurpleStick Guy / Husband): Clean 2D vector cartoon stickman with a large perfectly round vibrant royal-purple (#8B3DFF) head, small cute spiky purple hair tuft on top, thick crisp black outlines, huge expressive white cartoon eyes with dynamic black pupils and eyebrows, animated lip-syncing mouth, and a thin solid black stickman body, arms, legs, and flat black oval feet.",
-  PURP_GIRL: "PURP_GIRL (PurpleStick Girl / Wife): Clean 2D vector cartoon stickman with a large perfectly round vibrant royal-purple (#8B3DFF) head, sleek dark-brown/black cartoon ponytail (or flowing shoulder-length dark hair), cute curved eyelashes, glossy red-pink cartoon lips, huge expressive white eyes, thick crisp black outlines, and a thin solid black stickman body with expressive stick arms and legs.",
+  PURP_GUY: "PURP_GUY (PurpleStick Guy / Husband): Clean 2D vector cartoon stickman caricature matching the attached PURP_GUY character sheet — large stylized round vibrant royal-purple (#8B3DFF) head with short textured dark-black hair (slightly messy volume on top, neat tapered sides), friendly expressive cartoon eyes and eyebrows, warm mischievous smile, animated lip-syncing mouth, thick crisp black outlines, on a thin solid black stickman body, arms, legs, and flat black oval feet.",
+  PURP_GIRL: "PURP_GIRL (PurpleStick Girl / Wife): Clean 2D vector cartoon stickman caricature matching the attached PURP_GIRL character sheet — large stylized round vibrant royal-purple (#8B3DFF) head with long wavy dark-brown/black hair styled half-up half-down flowing past her shoulders, sweet rounded cheeks, bright expressive cartoon eyes with long lashes, glossy pink-red lips, a bold curvy hourglass 2D cartoon figure wearing a flashy form-fitting short magenta cocktail dress and cute black heels, with thin solid black cartoon stick arms and legs, thick crisp black outlines.",
   PURP_TEACHER: "PURP_TEACHER (PurpleStick Teacher / Boss): Clean 2D vector cartoon stickman with a large round vibrant royal-purple (#8B3DFF) head, expressive furrowed eyebrows and big cartoon eyes, wearing a neat white collared dress shirt with a dark charcoal necktie over a thin black stickman body and legs, thick crisp black outlines.",
   WHITE_KID: "WHITE_KID (Cheeky Student / Friend): Clean 2D vector cartoon stickman with a slightly smaller round pure-white head, smug half-lidded expressive cartoon eyes, cheeky smirk, thick crisp black outlines, and a thin solid black stickman body and limbs.",
   OLD_RICH: "OLD_RICH (Rich Grandpa / Elder): Clean 2D vector cartoon stickman with a stylized cartoon older man's head (bald top, fluffy white side hair tufts, gentle laugh lines, warm expressive eyes), thick crisp black outlines, and a thin solid black stickman body and limbs.",
@@ -44,15 +44,12 @@ const PURPLESTICK_LOCS = {
   BARBERSHOP: "Clean 2D flat-vector cartoon barbershop: barber chair, wall mirror, clippers and comb on counter, pastel striped accent wall."
 };
 
-const PURPLESTICK_MASTER_STYLE = "MASTER STYLE LOCK — Exact viral 2D Flash/vector stickman comedy animation (PurpleStick style) in crisp 9:16 vertical format. Thick clean uniform black outlines, flat cel-shaded cartoon colors, vibrant royal-purple (#8B3DFF) round stickman heads with HUGE hyper-expressive cartoon eyes, eyebrows, and accurate lip-syncing mouths on thin black stick bodies. Clean, uncluttered pastel 2D cartoon backgrounds. Snappy comedic animation timing: quick poses, smug eye-rolls, wide jaw-drop shock lines, sparkling heart-eyes, angry red steam, or dizzy spiral eyes on punchline.";
+const PURPLESTICK_MASTER_STYLE = "MASTER STYLE LOCK — Exact viral 2D Flash/vector stickman comedy animation (PurpleStick style) in crisp 9:16 vertical format. Thick clean uniform black outlines, flat cel-shaded cartoon colors, vibrant royal-purple (#8B3DFF) round stickman heads with HUGE hyper-expressive cartoon eyes, eyebrows, and accurate lip-syncing mouths on thin black stick bodies. Clean, uncluttered pastel 2D cartoon backgrounds. Snappy comedic animation timing with expressive poses and facial expressions.";
 
-const PURPLESTICK_AUDIO_RULE = "AUDIO & VOICE LOCK — Clear, lively, natural American English cartoon voice acting with distinct expressive voices for each character (snappy female, deadpan/cocky male, cheeky kid, gruff boss, gentle old man). Deliver every dialogue line word-for-word with razor-sharp comedic timing and zero dead air. Include punchy cartoon sound effects (phone tap, dramatic gasp, cartoon slap/bonk, sparkle chime, record scratch, angry shout) and finish the final 1 second with a brief playful comedy rimshot / studio laugh sting.";
+const PURPLESTICK_AUDIO_RULE = "AUDIO & VOICE LOCK — Clear, lively, natural American English cartoon voice acting with distinct expressive voices for each character (snappy female, deadpan/cocky male, cheeky kid, gruff boss, gentle old man). Deliver every dialogue line word-for-word with razor-sharp comedic timing and zero dead air. Include subtle natural cartoon sound effects matching the action.";
 
-function purpleStickOverlayRule(includeOverlay) {
-  if (!includeOverlay) {
-    return "FRAME CLEANLINESS — Keep the 9:16 frame 100% clean with NO baked-in captions, NO subtitles, and NO watermark so bold yellow/white viral captions, the PurpleStick logo, and the laughing meme reaction clip can be added in CapCut.";
-  }
-  return "BRANDING & VIRAL CAPTIONS — Place a clean bold 'PurpleStick' logo in vibrant royal purple with crisp white/dark edge at top-center/top-right. Display big, bold, high-contrast centered lower-third subtitles synced to every spoken phrase, alternating bright yellow and crisp white text with thick black outlines (viral Facebook Reels comedy style).";
+function purpleStickOverlayRule() {
+  return "NO ON-SCREEN TEXT LOCK — Keep the entire 9:16 frame 100% clean with ZERO on-screen text, ZERO subtitles, ZERO captions, ZERO speech bubbles, ZERO logos, and ZERO watermarks. Do NOT render any words or letters anywhere in the video frame; crisp audio-synced viral captions and the PurpleStick logo are burned in automatically during post-processing.";
 }
 
 // [cat, who, loc, title, hook, dialogue (pipe-separated), visualAction, punchlineReaction, sfx, tags]
@@ -356,44 +353,83 @@ const PURPLESTICK_CLIPS = RAW_PURPLESTICK_SKITS.map(([cat, who, loc, title, hook
   };
 });
 
-function purpleStickPromptFor(i, ar = "9:16", dur = "10s", includeOverlay = true) {
-  const c = PURPLESTICK_CLIPS[i];
-  if (!c) return "";
-  return [
-    `GOOGLE FLOW 2D STICKMAN COMEDY PROMPT — "PURPLESTICK" — SKIT #${c.num}/${PURPLESTICK_CLIPS.length}: ${c.title}`,
-    `CHARACTERS — keep approved PurpleStick designs strictly consistent:\n${c.who.map(code => PURPLESTICK_CHARS[code]).join("\n")}`,
-    `BACKGROUND SET: ${PURPLESTICK_LOCS[c.loc]}`,
-    `EXACT ENGLISH DIALOGUE (deliver word-for-word with expressive cartoon lip-sync and razor-sharp comedic timing):\n${c.dialogueLines}`,
-    `ANIMATION & ACTION TIMELINE (${dur}): ${c.visual}`,
-    `PUNCHLINE REACTION FINALE: ${c.reaction}`,
-    `SOUND EFFECTS & AUDIO: ${c.sfx}`,
-    PURPLESTICK_MASTER_STYLE,
-    PURPLESTICK_AUDIO_RULE,
-    purpleStickOverlayRule(includeOverlay),
-    `FORMAT: ${ar === "16:9" ? "16:9 wide" : "9:16 vertical Facebook Reels / TikTok / YouTube Shorts"} framing. Exactly ${dur}, crisp 2D vector cartoon animation, high-energy viral comedy pacing.`
-  ].join("\n\n");
+const PURPLESTICK_LANGS = {
+  en: {
+    code: "en",
+    label: "English",
+    short: "EN",
+    dialogueHeader: "EXACT ENGLISH DIALOGUE",
+    audioRule: "AUDIO & VOICE LOCK — Clear, lively, natural American English cartoon voice acting with distinct expressive voices for each character (snappy female, deadpan/cocky male, cheeky kid, gruff boss, gentle old man). Deliver every English line word-for-word with razor-sharp comedic timing and zero dead air. Include subtle natural cartoon sound effects matching the action."
+  },
+  hi: {
+    code: "hi",
+    label: "हिन्दी (Hindi)",
+    short: "HI",
+    dialogueHeader: "EXACT HINDI DIALOGUE",
+    audioRule: "AUDIO & VOICE LOCK — Clear, lively, natural conversational Hindi cartoon voice acting with authentic Indian Hindi pronunciation and distinct expressive voices for each character (snappy wife, deadpan/cocky husband, cheeky kid, strict boss). Deliver every Hindi line word-for-word with razor-sharp comedic timing and zero dead air. Do NOT translate to English. Include subtle natural cartoon sound effects matching the action."
+  },
+  ne: {
+    code: "ne",
+    label: "नेपाली (Nepali)",
+    short: "NE",
+    dialogueHeader: "EXACT NEPALI DIALOGUE",
+    audioRule: "AUDIO & VOICE LOCK — Clear, lively, natural everyday Nepali cartoon voice acting with authentic Nepali pronunciation and distinct expressive voices for each character (snappy wife, witty husband, cheeky student, strict boss). Deliver every Nepali line word-for-word with razor-sharp comedic timing and zero dead air. Do NOT translate to English or Hindi. Include subtle natural cartoon sound effects matching the action."
+  }
+};
+
+function purpleStickLangInfo(lang = "en") {
+  return PURPLESTICK_LANGS[lang] || PURPLESTICK_LANGS.en;
 }
 
-function purpleStickCustomPrompt({ title, charA, charB, loc, dialogue, reaction, ar = "9:16", dur = "10s", includeOverlay = true }) {
+function buildPurpleStickPromptFromClip(c, ar = "9:16", dur = "8s", includeOverlay = true, total = PURPLESTICK_CLIPS.length, langOverride) {
+  if (!c) return "";
+  const lang = purpleStickLangInfo(langOverride || c.lang || "en");
+  const dialogueLines = c.dialogueLines || (c.line || "").split("|").join("\n");
+  const sfxClean = String(c.sfx || "").replace(/,?\s*(?:quick\s+)?laugh\s+sting\.?/gi, "").trim();
+  return [
+    `GOOGLE FLOW 2D STICKMAN COMEDY PROMPT — "PURPLESTICK" — SKIT #${c.num}/${total}: ${c.title}`,
+    `CHARACTERS — keep approved PurpleStick designs strictly consistent:\n${(c.who || []).map(code => PURPLESTICK_CHARS[code] || code).join("\n")}`,
+    `BACKGROUND SET: ${PURPLESTICK_LOCS[c.loc] || PURPLESTICK_LOCS.LIVING_ROOM}`,
+    `${lang.dialogueHeader} (deliver word-for-word with natural, snappy comedic pacing and expressive cartoon lip-sync — let the timing flow naturally within ${dur}):\n${dialogueLines}`,
+    `ANIMATION & ACTION BEATS (${dur}): ${c.visual}`,
+    sfxClean ? `SOUND EFFECTS & AUDIO: ${sfxClean}` : "",
+    PURPLESTICK_MASTER_STYLE,
+    lang.audioRule,
+    purpleStickOverlayRule(includeOverlay),
+    `FORMAT: ${ar === "16:9" ? "16:9 wide" : "9:16 vertical Facebook Reels / TikTok / YouTube Shorts"} framing. Exactly ${dur}, crisp 2D vector cartoon animation, high-energy viral comedy pacing.`
+  ].filter(Boolean).join("\n\n");
+}
+
+function purpleStickPromptFor(i, ar = "9:16", dur = "8s", includeOverlay = true, langOverride) {
+  const c = typeof i === "object" && i !== null ? i : PURPLESTICK_CLIPS[i];
+  return buildPurpleStickPromptFromClip(c, ar, dur, includeOverlay, PURPLESTICK_CLIPS.length, langOverride);
+}
+
+function purpleStickCustomPrompt({ title, charA, charB, loc, dialogue, ar = "9:16", dur = "8s", includeOverlay = true, lang = "en" }) {
   const who = [charA, charB].filter(Boolean);
+  const langInfo = purpleStickLangInfo(lang);
   return [
     `GOOGLE FLOW 2D STICKMAN COMEDY PROMPT — "PURPLESTICK" — CUSTOM SKIT: ${title || "PurpleStick Comedy Skit"}`,
     `CHARACTERS — keep approved PurpleStick designs strictly consistent:\n${who.map(code => PURPLESTICK_CHARS[code] || code).join("\n")}`,
     `BACKGROUND SET: ${PURPLESTICK_LOCS[loc] || PURPLESTICK_LOCS.LIVING_ROOM}`,
-    `EXACT ENGLISH DIALOGUE (deliver word-for-word with expressive cartoon lip-sync and razor-sharp comedic timing):\n${dialogue}`,
-    `PUNCHLINE REACTION FINALE: ${reaction || "Giant wide-eyed cartoon jaw-drop freeze with white shock lines radiating around the purple head and a quick laugh sting."}`,
+    `${langInfo.dialogueHeader} (deliver word-for-word with natural, snappy comedic pacing and expressive cartoon lip-sync — let the timing flow naturally within ${dur}):\n${dialogue}`,
     PURPLESTICK_MASTER_STYLE,
-    PURPLESTICK_AUDIO_RULE,
+    langInfo.audioRule,
     purpleStickOverlayRule(includeOverlay),
     `FORMAT: ${ar === "16:9" ? "16:9 wide" : "9:16 vertical Facebook Reels / TikTok / YouTube Shorts"} framing. Exactly ${dur}, crisp 2D vector cartoon animation, high-energy viral comedy pacing.`
   ].join("\n\n");
 }
 
-function purpleStickCharactersFor(i) {
-  const who = Array.isArray(PURPLESTICK_CLIPS[i]?.who) ? PURPLESTICK_CLIPS[i].who : [];
+function purpleStickCharactersForClip(clip) {
+  const who = Array.isArray(clip?.who) ? clip.who : [];
   return who.map(code => ({
     code,
     name: PURPLESTICK_CHAR_NAMES[code] || code,
     refPrompt: `Character reference: clean full-body 2D vector cartoon stickman character turnaround sheet of ${PURPLESTICK_CHARS[code] || code} Plain clean white background, thick crisp black outlines, vibrant royal-purple (#8B3DFF) round head (unless specified otherwise), huge expressive eyes showing happy, smug, shocked, and angry expressions, no text.`
   }));
+}
+
+function purpleStickCharactersFor(i) {
+  const clip = typeof i === "object" && i !== null ? i : PURPLESTICK_CLIPS[i];
+  return purpleStickCharactersForClip(clip);
 }

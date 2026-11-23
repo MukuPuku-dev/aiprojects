@@ -1,0 +1,20 @@
+{
+  "OWL": {
+    "code": "OWL",
+    "name": "Barnaby (Clockwork Owl)",
+    "refPrompt": "Charming hand-painted storybook gouache and fine sepia-ink character portrait on clean warm cream parchment background, full-body plump little owl with soft chestnut feathers and tiny brass clockwork gears peeking from his vest, wearing oversized round copper spectacles and a miniature ticking pocket watch, warm expressive amber eyes, Studio Ghibli editorial picture-book style, no text, no watermark, NOT a stickman",
+    "updatedAt": "2026-11-23T11:11:26.005Z"
+  },
+  "FOX": {
+    "code": "FOX",
+    "name": "Mina (Lantern Fox)",
+    "refPrompt": "Charming hand-painted storybook gouache and fine sepia-ink character portrait on clean warm cream parchment background, full-body clever little red fox standing upright in a cozy knitted teal scarf holding a softly glowing amber paper lantern on a curved wooden twig, bright curious eyes and fluffy white-tipped tail, Studio Ghibli editorial picture-book style, no text, no watermark, NOT a stickman",
+    "updatedAt": "2026-11-23T11:11:58.454Z"
+  },
+  "MOON": {
+    "code": "MOON",
+    "name": "The Sleepless Moon",
+    "refPrompt": "Charming hand-painted storybook gouache and fine sepia-ink illustration on deep twilight indigo sky, giant friendly luminous silver-cream crescent moon with gentle sleepy eyes and a tiny crooked starry nightcap drifting above silhouettes of snowy pine treetops, magical warm glow, no text, no watermark",
+    "updatedAt": "2026-11-23T11:12:35.408Z"
+  }
+}

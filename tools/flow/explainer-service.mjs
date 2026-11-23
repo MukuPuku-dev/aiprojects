@@ -242,16 +242,72 @@ export async function callGeminiText(prompt, fetchImpl = fetch) {
   return body.text.trim();
 }
 
-async function fetchTtsAudio({ prompt, voice = 'Kore', timestamps = true, language = 'en', fetchImpl = fetch }) {
+function normalizeSpeakers(speakers) {
+  if (!Array.isArray(speakers)) return null;
+  const clean = speakers
+    .filter(s => s && typeof s.speaker === 'string' && s.speaker.trim())
+    .map(s => ({
+      speaker: s.speaker.trim(),
+      voice: (typeof s.voice === 'string' && s.voice.trim()) ? s.voice.trim() : 'Kore'
+    }));
+  return clean.length >= 2 ? clean : null;
+}
+
+function escapeRegExp(str) {
+  return String(str || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function buildSpeakerLabelRegex(speakers) {
+  const names = (speakers || []).map(s => escapeRegExp(s.speaker)).filter(Boolean);
+  if (!names.length) return null;
+  return new RegExp(`^\\s*(?:${names.join('|')})\\s*:\\s*`, 'i');
+}
+
+export function buildConversationalBlockPrompt(beats = [], speakers = [], emotionMode = 'auto') {
+  const cleanSpeakers = normalizeSpeakers(speakers);
+  if (!cleanSpeakers) return buildExpressiveBlockPrompt(beats, emotionMode);
+  const labelRe = buildSpeakerLabelRegex(cleanSpeakers);
+  const lines = [];
+  for (let i = 0; i < beats.length; i++) {
+    const raw = String(beats[i]?.narration || '').trim();
+    if (!raw) continue;
+    if (labelRe && labelRe.test(raw)) {
+      lines.push(raw);
+    } else {
+      const sp = cleanSpeakers[i % cleanSpeakers.length].speaker;
+      lines.push(`${sp}: ${raw}`);
+    }
+  }
+  return lines.join('\n');
+}
+
+function stripSpeakerLabelsForAlignment(beats = [], speakers = null) {
+  const labelRe = buildSpeakerLabelRegex(speakers);
+  if (!labelRe) return beats;
+  return beats.map(b => ({
+    ...b,
+    narration: String(b?.narration || '')
+      .split(/\r?\n/)
+      .map(line => line.replace(labelRe, '').trim())
+      .filter(Boolean)
+      .join(' ')
+  }));
+}
+
+async function fetchTtsAudio({ prompt, voice = 'Kore', timestamps = true, language = 'en', speakers = null, fetchImpl = fetch }) {
   if (typeof prompt !== 'string' || !prompt.trim()) {
     throw new Error('Narration text (prompt) is required.');
   }
-  const selectedVoice = typeof voice === 'string' && voice.trim() ? voice.trim() : 'Kore';
+  const cleanSpeakers = normalizeSpeakers(speakers);
+  const selectedVoice = cleanSpeakers
+    ? cleanSpeakers.map(s => `${s.speaker}:${s.voice}`).join(' + ')
+    : (typeof voice === 'string' && voice.trim() ? voice.trim() : 'Kore');
   const payload = {
     prompt: prompt.trim(),
-    voice: selectedVoice,
+    voice: typeof voice === 'string' && voice.trim() ? voice.trim() : 'Kore',
     timestamps: Boolean(timestamps),
-    language: typeof language === 'string' && language.trim() ? language.trim() : 'en'
+    language: typeof language === 'string' && language.trim() ? language.trim() : 'en',
+    ...(cleanSpeakers ? { speakers: cleanSpeakers } : {})
   };
 
   const response = await fetchImpl(GEMINI_TTS_URL, {
@@ -299,6 +355,7 @@ export async function generateAndSaveTts({
   voice = 'Kore',
   timestamps = true,
   language = 'en',
+  speakers = null,
   fetchImpl = fetch
 }) {
   const proj = validateId(project, 'project identifier');
@@ -307,7 +364,7 @@ export async function generateAndSaveTts({
     throw new Error('scene must be an integer from 1 to 365.');
   }
 
-  const tts = await fetchTtsAudio({ prompt, voice, timestamps, language, fetchImpl });
+  const tts = await fetchTtsAudio({ prompt, voice, timestamps, language, speakers, fetchImpl });
   const audioDir = path.join(root, 'projects', proj, 'audio');
   const num = pad2(sceneNum);
   const wavFile = path.join(audioDir, `scene-${num}.wav`);
@@ -347,6 +404,7 @@ export async function generateAndSaveBlockTts({
   voice = 'Kore',
   emotionMode = 'auto',
   language = 'en',
+  speakers = null,
   fetchImpl = fetch
 }) {
   const proj = validateId(project, 'project identifier');
@@ -355,12 +413,16 @@ export async function generateAndSaveBlockTts({
   if (!Number.isInteger(blkNum) || blkNum < 1 || blkNum > 100) {
     throw new Error('blockId must be an integer from 1 to 100.');
   }
+  const cleanSpeakers = normalizeSpeakers(speakers);
   const spokenText = (typeof prompt === 'string' && prompt.trim())
     ? prompt.trim()
-    : buildExpressiveBlockPrompt(beats, emotionMode);
+    : (cleanSpeakers
+      ? buildConversationalBlockPrompt(beats, cleanSpeakers, emotionMode)
+      : buildExpressiveBlockPrompt(beats, emotionMode));
 
-  const tts = await fetchTtsAudio({ prompt: spokenText, voice, timestamps: true, language, fetchImpl });
-  const beatTimings = alignBeatsToTimestamps(beats, tts.wordTimestamps, tts.duration);
+  const tts = await fetchTtsAudio({ prompt: spokenText, voice, timestamps: true, language, speakers: cleanSpeakers, fetchImpl });
+  const alignBeats = stripSpeakerLabelsForAlignment(beats, cleanSpeakers);
+  const beatTimings = alignBeatsToTimestamps(alignBeats, tts.wordTimestamps, tts.duration);
 
   const audioDir = path.join(root, 'projects', proj, 'episodes', epId, 'audio');
   const num = pad2(blkNum);
@@ -424,17 +486,19 @@ export async function generateAndSaveMultiBlockTts({
   voice = 'Kore',
   emotionMode = 'auto',
   language = 'en',
+  speakers = null,
   fetchImpl = fetch
 }) {
   const proj = validateId(project, 'project identifier');
   const epId = validateId(episodeId, 'episode identifier');
+  const cleanSpeakers = normalizeSpeakers(speakers);
   const cleanBlocks = (Array.isArray(blocks) ? blocks : []).filter(b => b && Number.isInteger(Number(b.blockId)) && Array.isArray(b.beats) && b.beats.length > 0);
   if (!cleanBlocks.length) throw new Error('blocks array with beats is required.');
   if (cleanBlocks.length === 1) {
     const one = await generateAndSaveBlockTts({
       root, project: proj, episodeId: epId,
       blockId: cleanBlocks[0].blockId, beats: cleanBlocks[0].beats,
-      voice, emotionMode, language, fetchImpl
+      voice, emotionMode, language, speakers: cleanSpeakers, fetchImpl
     });
     return { ok: true, blocks: [one] };
   }
@@ -447,9 +511,15 @@ export async function generateAndSaveMultiBlockTts({
     ranges.push({ blockId: Number(blk.blockId), beats: blk.beats, startIdx, endIdx: combinedBeats.length });
   }
 
-  const spokenText = buildExpressiveBlockPrompt(combinedBeats, emotionMode);
-  const tts = await fetchTtsAudio({ prompt: spokenText, voice, timestamps: true, language, fetchImpl });
-  const allTimings = alignBeatsToTimestamps(combinedBeats, tts.wordTimestamps, tts.duration);
+  const spokenText = cleanSpeakers
+    ? buildConversationalBlockPrompt(combinedBeats, cleanSpeakers, emotionMode)
+    : buildExpressiveBlockPrompt(combinedBeats, emotionMode);
+  const tts = await fetchTtsAudio({ prompt: spokenText, voice, timestamps: true, language, speakers: cleanSpeakers, fetchImpl });
+  const allTimings = alignBeatsToTimestamps(
+    stripSpeakerLabelsForAlignment(combinedBeats, cleanSpeakers),
+    tts.wordTimestamps,
+    tts.duration
+  );
   const audioDir = path.join(root, 'projects', proj, 'episodes', epId, 'audio');
   const results = [];
 

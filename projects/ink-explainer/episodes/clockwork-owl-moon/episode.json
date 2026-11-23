@@ -1,0 +1,206 @@
+{
+  "id": "clockwork-owl-moon",
+  "title": "Why The Moon Never Sleeps",
+  "subtitle": "A cozy 2-speaker storybook conversation between Barnaby the Clockwork Owl & Mina the Lantern Fox",
+  "hook": "Wait—if the whole world sleeps at night, who keeps the Moon from nodding off?",
+  "niche": "Storybook Explainer / 2-Speaker Conversation Showcase",
+  "language": "en",
+  "characters": [
+    {
+      "code": "OWL",
+      "name": "Barnaby (Clockwork Owl)",
+      "role": "Host",
+      "refPrompt": "Charming hand-painted storybook gouache and fine sepia-ink character portrait on clean warm cream parchment background, full-body plump little owl with soft chestnut feathers and tiny brass clockwork gears peeking from his vest, wearing oversized round copper spectacles and a miniature ticking pocket watch, warm expressive amber eyes, Studio Ghibli editorial picture-book style, no text, no watermark, NOT a stickman"
+    },
+    {
+      "code": "FOX",
+      "name": "Mina (Lantern Fox)",
+      "role": "Guest",
+      "refPrompt": "Charming hand-painted storybook gouache and fine sepia-ink character portrait on clean warm cream parchment background, full-body clever little red fox standing upright in a cozy knitted teal scarf holding a softly glowing amber paper lantern on a curved wooden twig, bright curious eyes and fluffy white-tipped tail, Studio Ghibli editorial picture-book style, no text, no watermark, NOT a stickman"
+    },
+    {
+      "code": "MOON",
+      "name": "The Sleepless Moon",
+      "role": "Supporting",
+      "refPrompt": "Charming hand-painted storybook gouache and fine sepia-ink illustration on deep twilight indigo sky, giant friendly luminous silver-cream crescent moon with gentle sleepy eyes and a tiny crooked starry nightcap drifting above silhouettes of snowy pine treetops, magical warm glow, no text, no watermark"
+    }
+  ],
+  "blocks": [
+    {
+      "blockId": 1,
+      "title": "The Midnight Question",
+      "beats": [
+        {
+          "beat": 1,
+          "cardType": "flat-scene",
+          "label": "Midnight Rooftop",
+          "emotion": "curiously",
+          "characters": [
+            "FOX",
+            "MOON"
+          ],
+          "narration": "Guest: Wait, Barnaby—if the whole town is asleep, why is the Moon still wide awake?",
+          "visual": "Storybook gouache and sepia-ink wide scene of Mina the red fox in a teal scarf sitting on a mossy wooden rooftop holding a glowing amber lantern, pointing up at a huge luminous crescent moon in a starry indigo sky, warm magical lighting, no text",
+          "dynamic": true,
+          "motionPrompt": "Slow gentle tilt up from the lantern fox toward the glowing crescent moon"
+        },
+        {
+          "beat": 2,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "OWL"
+          ],
+          "narration": "Host: Ah, Mina! Because the Moon isn't actually shining on its own at all.",
+          "visual": "Close-up storybook gouache illustration of Barnaby the plump clockwork owl perched on a chimney rim, adjusting his oversized copper spectacles with one feathered wing, warm golden lantern light on his brass vest gears, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 3,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "FOX"
+          ],
+          "narration": "Guest: Wait, what? You're telling me that giant silver lantern has no light bulb inside?",
+          "visual": "Expressive storybook gouache close-up of Mina the red fox squinting in playful disbelief, ears perked forward, holding her glowing paper lantern up beside her face to compare with the sky, warm amber highlights, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 4,
+          "cardType": "flat-scene",
+          "label": "Giant Mirror",
+          "emotion": "playfully",
+          "characters": [
+            "OWL",
+            "MOON"
+          ],
+          "narration": "Host: Not a single spark! It's basically a colossal dusty mirror catching sunlight from behind Earth.",
+          "visual": "Whimsical storybook gouache diagram-illustration showing golden sunbeams curving past a small painted Earth and bouncing off the cratered silver surface of the crescent moon toward a cozy sleeping village below, fine sepia ink lines, no text",
+          "dynamic": true,
+          "motionPrompt": "Golden sunbeams shimmer and bounce smoothly off the moon surface"
+        },
+        {
+          "beat": 5,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "amazed",
+          "characters": [
+            "FOX",
+            "OWL"
+          ],
+          "narration": "Guest: So every time we see moonlight, we're actually seeing recycled sunshine?",
+          "visual": "Medium storybook gouache illustration of Mina the fox grinning with sparkling eyes while Barnaby the clockwork owl nods proudly beside her on the rooftop, swirling golden dust motes in the night air, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 6,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "cheerfully",
+          "characters": [
+            "OWL"
+          ],
+          "narration": "Host: Exactly! Sunlight that took just over one second to bounce from the Moon straight to your whiskers.",
+          "visual": "Playful storybook gouache close-up of Barnaby the clockwork owl tapping his miniature brass pocket watch while a tiny silver beam of moonlight lands right on Mina the fox's nose, warm cozy atmosphere, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        }
+      ]
+    },
+    {
+      "blockId": 2,
+      "title": "The Ocean Pull",
+      "beats": [
+        {
+          "beat": 7,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "curiously",
+          "characters": [
+            "FOX"
+          ],
+          "narration": "Guest: Okay, mirror duty makes sense—but does the Moon actually do anything else while we dream?",
+          "visual": "Storybook gouache illustration of Mina the red fox leaning her chin on her paws atop the wooden rooftop railing, gazing thoughtfully across misty silver hills toward a distant shimmering sea, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 8,
+          "cardType": "flat-scene",
+          "label": "Gravity Tug",
+          "emotion": "dramatically",
+          "characters": [
+            "OWL",
+            "MOON"
+          ],
+          "narration": "Host: Oh, it works the hardest night shift in the solar system—it pulls entire oceans across our planet!",
+          "visual": "Sweeping storybook gouache illustration of glowing silver ribbons of moon-gravity gently lifting deep turquoise ocean waves toward the smiling crescent moon, fine sepia-ink wave crests, magical atmosphere, no text",
+          "dynamic": true,
+          "motionPrompt": "Gentle rhythmic ocean tide swelling upward beneath the glowing moon"
+        },
+        {
+          "beat": 9,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "surprised",
+          "characters": [
+            "FOX"
+          ],
+          "narration": "Guest: Hold on—one sleepy rock up there lifts trillions of tons of seawater twice a day?",
+          "visual": "Storybook gouache illustration of Mina the fox with wide amazed eyes watching a miniature swirling ocean tide pool glowing inside a cupped leaf between her paws, starry reflections, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 10,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "warmly",
+          "characters": [
+            "OWL"
+          ],
+          "narration": "Host: And even better—its steady gravity keeps Earth's tilt balanced, so our seasons never spin out of control.",
+          "visual": "Whimsical storybook gouache illustration of Barnaby the clockwork owl gently spinning a tiny brass-ringed globe surrounded by four miniature floating seasonal leaves—spring blossom, summer sun, autumn maple, winter snowflake—no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 11,
+          "cardType": "flat-scene",
+          "label": "",
+          "emotion": "affectionately",
+          "characters": [
+            "FOX",
+            "MOON"
+          ],
+          "narration": "Guest: Alright, I take it back. The Moon deserves the biggest nightcap in the universe.",
+          "visual": "Heartwarming storybook gouache scene of Mina the red fox raising her glowing paper lantern in a cheerful toast toward the giant luminous crescent moon wearing its tiny starry nightcap, no text",
+          "dynamic": false,
+          "motionPrompt": ""
+        },
+        {
+          "beat": 12,
+          "cardType": "flat-scene",
+          "label": "Goodnight Sky",
+          "emotion": "warmly",
+          "characters": [
+            "OWL",
+            "FOX",
+            "MOON"
+          ],
+          "narration": "Host: Goodnight, Mina—and thank you, Moon, for keeping the night shift glowing.",
+          "visual": "Cozy storybook gouache finale showing Barnaby the clockwork owl and Mina the red fox sitting side by side on the warm shingled rooftop under a vast indigo sky, glowing lantern beside them and the silver crescent moon smiling softly above snowy pines, no text",
+          "dynamic": true,
+          "motionPrompt": "Slow peaceful zoom out as fireflies drift across the starry twilight sky"
+        }
+      ]
+    }
+  ],
+  "updatedAt": "2026-11-23T11:35:49.325Z"
+}

@@ -3,150 +3,301 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>PurpleStick – Viral 2D Stickman Comedy Reels Studio</title>
+<title>PurpleStick – Multi-Series Viral Stickman Comedy Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0e0a16;--card:#171124;--ink:#f5f0ff;--mut:#a99bc2;--acc:#a855f7;
+  --bg:#0c0814;--panel:#140e21;--card:#191229;--ink:#f6f1ff;--mut:#a99bc2;--acc:#a855f7;
   --acc2:#7c3aed;--gold:#facc15;--ok:#4ade80;--line:#2d2246;
+  --dev:"Noto Sans Devanagari","Nirmala UI",system-ui,sans-serif;
 }
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,sans-serif}
-header{position:sticky;top:0;background:#0e0a16ee;backdrop-filter:blur(10px);padding:12px 16px;border-bottom:1px solid var(--line);z-index:5}
+header{position:sticky;top:0;background:#0c0814f2;backdrop-filter:blur(12px);padding:12px 56px 12px 18px;border-bottom:1px solid var(--line);z-index:10}
+.head-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
 h1{margin:0;font-size:20px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-h1 .brand-pill{background:linear-gradient(135deg,#9333ea,#c084fc);color:#fff;font-weight:900;padding:2px 10px;border-radius:8px;letter-spacing:-.02em;box-shadow:0 2px 12px #9333ea66}
-h2{margin:18px 0 8px;font-size:17px;color:var(--gold)}
+h1 .brand-pill{background:linear-gradient(135deg,#9333ea,#c084fc);color:#fff;font-weight:900;padding:2px 11px;border-radius:8px;letter-spacing:-.02em;box-shadow:0 2px 14px #9333ea66}
+h2{margin:0 0 8px;font-size:18px;color:var(--gold)}
 h3{margin:14px 0 6px;font-size:15px;color:#d8b4fe}
-.sub{color:var(--mut);font-size:12px}
-.bar{height:6px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
+.sub{color:var(--mut);font-size:12.5px}
+.bar{height:5px;background:var(--line);border-radius:9px;margin:8px 0;overflow:hidden}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc2),var(--acc),var(--gold));width:0;transition:width .3s}
-nav,.filters,.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-nav{margin-top:4px}
-button,select,input[type="text"],textarea{background:#211834;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 12px;font:inherit}
+nav,.filters,.btns,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+nav{margin-top:6px}
+button,select,input[type="text"],textarea{background:#211834;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:7px 12px;font:inherit}
 button,select{cursor:pointer}
 button.p{background:linear-gradient(135deg,#9333ea,#a855f7);color:#fff;border-color:#a855f7;font-weight:700}
 button.p:hover{filter:brightness(1.08)}
-button.on{border-color:var(--gold);color:var(--gold)}
-button.tt,button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
-button.fb,button[data-act="facebook"]{background:#1877f2;color:#ffffff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
-button.fb:hover,button[data-act="facebook"]:hover{background:#166fe5;border-color:#166fe5}
-button.tg,button[data-act="telegram"]{background:#229ED9;color:#ffffff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
-button.tg:hover,button[data-act="telegram"]:hover{background:#1d8ec4;border-color:#1d8ec4}
+button.on{border-color:var(--gold);color:var(--gold);background:#251a3b}
+button.btn-gem-b{background:#172e4d;border-color:#3b82f6;color:#dbeafe;font-weight:700}
+button.btn-claude{background:#472210;border-color:#f97316;color:#ffedd5;font-weight:700}
+button[data-act="tiktok"]{background:#182120;color:#9df2d2;border-color:#2b5446;font-weight:700}
+button[data-act="facebook"]{background:#1877f2;color:#fff;border-color:#1877f2;font-weight:700;display:inline-flex;align-items:center}
+button[data-act="telegram"]{background:#229ED9;color:#fff;border-color:#229ED9;font-weight:700;display:inline-flex;align-items:center}
 button:disabled{opacity:.45;cursor:not-allowed}
 button:focus-visible,select:focus-visible,summary:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-nav a{color:#d8b4fe;padding:7px 4px;text-decoration:none}
+nav a{color:#d8b4fe;padding:6px 4px;text-decoration:none}
 nav a:hover{text-decoration:underline}
-main{max-width:960px;margin:0 auto;padding:14px}
+
+/* Spacious Two-Pane Studio Layout */
+.studio-shell{max-width:1380px;margin:0 auto;padding:18px;display:grid;grid-template-columns:300px minmax(0,1fr);gap:20px;align-items:start}
+.sidebar{position:sticky;top:116px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px;max-height:calc(100vh - 134px);overflow-y:auto}
+.sidebar-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.sidebar-head h2{margin:0;font-size:15px;color:#fff}
+.series-list{display:flex;flex-direction:column;gap:8px}
+.series-item{background:#1b132b;border:1px solid var(--line);border-radius:12px;padding:10px 12px;cursor:pointer;transition:border-color .15s,background .15s;text-align:left;width:100%}
+.series-item:hover{border-color:#6d28d9;background:#221836}
+.series-item.active{border-color:var(--acc);background:#25183e;box-shadow:0 0 0 1px var(--acc)}
+.series-title{font-weight:700;font-size:14px;color:#fff;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.series-meta{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:11.5px;color:var(--mut)}
+.pill{display:inline-block;padding:1px 7px;border-radius:99px;font-size:11px;font-weight:700;border:1px solid var(--line)}
+.pill-en{color:#93c5fd;border-color:#2563eb66;background:#1e3a8a33}
+.pill-hi{color:#fdba74;border-color:#ea580c66;background:#7c2d1233}
+.pill-ne{color:#86efac;border-color:#16a34a66;background:#14532d33}
+.pill-ongoing{color:var(--gold);border-color:#facc1566;background:#713f1233}
+.series-bar{height:4px;background:#2d2246;border-radius:9px;margin-top:7px;overflow:hidden}
+.series-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),var(--ok))}
+.new-series-box{background:#120c1f;border:1px solid #6d28d9;border-radius:12px;padding:12px;margin-bottom:12px}
+
+.workspace{min-width:0}
 .hide{display:none}
-.filters{margin:6px 0 12px}
+.series-banner{background:linear-gradient(135deg,#1d1233,#140e22);border:1px solid #4c1d95;border-radius:16px;padding:16px 18px;margin-bottom:16px}
+.series-banner-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.series-banner h2{margin:0 0 4px;font-size:21px;color:#fff}
+.ai-panel{background:linear-gradient(180deg,#1a122e,#130d20);border:1px solid #6d28d9;border-radius:16px;padding:16px 18px;margin-bottom:16px}
+.filters{margin:8px 0 14px}
 .filters button{font-size:13px;padding:5px 11px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 16px;margin:12px 0;scroll-margin-top:175px}
-.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 6px 24px #9333ea22}
-.card.done{opacity:.74;border-color:#2e5a44}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 18px;margin:14px 0;scroll-margin-top:145px}
+.card.cur{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc),0 8px 28px #9333ea22}
+.card.done{opacity:.78;border-color:#2e5a44}
 .top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.clip-badge{background:var(--acc);color:#fff;font-weight:800;border-radius:7px;padding:1px 9px;font-size:13px}
+.clip-badge{background:var(--acc);color:#fff;font-weight:800;border-radius:7px;padding:2px 10px;font-size:13px}
 .chip{border:1px solid var(--line);border-radius:99px;padding:1px 10px;font-size:12px;color:var(--mut)}
 .top label{margin-left:auto;font-size:13px;color:var(--mut);display:flex;gap:6px;align-items:center;cursor:pointer}
-.title{font-size:18px;font-weight:800;margin:4px 0 2px;color:#fff}
-.hook-line{color:var(--gold);font-size:13px;font-style:italic;margin:0 0 8px}
-.dl{font-size:15px;line-height:1.65;margin:6px 0 10px;padding:10px 12px;background:#120d1e;border-left:3px solid var(--gold);border-radius:0 8px 8px 0}
+.title{font-size:19px;font-weight:800;margin:4px 0 3px;color:#fff}
+.hook-line{color:var(--gold);font-size:13.5px;font-style:italic;margin:0 0 10px}
+.dl{font-family:var(--dev);font-size:15.5px;line-height:1.7;margin:6px 0 10px;padding:10px 14px;background:#110c1c;border-left:3px solid var(--gold);border-radius:0 10px 10px 0}
 .dl div+div{margin-top:4px}
 .dl b{color:var(--gold)}
 .scene{font-size:13.5px;margin:6px 0 8px}
 .scene b,.react-box b,.sfx-box b{color:#d8b4fe}
-.react-box{font-size:13px;color:#fef08a;background:#1f1633;border-left:3px solid var(--acc);padding:7px 10px;border-radius:0 8px 8px 0;margin:6px 0 8px}
-.sfx-box{font-size:12.5px;color:var(--mut);background:#120d1e;border-left:3px solid var(--ok);padding:6px 10px;border-radius:0 8px 8px 0;margin:6px 0 8px}
-.cap-box{background:#120d1e;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:8px 11px;font-size:13px;line-height:1.55;color:#ede9fe;margin:6px 0 10px;white-space:pre-line}
-.gen{font-size:13px;min-height:1em;margin-top:6px;color:var(--gold)}
+.react-box{font-size:13px;color:#fef08a;background:#1f1633;border-left:3px solid var(--acc);padding:7px 11px;border-radius:0 8px 8px 0;margin:6px 0 8px}
+.sfx-box{font-size:12.5px;color:var(--mut);background:#110c1c;border-left:3px solid var(--ok);padding:6px 11px;border-radius:0 8px 8px 0;margin:6px 0 8px}
+.cap-box{font-family:var(--dev);background:#110c1c;border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:0 10px 10px 0;padding:8px 12px;font-size:13px;line-height:1.6;color:#ede9fe;margin:6px 0 10px;white-space:pre-line}
+.gen{font-size:13px;min-height:1em;margin-top:8px;color:var(--gold)}
 details{margin-top:10px}
 summary{cursor:pointer;color:var(--mut);font-size:13px}
-pre{white-space:pre-wrap;word-break:break-word;background:#0a0711;border:1px solid var(--line);border-radius:10px;padding:11px;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
-.note{border-left:3px solid var(--acc);padding:8px 12px;background:#1b122c;border-radius:0 8px 8px 0;margin:10px 0}
-.grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px}
-.info-box{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
-.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:10px}
-.field{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--mut)}
+pre{white-space:pre-wrap;word-break:break-word;background:#090610;border:1px solid var(--line);border-radius:10px;padding:12px;font:12.5px/1.55 ui-monospace,Menlo,Consolas,monospace;margin:8px 0 0}
+.note{border-left:3px solid var(--acc);padding:9px 13px;background:#1b122c;border-radius:0 8px 8px 0;margin:10px 0}
+.grid-two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.info-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px;margin-bottom:10px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mut)}
 .field input,.field select,.field textarea{width:100%}
 ul,ol{padding-left:20px}
-li{margin:5px 0}
-#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--acc);color:#fff;font-weight:700;padding:8px 16px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:9}
+li{margin:6px 0}
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--acc);color:#fff;font-weight:700;padding:9px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:20}
 #toast.show{opacity:1}
-@media(max-width:600px){header{position:relative}.title{font-size:16px}}
+@media(max-width:960px){
+  .studio-shell{grid-template-columns:1fr;padding:12px}
+  .sidebar{position:static;max-height:none}
+  header{position:relative}
+}
 </style>
 </head>
 <body>
 <header>
-  <h1>🟣 <span class="brand-pill">PurpleStick</span> Viral 2D Stickman Comedy Reels <span class="sub" id="st"></span></h1>
-  <div class="sub">Exact RedStick-style 9:16 Vertical Comedy Skits · Royal Purple Stickman Cast · Snappy English Dialogue, Lip-Sync &amp; Slapstick Punchlines</div>
+  <div class="head-top">
+    <div>
+      <h1>🟣 <span class="brand-pill">PurpleStick</span> Multi-Series Comedy Studio <span class="sub" id="st"></span></h1>
+      <div class="sub">9:16 Viral Stickman Reels &amp; Ongoing 10s Comedy Shows · English / हिन्दी / नेपाली · Character Consistency · Moving-Yellow Word Captions · Auto-Outro</div>
+    </div>
+    <div class="row">
+      <a href="../../index.html" style="color:#d8b4fe;text-decoration:none;font-size:13px">← All projects</a>
+      <span class="sub" id="api"></span>
+    </div>
+  </div>
   <div class="bar"><i id="pb"></i></div>
   <nav>
     <button class="p" id="nx">Copy NEXT prompt</button>
-    <button class="p" id="gnx">▶ Generate next skit with Flow</button>
-    <button data-t="clips" class="on">Skits (30)</button>
-    <button data-t="custom">✨ Custom Skit Maker</button>
-    <button data-t="cast">Cast &amp; Sets</button>
-    <button data-t="rules">Viral Guide &amp; CapCut</button>
-    <button id="dl">Download all prompts (.txt)</button>
-    <a href="../../index.html">← All projects</a>
+    <button class="p" id="gnx">▶ Generate next clip</button>
+    <button data-t="clips" class="on">📺 Series &amp; Episodes</button>
+    <button data-t="custom">✨ Custom Skit</button>
+    <button data-t="cast">🎭 Cast &amp; Sets</button>
+    <button data-t="rules">📖 Viral Guide</button>
+    <button id="dl">⬇ Export Series (.txt)</button>
+    <label class="sub">Language
+      <select id="globalLang">
+        <option value="en">English (Default)</option>
+        <option value="hi">हिन्दी (Hindi)</option>
+        <option value="ne">नेपाली (Nepali)</option>
+      </select>
+    </label>
     <label class="sub">Shape <select id="ar"><option value="9:16">9:16 vertical</option><option value="16:9">16:9 wide</option></select></label>
     <label class="sub">Model <select id="model"><option>Omni 1.1 Flash</option><option>Omni 1.2 Flash</option><option>Veo 3.1 - Lite</option><option>Veo 3.1 - Fast</option><option>Veo 3.1 - Quality</option></select></label>
-    <label class="sub">Length <select id="dur"><option>10s</option><option>8s</option><option>6s</option><option>4s</option></select></label>
-    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Include PurpleStick logo + bold yellow/white viral captions inside the Flow prompt (uncheck for clean frame to edit in CapCut)"><input type="checkbox" id="overlayToggle"> Logo &amp; viral captions</label>
-    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to TikTok right after Flow finishes"><input type="checkbox" id="autoPostToggle"> Auto-post TikTok</label>
-    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Default off: auto-post to Facebook right after Flow finishes"><input type="checkbox" id="autoPostFacebookToggle"> Auto-post Facebook</label>
-    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Auto-send video &amp; caption to Telegram right after Flow finishes"><input type="checkbox" id="autoPostTelegramToggle"> Auto-send Telegram</label>
-    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Workspace setting: ensure &amp; attach required PurpleStick character images in Flow"><input type="checkbox" id="charConsistencyToggle"> Character consistency</label>
-    <span class="sub" id="api"></span>
+    <label class="sub">Length <select id="dur"><option value="3s">3s</option><option value="4s">4s</option><option value="5s">5s</option><option value="6s">6s</option><option value="7s">7s</option><option value="8s" selected>8s (Default)</option><option value="9s">9s</option><option value="10s">10s</option></select></label>
+    <label class="sub">Quality <select id="res"><option value="360p" selected>360p (Default)</option><option value="720p">720p</option></select></label>
+    <label class="sub" title="Auto = On for mukesh.inaruwa@gmail.com (Pro) and falls back to Original on non-Pro accounts">Upscale <select id="upscale"><option value="auto" selected>Auto (Pro)</option><option value="on">Always</option><option value="off">Off</option></select></label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer" title="Extract audio -> /transcribe word timestamps -> burn moving-yellow synced captions + PurpleStick logo via FFmpeg"><input type="checkbox" id="overlayToggle"> Synced captions &amp; logo</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="charConsistencyToggle" checked> Character consistency</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="autoPostToggle"> Auto-TikTok</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="autoPostFacebookToggle"> Auto-Facebook</label>
+    <label class="sub" style="display:inline-flex;gap:5px;align-items:center;cursor:pointer"><input type="checkbox" id="autoPostTelegramToggle"> Auto-Telegram</label>
   </nav>
 </header>
 
-<main>
-  <section id="clips">
-    <div class="filters" id="filters"></div>
-    <div id="list"></div>
-  </section>
+<div class="studio-shell">
+  <!-- LEFT SIDEBAR: SERIES & SHOWS -->
+  <aside class="sidebar" id="series-sidebar">
+    <div class="sidebar-head">
+      <h2>📚 Your Series</h2>
+      <button type="button" class="p" id="btn-toggle-new-series" style="padding:4px 10px;font-size:12.5px">+ New Series</button>
+    </div>
 
-  <section id="custom" class="hide">
-    <div class="info-box">
-      <h2>✨ Custom PurpleStick Skit Maker</h2>
-      <p class="sub" style="margin-top:0">Write any 4–5 line joke and turn it into a ready-to-generate PurpleStick 9:16 comedy video prompt instantly.</p>
-      <div class="form-grid">
-        <label class="field">Skit Title
-          <input type="text" id="cs-title" value="Wife's Savage Gym Reply! 😂" placeholder="e.g. Husband's Shocking Reply! 😂">
+    <div class="new-series-box hide" id="new-series-form">
+      <div class="field" style="margin-bottom:8px">Series / Show Name
+        <input type="text" id="ns-title" placeholder="e.g. Husband vs Wife Chaos S1">
+      </div>
+      <div class="field" style="margin-bottom:8px">Premise / Running Gag
+        <textarea id="ns-premise" rows="2" placeholder="e.g. Every 10s episode, husband tries a clever scheme and wife destroys him with a savage comeback"></textarea>
+      </div>
+      <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+        <label class="field">Language
+          <select id="ns-lang">
+            <option value="en">English</option>
+            <option value="hi">हिन्दी (Hindi)</option>
+            <option value="ne">नेपाली (Nepali)</option>
+          </select>
         </label>
-        <label class="field">Character 1
-          <select id="cs-char-a"></select>
-        </label>
-        <label class="field">Character 2
-          <select id="cs-char-b"></select>
-        </label>
-        <label class="field">Background Set
-          <select id="cs-loc"></select>
+        <label class="field">Type
+          <select id="ns-mode">
+            <option value="ongoing">Ongoing Series</option>
+            <option value="standalone">Topic Pack</option>
+          </select>
         </label>
       </div>
-      <label class="field" style="margin-bottom:10px">Dialogue Lines (one line per turn — keep it snappy for 8–10s!)
-        <textarea id="cs-dialogue" rows="5">HUSBAND: Babe, I joined the gym today!
+      <div class="btns">
+        <button type="button" class="p" id="btn-create-series" style="flex:1">Create Series</button>
+        <button type="button" id="btn-cancel-series">Cancel</button>
+      </div>
+    </div>
+
+    <div class="series-list" id="series-list"></div>
+  </aside>
+
+  <!-- MAIN WORKSPACE -->
+  <main class="workspace">
+    <section id="clips">
+      <div class="series-banner" id="series-banner"></div>
+
+      <!-- AI SERIES & CONCEPT GENERATOR -->
+      <div class="ai-panel">
+        <div class="top" style="margin-bottom:8px">
+          <h2 style="margin:0;font-size:16px" id="ai-panel-heading">🤖 Generate New Clips into This Series</h2>
+          <span class="sub">Choose Claude AI, Gemini Browser, or Gemini API · Supports English, Hindi &amp; Nepali</span>
+        </div>
+        <div class="form-grid">
+          <label class="field" style="grid-column:span 2">Topic / Idea / Next Story Twist
+            <input type="text" id="ai-theme" placeholder="e.g. husband hides new gaming console, wife catches him on budget day, office boss roasts…">
+          </label>
+          <label class="field">Language
+            <select id="ai-lang">
+              <option value="en">English (Default)</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="ne">नेपाली (Nepali)</option>
+            </select>
+          </label>
+          <label class="field">Category
+            <select id="ai-cat">
+              <option value="all">Mix all categories</option>
+              <option value="couple">Couple Comedy</option>
+              <option value="school">School &amp; Teacher</option>
+              <option value="dating">Money &amp; Dating</option>
+              <option value="office">Boss &amp; Office</option>
+              <option value="everyday">Doctor &amp; Everyday</option>
+            </select>
+          </label>
+          <label class="field">How many 10s clips?
+            <select id="ai-count">
+              <option value="1">1 clip</option>
+              <option value="3">3 clips</option>
+              <option value="5" selected>5 clips</option>
+              <option value="10">10 clips (Mini Season)</option>
+              <option value="15">15 clips (Full Season)</option>
+            </select>
+          </label>
+        </div>
+        <div class="btns">
+          <button type="button" class="btn-claude" data-ai-gen="claude">🧠 Generate with Claude AI</button>
+          <button type="button" class="btn-gem-b" data-ai-gen="gemini-browser">🌐 Generate with Gemini Browser</button>
+          <button type="button" class="p" data-ai-gen="gemini-api">✨ Generate with Gemini API</button>
+          <button type="button" id="btn-toggle-paste-json">📋 Paste JSON</button>
+        </div>
+        <div id="paste-json-box" class="hide" style="margin-top:10px">
+          <textarea id="paste-json-input" rows="4" placeholder="Paste any Claude / Gemini JSON array of skits here..." style="width:100%;margin-bottom:8px"></textarea>
+          <div class="btns">
+            <button type="button" class="p" id="btn-import-json">Import JSON into Series</button>
+            <button type="button" id="btn-cancel-paste">Cancel</button>
+          </div>
+        </div>
+        <div class="gen" id="ai-status"></div>
+      </div>
+
+      <div class="filters" id="filters"></div>
+      <div id="list"></div>
+    </section>
+
+    <section id="custom" class="hide">
+      <div class="info-box">
+        <h2>✨ Custom PurpleStick Skit Maker</h2>
+        <p class="sub" style="margin-top:0">Write any 4–5 line joke in English, Hindi, or Nepali and generate it directly in Flow with your PurpleStick characters, synced moving-yellow captions, and outro.</p>
+        <div class="form-grid">
+          <label class="field">Skit Title
+            <input type="text" id="cs-title" value="Wife's Savage Gym Reply! 😂" placeholder="e.g. Husband's Shocking Reply! 😂">
+          </label>
+          <label class="field">Language
+            <select id="cs-lang">
+              <option value="en">English</option>
+              <option value="hi">हिन्दी (Hindi)</option>
+              <option value="ne">नेपाली (Nepali)</option>
+            </select>
+          </label>
+          <label class="field">Character 1
+            <select id="cs-char-a"></select>
+          </label>
+          <label class="field">Character 2
+            <select id="cs-char-b"></select>
+          </label>
+          <label class="field">Background Set
+            <select id="cs-loc"></select>
+          </label>
+        </div>
+        <label class="field" style="margin-bottom:12px">Dialogue Lines (one line per turn — keep it snappy for 8s!)
+          <textarea id="cs-dialogue" rows="5" style="font-family:var(--dev)">HUSBAND: Babe, I joined the gym today!
 WIFE: Awesome! How much weight did you lose?
 HUSBAND: About $80... right out of my wallet!
 WIFE: SERIOUSLY?!</textarea>
-      </label>
-      <label class="field" style="margin-bottom:12px">Punchline Cartoon Reaction
-        <input type="text" id="cs-reaction" value="Wife's eyebrows snap down in shock and fury while Husband sweats nervously with a goofy grin, quick laugh sting.">
-      </label>
-      <div class="btns">
-        <button type="button" class="p" id="cs-copy">Copy Custom Flow Prompt</button>
-        <button type="button" id="cs-gen">▶ Generate Custom Skit in Flow</button>
+        </label>
+        <div class="btns">
+          <button type="button" class="p" id="cs-copy">Copy Custom Flow Prompt</button>
+          <button type="button" id="cs-add-series">+ Add to Active Series</button>
+          <button type="button" id="cs-gen">▶ Generate Custom Skit in Flow</button>
+        </div>
+        <div class="gen" id="cs-status"></div>
+        <details open style="margin-top:12px">
+          <summary>Live PurpleStick Flow Prompt Preview</summary>
+          <pre id="cs-preview"></pre>
+        </details>
       </div>
-      <div class="gen" id="cs-status"></div>
-      <details open style="margin-top:12px">
-        <summary>Live PurpleStick Flow Prompt Preview</summary>
-        <pre id="cs-preview"></pre>
-      </details>
-    </div>
-  </section>
+    </section>
 
-  <section id="cast" class="hide"></section>
-  <section id="rules" class="hide"></section>
-</main>
+    <section id="cast" class="hide"></section>
+    <section id="rules" class="hide"></section>
+  </main>
+</div>
 
 <div id="toast" role="status" aria-live="polite"></div>
 
@@ -159,22 +310,111 @@ const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>
 const PROJECT_ID = "purplestick";
 const KEY = "purplestick-v1";
 const JOB_KEY = "purplestick_flow_job";
+const BUILTIN_SERIES_ID = "classic-viral";
 const projectStorage = window.StoryStudioStorage?.createProjectStorage?.({ projectId: PROJECT_ID });
 
 const CATS = PURPLESTICK_CATS;
 const CHARS = PURPLESTICK_CHARS;
 const CHAR_NAMES = PURPLESTICK_CHAR_NAMES;
 const LOCS = PURPLESTICK_LOCS;
-const CLIPS = PURPLESTICK_CLIPS;
+const BASE_CLIPS = PURPLESTICK_CLIPS.map((c, idx) => ({ ...c, lang: "en", videoDay: idx + 1 }));
 
-let S = { done:{}, ar:"9:16", model:"Omni 1.1 Flash", dur:"10s", overlay:true, filter:"all", cur:0, tab:"clips" };
+let S = {
+  done: {},
+  ar: "9:16",
+  model: "Omni 1.1 Flash",
+  dur: "8s",
+  res: "360p",
+  upscale: "auto",
+  lang: "en",
+  overlay: true,
+  filter: "all",
+  cur: 0,
+  tab: "clips",
+  activeSeriesId: BUILTIN_SERIES_ID,
+  nextVideoDay: BASE_CLIPS.length + 1,
+  series: []
+};
 const GEN = {};
 try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
+if (!Array.isArray(S.series)) S.series = [];
+if (!Number.isInteger(S.nextVideoDay) || S.nextVideoDay <= BASE_CLIPS.length) S.nextVideoDay = BASE_CLIPS.length + 1;
+
+// Migrate any legacy S.customConcepts into a custom series so nothing is lost
+if (Array.isArray(S.customConcepts) && S.customConcepts.length) {
+  const existing = S.series.find(sr => sr.id === "my-ai-skits");
+  const migrated = S.customConcepts.map(c => ({ ...c, videoDay: c.videoDay || S.nextVideoDay++ }));
+  if (existing) existing.clips.push(...migrated);
+  else S.series.push({
+    id: "my-ai-skits",
+    title: "My AI Generated Skits",
+    premise: "Custom AI-generated PurpleStick comedy concepts.",
+    language: "en",
+    mode: "standalone",
+    clips: migrated
+  });
+  delete S.customConcepts;
+}
+
+function hydrateClip(raw, epIndex, fallbackLang = "en") {
+  const who = Array.isArray(raw.who) && raw.who.length ? raw.who : ["PURP_GUY", "PURP_GIRL"];
+  const charList = who.map(c => CHAR_NAMES[c] || c).join(" & ");
+  const dialogueLines = raw.dialogueLines || (raw.line || "").split("|").join("\n");
+  const lang = raw.lang || fallbackLang || "en";
+  const tags = raw.tags || (lang === "hi"
+    ? "#PurpleStick #HindiComedy #StickmanHindi #funnyreels #viralreels #DesiComedy"
+    : lang === "ne"
+      ? "#PurpleStick #NepaliComedy #StickmanNepal #funnyreels #viralreels #NepaliMemes"
+      : "#PurpleStick #stickman #stickmananimation #funnyreels #viralreels #comedy #memes");
+  const cap = raw.cap || `${raw.title}\n\n${raw.hook}\n\nFollow @PurpleStick for daily stickman comedy! 😂👇\n\n${tags}`;
+  return {
+    ...raw,
+    num: epIndex + 1,
+    videoDay: raw.videoDay || (epIndex + 1),
+    lang,
+    who,
+    charList,
+    dialogueLines,
+    tags,
+    cap
+  };
+}
+
+function allSeriesList() {
+  return [
+    {
+      id: BUILTIN_SERIES_ID,
+      title: "Classic Viral Skits",
+      premise: "30 proven RedStick-style 9:16 comedy skits across Couple, School, Dating, Office & Everyday categories.",
+      language: "en",
+      mode: "standalone",
+      builtin: true,
+      clips: BASE_CLIPS
+    },
+    ...S.series
+  ];
+}
+
+function getActiveSeries() {
+  const list = allSeriesList();
+  return list.find(sr => sr.id === S.activeSeriesId) || list[0];
+}
+
+function getActiveClips() {
+  const sr = getActiveSeries();
+  return (sr.clips || []).map((c, idx) => hydrateClip(c, idx, sr.language));
+}
+
+function getAllClipsAcrossSeries() {
+  return allSeriesList().flatMap(sr => (sr.clips || []).map((c, idx) => hydrateClip(c, idx, sr.language)));
+}
+
 const pushCloud = () => {
+  const all = getAllClipsAcrossSeries();
   const checked = { ...(S.done || {}) };
   window.StoryStudioStorage?.saveProjectProgress?.(PROJECT_ID, {
-    totalClips: CLIPS.length,
-    completedCount: CLIPS.filter((_, i) => checked[i + 1]).length,
+    totalClips: all.length,
+    completedCount: all.filter(c => checked[c.videoDay]).length,
     checked,
     state: S
   });
@@ -201,7 +441,7 @@ function toast(msg) {
   el.textContent = msg;
   el.classList.add("show");
   clearTimeout(tt);
-  tt = setTimeout(() => el.classList.remove("show"), 1800);
+  tt = setTimeout(() => el.classList.remove("show"), 1900);
 }
 
 async function copy(text, msg) {
@@ -217,65 +457,340 @@ async function copy(text, msg) {
 }
 
 function catInfo(id) { return CATS.find(a => a.id === id) || CATS[1]; }
-function buildPrompt(i) { return purpleStickPromptFor(i, S.ar, S.dur, S.overlay !== false); }
+function langPill(lang) {
+  const info = purpleStickLangInfo(lang);
+  return `<span class="pill pill-${info.code}">${info.short}</span>`;
+}
+
+function buildPromptForClip(clip, total) {
+  return buildPurpleStickPromptFromClip(clip, S.ar, S.dur, S.overlay !== false, total, clip.lang || S.lang);
+}
+
+/* ---------- Render Series Sidebar & Active Series Banner ---------- */
+function renderSidebar() {
+  const list = allSeriesList();
+  const active = getActiveSeries();
+  $("#series-list").innerHTML = list.map(sr => {
+    const clips = sr.clips || [];
+    const doneCount = clips.filter((c, idx) => S.done[c.videoDay || (idx + 1)]).length;
+    const pct = clips.length ? Math.round((doneCount / clips.length) * 100) : 0;
+    return `<div class="series-item ${sr.id === active.id ? "active" : ""}" data-select-series="${esc(sr.id)}">
+      <div class="series-title">
+        <span>${esc(sr.title)}</span>
+        ${!sr.builtin ? `<button type="button" data-del-series="${esc(sr.id)}" title="Delete series" style="padding:1px 6px;font-size:11px;border-color:#7f1d1d;color:#fca5a5">✕</button>` : ""}
+      </div>
+      <div class="series-meta">
+        ${langPill(sr.language)}
+        <span class="pill ${sr.mode === "ongoing" ? "pill-ongoing" : ""}">${sr.mode === "ongoing" ? "Ongoing Series" : "Topic Pack"}</span>
+        <span>${doneCount}/${clips.length} made</span>
+      </div>
+      <div class="series-bar"><i style="width:${pct}%"></i></div>
+    </div>`;
+  }).join("");
+}
+
+function renderBanner() {
+  const sr = getActiveSeries();
+  const clips = getActiveClips();
+  const doneCount = clips.filter(c => S.done[c.videoDay]).length;
+  $("#series-banner").innerHTML = `
+    <div class="series-banner-top">
+      <div>
+        <div class="row" style="margin-bottom:6px">
+          ${langPill(sr.language)}
+          <span class="pill ${sr.mode === "ongoing" ? "pill-ongoing" : ""}">${sr.mode === "ongoing" ? "🎬 Ongoing 10s Comedy Series" : "⚡ Standalone Viral Reels Pack"}</span>
+          <span class="sub">${doneCount}/${clips.length} videos generated</span>
+        </div>
+        <h2>${esc(sr.title)}</h2>
+        <div class="sub">${esc(sr.premise || "Generate fresh 10-second PurpleStick episodes below.")}</div>
+      </div>
+      <div class="btns">
+        <button type="button" class="p" id="banner-gen-next">▶ Generate Next in Series</button>
+      </div>
+    </div>`;
+  $("#banner-gen-next").onclick = () => $("#gnx").click();
+  $("#ai-panel-heading").textContent = sr.mode === "ongoing"
+    ? `🤖 Generate Next Ongoing Episodes for "${sr.title}"`
+    : `🤖 Generate New Clips into "${sr.title}"`;
+  $("#ai-lang").value = sr.language || S.lang || "en";
+}
 
 function renderFilters() {
-  $("#filters").innerHTML = CATS.map(a =>
-    `<button data-f="${a.id}" class="${S.filter === a.id ? "on" : ""}">${esc(a.label)}</button>`
-  ).join("");
+  const clips = getActiveClips();
+  $("#filters").innerHTML = CATS.map(a => {
+    const count = a.id === "all" ? clips.length : clips.filter(c => c.cat === a.id).length;
+    const baseLabel = a.label.replace(/\s*\([^)]*\)\s*$/, "");
+    return `<button data-f="${a.id}" class="${S.filter === a.id ? "on" : ""}">${esc(baseLabel)} (${count})</button>`;
+  }).join("");
 }
 
 function renderList() {
-  $("#list").innerHTML = CLIPS.map((c, i) => ({ c, i }))
-    .filter(({ c }) => S.filter === "all" || c.cat === S.filter)
-    .map(({ c, i }) => {
-      const done = !!S.done[i + 1];
-      const cat = catInfo(c.cat);
-      const lines = c.line ? c.line.split("|") : [];
-      return `<article class="card ${done ? "done" : ""} ${S.cur === i ? "cur" : ""}" id="v${i}" data-i="${i}">
-        <div class="top">
-          <span class="clip-badge">Skit #${i + 1}</span>
-          <span class="chip">${esc(cat.label)}</span>
-          <span class="chip">${esc(c.charList)}</span>
-          <span class="chip">${esc(c.loc)}</span>
-          <label><input type="checkbox" data-done="${i}" ${done ? "checked" : ""}> Made in Flow</label>
-        </div>
-        <div class="title">${esc(c.title)}</div>
-        <p class="hook-line">${esc(c.hook)}</p>
-        <div class="dl">${lines.map(l => {
-          const idx = l.indexOf(":");
-          return idx > 0 ? `<div><b>${esc(l.slice(0, idx))}:</b>${esc(l.slice(idx + 1))}</div>` : `<div>${esc(l)}</div>`;
-        }).join("")}</div>
-        <p class="scene"><b>Animation Timeline:</b> ${esc(c.visual)}</p>
-        <div class="react-box"><b>Punchline Reaction:</b> ${esc(c.reaction)}</div>
-        <div class="sfx-box"><b>Voices &amp; SFX:</b> ${esc(c.sfx)}</div>
-        <div class="cap-box">${esc(c.cap)}</div>
-        <div class="btns">
-          <button class="p" data-act="gen" data-i="${i}">Generate video</button>
-          <button data-act="tiktok" data-i="${i}" title="Post skit to TikTok">♪ Post TikTok</button>
-          <button data-act="facebook" data-i="${i}" title="Post skit to Facebook"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button>
-          <button data-act="telegram" data-i="${i}" title="Send skit &amp; caption to Telegram">✈ Send Telegram</button>
-          <button data-act="prompt" data-i="${i}">Copy Flow prompt</button>
-          <button data-act="line" data-i="${i}">Copy dialogue</button>
-          <button data-act="cap" data-i="${i}">Copy caption</button>
-        </div>
-        <div class="gen" id="g${i}">${esc(GEN[i] || "")}</div>
-        <details><summary>Show complete PurpleStick Flow prompt</summary><pre>${esc(buildPrompt(i))}</pre></details>
-      </article>`;
-    }).join("");
+  const sr = getActiveSeries();
+  const clips = getActiveClips();
+  const filtered = clips.map((c, i) => ({ c, i })).filter(({ c }) => S.filter === "all" || c.cat === S.filter);
+  if (!filtered.length) {
+    $("#list").innerHTML = `<div class="info-box" style="text-align:center;padding:28px">
+      <div style="font-size:28px;margin-bottom:6px">🎬</div>
+      <div style="font-weight:700;margin-bottom:4px">No clips in this view yet</div>
+      <div class="sub">Use the <b>AI Generator</b> above (Claude AI, Gemini Browser, or Gemini API) to generate 5–15 super-funny 10s PurpleStick clips into <b>${esc(sr.title)}</b>!</div>
+    </div>`;
+    return;
+  }
+  $("#list").innerHTML = filtered.map(({ c, i }) => {
+    const done = !!S.done[c.videoDay];
+    const cat = catInfo(c.cat);
+    const lines = c.line ? c.line.split("|") : [];
+    const promptTxt = buildPromptForClip(c, clips.length);
+    return `<article class="card ${done ? "done" : ""} ${S.cur === i ? "cur" : ""}" id="v${i}" data-i="${i}">
+      <div class="top">
+        <span class="clip-badge">${sr.mode === "ongoing" ? `Ep ${i + 1}` : `Skit #${i + 1}`}</span>
+        ${langPill(c.lang)}
+        <span class="chip">day-${String(c.videoDay).padStart(2, "0")}.mp4</span>
+        ${c.provider ? `<span class="chip" style="border-color:var(--gold);color:var(--gold)">✨ ${esc(c.provider)}</span>` : ""}
+        <span class="chip">${esc(cat.label.replace(/\s*\([^)]*\)\s*$/, ""))}</span>
+        <span class="chip">${esc(c.charList)}</span>
+        <span class="chip">${esc(c.loc)}</span>
+        <label><input type="checkbox" data-done="${c.videoDay}" ${done ? "checked" : ""}> Made in Flow</label>
+      </div>
+      <div class="title">${esc(c.title)}</div>
+      <p class="hook-line">${esc(c.hook)}</p>
+      <div class="dl">${lines.map(l => {
+        const idx = l.indexOf(":");
+        return idx > 0 ? `<div><b>${esc(l.slice(0, idx))}:</b>${esc(l.slice(idx + 1))}</div>` : `<div>${esc(l)}</div>`;
+      }).join("")}</div>
+      <p class="scene"><b>Animation Beats:</b> ${esc(c.visual)}</p>
+      <div class="sfx-box"><b>Voices &amp; SFX:</b> ${esc(c.sfx)}</div>
+      <div class="cap-box">${esc(c.cap)}</div>
+      <div class="btns">
+        <button class="p" data-act="gen" data-i="${i}">Generate video</button>
+        <button data-act="tiktok" data-i="${i}">♪ Post TikTok</button>
+        <button data-act="facebook" data-i="${i}"><svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="vertical-align:-1px;margin-right:4px" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>Post Facebook</button>
+        <button data-act="telegram" data-i="${i}">✈ Send Telegram</button>
+        <button data-act="prompt" data-i="${i}">Copy prompt</button>
+        <button data-act="line" data-i="${i}">Copy dialogue</button>
+        <button data-act="cap" data-i="${i}">Copy caption</button>
+        ${!sr.builtin ? `
+          <button data-act="move-up" data-i="${i}" title="Move earlier" ${i === 0 ? "disabled" : ""}>↑</button>
+          <button data-act="move-down" data-i="${i}" title="Move later" ${i === clips.length - 1 ? "disabled" : ""}>↓</button>
+          <button data-act="remove-clip" data-i="${i}" style="border-color:#7f1d1d;color:#fca5a5">✕ Remove</button>
+        ` : ""}
+      </div>
+      <div class="gen" id="g${c.videoDay}">${esc(GEN[c.videoDay] || "")}</div>
+      <details><summary>Show complete PurpleStick Flow prompt</summary><pre>${esc(promptTxt)}</pre></details>
+    </article>`;
+  }).join("");
 }
 
 function progress() {
-  const n = Object.keys(S.done).filter(k => S.done[k]).length;
+  const all = getAllClipsAcrossSeries();
+  const n = all.filter(c => S.done[c.videoDay]).length;
   const secs = parseInt(S.dur, 10) || 10;
-  $("#pb").style.width = (n / CLIPS.length * 100) + "%";
-  $("#st").textContent = `${n}/${CLIPS.length} skits made · ${n * secs}s of PurpleStick comedy`;
+  $("#pb").style.width = (n / Math.max(1, all.length) * 100) + "%";
+  $("#st").textContent = `${n}/${all.length} total clips across ${allSeriesList().length} series · ${n * secs}s`;
+  renderSidebar();
 }
 
-function nextIndex() {
-  for (let i = 0; i < CLIPS.length; i++) if (!S.done[i + 1]) return i;
+function renderAll() {
+  renderSidebar();
+  renderBanner();
+  renderFilters();
+  renderList();
+  progress();
+}
+
+function nextIndexInActive() {
+  const clips = getActiveClips();
+  for (let i = 0; i < clips.length; i++) if (!S.done[clips[i].videoDay]) return i;
   return -1;
 }
+
+/* ---------- Series Management ---------- */
+$("#btn-toggle-new-series").onclick = () => {
+  const box = $("#new-series-form");
+  box.classList.toggle("hide");
+  $("#ns-lang").value = S.lang || "en";
+  if (!box.classList.contains("hide")) $("#ns-title").focus();
+};
+$("#btn-cancel-series").onclick = () => $("#new-series-form").classList.add("hide");
+
+$("#btn-create-series").onclick = () => {
+  const title = $("#ns-title").value.trim();
+  if (!title) { toast("Enter a series name first"); return; }
+  const id = "series-" + Date.now().toString(36);
+  const newSeries = {
+    id,
+    title,
+    premise: $("#ns-premise").value.trim(),
+    language: $("#ns-lang").value || "en",
+    mode: $("#ns-mode").value || "ongoing",
+    clips: []
+  };
+  S.series.push(newSeries);
+  S.activeSeriesId = id;
+  S.lang = newSeries.language;
+  S.filter = "all";
+  S.cur = 0;
+  $("#globalLang").value = S.lang;
+  $("#ns-title").value = "";
+  $("#ns-premise").value = "";
+  $("#new-series-form").classList.add("hide");
+  save();
+  showTab("clips");
+  renderAll();
+  toast(`Created series "${title}" ✓`);
+};
+
+$("#series-list").addEventListener("click", e => {
+  const delBtn = e.target.closest("button[data-del-series]");
+  if (delBtn) {
+    e.stopPropagation();
+    const id = delBtn.dataset.delSeries;
+    const target = S.series.find(sr => sr.id === id);
+    if (!target || !confirm(`Delete series "${target.title}" and its ${target.clips.length} clip scripts?`)) return;
+    S.series = S.series.filter(sr => sr.id !== id);
+    if (S.activeSeriesId === id) S.activeSeriesId = BUILTIN_SERIES_ID;
+    save(); renderAll();
+    toast("Series deleted ✓");
+    return;
+  }
+  const item = e.target.closest("[data-select-series]");
+  if (!item) return;
+  S.activeSeriesId = item.dataset.selectSeries;
+  S.filter = "all";
+  S.cur = 0;
+  save();
+  showTab("clips");
+  renderAll();
+});
+
+/* ---------- AI Concept & Ongoing Episode Generation ---------- */
+$("#btn-toggle-paste-json").onclick = () => $("#paste-json-box").classList.toggle("hide");
+$("#btn-cancel-paste").onclick = () => $("#paste-json-box").classList.add("hide");
+$("#btn-import-json").onclick = () => {
+  const raw = ($("#paste-json-input").value || "").trim();
+  if (!raw) { toast("Paste JSON first"); return; }
+  try {
+    const start = raw.search(/\[\s*\{/);
+    const end = raw.lastIndexOf("]");
+    const arr = JSON.parse(start >= 0 && end > start ? raw.slice(start, end + 1) : raw);
+    if (!Array.isArray(arr) || !arr.length) throw new Error("Expected a JSON array of skits.");
+    const chosenLang = $("#ai-lang").value || S.lang || "en";
+    const active = getActiveSeries();
+    let targetSeries = active.builtin ? null : S.series.find(sr => sr.id === active.id);
+    if (!targetSeries) {
+      targetSeries = {
+        id: "series-" + Date.now().toString(36),
+        title: `Imported Skits (${purpleStickLangInfo(chosenLang).short})`,
+        premise: "Imported from Claude / Gemini JSON.",
+        language: chosenLang,
+        mode: "standalone",
+        clips: []
+      };
+      S.series.push(targetSeries);
+      S.activeSeriesId = targetSeries.id;
+    }
+    const firstNewIdx = targetSeries.clips.length;
+    const added = arr.map(c => ({
+      cat: c.cat || "couple",
+      lang: c.lang || chosenLang,
+      who: Array.isArray(c.who) && c.who.length ? c.who : ["PURP_GUY", "PURP_GIRL"],
+      loc: c.loc || "LIVING_ROOM",
+      title: c.title || "PurpleStick Skit 😂",
+      hook: c.hook || "Wait for the punchline!",
+      line: Array.isArray(c.line) ? c.line.join("|") : String(c.line || c.dialogue || ""),
+      visual: c.visual || "",
+      reaction: c.reaction || "",
+      sfx: c.sfx || "",
+      tags: c.tags || "",
+      provider: "Imported JSON",
+      videoDay: S.nextVideoDay++
+    }));
+    targetSeries.clips.push(...added);
+    $("#paste-json-input").value = "";
+    $("#paste-json-box").classList.add("hide");
+    S.filter = "all"; S.cur = firstNewIdx;
+    save(); renderAll();
+    $("#ai-status").textContent = `✓ Imported ${added.length} skits into "${targetSeries.title}"!`;
+    toast(`+${added.length} skits imported ✓`);
+    $("#v" + firstNewIdx)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  } catch (err) {
+    toast("Invalid JSON: " + err.message);
+  }
+};
+
+document.querySelectorAll("button[data-ai-gen]").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    if (isFile) { toast("Open via http://127.0.0.1:8787/projects/purplestick/ to generate concepts"); return; }
+    const provider = btn.dataset.aiGen;
+    const providerLabel = provider === "claude" ? "Claude AI" : provider === "gemini-browser" ? "Gemini Browser" : "Gemini API";
+    const allBtns = [...document.querySelectorAll("button[data-ai-gen]")];
+    allBtns.forEach(b => { b.disabled = true; });
+
+    let active = getActiveSeries();
+    const chosenLang = $("#ai-lang").value || S.lang || "en";
+    const themeInput = $("#ai-theme").value.trim();
+    const count = Number($("#ai-count").value) || 5;
+    const st = $("#ai-status");
+
+    // If user is on the built-in read-only Classic pack, auto-create or target a dedicated series for generated clips
+    let targetSeries = active.builtin ? null : S.series.find(sr => sr.id === active.id);
+    if (!targetSeries) {
+      const autoTitle = themeInput ? `${themeInput.slice(0, 36)} (${purpleStickLangInfo(chosenLang).short})` : `AI Viral Pack (${purpleStickLangInfo(chosenLang).short})`;
+      targetSeries = {
+        id: "series-" + Date.now().toString(36),
+        title: autoTitle,
+        premise: themeInput || "AI-generated PurpleStick viral comedy skits.",
+        language: chosenLang,
+        mode: "standalone",
+        clips: []
+      };
+      S.series.push(targetSeries);
+      S.activeSeriesId = targetSeries.id;
+    }
+
+    st.textContent = `Generating ${count} ${purpleStickLangInfo(chosenLang).label} PurpleStick clip(s) via ${providerLabel}…${provider !== "gemini-api" ? " (keep Flow Chrome open)" : ""}`;
+    try {
+      const previousBeats = targetSeries.clips.map(c => `${c.title} — ${c.hook}`);
+      const r = await fetch("/api/purplestick/generate-concepts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          provider,
+          theme: themeInput || targetSeries.premise || "",
+          category: $("#ai-cat").value,
+          language: chosenLang,
+          seriesMode: targetSeries.mode,
+          seriesTitle: targetSeries.title,
+          count,
+          existingTitles: getAllClipsAcrossSeries().map(c => c.title),
+          previousBeats
+        })
+      });
+      const j = await r.json();
+      if (!r.ok || !j.ok) throw new Error(j.error || `${providerLabel} generation failed`);
+      const firstNewIdx = targetSeries.clips.length;
+      const added = (j.concepts || []).map(c => ({
+        ...c,
+        lang: c.lang || chosenLang,
+        provider: providerLabel,
+        videoDay: S.nextVideoDay++
+      }));
+      targetSeries.clips.push(...added);
+      S.filter = "all";
+      S.cur = firstNewIdx;
+      save();
+      renderAll();
+      st.textContent = `✓ Added ${added.length} new clip(s) into "${targetSeries.title}" via ${providerLabel}!`;
+      toast(`+${added.length} new clips added ✓`);
+      $("#v" + firstNewIdx)?.scrollIntoView({ behavior: "smooth", block: "start" });
+    } catch (err) {
+      st.textContent = `${providerLabel} error: ${err.message}`;
+      toast(`${providerLabel} failed`);
+    } finally {
+      allBtns.forEach(b => { b.disabled = false; });
+    }
+  });
+});
 
 /* ---------- Custom Skit Maker ---------- */
 function initCustomBuilder() {
@@ -286,15 +801,15 @@ function initCustomBuilder() {
   $("#cs-char-b").value = "PURP_GIRL";
   $("#cs-loc").innerHTML = Object.keys(LOCS).map(k => `<option value="${k}">${esc(k)}</option>`).join("");
   $("#cs-loc").value = "LIVING_ROOM";
+  $("#cs-lang").value = S.lang || "en";
 
-  const updatePreview = () => {
-    $("#cs-preview").textContent = getCustomPrompt();
-  };
-  ["#cs-title", "#cs-char-a", "#cs-char-b", "#cs-loc", "#cs-dialogue", "#cs-reaction"].forEach(sel => {
+  const updatePreview = () => { $("#cs-preview").textContent = getCustomPrompt(); };
+  ["#cs-title", "#cs-lang", "#cs-char-a", "#cs-char-b", "#cs-loc", "#cs-dialogue"].forEach(sel => {
     $(sel)?.addEventListener("input", updatePreview);
     $(sel)?.addEventListener("change", updatePreview);
   });
   $("#cs-copy").onclick = () => copy(getCustomPrompt(), "Custom PurpleStick prompt copied ✓");
+  $("#cs-add-series").onclick = addCustomToActiveSeries;
   $("#cs-gen").onclick = genCustomSkit;
   updatePreview();
 }
@@ -306,11 +821,40 @@ function getCustomPrompt() {
     charB: $("#cs-char-b")?.value,
     loc: $("#cs-loc")?.value,
     dialogue: $("#cs-dialogue")?.value.trim(),
-    reaction: $("#cs-reaction")?.value.trim(),
     ar: S.ar,
     dur: S.dur,
-    includeOverlay: S.overlay !== false
+    includeOverlay: S.overlay !== false,
+    lang: $("#cs-lang")?.value || S.lang || "en"
   });
+}
+
+function addCustomToActiveSeries() {
+  const active = getActiveSeries();
+  let target = active.builtin ? S.series[0] : S.series.find(sr => sr.id === active.id);
+  const lang = $("#cs-lang").value || S.lang || "en";
+  if (!target) {
+    target = { id: "series-" + Date.now().toString(36), title: "My Custom Skits", premise: "Hand-crafted PurpleStick comedy skits.", language: lang, mode: "standalone", clips: [] };
+    S.series.push(target);
+  }
+  const line = ($("#cs-dialogue").value || "").trim().split(/\r?\n+/).map(s => s.trim()).filter(Boolean).join("|");
+  target.clips.push({
+    cat: "couple",
+    lang,
+    who: [...new Set([$("#cs-char-a").value, $("#cs-char-b").value].filter(Boolean))],
+    loc: $("#cs-loc").value,
+    title: $("#cs-title").value.trim() || "Custom PurpleStick Skit 😂",
+    hook: "Custom skit",
+    line,
+    visual: "Setup -> Twist -> Punchline visual action beats.",
+    sfx: "Expressive cartoon voices with subtle matching sound effects.",
+    provider: "Custom",
+    videoDay: S.nextVideoDay++
+  });
+  S.activeSeriesId = target.id;
+  save();
+  showTab("clips");
+  renderAll();
+  toast(`Added to "${target.title}" ✓`);
 }
 
 async function genCustomSkit() {
@@ -318,15 +862,13 @@ async function genCustomSkit() {
   const btn = $("#cs-gen");
   const st = $("#cs-status");
   btn.disabled = true;
-  const customDay = Math.max(31, Number(S.customDay) || 31);
-  st.textContent = `Generating custom PurpleStick skit #${customDay} in Flow… keep the Flow Chrome window open.`;
+  const customDay = S.nextVideoDay++;
+  save();
+  const lang = $("#cs-lang").value || S.lang || "en";
+  st.textContent = `Generating custom PurpleStick skit (day-${customDay}.mp4) in Flow… keep the Flow Chrome window open.`;
   try {
-    const who = [$("#cs-char-a").value, $("#cs-char-b").value].filter(Boolean);
-    const characters = [...new Set(who)].map(code => ({
-      code,
-      name: CHAR_NAMES[code] || code,
-      refPrompt: `Character reference: clean full-body 2D vector cartoon stickman character turnaround sheet of ${CHARS[code] || code} Plain clean white background, thick crisp black outlines, huge expressive eyes, no text.`
-    }));
+    const who = [...new Set([$("#cs-char-a").value, $("#cs-char-b").value].filter(Boolean))];
+    const characters = purpleStickCharactersForClip({ who });
     const r = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -337,13 +879,16 @@ async function genCustomSkit() {
         model: S.model,
         aspect: S.ar,
         duration: S.dur,
+        resolution: S.res || "360p",
+        upscale: S.upscale || "auto",
+        language: lang,
+        burnSubtitles: S.overlay !== false,
+        dialogueText: $("#cs-dialogue")?.value.trim() || "",
         characters
       })
     });
     const j = await r.json();
     if (!r.ok || !j.ok) throw new Error(j.error || "Generation failed");
-    S.customDay = customDay + 1;
-    save();
     st.textContent = "Saved to " + j.file;
     toast("Custom PurpleStick skit saved ✓");
   } catch (err) {
@@ -389,8 +934,8 @@ function renderCastAssetsUi() {
     if (!slot) return;
     const url = castAssets[key];
     slot.innerHTML = url
-      ? `<img src="${url}" alt="${esc(key)}" style="width:100%;max-height:180px;object-fit:cover;border-radius:8px;border:1px solid var(--line);margin-top:6px">`
-      : `<div class="sub" style="margin-top:6px;padding:10px;border:1px dashed var(--line);border-radius:8px">No cloud reference image yet · Auto-generated on first Flow run (when Character Consistency is on) or upload below</div>`;
+      ? `<img src="${url}" alt="${esc(key)}" style="width:100%;max-height:190px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid var(--line);margin-top:6px">`
+      : `<div class="sub" style="margin-top:6px;padding:10px;border:1px dashed var(--line);border-radius:8px">No cloud reference image yet · Auto-generated on first Flow run or upload below</div>`;
   });
 }
 
@@ -456,18 +1001,15 @@ function renderCastAndRules() {
 
   $("#rules").innerHTML = `
     <div class="info-box">
-      <h2>🟣 PurpleStick Viral Facebook Reels Formula</h2>
-      <div class="note">Built to match the exact viral formula of RedStick (10M–24M view Reels) — rebranded 100% as <b>PurpleStick</b>.</div>
+      <h2>🟣 PurpleStick Multi-Series Production Pipeline</h2>
+      <div class="note">Designed for scaling PurpleStick into a high-volume viral Reels channel across <b>English, Hindi &amp; Nepali</b>.</div>
       <ol>
-        <li><b>Instant 9:16 Hook (0–2s):</b> Start mid-conversation immediately—zero intro, zero title card. The big royal-purple stickman head and pastel background stop the scroll instantly.</li>
-        <li><b>Tight 8–10s Punchline Arc:</b> Setup (0–3s) → Twist/Escalation (3–6s) → Explosive Punchline + Cartoon Shock/Slap/Starry-Eyes Reaction (6–9s).</li>
-        <li><b>Logo &amp; Viral Captions Toggle:</b> Keep <b>Logo &amp; viral captions</b> checked to generate the PurpleStick watermark + bold yellow/white outlined captions straight out of Google Flow. Uncheck it if you prefer a 100% clean frame to add custom CapCut captions.</li>
-        <li><b>Automatic Laughing Meme Outro (Built-in):</b> By default for PurpleStick, every Flow-generated video automatically appends <code>projects/purplestick/assets/Breakfast_Club_3s_to_6s.mp4</code> (letterboxed cleanly into the 9:16 frame with normalized audio) before saving the final MP4!</li>
-        <li><b>Character Consistency:</b> Check <b>Character consistency</b> in the top bar so Google Flow locks your exact PurpleStick Guy, Girl, and Teacher designs across every episode.</li>
-        <li><b>Saved Output:</b> Generated MP4s save to <code>projects/purplestick/videos/day-01.mp4</code> … <code>day-30.mp4</code> and can auto-post to Facebook, TikTok, or Telegram.</li>
+        <li><b>Organize by Series / Ongoing Shows:</b> Click <b>+ New Series</b> in the left sidebar to launch an ongoing 10-second comedy show (like <i>Husband vs Wife Chaos S1</i>) or a dedicated Hindi/Nepali topic pack.</li>
+        <li><b>Generate 5–15 Episodes at Once:</b> Use <b>Claude AI</b>, <b>Gemini Browser</b>, or <b>Gemini API</b> to write fresh skits—in <b>Ongoing Series</b> mode, the AI automatically reads previous episodes so every new 10s clip escalates your running gags in order!</li>
+        <li><b>Consistent Personalized Cast:</b> Your custom 2D PurpleStick caricature sheets (<code>PURP_GUY.png</code> &amp; <code>PURP_GIRL.png</code>) are automatically attached in Flow when <b>Character consistency</b> is checked.</li>
+        <li><b>Exact Word-Level Moving-Yellow Subtitles:</b> Flow renders a clean text-free video; Story Studio extracts the audio, gets millisecond word timestamps from <code>/transcribe</code> (in English, Hindi, or Nepali), burns bold white phrases with the active word glowing bright yellow + the <b>PurpleStick</b> top logo, and appends <code>Breakfast_Club_3s_to_6s.mp4</code> automatically!</li>
       </ol>
       <h3>Master PurpleStick Style Lock</h3><pre>${esc(PURPLESTICK_MASTER_STYLE)}</pre>
-      <h3>Audio &amp; Voice Acting Lock</h3><pre>${esc(PURPLESTICK_AUDIO_RULE)}</pre>
     </div>`;
 }
 
@@ -483,13 +1025,32 @@ function showTab(t) {
 $("#list").addEventListener("click", e => {
   const b = e.target.closest("button[data-act]");
   if (!b) return;
+  const act = b.dataset.act;
   const i = +b.dataset.i;
+  const sr = getActiveSeries();
+  const clips = getActiveClips();
+
+  if (act === "remove-clip" && !sr.builtin) {
+    const target = S.series.find(x => x.id === sr.id);
+    if (target) { target.clips.splice(i, 1); save(); renderAll(); toast("Clip removed ✓"); }
+    return;
+  }
+  if ((act === "move-up" || act === "move-down") && !sr.builtin) {
+    const target = S.series.find(x => x.id === sr.id);
+    const swapIdx = act === "move-up" ? i - 1 : i + 1;
+    if (target && swapIdx >= 0 && swapIdx < target.clips.length) {
+      [target.clips[i], target.clips[swapIdx]] = [target.clips[swapIdx], target.clips[i]];
+      save(); renderAll();
+    }
+    return;
+  }
+
   S.cur = i; save();
-  if (b.dataset.act === "gen") { genVideo(i); return; }
-  if (b.dataset.act === "tiktok" || b.dataset.act === "facebook" || b.dataset.act === "telegram") { postSocial(b.dataset.act, i); return; }
-  if (b.dataset.act === "prompt") copy(buildPrompt(i), `Skit #${i + 1} prompt copied ✓`);
-  if (b.dataset.act === "line") copy(CLIPS[i].dialogueLines, "Dialogue copied ✓");
-  if (b.dataset.act === "cap") copy(CLIPS[i].cap, "Viral caption copied ✓");
+  if (act === "gen") { genVideo(i); return; }
+  if (act === "tiktok" || act === "facebook" || act === "telegram") { postSocial(act, i); return; }
+  if (act === "prompt") copy(buildPromptForClip(clips[i], clips.length), `Clip #${i + 1} prompt copied ✓`);
+  if (act === "line") copy(clips[i].dialogueLines, "Dialogue copied ✓");
+  if (act === "cap") copy(clips[i].cap, "Viral caption copied ✓");
   document.querySelectorAll(".card.cur").forEach(el => el.classList.remove("cur"));
   $("#v" + i)?.classList.add("cur");
 });
@@ -497,9 +1058,9 @@ $("#list").addEventListener("click", e => {
 $("#list").addEventListener("change", e => {
   const c = e.target.closest("input[data-done]");
   if (!c) return;
-  const i = +c.dataset.done;
-  if (c.checked) S.done[i + 1] = true; else delete S.done[i + 1];
-  save(); progress();
+  const day = +c.dataset.done;
+  if (c.checked) S.done[day] = true; else delete S.done[day];
+  save(); progress(); renderBanner();
   c.closest(".card").classList.toggle("done", c.checked);
 });
 
@@ -512,39 +1073,52 @@ $("#filters").addEventListener("click", e => {
 document.querySelectorAll("nav button[data-t]").forEach(b => b.onclick = () => showTab(b.dataset.t));
 
 $("#nx").onclick = () => {
-  const i = nextIndex();
-  if (i < 0) { toast("All 30 PurpleStick skits are marked made 🎉"); return; }
+  const i = nextIndexInActive();
+  if (i < 0) { toast("All clips in this series are marked made 🎉"); return; }
+  const clips = getActiveClips();
   S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
-  copy(buildPrompt(i), `Skit #${i + 1} prompt copied ✓`);
+  copy(buildPromptForClip(clips[i], clips.length), `Clip #${i + 1} prompt copied ✓`);
   $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
 };
 
 $("#gnx").onclick = () => {
-  const i = nextIndex();
-  if (i < 0) { toast("All 30 PurpleStick skits are marked made 🎉"); return; }
+  const i = nextIndexInActive();
+  if (i < 0) { toast("All clips in this series are marked made 🎉"); return; }
   S.cur = i; S.filter = "all"; save(); showTab("clips"); renderFilters(); renderList();
   $("#v" + i)?.scrollIntoView({ behavior: "smooth", block: "start" });
   genVideo(i);
 };
 
+$("#globalLang").onchange = e => {
+  S.lang = e.target.value;
+  $("#ai-lang").value = S.lang;
+  $("#cs-lang").value = S.lang;
+  save();
+  $("#cs-preview").textContent = getCustomPrompt();
+  toast(`Default language: ${purpleStickLangInfo(S.lang).label}`);
+};
 $("#ar").onchange = e => { S.ar = e.target.value; S.picked = true; save(); renderList(); $("#cs-preview").textContent = getCustomPrompt(); };
 $("#model").onchange = e => { S.model = e.target.value; S.picked = true; save(); };
 $("#dur").onchange = e => { S.dur = e.target.value; S.picked = true; save(); progress(); renderList(); $("#cs-preview").textContent = getCustomPrompt(); };
-$("#overlayToggle").onchange = e => { S.overlay = Boolean(e.target.checked); save(); renderList(); $("#cs-preview").textContent = getCustomPrompt(); toast(S.overlay ? "Logo & viral captions enabled ✓" : "Clean frame mode (for CapCut) ✓"); };
+$("#res").onchange = e => { S.res = e.target.value; S.picked = true; save(); toast(`Resolution: ${S.res}`); };
+$("#upscale").onchange = e => { S.upscale = e.target.value; S.picked = true; save(); toast(`Upscale: ${S.upscale}`); };
+$("#overlayToggle").onchange = e => { S.overlay = Boolean(e.target.checked); save(); toast(S.overlay ? "Auto-synced moving-yellow captions & logo ON ✓" : "Clean frame (no burned captions) ✓"); };
 
 $("#dl").onclick = () => {
-  const txt = CLIPS.map((c, i) =>
-    `=== PURPLESTICK SKIT #${i + 1}: ${c.title} (${catInfo(c.cat).label}) ===\n${c.hook}\n\nDIALOGUE:\n${c.dialogueLines}\n\nFLOW PROMPT:\n${buildPrompt(i)}\n\nVIRAL CAPTION:\n${c.cap}\n`
+  const sr = getActiveSeries();
+  const clips = getActiveClips();
+  const txt = clips.map((c, i) =>
+    `=== ${sr.title} — CLIP #${i + 1} (day-${String(c.videoDay).padStart(2, "0")}.mp4): ${c.title} ===\n${c.hook}\n\nDIALOGUE:\n${c.dialogueLines}\n\nFLOW PROMPT:\n${buildPromptForClip(c, clips.length)}\n\nVIRAL CAPTION:\n${c.cap}\n`
   ).join("\n\n");
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([txt], { type: "text/plain;charset=utf-8" }));
-  a.download = "purplestick-prompts.txt";
+  a.download = `purplestick-${sr.id}.txt`;
   document.body.append(a); a.click(); a.remove();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
 
 const isFile = location.protocol === "file:";
-function setGen(i, msg) { GEN[i] = msg; const el = $("#g" + i); if (el) el.textContent = msg; }
+function setGen(day, msg) { GEN[day] = msg; const el = $("#g" + day); if (el) el.textContent = msg; }
 
 async function checkApi() {
   const el = $("#api");
@@ -562,9 +1136,9 @@ async function applyFlowDefaults() {
     const ccToggle = $("#charConsistencyToggle");
     if (ccToggle) ccToggle.checked = Boolean(j.effective?.characters?.consistency);
     if (S.picked) return;
-    S.model = j.effective.video.model; S.ar = j.effective.video.aspect || "9:16"; S.dur = j.effective.video.duration || "10s";
+    S.model = j.effective.video.model; S.ar = j.effective.video.aspect || "9:16"; S.dur = j.effective.video.duration || "8s"; S.res = j.effective.video.resolution || "360p"; S.upscale = j.effective.video.upscale || "auto";
     save();
-    $("#model").value = S.model; $("#dur").value = S.dur; $("#ar").value = S.ar;
+    $("#model").value = S.model; $("#dur").value = S.dur; $("#ar").value = S.ar; $("#res").value = S.res; $("#upscale").value = S.upscale;
     renderList(); progress();
   } catch {}
 }
@@ -593,13 +1167,13 @@ $("#charConsistencyToggle")?.addEventListener("change", async e => {
   }
 });
 
-function socialContextFor(i) {
-  const item = CLIPS[i];
-  return `PurpleStick viral 9:16 2D stickman comedy reel #${i + 1}: "${item.title}"\nHook: ${item.hook}\nDialogue:\n${item.dialogueLines}\nPreset viral caption:\n${item.cap}`.slice(0, 4800);
+function socialContextForClip(item) {
+  return `PurpleStick viral 9:16 2D stickman comedy reel (${purpleStickLangInfo(item.lang).label}): "${item.title}"\nHook: ${item.hook}\nDialogue:\n${item.dialogueLines}\nPreset viral caption:\n${item.cap}`.slice(0, 4800);
 }
 
 async function postSocial(platform, i) {
   if (isFile) { toast(`Open via http://127.0.0.1:8787 to post to ${platform}`); return; }
+  const item = getActiveClips()[i];
   const label = platform === "facebook" ? "Facebook" : platform === "telegram" ? "Telegram" : "TikTok";
   const btn = document.querySelector(`button[data-act="${platform}"][data-i="${i}"]`);
   if (btn) btn.disabled = true;
@@ -607,15 +1181,15 @@ async function postSocial(platform, i) {
     await window.StoryStudioSocial.postMedia({
       platform,
       projectId: PROJECT_ID,
-      day: i + 1,
-      context: socialContextFor(i),
-      label: `Skit #${i + 1}`,
-      onStatus: m => setGen(i, m)
+      day: item.videoDay,
+      context: socialContextForClip(item),
+      label: `Clip #${i + 1}`,
+      onStatus: m => setGen(item.videoDay, m)
     });
-    setGen(i, `Posted to ${label} ✓`);
-    toast(`Skit #${i + 1} posted to ${label} ✓`);
+    setGen(item.videoDay, `Posted to ${label} ✓`);
+    toast(`Clip #${i + 1} posted to ${label} ✓`);
   } catch (err) {
-    setGen(i, `${label} failed: ${err.message}`);
+    setGen(item.videoDay, `${label} failed: ${err.message}`);
     toast(`${label} upload failed.`);
   } finally {
     if (btn) btn.disabled = false;
@@ -624,45 +1198,53 @@ async function postSocial(platform, i) {
 
 async function genVideo(i) {
   if (isFile) { toast("Open via http://127.0.0.1:8787/projects/purplestick/ to generate"); return; }
+  const clips = getActiveClips();
+  const item = clips[i];
+  if (!item) return;
   const btn = document.querySelector(`button[data-act="gen"][data-i="${i}"]`);
   const gnxBtn = $("#gnx");
   if (btn) btn.disabled = true;
   if (gnxBtn) gnxBtn.disabled = true;
-  setGen(i, "Generating PurpleStick skit in Flow… keep the Flow Chrome window open.");
+  setGen(item.videoDay, `Generating PurpleStick clip (day-${String(item.videoDay).padStart(2, "0")}.mp4 · ${purpleStickLangInfo(item.lang).short}) in Flow…`);
   try {
     const r = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         project: PROJECT_ID,
-        day: i + 1,
-        prompt: buildPrompt(i),
+        day: item.videoDay,
+        prompt: buildPromptForClip(item, clips.length),
         model: S.model,
         aspect: S.ar,
         duration: S.dur,
-        characters: purpleStickCharactersFor(i)
+        resolution: S.res || "360p",
+        upscale: S.upscale || "auto",
+        language: item.lang || S.lang || "en",
+        burnSubtitles: S.overlay !== false,
+        dialogueText: item.dialogueLines || "",
+        characters: purpleStickCharactersForClip(item)
       })
     });
     const j = await r.json();
     if (!r.ok || !j.ok) throw new Error(j.error || "Generation failed");
-    setGen(i, "Saved to " + j.file);
-    S.done[i + 1] = true; save(); progress(); renderList();
+    S.done[item.videoDay] = true; save();
+    renderAll();
     loadCastAssets();
-    setGen(i, "Saved to " + j.file);
-    toast(`Skit #${i + 1} video saved ✓`);
+    setGen(item.videoDay, "Saved to " + j.file);
+    toast(`Clip #${i + 1} saved with synced captions & outro ✓`);
     await window.StoryStudioSocial?.autoPostAfterFlow?.({
       projectId: PROJECT_ID,
-      day: i + 1,
-      context: socialContextFor(i),
+      day: item.videoDay,
+      context: socialContextForClip(item),
       tiktokEnabled: Boolean($("#autoPostToggle")?.checked),
       facebookEnabled: Boolean($("#autoPostFacebookToggle")?.checked),
       telegramEnabled: Boolean($("#autoPostTelegramToggle")?.checked),
-      label: `Skit #${i + 1}`,
-      onStatus: m => setGen(i, m),
+      label: `Clip #${i + 1}`,
+      onStatus: m => setGen(item.videoDay, m),
       onToast: toast
     });
   } catch (err) {
-    setGen(i, "Failed: " + err.message);
+    setGen(item.videoDay, "Failed: " + err.message);
     toast("Generation failed. See the status line.");
   } finally {
     if (btn) btn.disabled = false;
@@ -674,13 +1256,17 @@ window.addEventListener("storage", e => {
   if (e.key !== KEY && e.key !== JOB_KEY) return;
   try { const r = localStorage.getItem(KEY); if (r) S = Object.assign(S, JSON.parse(r)); } catch {}
   syncFailedStudioJob();
-  renderList(); progress();
+  renderAll();
 });
 
 $("#ar").value = S.ar; $("#model").value = S.model; $("#dur").value = S.dur;
+$("#res").value = S.res || "360p"; $("#upscale").value = S.upscale || "auto";
+$("#globalLang").value = S.lang || "en";
 $("#overlayToggle").checked = S.overlay !== false;
 initCustomBuilder();
-renderFilters(); renderList(); renderCastAndRules(); progress(); showTab(S.tab || "clips");
+renderCastAndRules();
+renderAll();
+showTab(S.tab || "clips");
 checkApi(); applyFlowDefaults(); loadCastAssets();
 window.StoryStudioSocial?.initAutoPostToggles?.({
   projectId: PROJECT_ID,
@@ -692,12 +1278,16 @@ window.StoryStudioSocial?.initAutoPostToggles?.({
 window.StoryStudioStorage?.seedDefaultCharacters?.();
 window.StoryStudioStorage?.syncWorkspaceProgress?.({
   projectId: PROJECT_ID,
-  totalClips: CLIPS.length,
-  readLocal: () => ({ checked: { ...(S.done || {}) }, state: S, hasLocal: Object.keys(S.done || {}).length > 0, completedCount: CLIPS.filter((_, i) => S.done[i + 1]).length }),
+  totalClips: getAllClipsAcrossSeries().length,
+  readLocal: () => {
+    const all = getAllClipsAcrossSeries();
+    return { checked: { ...(S.done || {}) }, state: S, hasLocal: Object.keys(S.done || {}).length > 0, completedCount: all.filter(c => S.done[c.videoDay]).length };
+  },
   applyMerged: (checked, mergedState) => {
     S = Object.assign(S, mergedState || {}, { done: checked || {} });
+    if (!Array.isArray(S.series)) S.series = [];
     try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {}
-    renderFilters(); renderList(); progress();
+    renderAll();
   }
 });
 </script>

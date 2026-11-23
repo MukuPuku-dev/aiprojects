@@ -152,32 +152,37 @@ async function extractAssistantResponse(page) {
     const msgs = [...document.querySelectorAll('[data-testid="assistant-message"]')];
     const last = msgs[msgs.length - 1];
     if (!last) return '';
-    // Prefer a JSON code block if Claude fenced its JSON response
-    const codeBlocks = [...last.querySelectorAll('pre code')].map(c => (c.innerText || '').trim()).filter(Boolean);
+
+    const cleanAndNormalize = raw => {
+      let s = String(raw || '').trim().replace(/^Claude responded:\s*/i, '').trim();
+      if (s.includes('{') && s.includes('}') && /[\u201C\u201D]/.test(s)) {
+        s = s.replace(/[\u201C\u201D]/g, '"');
+      }
+      return s;
+    };
+
+    // 1. Prefer a JSON code block if Claude fenced its JSON response (check both pre code and pre)
+    const codeBlocks = [...last.querySelectorAll('pre code, pre')]
+      .map(c => cleanAndNormalize(c.innerText || c.textContent || ''))
+      .filter(Boolean);
     const jsonBlock = codeBlocks
       .filter(txt => txt.includes('{') && txt.includes('}'))
       .sort((a, b) => b.length - a.length)[0];
     if (jsonBlock) return jsonBlock;
 
-    // Otherwise clone the visible response body without .sr-only duplicates or action buttons
-    const body = last.querySelector('.standard-markdown, .font-claude-response, .font-claude-message') || last;
-    const clone = body.cloneNode(true);
-    clone.querySelectorAll('.sr-only, button, [role="toolbar"], [data-testid*="action"]').forEach(n => n.remove());
-    let raw = (clone.innerText || clone.textContent || '').trim();
-    raw = raw.replace(/^Claude responded:\s*/i, '').trim();
-    // Normalize typographic double quotes if Claude formatted raw JSON in a paragraph
-    if (raw.includes('{') && raw.includes('}') && /[“”]/.test(raw)) {
-      const normalized = raw.replace(/[“”]/g, '"');
-      try {
-        const s = normalized.indexOf('{');
-        const e = normalized.lastIndexOf('}');
-        if (s >= 0 && e > s) {
-          JSON.parse(normalized.slice(s, e + 1));
-          return normalized.slice(s, e + 1);
-        }
-      } catch {}
-    }
-    return raw;
+    // 2. Check ALL markdown/response containers (skipping thinking blocks that lack JSON)
+    const containers = [...last.querySelectorAll('.standard-markdown, .font-claude-response, .font-claude-message')];
+    const jsonContainer = containers
+      .map(el => cleanAndNormalize(el.innerText || el.textContent || ''))
+      .filter(txt => txt.includes('{') && txt.includes('}'))
+      .sort((a, b) => b.length - a.length)[0];
+    if (jsonContainer) return jsonContainer;
+
+    // 3. Fallback to the full visible text of the last assistant message
+    const fullText = cleanAndNormalize(last.innerText || last.textContent || '');
+    if (fullText) return fullText;
+
+    return '';
   });
 }
 

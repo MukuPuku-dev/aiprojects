@@ -1,0 +1,10 @@
+{
+  "hostId": "female-host",
+  "presetId": "nepali_female_educator",
+  "name": "Akansha",
+  "masterPrompt": "Ultra-realistic chest-up studio webcam portrait of the exact same confident young Nepali woman from the reference sheet, wavy dark hair styled half-up, warm radiant smile, wearing her sharp navy-blue tailored blazer suit, crisp white collared shirt, patterned tie, and subtle lapel pin, seated facing a 4K webcam straight-on, soft even studio lighting, isolated on a 100% PURE SOLID SEAMLESS WHITE BACKGROUND (#FFFFFF). Zero lines, zero outdoors, zero bookshelves, zero props, centered head and shoulders for circular crop, no text, no watermark.",
+  "jpegQuality": 82,
+  "frameSize": 384,
+  "edgeTrimPercent": 3.5,
+  "exportTargetDir": "c:\\Windows.old\\Users\\Dell\\Documents\\newQuiz-main\\quiz-app\\public\\host-frames\\female"
+}

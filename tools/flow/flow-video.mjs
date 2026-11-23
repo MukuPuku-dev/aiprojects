@@ -1,10 +1,12 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright-core';
 import { FLOW_URL, SELECTORS as S } from './selectors.mjs';
 import { ensureCredits, readAccountList } from './flow-accounts.mjs';
+import { PRO_UPSCALE_ACCOUNTS } from './flow-settings.mjs';
 import { attachCharactersToPrompt, ensureCharactersInFlow } from './flow-characters.mjs';
 import { ensureFlowProject } from './flow-project.mjs';
 
@@ -102,13 +104,139 @@ async function selectModel(page, modelButton, model) {
   if (!((await modelButton.innerText()).trim().startsWith(model))) throw new Error(`Flow did not select model ${model}.`);
 }
 
-async function configure(page, { model, aspect, duration }) {
+async function setDuration(page, duration, log = console.log) {
+  const radio = page.getByRole('radio', { name: S.durationRadio(duration) }).first();
+  if (await radio.isVisible({ timeout: 1200 }).catch(() => false)) {
+    await setRadio(page, radio, `duration ${duration}`);
+    return;
+  }
+
+  // Omni 1.2 Flash uses a Material slider (.duration-slider-section) whose <input type="range">
+  // uses a 0-based index (e.g. min=0..max=7 mapping to 3 sec..10 sec). Always derive the offset
+  // dynamically from the displayed `.duration-slider-value` ("7 sec") vs input.value (4).
+  const slider = page.locator(
+    '.cdk-overlay-container .duration-slider input[type="range"], .cdk-overlay-container input[type="range"][aria-label="Length"], .cdk-overlay-container input[type="range"], .cdk-overlay-container [role="slider"]'
+  ).first();
+  const hasSlider = (await slider.count().catch(() => 0)) > 0;
+  if (!hasSlider) {
+    // Model has a fixed duration with no radio or slider control.
+    return;
+  }
+
+  const targetSec = parseInt(String(duration), 10) || 8;
+  const readSliderState = async () => page.evaluate(() => {
+    const overlay = document.querySelector('.cdk-overlay-container') || document.body;
+    const section = overlay.querySelector('.duration-slider-section') || overlay;
+    const el = section.querySelector('input[type="range"], [role="slider"]')
+      || overlay.querySelector('input[type="range"], [role="slider"]');
+    if (!el) return null;
+    const parseNum = v => (v === null || v === undefined || v === '' || Number.isNaN(Number(v)) ? null : Number(v));
+    const rawVal = parseNum(el.value) ?? parseNum(el.getAttribute('aria-valuenow'));
+    const rawMin = parseNum(el.min) ?? parseNum(el.getAttribute('aria-valuemin')) ?? 0;
+    const rawMax = parseNum(el.max) ?? parseNum(el.getAttribute('aria-valuemax')) ?? 7;
+    const valEl = section.querySelector('.duration-slider-value');
+    const valText = valEl ? valEl.innerText : (section.innerText || '');
+    const secMatch = valText.match(/(\d+)\s*sec/i);
+    const displayedSec = secMatch ? Number(secMatch[1]) : null;
+    const offset = (displayedSec !== null && rawVal !== null) ? (displayedSec - rawVal) : 0;
+    return {
+      rawVal,
+      rawMin,
+      rawMax,
+      displayedSec,
+      offset,
+      minSec: rawMin + offset,
+      maxSec: rawMax + offset,
+      tag: el.tagName
+    };
+  });
+
+  let state = await readSliderState();
+  if (!state) return;
+  const clampedSec = Math.max(state.minSec, Math.min(state.maxSec, targetSec));
+  const targetRaw = Math.max(state.rawMin, Math.min(state.rawMax, clampedSec - state.offset));
+  if (state.displayedSec === clampedSec) {
+    log(`Flow Length slider already at ${clampedSec} sec.`);
+    return;
+  }
+
+  // Strategy A: Native HTMLInputElement value setter + input/change events using the exact slider index
+  if (state.tag === 'INPUT') {
+    await page.evaluate(nextRaw => {
+      const overlay = document.querySelector('.cdk-overlay-container') || document.body;
+      const input = overlay.querySelector('.duration-slider input[type="range"], input[type="range"][aria-label="Length"], input[type="range"]');
+      if (!input) return;
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set;
+      if (setter) setter.call(input, String(nextRaw));
+      else input.value = String(nextRaw);
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      input.dispatchEvent(new Event('change', { bubbles: true }));
+    }, targetRaw);
+    await page.waitForTimeout(250);
+    state = await readSliderState();
+    if (state?.displayedSec === clampedSec) {
+      log(`Flow Length slider set to ${clampedSec} sec (index ${targetRaw}).`);
+      return;
+    }
+  }
+
+  // Strategy B: Focus slider and step with ArrowRight / ArrowLeft until displayedSec matches clampedSec
+  await slider.focus().catch(async () => { await slider.click({ force: true }).catch(() => {}); });
+  for (let step = 0; step < 20; step++) {
+    state = await readSliderState();
+    if (!state || state.displayedSec === null || state.displayedSec === clampedSec) break;
+    await page.keyboard.press(state.displayedSec < clampedSec ? 'ArrowRight' : 'ArrowLeft');
+    await page.waitForTimeout(150);
+  }
+  state = await readSliderState();
+  if (state?.displayedSec === clampedSec) {
+    log(`Flow Length slider set to ${clampedSec} sec (keyboard).`);
+    return;
+  }
+
+  // Strategy C: Direct click on the mat-slider track at the exact index ratio
+  const track = page.locator('.cdk-overlay-container .duration-slider, .cdk-overlay-container mat-slider').first();
+  const box = await track.boundingBox().catch(() => null);
+  if (box && box.width > 10 && state && state.rawMax > state.rawMin) {
+    const ratio = (targetRaw - state.rawMin) / (state.rawMax - state.rawMin);
+    const clickX = box.x + Math.max(2, Math.min(box.width - 2, box.width * ratio));
+    const clickY = box.y + box.height / 2;
+    await page.mouse.click(clickX, clickY);
+    await page.waitForTimeout(250);
+    state = await readSliderState();
+  }
+
+  if (state?.displayedSec !== clampedSec) {
+    throw new Error(`Flow Length slider stayed at ${state?.displayedSec ?? 'unknown'} sec instead of ${clampedSec} sec.`);
+  }
+  log(`Flow Length slider set to ${clampedSec} sec (track click).`);
+}
+
+export function shouldUpscaleForAccount(upscale = 'auto', accountEmail = '') {
+  if (upscale === true || upscale === 'on') return true;
+  if (upscale === false || upscale === 'off') return false;
+  const email = String(accountEmail || '').trim().toLowerCase();
+  return PRO_UPSCALE_ACCOUNTS.includes(email);
+}
+
+async function setResolution(page, resolution, log = console.log) {
+  if (!resolution) return;
+  const radio = page.getByRole('radio', { name: new RegExp('^' + resolution.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'i') }).first();
+  if (!(await radio.isVisible({ timeout: 1200 }).catch(() => false))) return;
+  await setRadio(page, radio, `resolution ${resolution}`);
+  log(`Flow resolution set to ${resolution}.`);
+}
+
+async function configure(page, { model, aspect, duration, resolution }, log = console.log) {
   const modelButton = await openSettingsPanel(page);
   await setRadio(page, page.getByRole('radio', { name: S.videoModeRadio }), 'Video mode');
   await selectModel(page, modelButton, model);
   await setRadio(page, page.getByRole('radio', { name: S.aspectRadio(aspect) }), `aspect ${aspect}`);
-  await setRadio(page, page.getByRole('radio', { name: S.durationRadio(duration) }), `duration ${duration}`);
+  await setResolution(page, resolution, log);
+  await setDuration(page, duration, log);
   await setRadio(page, page.getByRole('radio', { name: S.singleRadio }), 'x1 output count');
+  await page.keyboard.press('Escape').catch(() => {});
+  await page.waitForTimeout(200);
 }
 
 async function configureImage(page, { model, aspect }) {
@@ -173,22 +301,144 @@ async function readElementDims(page, selector, wProp, hProp) {
   }, { selector, wProp, hProp }).catch(() => null);
 }
 
-async function downloadViaMenu(page, outFile, aspect, dims, emptyMessage, log) {
+async function pickDownloadMenuItem(page, { wantUpscale = false, preferTargetRes = '720p', log = console.log } = {}) {
+  const items = page.getByRole('menuitem');
+  await items.first().waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+  const count = await items.count().catch(() => 0);
+  if (!count) return { clicked: false, upscaled: false, label: '' };
+
+  const entries = [];
+  for (let i = 0; i < count; i++) {
+    const loc = items.nth(i);
+    if (!(await loc.isVisible().catch(() => false))) continue;
+    const text = ((await loc.innerText().catch(() => '')) || '').replace(/\s+/g, ' ').trim();
+    const ariaDisabled = (await loc.getAttribute('aria-disabled').catch(() => null)) === 'true';
+    const hasUpgrade = /\bUpgrade\b/i.test(text);
+    const isUpscaled = /\bUpscaled\b/i.test(text);
+    const isOriginal = S.downloadOriginalItem.test(text);
+    entries.push({ i, loc, text, disabled: ariaDisabled || hasUpgrade, isUpscaled, isOriginal });
+  }
+
+  if (wantUpscale) {
+    const unlockedUpscaled = entries.filter(e => e.isUpscaled && !e.disabled);
+    if (unlockedUpscaled.length) {
+      // Prefer 720p Upscaled when generated at 360p (or 1080p Upscaled if that's what's unlocked)
+      const preferred = unlockedUpscaled.find(e => new RegExp(preferTargetRes, 'i').test(e.text))
+        || unlockedUpscaled.find(e => /1080p/i.test(e.text))
+        || unlockedUpscaled[0];
+      log(`Pro upscale available — clicking "${preferred.text}" before downloading…`);
+      await preferred.loc.click();
+      return { clicked: true, upscaled: true, label: preferred.text };
+    }
+    log('No unlocked Upscaled option in Download menu (non-Pro account or already max); downloading Original size.');
+  }
+
+  const orig = entries.find(e => e.isOriginal && !e.disabled) || entries.find(e => !e.disabled && !/GIF/i.test(e.text));
+  if (orig) {
+    await orig.loc.click();
+    return { clicked: true, upscaled: false, label: orig.text };
+  }
+  return { clicked: false, upscaled: false, label: '' };
+}
+
+async function fetchBytesInPage(page, url) {
+  if (!url) return null;
+  // 1. Try Playwright's APIRequestContext (shares browser cookies) for http(s) URLs
+  if (/^https?:\/\//i.test(url)) {
+    try {
+      const res = await page.request.get(url, { timeout: 30000 });
+      if (res.ok()) {
+        const buf = await res.body();
+        if (buf && buf.length > 0) return buf;
+      }
+    } catch {}
+  }
+  // 2. Try in-page fetch (works for blob: URLs and same-origin authenticated media)
+  try {
+    const b64 = await page.evaluate(async targetUrl => {
+      const r = await fetch(targetUrl, { credentials: 'include' });
+      if (!r.ok) return null;
+      const blob = await r.blob();
+      return await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const s = String(reader.result || '');
+          const idx = s.indexOf(',');
+          resolve(idx >= 0 ? s.slice(idx + 1) : s);
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsDataURL(blob);
+      });
+    }, url);
+    if (b64) {
+      const buf = Buffer.from(b64, 'base64');
+      if (buf.length > 0) return buf;
+    }
+  } catch {}
+  return null;
+}
+
+async function saveDownloadResiliently(page, dl, outFile, log, fallbackSelector = '') {
+  fs.mkdirSync(path.dirname(outFile), { recursive: true });
+  try {
+    await dl.saveAs(outFile);
+    if (fs.existsSync(outFile) && fs.statSync(outFile).size > 0) return;
+  } catch (saveErr) {
+    log(`download.saveAs failed (${saveErr.message}); recovering media via fallback...`);
+  }
+
+  // Fallback 1: fetch directly from download URL (handles CDP temp-artifact ENOENT)
+  const dlUrl = (() => { try { return dl.url(); } catch { return ''; } })();
+  let buf = await fetchBytesInPage(page, dlUrl);
+
+  // Fallback 2: read directly from the visible media preview element (e.g. Flow image preview)
+  if ((!buf || !buf.length) && fallbackSelector) {
+    const src = await page.locator(fallbackSelector).first()
+      .evaluate(el => el.currentSrc || el.src || '')
+      .catch(() => '');
+    buf = await fetchBytesInPage(page, src);
+  }
+
+  if (buf && buf.length > 0) {
+    fs.writeFileSync(outFile, buf);
+    log(`Recovered download via direct media fetch (${buf.length} bytes).`);
+    return;
+  }
+
+  // Fallback 3: check Chrome's default Downloads folder if another CDP client reset download behavior
+  const suggested = (() => { try { return dl.suggestedFilename(); } catch { return ''; } })();
+  if (suggested) {
+    const candidate = path.join(os.homedir(), 'Downloads', path.basename(suggested));
+    try {
+      if (fs.existsSync(candidate)) {
+        const st = fs.statSync(candidate);
+        if (st.size > 0 && (Date.now() - st.mtimeMs) < 120000) {
+          fs.copyFileSync(candidate, outFile);
+          log(`Recovered download from Downloads folder: ${candidate}`);
+          return;
+        }
+      }
+    } catch {}
+  }
+
+  // Final retry of saveAs to surface a clean error if all fallbacks failed
+  await dl.saveAs(outFile);
+}
+
+async function downloadViaMenu(page, outFile, aspect, dims, emptyMessage, log, { wantUpscale = false, resolution = '360p', fallbackSelector = '' } = {}) {
   if (dims) checkAspect(dims.width, dims.height, aspect);
 
-  const downloadPromise = page.waitForEvent('download', { timeout: 60000 });
+  const timeoutMs = wantUpscale ? 240000 : 60000;
+  const downloadPromise = page.waitForEvent('download', { timeout: timeoutMs });
   await page.locator(S.downloadMediaButton).first().click();
-  const originalItem = page.getByRole('menuitem', { name: S.downloadOriginalItem }).first();
+
+  const preferTargetRes = resolution === '360p' ? '720p' : '1080p';
   const dl = await Promise.race([
     downloadPromise,
-    originalItem.waitFor({ state: 'visible', timeout: 10000 }).then(
-      async () => { await originalItem.click(); return downloadPromise; },
-      () => downloadPromise
-    )
+    pickDownloadMenuItem(page, { wantUpscale, preferTargetRes, log }).then(() => downloadPromise)
   ]);
 
-  fs.mkdirSync(path.dirname(outFile), { recursive: true });
-  await dl.saveAs(outFile);
+  await saveDownloadResiliently(page, dl, outFile, log, fallbackSelector);
   if (!fs.existsSync(outFile) || !fs.statSync(outFile).size) {
     throw new Error(emptyMessage);
   }
@@ -197,7 +447,7 @@ async function downloadViaMenu(page, outFile, aspect, dims, emptyMessage, log) {
   return { file: outFile, width: dims?.width ?? null, height: dims?.height ?? null };
 }
 
-export async function saveOpenedVideo(page, outFile, aspect, log = console.log) {
+export async function saveOpenedVideo(page, outFile, aspect, log = console.log, { wantUpscale = false, resolution = '360p' } = {}) {
   const player = page.locator(S.videoPlayer).first();
   const downloadBtn = page.locator(S.downloadMediaButton).first();
   await Promise.any([
@@ -207,9 +457,15 @@ export async function saveOpenedVideo(page, outFile, aspect, log = console.log) 
     throw new Error('Timed out waiting for the generated video player or download button.');
   });
 
+  // When upscaling is requested and Download media button is visible, use the Download menu so Flow upscales first!
+  if (wantUpscale && await downloadBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
+    const dims = await readElementDims(page, S.editorCanvas, 'width', 'height');
+    return downloadViaMenu(page, outFile, aspect, dims, 'Flow returned an empty video.', log, { wantUpscale: true, resolution });
+  }
+
   if (await player.count() > 0) return saveViaVideoElement(page, outFile, aspect, log);
   const dims = await readElementDims(page, S.editorCanvas, 'width', 'height');
-  return downloadViaMenu(page, outFile, aspect, dims, 'Flow returned an empty video.', log);
+  return downloadViaMenu(page, outFile, aspect, dims, 'Flow returned an empty video.', log, { wantUpscale, resolution });
 }
 
 export async function saveOpenedImage(page, outFile, aspect, log = console.log) {
@@ -218,7 +474,7 @@ export async function saveOpenedImage(page, outFile, aspect, log = console.log) 
     throw new Error('Timed out waiting for the generated image download button.');
   });
   const dims = await readElementDims(page, S.imagePreview, 'naturalWidth', 'naturalHeight');
-  return downloadViaMenu(page, outFile, aspect, dims, 'Flow returned an empty image.', log);
+  return downloadViaMenu(page, outFile, aspect, dims, 'Flow returned an empty image.', log, { fallbackSelector: S.imagePreview });
 }
 
 const normalizePrompt = text => text.replace(/\s+/g, ' ').trim();
@@ -270,12 +526,13 @@ async function diagnose(page, label, error) {
   return base;
 }
 
-async function runGeneration({ checkCredits, configurePage, thumbnailSelector, waitOpen, saveOpened, summary, prompt, flowProject, project = '', charProject = '', characterConsistency = false, requiredCharacters = [], log }) {
+async function runGeneration({ checkCredits, preferredAccount = '', minCredits, configurePage, thumbnailSelector, waitOpen, saveOpened, summary, prompt, flowProject, project = '', charProject = '', characterConsistency = false, requiredCharacters = [], log }) {
   const browser = await connect(log);
   let page;
   try {
     page = await findFlowPage(browser);
-    if (checkCredits) await ensureCredits(page, { accounts: readAccountList(), log });
+    let activeAccount = null;
+    if (checkCredits) activeAccount = await ensureCredits(page, { accounts: readAccountList(), preferredAccount, ...(minCredits ? { minCredits } : {}), log });
     await ensureFlowProject(page, flowProject, { log });
     await ensureDirectPromptMode(page);
     await configurePage(page);
@@ -300,7 +557,7 @@ async function runGeneration({ checkCredits, configurePage, thumbnailSelector, w
     await submit.click();
 
     await waitOpen(page, before);
-    const result = await saveOpened(page);
+    const result = await saveOpened(page, activeAccount);
     await page.goBack({ waitUntil: 'domcontentloaded' });
     return result;
   } catch (err) {
@@ -318,14 +575,17 @@ async function runGeneration({ checkCredits, configurePage, thumbnailSelector, w
  * Generates one video in Flow and saves it to outFile.
  * Throws with a diagnostic log path on failure. Does not resubmit on its own.
  */
-export function generateVideo({ prompt, outFile, model, aspect, duration, flowProject, project = '', characterConsistency = false, requiredCharacters = [], log = console.log }) {
+export function generateVideo({ prompt, outFile, model, aspect, duration, resolution = '360p', upscale = 'auto', flowProject, project = '', characterConsistency = false, requiredCharacters = [], log = console.log }) {
   return runGeneration({
     checkCredits: true,
-    configurePage: page => configure(page, { model, aspect, duration }),
+    configurePage: page => configure(page, { model, aspect, duration, resolution }, log),
     thumbnailSelector: S.videoThumbnail,
     waitOpen: (page, before) => openNewVideo(page, before, prompt),
-    saveOpened: page => saveOpenedVideo(page, outFile, aspect, log),
-    summary: `${model}, ${aspect}, ${duration}`,
+    saveOpened: (page, activeAccount) => {
+      const wantUpscale = shouldUpscaleForAccount(upscale, activeAccount?.email || '');
+      return saveOpenedVideo(page, outFile, aspect, log, { wantUpscale, resolution });
+    },
+    summary: `${model}, ${aspect}, ${duration}, ${resolution}${upscale !== 'off' ? ` (upscale:${upscale})` : ''}`,
     prompt, flowProject, project, characterConsistency, requiredCharacters, log
   });
 }
@@ -578,13 +838,14 @@ async function attachFrame(page, label, file, log) {
   log(`${label} frame attached (${path.basename(file)}).`);
 }
 
-async function configureFrames(page, { model, aspect, duration, startFile, endFile, log }) {
+async function configureFrames(page, { model, aspect, duration, resolution = '360p', startFile, endFile, log }) {
   const modelButton = await openSettingsPanel(page);
   await setRadio(page, page.getByRole('radio', { name: S.videoModeRadio }), 'Video mode');
   await selectModel(page, modelButton, model);
   await setRadio(page, page.getByRole('radio', { name: S.framesRadio }), 'Frames mode');
   await setRadio(page, page.getByRole('radio', { name: S.aspectRadio(aspect) }), `aspect ${aspect}`);
-  await setRadio(page, page.getByRole('radio', { name: S.durationRadio(duration) }), `duration ${duration}`);
+  await setResolution(page, resolution, log);
+  await setDuration(page, duration, log);
   await setRadio(page, page.getByRole('radio', { name: S.singleRadio }), 'x1 output count');
   await page.keyboard.press('Escape').catch(() => {}); // close the settings popup so the tiles are clickable
   await page.waitForTimeout(300);
@@ -611,14 +872,19 @@ async function configureFrames(page, { model, aspect, duration, startFile, endFi
  * Generates one Flow video from a Start frame and an End frame and saves it to outFile.
  * Credits are checked like normal video jobs. Does not resubmit on its own.
  */
-export function generateFrameVideo({ prompt, outFile, model, aspect, duration, startFile, endFile, flowProject, log = console.log }) {
+export function generateFrameVideo({ prompt, outFile, model, aspect, duration, resolution = '360p', upscale = 'off', preferredAccount = '', minCredits = 4, startFile, endFile, flowProject, log = console.log }) {
   return runGeneration({
     checkCredits: true,
-    configurePage: page => configureFrames(page, { model, aspect, duration, startFile, endFile, log }),
+    preferredAccount,
+    minCredits,
+    configurePage: page => configureFrames(page, { model, aspect, duration, resolution, startFile, endFile, log }),
     thumbnailSelector: S.videoThumbnail,
     waitOpen: (page, before) => openNewVideo(page, before, prompt),
-    saveOpened: page => saveOpenedVideo(page, outFile, aspect, log),
-    summary: `Frames, ${model}, ${aspect}, ${duration}`,
+    saveOpened: (page, activeAccount) => saveOpenedVideo(page, outFile, aspect, log, {
+      wantUpscale: shouldUpscaleForAccount(upscale, activeAccount?.email),
+      resolution
+    }),
+    summary: `Frames, ${model}, ${aspect}, ${resolution}, ${duration}`,
     prompt, flowProject, log
   });
 }

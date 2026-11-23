@@ -500,7 +500,8 @@ async function handleExplainerRoute(req, res, url) {
         prompt: body.prompt,
         voice: body.voice || 'Kore',
         timestamps: body.timestamps !== false,
-        language: body.language || 'en'
+        language: body.language || 'en',
+        speakers: Array.isArray(body.speakers) ? body.speakers : null
       });
       return send(res, 200, result);
     }
@@ -514,7 +515,8 @@ async function handleExplainerRoute(req, res, url) {
         prompt: body.prompt,
         voice: body.voice || 'Kore',
         emotionMode: body.emotionMode || 'auto',
-        language: body.language || 'en'
+        language: body.language || 'en',
+        speakers: Array.isArray(body.speakers) ? body.speakers : null
       });
       return send(res, 200, result);
     }
@@ -526,7 +528,8 @@ async function handleExplainerRoute(req, res, url) {
         blocks: Array.isArray(body.blocks) ? body.blocks : [],
         voice: body.voice || 'Kore',
         emotionMode: body.emotionMode || 'auto',
-        language: body.language || 'en'
+        language: body.language || 'en',
+        speakers: Array.isArray(body.speakers) ? body.speakers : null
       });
       return send(res, 200, result);
     }

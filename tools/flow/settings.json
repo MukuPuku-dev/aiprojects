@@ -3,7 +3,9 @@
     "video": {
       "model": "Omni 1.1 Flash",
       "aspect": "9:16",
-      "duration": "10s"
+      "duration": "10s",
+      "resolution": "360p",
+      "upscale": "auto"
     },
     "image": {
       "model": "",
@@ -74,6 +76,20 @@
       },
       "characters": {
         "consistency": false
+      }
+    },
+    "purplestick": {
+      "video": {
+        "aspect": "9:16",
+        "duration": "8s",
+        "resolution": "360p",
+        "upscale": "auto"
+      },
+      "image": {
+        "aspect": "9:16"
+      },
+      "characters": {
+        "consistency": true
       }
     }
   }

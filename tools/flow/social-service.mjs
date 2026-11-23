@@ -66,6 +66,7 @@ export function createSocialPostService({ root, platform, recordFileName, genera
     if (project === 'tarkari-katha') return 40;
     if (project === 'stickman-lantern') return 64;
     if (project === 'ink-explainer') return 60;
+    if (project === 'purplestick') return 365;
     return 30;
   }
 

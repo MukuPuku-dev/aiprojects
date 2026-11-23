@@ -1,0 +1,10 @@
+{
+  "hostId": "male-host",
+  "presetId": "nepali_male_educator",
+  "name": "Mukesh",
+  "masterPrompt": "Ultra-realistic chest-up studio webcam portrait of the exact same friendly young Nepali man from the reference sheet, short textured dark hair, warm smile, wearing his mustard-yellow jacket and teal knit scarf with subtle lapel mic, seated facing a 4K webcam straight-on, soft even studio lighting, isolated on a 100% PURE SOLID SEAMLESS WHITE BACKGROUND (#FFFFFF). Zero mountains, zero trees, zero outdoors, zero bookshelves, zero props, centered head and shoulders for circular crop, no text, no watermark.",
+  "jpegQuality": 82,
+  "frameSize": 384,
+  "edgeTrimPercent": 3.5,
+  "exportTargetDir": "c:\\Windows.old\\Users\\Dell\\Documents\\newQuiz-main\\quiz-app\\public\\host-frames\\male"
+}

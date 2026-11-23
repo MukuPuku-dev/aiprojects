@@ -879,8 +879,8 @@
       code: "PURP_GUY",
       name: "PurpleStick Guy",
       role: "Lead Husband / Comedy Guy",
-      appearance: "PURP_GUY (PurpleStick Guy / Husband): Clean 2D vector cartoon stickman with a large perfectly round vibrant royal-purple (#8B3DFF) head, small cute spiky purple hair tuft on top, thick crisp black outlines, huge expressive white cartoon eyes with dynamic black pupils and eyebrows, animated lip-syncing mouth, and a thin solid black stickman body, arms, legs, and flat black oval feet.",
-      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of PURP_GUY (PurpleStick Guy): large perfectly round vibrant royal-purple (#8B3DFF) head with small spiky hair tuft, thick crisp black outlines, huge expressive white eyes showing smug, shocked, happy, and dizzy expressions, thin black stickman body. Plain clean white background, no text.",
+      appearance: "PURP_GUY (PurpleStick Guy / Husband): Clean 2D vector cartoon stickman caricature matching the attached PURP_GUY character sheet — large stylized round vibrant royal-purple (#8B3DFF) head with short textured dark-black hair (slightly messy volume on top, neat tapered sides), friendly expressive cartoon eyes and eyebrows, warm mischievous smile, thick crisp black outlines, on a thin solid black stickman body.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman caricature turnaround sheet of PURP_GUY: large stylized round vibrant royal-purple (#8B3DFF) head with short textured dark-black hair (messy volume on top, tapered sides), thick crisp black outlines, expressive eyes showing smug, shocked, happy, and dizzy expressions, thin black stickman body. Plain clean white background, no text.",
       image_key: "char-PURP_GUY"
     },
     {
@@ -890,8 +890,8 @@
       code: "PURP_GIRL",
       name: "PurpleStick Girl",
       role: "Lead Wife / Sassy Girlfriend",
-      appearance: "PURP_GIRL (PurpleStick Girl / Wife): Clean 2D vector cartoon stickman with a large perfectly round vibrant royal-purple (#8B3DFF) head, sleek dark-brown/black cartoon ponytail, cute curved eyelashes, glossy red-pink cartoon lips, huge expressive white eyes, thick crisp black outlines, and a thin solid black stickman body.",
-      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of PURP_GIRL (PurpleStick Girl): large perfectly round vibrant royal-purple (#8B3DFF) head with sleek dark ponytail, cute eyelashes, glossy lips, thick crisp black outlines, huge expressive white eyes showing sassy, starry-eyed, shocked, and furious expressions, thin black stickman body. Plain clean white background, no text.",
+      appearance: "PURP_GIRL (PurpleStick Girl / Wife): Clean 2D vector cartoon stickman caricature matching the attached PURP_GIRL character sheet — large stylized round vibrant royal-purple (#8B3DFF) head with long wavy dark-brown/black hair styled half-up half-down, sweet rounded cheeks, bright expressive eyes with long lashes, glossy pink-red lips, a bold curvy hourglass 2D cartoon figure wearing a flashy form-fitting short magenta cocktail dress and cute black heels, with thin black stick arms and legs, thick crisp black outlines.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman caricature turnaround sheet of PURP_GIRL: large stylized round vibrant royal-purple (#8B3DFF) head with long wavy dark-brown/black hair half-up half-down, long eyelashes, glossy lips, bold curvy hourglass 2D cartoon figure in a flashy form-fitting short magenta cocktail dress and black heels with thin black stick arms and legs, thick crisp black outlines. Plain clean white background, no text.",
       image_key: "char-PURP_GIRL"
     },
     {
@@ -915,6 +915,28 @@
       appearance: "WHITE_KID (Cheeky Student / Friend): Clean 2D vector cartoon stickman with a slightly smaller round pure-white head, smug half-lidded expressive cartoon eyes, cheeky smirk, thick crisp black outlines, and a thin solid black stickman body and limbs.",
       ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of WHITE_KID: round pure-white head with smug half-lidded cartoon eyes and cheeky smirk, thick crisp black outlines, thin solid black stickman body. Plain clean white background, no text.",
       image_key: "char-WHITE_KID"
+    },
+    {
+      id: "purplestick:OLD_RICH",
+      project_id: "purplestick",
+      project_name: "PurpleStick",
+      code: "OLD_RICH",
+      name: "Rich Grandpa",
+      role: "Wealthy Elder / Millionaire",
+      appearance: "OLD_RICH (Rich Grandpa / Elder): Clean 2D vector cartoon stickman with a stylized cartoon older man's head (bald top, fluffy white side hair tufts, gentle laugh lines, warm expressive eyes), thick crisp black outlines, and a thin solid black stickman body and limbs.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of OLD_RICH: stylized cartoon older man head with bald top, fluffy white side hair tufts, warm expressive eyes and gentle smirk, thick crisp black outlines, thin solid black stickman body. Plain clean white background, no text.",
+      image_key: "char-OLD_RICH"
+    },
+    {
+      id: "purplestick:PURP_DOC",
+      project_id: "purplestick",
+      project_name: "PurpleStick",
+      code: "PURP_DOC",
+      name: "PurpleStick Pro",
+      role: "Doctor / Barber / Waiter",
+      appearance: "PURP_DOC (PurpleStick Doctor / Waiter): Clean 2D vector cartoon stickman with a large round vibrant royal-purple (#8B3DFF) head, glasses perched on face, big expressive white eyes, wearing a crisp white doctor coat with a black stethoscope (or neat server bowtie) over a thin black stickman body.",
+      ref_prompt: "Character reference: clean full-body 2D vector cartoon stickman turnaround sheet of PURP_DOC: large round vibrant royal-purple (#8B3DFF) head with glasses and expressive cartoon eyes, crisp white lab coat and black stethoscope over a thin black stickman body, thick crisp black outlines. Plain clean white background, no text.",
+      image_key: "char-PURP_DOC"
     }
   ];
 
@@ -1066,4 +1088,12 @@
     saveCharacter,
     deleteCharacter
   };
+
+  // Auto-mount the compact top-right server restart icon button on every workspace page
+  if (typeof document !== "undefined" && location.protocol !== "file:" && !document.getElementById("server-control") && !window.__storyStudioServerControlLoaded) {
+    const sc = document.createElement("script");
+    sc.src = "/platform/server-control.js";
+    sc.defer = true;
+    document.head?.appendChild(sc);
+  }
 })();

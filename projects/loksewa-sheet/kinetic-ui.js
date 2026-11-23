@@ -11,6 +11,7 @@
   let activeId = scripts[0]?.id || 'kinetic-nepal-5';
   let imgMap = new Map();
   let uploadTargetFile = null;
+  let pasteTargetIdx = null;
   let activeJobId = null;
   let pollTimer = null;
 
@@ -37,6 +38,120 @@
 
   function slideFile(idx) {
     return `slide_${String(idx + 1).padStart(2, '0')}.jpg`;
+  }
+
+  function blobToJpegDataUrl(blob) {
+    return new Promise((resolve, reject) => {
+      const readRaw = () => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Failed to read image data'));
+        reader.readAsDataURL(blob);
+      };
+      if (blob.type === 'image/jpeg') {
+        readRaw();
+        return;
+      }
+      const objUrl = URL.createObjectURL(blob);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width = img.naturalWidth || img.width;
+          canvas.height = img.naturalHeight || img.height;
+          const ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#0c0c10';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.92);
+          URL.revokeObjectURL(objUrl);
+          resolve(dataUrl);
+        } catch {
+          URL.revokeObjectURL(objUrl);
+          readRaw();
+        }
+      };
+      img.onerror = () => {
+        URL.revokeObjectURL(objUrl);
+        readRaw();
+      };
+      img.src = objUrl;
+    });
+  }
+
+  async function uploadSlideImageBlob(idx, blob, label = 'Uploaded') {
+    const s = getActive();
+    if (!s || !blob) return;
+    const fname = slideFile(idx);
+    $('kinStatus').textContent = `⏳ Saving photo for Slide ${idx + 1}...`;
+    try {
+      const dataUrl = await blobToJpegDataUrl(blob);
+      const r = await fetch('/api/loksewa/upload-image', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ setId: s.id, filename: fname, dataUrl })
+      });
+      const d = await r.json();
+      if (!d.ok) throw new Error(d.error || 'Upload failed');
+      pasteTargetIdx = null;
+      $('kinStatus').textContent = `✅ ${label} photo for Slide ${idx + 1} (${fname}).`;
+      await refreshImages();
+    } catch (err) {
+      $('kinStatus').textContent = `❌ Photo save failed: ${err.message}`;
+    }
+  }
+
+  function extractImageFromDataTransfer(dt) {
+    if (!dt) return null;
+    if (dt.files && dt.files.length) {
+      for (const f of dt.files) {
+        if (f && f.type && f.type.startsWith('image/')) return f;
+      }
+    }
+    if (dt.items && dt.items.length) {
+      for (const item of dt.items) {
+        if (item.kind === 'file' && item.type && item.type.startsWith('image/')) {
+          const f = item.getAsFile();
+          if (f) return f;
+        }
+      }
+    }
+    return null;
+  }
+
+  function armSlideForPaste(idx) {
+    pasteTargetIdx = idx;
+    const list = $('kinSlideList');
+    if (!list) return;
+    list.querySelectorAll('.img-frame.paste-ready').forEach(el => el.classList.remove('paste-ready'));
+    const frame = list.querySelector(`.q-card[data-slide-idx="${idx}"] .img-frame`);
+    if (frame) {
+      frame.classList.add('paste-ready');
+      frame.focus();
+    }
+    $('kinStatus').textContent = `📋 Slide ${idx + 1} ready — press Ctrl+V now to paste a photo.`;
+  }
+
+  async function pasteFromClipboardForSlide(idx) {
+    if (navigator.clipboard && typeof navigator.clipboard.read === 'function') {
+      try {
+        const items = await navigator.clipboard.read();
+        for (const item of items) {
+          const preferred = ['image/png', 'image/jpeg', 'image/webp'];
+          const imgType = preferred.find(t => item.types.includes(t))
+            || item.types.find(t => t.startsWith('image/') && t !== 'image/svg+xml');
+          if (imgType) {
+            const blob = await item.getType(imgType);
+            await uploadSlideImageBlob(idx, blob, 'Pasted');
+            return;
+          }
+        }
+        $('kinStatus').textContent = '⚠️ No photo found in clipboard. Copy an image or take a screenshot first, then click Paste or press Ctrl+V.';
+        return;
+      } catch {
+        // Permission denied or clipboard.read() blocked in this context — fall back to Ctrl+V
+      }
+    }
+    armSlideForPaste(idx);
   }
 
   function renderTabs() {
@@ -82,6 +197,7 @@
       const saved = imgMap.get(fname);
       const card = document.createElement('div');
       card.className = `q-card ${saved ? 'has-img' : ''}`;
+      card.dataset.slideIdx = String(idx);
 
       const left = document.createElement('div');
       left.innerHTML = `
@@ -143,13 +259,27 @@
       const right = document.createElement('div');
       right.className = 'img-col';
       const frame = document.createElement('div');
-      frame.className = 'img-frame';
+      frame.className = `img-frame${pasteTargetIdx === idx ? ' paste-ready' : ''}`;
       frame.style.borderRadius = '14px';
+      frame.tabIndex = 0;
+      frame.title = 'Click & press Ctrl+V to paste a photo, or drag & drop an image here';
       if (saved) {
         frame.innerHTML = `<img src="${saved.url}?t=${saved.mtimeMs}" alt="Slide ${idx + 1}"><span class="img-badge">✓ Photo</span>`;
       } else {
-        frame.innerHTML = `<div class="img-empty">Optional photo<br><small>(Text-only works great!)</small></div>`;
+        frame.innerHTML = `<div class="img-empty">Optional photo<br><small>Click &amp; Ctrl+V to paste,<br>or drag &amp; drop</small></div>`;
       }
+      frame.addEventListener('click', () => armSlideForPaste(idx));
+      frame.addEventListener('dragover', e => {
+        e.preventDefault();
+        frame.classList.add('drag-over');
+      });
+      frame.addEventListener('dragleave', () => frame.classList.remove('drag-over'));
+      frame.addEventListener('drop', e => {
+        e.preventDefault();
+        frame.classList.remove('drag-over');
+        const imgFile = extractImageFromDataTransfer(e.dataTransfer);
+        if (imgFile) uploadSlideImageBlob(idx, imgFile, 'Dropped');
+      });
       right.appendChild(frame);
 
       const acts = document.createElement('div');
@@ -159,6 +289,13 @@
       genBtn.className = saved ? 'ghost sm' : 'primary sm';
       genBtn.textContent = saved ? '🔄 Regen' : '🎨 Flow';
       genBtn.addEventListener('click', () => generateSingleSlideImage(idx));
+
+      const pasteBtn = document.createElement('button');
+      pasteBtn.type = 'button';
+      pasteBtn.className = 'ghost sm';
+      pasteBtn.textContent = '📋 Paste';
+      pasteBtn.title = 'Paste photo from clipboard into this slide (or click preview + Ctrl+V)';
+      pasteBtn.addEventListener('click', () => pasteFromClipboardForSlide(idx));
 
       const upBtn = document.createElement('button');
       upBtn.type = 'button';
@@ -170,6 +307,7 @@
         $('kinFileInput').click();
       });
       acts.appendChild(genBtn);
+      acts.appendChild(pasteBtn);
       acts.appendChild(upBtn);
 
       if (saved) {
@@ -208,6 +346,7 @@
 
   async function selectScript(id) {
     activeId = id;
+    pasteTargetIdx = null;
     renderTabs();
     syncMeta();
     await refreshImages();
@@ -406,6 +545,34 @@
         if (d.ok) { $('kinStatus').textContent = `✅ Uploaded photo for ${uploadTargetFile}.`; await refreshImages(); }
       };
       reader.readAsDataURL(file);
+    });
+
+    document.addEventListener('paste', e => {
+      const modeEl = $('modeKinetic');
+      if (!modeEl || !modeEl.classList.contains('active')) return;
+      const imgFile = extractImageFromDataTransfer(e.clipboardData);
+      if (!imgFile) return;
+
+      const s = getActive();
+      if (!s || !s.slides.length) return;
+      e.preventDefault();
+
+      let targetIdx = null;
+      const cardEl = e.target?.closest?.('#kinSlideList .q-card[data-slide-idx]');
+      if (cardEl) {
+        const parsed = Number(cardEl.dataset.slideIdx);
+        if (Number.isInteger(parsed) && parsed >= 0 && parsed < s.slides.length) {
+          targetIdx = parsed;
+        }
+      }
+      if (targetIdx === null && Number.isInteger(pasteTargetIdx) && pasteTargetIdx >= 0 && pasteTargetIdx < s.slides.length) {
+        targetIdx = pasteTargetIdx;
+      }
+      if (targetIdx === null) {
+        const firstEmpty = s.slides.findIndex((_, i) => !imgMap.has(slideFile(i)));
+        targetIdx = firstEmpty >= 0 ? firstEmpty : 0;
+      }
+      uploadSlideImageBlob(targetIdx, imgFile, 'Pasted');
     });
 
     renderTabs();

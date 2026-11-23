@@ -1,0 +1,32 @@
+{
+  "PURP_GUY": {
+    "code": "PURP_GUY",
+    "name": "PurpleStick Guy",
+    "refPrompt": "Clean 2D vector PurpleStick cartoon caricature of PURP_GUY with short textured dark-black hair, vibrant royal-purple (#8B3DFF) head, expressive eyes, thin black stickman body.",
+    "updatedAt": "2026-11-21T09:09:29.679Z"
+  },
+  "PURP_GIRL": {
+    "code": "PURP_GIRL",
+    "name": "PurpleStick Girl",
+    "refPrompt": "Clean 2D vector PurpleStick cartoon caricature of PURP_GIRL with long wavy dark hair half-up half-down, vibrant royal-purple (#8B3DFF) head, sweet expressive eyes, thin black stickman body.",
+    "updatedAt": "2026-11-21T09:09:31.579Z"
+  },
+  "WHITE_KID": {
+    "code": "WHITE_KID",
+    "name": "Cheeky Student",
+    "refPrompt": "Character reference: clean full-body 2D vector cartoon stickman character turnaround sheet of WHITE_KID (Cheeky Student / Friend): Clean 2D vector cartoon stickman with a slightly smaller round pure-white head, smug half-lidded expressive cartoon eyes, cheeky smirk, thick crisp black outlines, and a thin solid black stickman body and limbs. Plain clean white background, thick crisp black outlines, vibrant royal-purple (#8B3DFF) round head (unless specified otherwise), huge expressive eyes showing happy, smug, shocked, and angry expressions, no text.",
+    "updatedAt": "2026-11-21T07:52:31.243Z"
+  },
+  "PURP_TEACHER": {
+    "code": "PURP_TEACHER",
+    "name": "PurpleStick Teacher/Boss",
+    "refPrompt": "Character reference: clean full-body 2D vector cartoon stickman character turnaround sheet of PURP_TEACHER (PurpleStick Teacher / Boss): Clean 2D vector cartoon stickman with a large round vibrant royal-purple (#8B3DFF) head, expressive furrowed eyebrows and big cartoon eyes, wearing a neat white collared dress shirt with a dark charcoal necktie over a thin black stickman body and legs, thick crisp black outlines. Plain clean white background, thick crisp black outlines, vibrant royal-purple (#8B3DFF) round head (unless specified otherwise), huge expressive eyes showing happy, smug, shocked, and angry expressions, no text.",
+    "updatedAt": "2026-11-21T07:53:24.536Z"
+  },
+  "OLD_RICH": {
+    "code": "OLD_RICH",
+    "name": "Rich Grandpa",
+    "refPrompt": "Character reference: clean full-body 2D vector cartoon stickman character turnaround sheet of OLD_RICH (Rich Grandpa / Elder): Clean 2D vector cartoon stickman with a stylized cartoon older man's head (bald top, fluffy white side hair tufts, gentle laugh lines, warm expressive eyes), thick crisp black outlines, and a thin solid black stickman body and limbs. Plain clean white background, thick crisp black outlines, vibrant royal-purple (#8B3DFF) round head (unless specified otherwise), huge expressive eyes showing happy, smug, shocked, and angry expressions, no text.",
+    "updatedAt": "2026-11-22T05:21:38.380Z"
+  }
+}

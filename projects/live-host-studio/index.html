@@ -1,0 +1,677 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Live Host Avatar Studio · Story Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d10;
+      --card: #17171c;
+      --card-2: #1f1f27;
+      --ink: #f3f2f5;
+      --mut: #a6a3b0;
+      --coral: #ff5b57;
+      --gold: #ead7b7;
+      --ok: #62d99a;
+      --blue: #7ab8ff;
+      --warn: #ffb84d;
+      --line: #2d2c36;
+      --font: "Noto Sans Devanagari", "Mukta", "Nirmala UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 14px/1.55 var(--font); }
+    header {
+      position: sticky; top: 0; z-index: 20;
+      background: #0d0d10ee; backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      padding: 12px 18px;
+    }
+    .head-row {
+      max-width: 1260px; margin: 0 auto;
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    }
+    .back { color: var(--gold); text-decoration: none; font-weight: 700; font-size: 13px; }
+    .back:hover { text-decoration: underline; }
+    h1 { margin: 0; font-size: 19px; }
+    h1 span { color: var(--coral); }
+    .sub { color: var(--mut); font-size: 12px; margin-left: auto; }
+    main { max-width: 1260px; margin: 0 auto; padding: 18px; display: flex; flex-direction: column; gap: 16px; }
+    .panel {
+      background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+    }
+    .panel-title {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;
+      margin: 0 0 12px;
+    }
+    .panel-title h2 { margin: 0; font-size: 16px; color: var(--gold); }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .split { display: grid; grid-template-columns: 1.45fr 1fr; gap: 16px; }
+    @media (max-width: 960px) { .split { grid-template-columns: 1fr; } }
+    button, input, select, textarea {
+      background: #22212a; color: var(--ink); border: 1px solid var(--line);
+      border-radius: 8px; padding: 7px 11px; font: inherit;
+    }
+    button, select { cursor: pointer; }
+    button.primary { background: var(--coral); border-color: var(--coral); color: #fff; font-weight: 700; }
+    button.gold { background: var(--gold); border-color: var(--gold); color: #1b140b; font-weight: 700; }
+    button.ok { background: #1c7c4d; border-color: #2ea56a; color: #fff; font-weight: 700; }
+    button.ghost { background: transparent; }
+    button:disabled { opacity: .45; cursor: not-allowed; }
+    label.field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--mut); }
+    textarea { width: 100%; min-height: 92px; resize: vertical; }
+    .master-wrap { display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap; }
+    .master-box {
+      width: 156px; height: 156px; border-radius: 50%; overflow: hidden; flex-shrink: 0;
+      border: 3px solid var(--coral); background: #121218;
+      display: flex; align-items: center; justify-content: center; text-align: center;
+      color: var(--mut); font-size: 12px; box-shadow: 0 0 28px rgba(255, 91, 87, .22);
+    }
+    .master-box img { width: 100%; height: 100%; object-fit: cover; }
+    .stat-strip {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;
+    }
+    .stat {
+      background: var(--card-2); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px;
+    }
+    .stat .k { font-size: 11px; color: var(--mut); text-transform: uppercase; letter-spacing: .04em; }
+    .stat .v { font-size: 20px; font-weight: 800; color: var(--ink); margin-top: 2px; }
+    .stat .v.ok { color: var(--ok); }
+    .status-line { font-size: 13px; color: var(--gold); min-height: 20px; margin-top: 8px; }
+    .bar { height: 7px; background: var(--line); border-radius: 99px; overflow: hidden; margin-top: 6px; }
+    .bar i { display: block; height: 100%; width: 0%; background: linear-gradient(90deg, var(--coral), var(--gold)); transition: width .3s; }
+    .sim-stage {
+      background: radial-gradient(circle at 50% 35%, #232334, #111118);
+      border: 1px solid var(--line); border-radius: 14px; padding: 16px;
+      display: flex; flex-direction: column; align-items: center; gap: 12px;
+    }
+    .pip-circle {
+      width: 210px; height: 210px; border-radius: 50%; overflow: hidden; position: relative;
+      border: 4px solid #fff; box-shadow: 0 12px 35px rgba(0,0,0,.55), 0 0 0 4px rgba(255, 91, 87, .35);
+      background: #14141d; display: flex; align-items: center; justify-content: center;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .pip-circle.speaking {
+      box-shadow: 0 12px 35px rgba(0,0,0,.55), 0 0 0 6px rgba(98, 217, 154, .65);
+    }
+    .pip-circle img {
+      width: 100%; height: 100%; object-fit: cover; transform-origin: center 65%;
+      animation: hostBreathe 3.8s ease-in-out infinite;
+    }
+    @keyframes hostBreathe {
+      0%, 100% { transform: scale(1.02) translateY(0px); }
+      50% { transform: scale(1.045) translateY(-2px); }
+    }
+    .pill-row { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+    .pill {
+      padding: 5px 10px; border-radius: 999px; font-size: 12px; font-weight: 600;
+      background: #23232e; border: 1px solid var(--line); color: var(--mut);
+    }
+    .pill.active { background: var(--coral); border-color: var(--coral); color: #fff; }
+    .grids-list {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px;
+    }
+    .grid-card {
+      background: var(--card-2); border: 1px solid var(--line); border-radius: 12px; padding: 13px;
+      display: flex; flex-direction: column; gap: 10px;
+    }
+    .grid-card h3 { margin: 0; font-size: 14.5px; color: var(--ink); }
+    .grid-card p { margin: 0; font-size: 12px; color: var(--mut); }
+    .badge {
+      display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700;
+    }
+    .badge.ok { background: rgba(98, 217, 154, .18); color: var(--ok); }
+    .badge.warn { background: rgba(255, 184, 77, .18); color: var(--warn); }
+    .mini-frames {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px;
+    }
+    .mini-cell {
+      aspect-ratio: 1 / 1; border-radius: 8px; overflow: hidden; background: #131319;
+      border: 1px solid #2b2a36; position: relative; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--mut); text-align: center; padding: 4px;
+    }
+    .mini-cell img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .mini-cell span {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,.68); color: #fff; font-size: 9.5px; padding: 2px 4px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mono { font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; color: var(--ok); }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="head-row">
+      <a class="back" href="../../index.html">← Story Studio</a>
+      <h1>🎙️ <span>Live Host Avatar Studio</span></h1>
+      <span class="sub">1 Master Portrait + 8× 3x3 Flow Grids = 72 Compressed Lip-Sync &amp; Gaze Frames</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Top Stats & Profile Selector -->
+    <section class="panel">
+      <div class="panel-title">
+        <h2>1 · Host Profile &amp; Export Status</h2>
+        <div class="row">
+          <button id="quickMaleBtn" class="gold">👨 Male Host (Mukesh)</button>
+          <button id="quickFemaleBtn" class="gold">👩 Female Host (Akansha)</button>
+          <select id="profileSelect"></select>
+          <input id="newProfileInput" placeholder="New host id" style="width: 150px;">
+          <button id="createProfileBtn">Create</button>
+        </div>
+      </div>
+
+      <div class="stat-strip">
+        <div class="stat"><div class="k">Master Reference</div><div class="v" id="statMaster">—</div></div>
+        <div class="stat"><div class="k">Sliced Frames</div><div class="v" id="statFrames">0 / 72</div></div>
+        <div class="stat"><div class="k">Total Pack Size</div><div class="v ok" id="statSize">0 KB</div></div>
+        <div class="stat"><div class="k">Avg Frame Size</div><div class="v" id="statAvg">0 KB</div></div>
+      </div>
+
+      <div class="status-line" id="statusLine">Ready. Generate Master Portrait first, then batch-generate all 8× 3x3 grids in Google Flow.</div>
+      <div class="bar"><i id="progressBar"></i></div>
+    </section>
+
+    <!-- Persona Setup + Live PiP Preview Simulator -->
+    <div class="split">
+      <section class="panel">
+        <div class="panel-title">
+          <h2>2 · Master Reference Portrait (@HOST)</h2>
+          <div class="row">
+            <select id="presetSelect">
+              <option value="nepali_male_educator">Preset: Nepali Male Educator</option>
+              <option value="nepali_female_educator">Preset: Nepali Female Educator</option>
+            </select>
+            <button id="applyPresetBtn">Apply Preset</button>
+          </div>
+        </div>
+
+        <div class="master-wrap">
+          <div class="master-box" id="masterPreview">No Master<br>Portrait Yet</div>
+          <div style="flex:1; min-width: 240px; display:flex; flex-direction:column; gap:10px;">
+            <div class="row">
+              <label class="field" style="flex:1;">
+                Host Display Name
+                <input id="hostNameInput" placeholder="e.g. Aarav Sir">
+              </label>
+              <label class="field" style="width:120px;">
+                JPEG Quality
+                <input id="qualityInput" type="number" min="45" max="95" value="82">
+              </label>
+              <label class="field" style="width:120px;">
+                Frame Px
+                <input id="sizeInput" type="number" min="256" max="512" step="32" value="384">
+              </label>
+              <label class="field" style="width:110px;">
+                Edge Trim %
+                <input id="trimInput" type="number" min="0" max="10" step="0.5" value="3.5">
+              </label>
+            </div>
+            <label class="field">
+              Master Portrait Prompt (locked across all 8 grids via @HOST in Flow)
+              <textarea id="masterPromptInput"></textarea>
+            </label>
+            <div class="row">
+              <button class="primary" id="genMasterBtn">✨ Generate Master in Flow</button>
+              <label style="display:inline-flex; align-items:center; gap:6px; cursor:pointer; background:#22212a; border:1px solid var(--line); border-radius:8px; padding:7px 11px;">
+                📁 Upload Master
+                <input type="file" id="uploadMasterInput" accept="image/*" style="display:none;">
+              </label>
+              <button class="ghost" id="saveConfigBtn">💾 Save Settings</button>
+            </div>
+          </div>
+        </div>
+
+        <hr style="border:0; border-top:1px solid var(--line); margin:16px 0;">
+
+        <div class="panel-title">
+          <h2>3 · Batch Generate, Slice &amp; Export to Quiz App</h2>
+        </div>
+        <div class="row" style="margin-bottom:10px;">
+          <button class="primary" id="genAllGridsBtn">🚀 Generate Missing 3x3 Grids in Flow</button>
+          <button class="gold" id="sliceAllBtn">✂️ Re-Slice &amp; Compress All (95% Lossy)</button>
+          <button class="ok" id="exportQuizBtn">📤 Export Pack to Quiz App</button>
+        </div>
+        <label class="field">
+          Quiz App Export Folder
+          <input id="exportDirInput" class="mono">
+        </label>
+      </section>
+
+      <!-- Live Circular PiP Simulator -->
+      <section class="panel">
+        <div class="panel-title">
+          <h2>🎬 Live Circular PiP Preview</h2>
+          <span class="badge ok" id="simSlotBadge">Idle</span>
+        </div>
+        <div class="sim-stage">
+          <div class="pip-circle" id="simCircle">
+            <img id="simImg" alt="Host preview" style="display:none;">
+            <div id="simEmpty" style="color:var(--mut); font-size:12px; padding:18px; text-align:center;">
+              Generate &amp; slice at least 1 grid to preview live lip-sync + gaze animation here!
+            </div>
+          </div>
+          <div class="pill-row" id="simModePills">
+            <button class="pill active" data-sim="talk_camera">🗣️ Camera Talk</button>
+            <button class="pill" data-sim="look_down_write">✍️ Look Down &amp; Write</button>
+            <button class="pill" data-sim="think_wait">⏳ Countdown Wait</button>
+            <button class="pill" data-sim="reveal_celebrate">🎉 Answer Reveal</button>
+            <button class="pill" data-sim="react_comments">💬 Read Comments</button>
+          </div>
+          <div class="row">
+            <button id="toggleSimSpeakBtn" class="gold">🔊 Simulate Speaking: ON</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- 8 Theme Grids -->
+    <section class="panel">
+      <div class="panel-title">
+        <h2>4 · Expression &amp; Gaze 3x3 Sprite Grids (8 Grids × 9 = 72 Frames)</h2>
+        <span style="font-size:12px; color:var(--mut);">Each grid generates 9 consistent frames in 1 Flow call, auto-sliced to 384×384 lossy JPEGs (~15–22 KB each).</span>
+      </div>
+      <div class="grids-list" id="gridsContainer"></div>
+    </section>
+  </main>
+
+  <script>
+    let currentHostId = localStorage.getItem('liveHostStudioId') || 'male-host';
+    let hostState = null;
+    let activeJobId = null;
+    let simMode = 'talk_camera';
+    let simSpeaking = true;
+    let simTimer = null;
+    let simTick = 0;
+
+    const $ = id => document.getElementById(id);
+
+    function fmtBytes(b) {
+      if (!b) return '0 KB';
+      if (b < 1024 * 1024) return (b / 1024).toFixed(1) + ' KB';
+      return (b / (1024 * 1024)).toFixed(2) + ' MB';
+    }
+
+    function setStatus(msg, pct = null) {
+      $('statusLine').textContent = msg;
+      if (pct !== null) $('progressBar').style.width = Math.max(0, Math.min(100, pct)) + '%';
+    }
+
+    async function api(url, opts = {}) {
+      const res = await fetch(url, {
+        headers: { 'Content-Type': 'application/json' },
+        ...opts
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok === false) throw new Error(data.error || `HTTP ${res.status}`);
+      return data;
+    }
+
+    async function refreshStatus() {
+      const data = await api(`/api/live-host/status?hostId=${encodeURIComponent(currentHostId)}`);
+      hostState = data;
+      renderAll();
+    }
+
+    function renderAll() {
+      if (!hostState) return;
+      const cfg = hostState.config;
+
+      // Profile selector
+      const sel = $('profileSelect');
+      sel.innerHTML = '';
+      const profs = hostState.profiles.includes(hostState.hostId)
+        ? hostState.profiles
+        : [...hostState.profiles, hostState.hostId];
+      for (const p of profs) {
+        const opt = document.createElement('option');
+        opt.value = p;
+        opt.textContent = p;
+        if (p === hostState.hostId) opt.selected = true;
+        sel.appendChild(opt);
+      }
+
+      // Inputs
+      $('hostNameInput').value = cfg.name || '';
+      $('masterPromptInput').value = cfg.masterPrompt || '';
+      $('qualityInput').value = cfg.jpegQuality ?? 82;
+      $('sizeInput').value = cfg.frameSize ?? 384;
+      $('trimInput').value = cfg.edgeTrimPercent ?? 3.5;
+      $('exportDirInput').value = cfg.exportTargetDir || '';
+      if (cfg.presetId) $('presetSelect').value = cfg.presetId;
+
+      // Stats
+      $('statMaster').textContent = hostState.hasMaster ? 'READY ✓' : 'MISSING';
+      $('statMaster').className = 'v ' + (hostState.hasMaster ? 'ok' : '');
+      $('statFrames').textContent = `${hostState.totalFrames} / ${hostState.expectedFrames}`;
+      $('statSize').textContent = fmtBytes(hostState.totalFrameBytes);
+      $('statAvg').textContent = hostState.totalFrames
+        ? fmtBytes(Math.round(hostState.totalFrameBytes / hostState.totalFrames))
+        : '0 KB';
+
+      // Master preview
+      const mp = $('masterPreview');
+      if (hostState.masterUrl) {
+        mp.innerHTML = `<img src="${hostState.masterUrl}?t=${Date.now()}" alt="Master Host">`;
+      } else {
+        mp.innerHTML = 'No Master<br>Portrait Yet';
+      }
+
+      // Grids
+      const container = $('gridsContainer');
+      container.innerHTML = '';
+      for (const g of hostState.grids) {
+        const card = document.createElement('div');
+        card.className = 'grid-card';
+        const badgeCls = g.slicedCount === 9 ? 'ok' : 'warn';
+        const badgeTxt = g.slicedCount === 9 ? '9/9 Sliced ✓' : g.hasGrid ? 'Grid Ready (Slice!)' : 'Not Generated';
+
+        let cellsHtml = '';
+        for (const f of g.frames) {
+          cellsHtml += `<div class="mini-cell" title="${f.label} (${fmtBytes(f.size)})">
+            ${f.url ? `<img src="${f.url}" loading="lazy" alt="${f.slot}">` : `<div>${f.slot}</div>`}
+            <span>${f.slot}</span>
+          </div>`;
+        }
+
+        card.innerHTML = `
+          <div class="row" style="justify-content:space-between;">
+            <h3>${g.title}</h3>
+            <span class="badge ${badgeCls}">${badgeTxt}</span>
+          </div>
+          <p>${g.description}</p>
+          <div class="mini-frames">${cellsHtml}</div>
+          <div class="row">
+            <button class="primary" data-gen-grid="${g.id}">${g.hasGrid ? '🔄 Regen in Flow' : '✨ Generate in Flow'}</button>
+            <button data-slice-grid="${g.id}" ${g.hasGrid ? '' : 'disabled'}>✂️ Slice</button>
+            <label style="display:inline-flex; align-items:center; gap:4px; cursor:pointer; background:#22212a; border:1px solid var(--line); border-radius:8px; padding:6px 9px; font-size:12px;">
+              📁 Upload 3x3
+              <input type="file" data-upload-grid="${g.id}" accept="image/*" style="display:none;">
+            </label>
+            <button class="ghost" data-copy-prompt="${g.id}" title="Copy Flow prompt">📋 Prompt</button>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    async function saveConfig() {
+      await api('/api/live-host/save-config', {
+        method: 'POST',
+        body: JSON.stringify({
+          hostId: currentHostId,
+          presetId: $('presetSelect').value,
+          name: $('hostNameInput').value.trim(),
+          masterPrompt: $('masterPromptInput').value.trim(),
+          jpegQuality: Number($('qualityInput').value) || 82,
+          frameSize: Number($('sizeInput').value) || 384,
+          edgeTrimPercent: Number($('trimInput').value) || 3.5,
+          exportTargetDir: $('exportDirInput').value.trim()
+        })
+      });
+    }
+
+    async function pollJob(jobId, label) {
+      activeJobId = jobId;
+      while (activeJobId === jobId) {
+        await new Promise(r => setTimeout(r, 2500));
+        try {
+          const st = await api(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+          const prog = st.progress || {};
+          const pct = prog.total ? Math.round(((prog.savedCount || 0) / prog.total) * 100) : 30;
+          setStatus(`${label}: ${st.status}${prog.total ? ` (${prog.savedCount || 0}/${prog.total})` : ''}...`, pct);
+          if (st.status === 'done' || st.status === 'completed') {
+            setStatus(`✅ ${label} finished!`, 100);
+            activeJobId = null;
+            await refreshStatus();
+            return;
+          }
+          if (st.status === 'failed' || st.status === 'error') {
+            setStatus(`❌ ${label} failed: ${st.error || 'Unknown error'}`, 0);
+            activeJobId = null;
+            await refreshStatus();
+            return;
+          }
+        } catch (err) {
+          setStatus(`⚠️ Poll error: ${err.message}`);
+          activeJobId = null;
+          return;
+        }
+      }
+    }
+
+    // Event bindings
+    $('quickMaleBtn').onclick = async () => {
+      currentHostId = 'male-host';
+      localStorage.setItem('liveHostStudioId', currentHostId);
+      await refreshStatus();
+      setStatus('Switched to Male Host (Mukesh) — Master character sheet already loaded!');
+    };
+    $('quickFemaleBtn').onclick = async () => {
+      currentHostId = 'female-host';
+      localStorage.setItem('liveHostStudioId', currentHostId);
+      await refreshStatus();
+      setStatus('Switched to Female Host (Akansha) — Master character sheet already loaded!');
+    };
+    $('profileSelect').onchange = async e => {
+      currentHostId = e.target.value;
+      localStorage.setItem('liveHostStudioId', currentHostId);
+      await refreshStatus();
+    };
+
+    $('createProfileBtn').onclick = async () => {
+      const val = $('newProfileInput').value.trim();
+      if (!val) return;
+      currentHostId = val.toLowerCase().replace(/[^a-z0-9_-]+/g, '-');
+      localStorage.setItem('liveHostStudioId', currentHostId);
+      $('newProfileInput').value = '';
+      await saveConfig();
+      await refreshStatus();
+      setStatus(`Switched to host profile "${currentHostId}".`);
+    };
+
+    $('applyPresetBtn').onclick = () => {
+      if (!hostState?.presets) return;
+      const p = hostState.presets[$('presetSelect').value];
+      if (!p) return;
+      $('hostNameInput').value = p.name;
+      $('masterPromptInput').value = p.masterPrompt;
+      setStatus(`Applied preset "${p.label}". Click Save Settings or Generate Master.`);
+    };
+
+    $('saveConfigBtn').onclick = async () => {
+      try {
+        await saveConfig();
+        await refreshStatus();
+        setStatus('✅ Settings saved.');
+      } catch (e) { setStatus('❌ ' + e.message); }
+    };
+
+    $('genMasterBtn').onclick = async () => {
+      try {
+        await saveConfig();
+        setStatus('Submitting Master Portrait job to Google Flow...', 10);
+        const res = await api('/api/live-host/generate-master', {
+          method: 'POST',
+          body: JSON.stringify({ hostId: currentHostId })
+        });
+        await pollJob(res.id, 'Master Portrait');
+      } catch (e) { setStatus('❌ ' + e.message); }
+    };
+
+    $('genAllGridsBtn').onclick = async () => {
+      try {
+        await saveConfig();
+        setStatus('Queueing missing 3x3 expression grids in Google Flow...', 10);
+        const res = await api('/api/live-host/generate-grids', {
+          method: 'POST',
+          body: JSON.stringify({ hostId: currentHostId, overwrite: false })
+        });
+        if (res.alreadyComplete) {
+          setStatus('✅ All 8 grids already exist! Click Re-Slice or Export.');
+          return;
+        }
+        await pollJob(res.id, '3x3 Expression Grids');
+      } catch (e) { setStatus('❌ ' + e.message); }
+    };
+
+    $('sliceAllBtn').onclick = async () => {
+      try {
+        await saveConfig();
+        setStatus('Slicing & compressing all grids to 384×384 lossy JPEGs...', 45);
+        const res = await api('/api/live-host/slice', {
+          method: 'POST',
+          body: JSON.stringify({ hostId: currentHostId })
+        });
+        await refreshStatus();
+        setStatus(`✅ Sliced ${res.results.length} grid(s) into compressed frames!`, 100);
+      } catch (e) { setStatus('❌ ' + e.message); }
+    };
+
+    $('exportQuizBtn').onclick = async () => {
+      try {
+        await saveConfig();
+        setStatus('Exporting manifest.json + compressed frames to Quiz App...', 60);
+        const res = await api('/api/live-host/export', {
+          method: 'POST',
+          body: JSON.stringify({ hostId: currentHostId, exportTargetDir: $('exportDirInput').value.trim() })
+        });
+        setStatus(`✅ Exported ${res.copiedFrames} frames (${fmtBytes(res.copiedBytes)}) to ${res.destDir}`, 100);
+      } catch (e) { setStatus('❌ ' + e.message); }
+    };
+
+    $('uploadMasterInput').onchange = async e => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          await api('/api/live-host/upload', {
+            method: 'POST',
+            body: JSON.stringify({ hostId: currentHostId, kind: 'master', dataUrl: reader.result })
+          });
+          await refreshStatus();
+          setStatus('✅ Master portrait uploaded!');
+        } catch (err) { setStatus('❌ ' + err.message); }
+      };
+      reader.readAsDataURL(file);
+    };
+
+    $('gridsContainer').addEventListener('click', async e => {
+      const genBtn = e.target.closest('[data-gen-grid]');
+      if (genBtn) {
+        const gridId = genBtn.dataset.genGrid;
+        try {
+          await saveConfig();
+          setStatus(`Generating ${gridId} in Google Flow...`, 15);
+          const res = await api('/api/live-host/generate-grids', {
+            method: 'POST',
+            body: JSON.stringify({ hostId: currentHostId, gridIds: [gridId], overwrite: true })
+          });
+          await pollJob(res.id, `Grid ${gridId}`);
+        } catch (err) { setStatus('❌ ' + err.message); }
+        return;
+      }
+      const sliceBtn = e.target.closest('[data-slice-grid]');
+      if (sliceBtn) {
+        const gridId = sliceBtn.dataset.sliceGrid;
+        try {
+          await saveConfig();
+          setStatus(`Slicing ${gridId}...`, 50);
+          await api('/api/live-host/slice', {
+            method: 'POST',
+            body: JSON.stringify({ hostId: currentHostId, gridId })
+          });
+          await refreshStatus();
+          setStatus(`✅ Sliced ${gridId} into 9 compressed frames!`, 100);
+        } catch (err) { setStatus('❌ ' + err.message); }
+        return;
+      }
+      const copyBtn = e.target.closest('[data-copy-prompt]');
+      if (copyBtn) {
+        const g = hostState?.grids?.find(x => x.id === copyBtn.dataset.copyPrompt);
+        if (g) {
+          await navigator.clipboard.writeText(g.prompt);
+          setStatus(`📋 Copied 3x3 prompt for ${g.id} to clipboard!`);
+        }
+      }
+    });
+
+    $('gridsContainer').addEventListener('change', e => {
+      const inp = e.target.closest('[data-upload-grid]');
+      if (!inp) return;
+      const file = inp.files?.[0];
+      if (!file) return;
+      const gridId = inp.dataset.uploadGrid;
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          await saveConfig();
+          setStatus(`Uploading & slicing ${gridId}...`, 50);
+          await api('/api/live-host/upload', {
+            method: 'POST',
+            body: JSON.stringify({ hostId: currentHostId, kind: 'grid', gridId, dataUrl: reader.result, autoSlice: true })
+          });
+          await refreshStatus();
+          setStatus(`✅ Uploaded & sliced ${gridId}!`, 100);
+        } catch (err) { setStatus('❌ ' + err.message); }
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Live PiP Simulator
+    $('simModePills').addEventListener('click', e => {
+      const pill = e.target.closest('[data-sim]');
+      if (!pill) return;
+      simMode = pill.dataset.sim;
+      document.querySelectorAll('#simModePills .pill').forEach(p => p.classList.toggle('active', p === pill));
+    });
+
+    $('toggleSimSpeakBtn').onclick = () => {
+      simSpeaking = !simSpeaking;
+      $('toggleSimSpeakBtn').textContent = `🔊 Simulate Speaking: ${simSpeaking ? 'ON' : 'OFF'}`;
+    };
+
+    function startSimulator() {
+      if (simTimer) clearInterval(simTimer);
+      const talkSeq = ['closed', 'slight', 'mid', 'wide', 'mid', 'round', 'teeth', 'slight', 'fv', 'mid', 'closed', 'smile'];
+      simTimer = setInterval(() => {
+        if (!hostState?.grids) return;
+        simTick++;
+        const grid = hostState.grids.find(g => g.state === simMode && g.slicedCount > 0)
+          || hostState.grids.find(g => g.slicedCount > 0);
+        if (!grid) {
+          $('simImg').style.display = 'none';
+          $('simEmpty').style.display = 'block';
+          return;
+        }
+        const avail = grid.frames.filter(f => f.url);
+        let picked = avail[0];
+        const isBlink = simTick % 26 === 0;
+        if (isBlink) {
+          picked = avail.find(f => f.slot === 'blink') || picked;
+        } else if (simMode === 'think_wait' || !simSpeaking) {
+          const idleIdx = Math.floor(simTick / 8) % avail.length;
+          picked = avail[idleIdx];
+        } else {
+          const targetSlot = talkSeq[simTick % talkSeq.length];
+          picked = avail.find(f => f.slot === targetSlot) || avail[simTick % avail.length];
+        }
+        if (picked?.url) {
+          $('simImg').src = picked.url;
+          $('simImg').style.display = 'block';
+          $('simEmpty').style.display = 'none';
+          $('simSlotBadge').textContent = `${grid.state} · ${picked.slot}`;
+          $('simCircle').classList.toggle('speaking', simSpeaking && simMode !== 'think_wait');
+        }
+      }, 135);
+    }
+
+    refreshStatus().then(startSimulator).catch(e => setStatus('❌ ' + e.message));
+  </script>
+</body>
+</html>

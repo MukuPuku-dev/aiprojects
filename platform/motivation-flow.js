@@ -505,8 +505,10 @@
           : { ...effective.video, aspect: ["9:16", "16:9"].includes(state.ar) ? state.ar : "9:16" };
         return {
           mode: "video",
-          prompt: purpleStickPromptFor(index, video.aspect, video.duration, state.overlay !== false),
+          prompt: purpleStickPromptFor(index, video.aspect, video.duration, false),
           characters: purpleStickCharactersFor(index),
+          burnSubtitles: state.overlay !== false,
+          dialogueText: PURPLESTICK_CLIPS[index]?.dialogueLines || "",
           ...video
         };
       }

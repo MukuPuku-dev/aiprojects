@@ -141,5 +141,38 @@ const PROJECTS = [
     mark: "🟣",
     accent: "purple",
     flowNext: true
+  },
+  {
+    name: "Download Facebook Videos",
+    type: "Facebook Reels & Video Downloader · yt-dlp + FFmpeg",
+    description: "Paste any Facebook video or Reel link to download in 720p (auto-merge) or 1080p (separate video + audio merged with FFmpeg), saved to Downloads\\FacebookReels and ready to play instantly.",
+    href: "projects/download-facebook-videos/index.html",
+    id: "download-facebook-videos",
+    totalClips: 0,
+    mark: "📥",
+    accent: "coral",
+    flowNext: false
+  },
+  {
+    name: "Live Host Avatar Studio",
+    type: "72-Frame Photorealistic Lip-Sync & Gaze Host · 3x3 Flow Grids",
+    description: "Generate a consistent ultra-realistic live quiz host in Google Flow (1 master portrait + 8× 3x3 expression/gaze grids = 72 frames), auto-slice & 95% lossy-compress, preview live lip-sync, and export directly to Quiz App.",
+    href: "projects/live-host-studio/index.html",
+    id: "live-host-studio",
+    totalClips: 8,
+    mark: "🎙️",
+    accent: "coral",
+    flowNext: false
+  },
+  {
+    name: "Quiz App Live 4 Questions",
+    type: "Live 4 Show Queue Controller · Claude & Gemini Browser + Firestore Sync",
+    description: "Control the exact questions playing in Quiz App Live 4 (Loksewa Sheet). Generate & fact-check questions via Claude or Gemini browser, paste & auto-format raw MCQs, edit/reorder/remove live, and push zero-disruption mid-show updates directly to Firestore.",
+    href: "projects/quiz-app-live4-questions/index.html",
+    id: "quiz-app-live4-questions",
+    totalClips: 25,
+    mark: "📡",
+    accent: "gold",
+    flowNext: false
   }
 ];

@@ -5,10 +5,17 @@
     "video-model": ["video", "model", "videoModels"],
     "video-aspect": ["video", "aspect", "aspects"],
     "video-duration": ["video", "duration", "durations"],
+    "video-resolution": ["video", "resolution", "resolutions"],
+    "video-upscale": ["video", "upscale", "upscaleModes"],
     "image-model": ["image", "model"],
     "image-aspect": ["image", "aspect", "aspects"],
     "telegram-bot-token": ["telegram", "botToken"],
     "telegram-chat-id": ["telegram", "chatId"]
+  };
+  const UPSCALE_LABELS = {
+    auto: "Auto (On for mukesh.inaruwa@gmail.com Pro)",
+    on: "On (Always upscale if available)",
+    off: "Off (Download original size)"
   };
   const BOOL_LABELS = { false: "Off (false — wait for click)", true: "On (true — auto-post directly)" };
   const TELEGRAM_LABELS = { false: "Off (false — wait for click)", true: "On (true — auto-send to Telegram)" };
@@ -43,9 +50,10 @@
       const el = $("#" + id);
       const fallback = doc.defaults[group][key];
       if (listName) {
+        const labelFor = v => (listName === "upscaleModes" ? (UPSCALE_LABELS[v] || v) : v);
         el.replaceChildren(
-          ...(isProject ? [new Option(`Use default (${fallback})`, "")] : []),
-          ...options[listName].map(value => new Option(value, value))
+          ...(isProject ? [new Option(`Use default (${labelFor(fallback)})`, "")] : []),
+          ...options[listName].map(value => new Option(labelFor(value), value))
         );
         el.value = isProject ? (doc.projects[active]?.[group]?.[key] ?? "") : fallback;
       } else {

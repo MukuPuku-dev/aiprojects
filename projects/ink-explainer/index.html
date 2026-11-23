@@ -139,7 +139,13 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         <option value="9:16">9:16 Shorts</option>
       </select>
     </label>
-    <label class="pill-lbl">Voice:
+    <label class="pill-lbl" title="Single narrator voice or Gemini 2-speaker Conversation TTS">TTS Mode:
+      <select id="tts-mode-sel">
+        <option value="single">Single Voice</option>
+        <option value="conversation">2-Speaker Conversation</option>
+      </select>
+    </label>
+    <label id="voice-single-wrap" class="pill-lbl">Voice:
       <select id="voice-sel">
         <option value="Kore">Kore</option>
         <option value="Puck">Puck</option>
@@ -149,6 +155,31 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
         <option value="Zephyr">Zephyr</option>
       </select>
     </label>
+    <div id="conv-speakers-wrap" style="display:none;flex-direction:column;gap:6px;margin-top:4px;padding:8px;border:1px solid var(--line);border-radius:8px;background:#101016">
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" id="spk1-name" value="Host" placeholder="Speaker 1" style="width:82px;padding:3px 6px;font-size:12px">
+        <select id="spk1-voice" style="flex:1;padding:3px 6px;font-size:12px">
+          <option value="Puck">Puck</option>
+          <option value="Kore">Kore</option>
+          <option value="Charon">Charon</option>
+          <option value="Fenrir">Fenrir</option>
+          <option value="Aoede">Aoede</option>
+          <option value="Zephyr">Zephyr</option>
+        </select>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <input type="text" id="spk2-name" value="Guest" placeholder="Speaker 2" style="width:82px;padding:3px 6px;font-size:12px">
+        <select id="spk2-voice" style="flex:1;padding:3px 6px;font-size:12px">
+          <option value="Kore">Kore</option>
+          <option value="Puck">Puck</option>
+          <option value="Charon">Charon</option>
+          <option value="Fenrir">Fenrir</option>
+          <option value="Aoede">Aoede</option>
+          <option value="Zephyr">Zephyr</option>
+        </select>
+      </div>
+      <div class="sub" style="font-size:11px;line-height:1.35">Uses Gemini multi-speaker TTS with word timestamps. Prefix lines with <code>Host:</code> / <code>Guest:</code> or let beats alternate automatically.</div>
+    </div>
     <label class="pill-lbl" title="Story &amp; TTS Timestamp Language">Lang:
       <select id="lang-sel">
         <option value="en">English (en)</option>
@@ -313,6 +344,13 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
             <option value="1.25">1.25x</option>
           </select>
         </label>
+        <label class="pill-lbl" title="Ken Burns pan &amp; zoom motion on still beat images">Motion:
+          <select id="p-ken-burns">
+            <option value="off">Off</option>
+            <option value="subtle" selected>Ken Burns · Subtle</option>
+            <option value="medium">Ken Burns · Medium</option>
+          </select>
+        </label>
       </div>
       <div class="btns">
         <label class="pill-lbl" title="Export only a specific beat range (e.g. 1 to 50)">Beats:
@@ -448,6 +486,7 @@ main{max-width:1240px;margin:0 auto;padding:15px;display:flex;flex-direction:col
           </select>
         </label>
         <button type="button" class="ok" id="btn-upload-yt">▶ Upload Exported Video to YouTube Studio</button>
+        <button type="button" style="background:#1877f2;color:#fff;border-color:#1877f2;font-weight:700" id="btn-upload-fb">📘 Post Exported Video to Facebook</button>
         <button type="button" style="background:#229ED9;color:#fff;border-color:#229ED9;font-weight:700" id="btn-send-tg">✈ Send Exported Video to Telegram</button>
       </div>
       <span class="sub" id="yt-status"></span>
@@ -482,12 +521,38 @@ let audioBatchBusy = false;
 let flowBatchBusy = false;
 
 function loadState() {
+  const defaults = {
+    episodeId: "ancient-humans-day",
+    ar: "16:9",
+    voice: "Kore",
+    ttsMode: "single",
+    spk1Name: "Host",
+    spk1Voice: "Puck",
+    spk2Name: "Guest",
+    spk2Voice: "Kore",
+    captionPos: "bottom-center",
+    kenBurns: "subtle",
+    silenceCut: false,
+    silenceLevel: "normal",
+    silenceSkip: "",
+    done: {}
+  };
   try {
     const parsed = JSON.parse(localStorage.getItem(STATE_KEY) || "{}");
-    return Object.assign({ episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", captionPos: "bottom-center", silenceCut: false, silenceLevel: "normal", silenceSkip: "", done: {} }, parsed || {});
+    return Object.assign(defaults, parsed || {});
   } catch {
-    return { episodeId: "ancient-humans-day", ar: "16:9", voice: "Kore", captionPos: "bottom-center", silenceCut: false, silenceLevel: "normal", silenceSkip: "", done: {} };
+    return defaults;
   }
+}
+
+function activeConversationSpeakers() {
+  if ((state.ttsMode || "single") !== "conversation") return null;
+  const s1 = String(state.spk1Name || "Host").trim() || "Host";
+  const s2 = String(state.spk2Name || "Guest").trim() || "Guest";
+  return [
+    { speaker: s1, voice: state.spk1Voice || "Puck" },
+    { speaker: s2, voice: state.spk2Voice || "Kore" }
+  ];
 }
 
 function saveState() {
@@ -1115,7 +1180,9 @@ async function generateBlockVoiceover(blockId, silent = false) {
   if (!blk) return false;
   const btn = document.querySelector(`button[data-act="gen-block-tts"][data-block="${blockId}"]`);
   if (btn) btn.disabled = true;
-  $("#batch-status").textContent = `Synthesizing Block ${blockId} continuous voiceover (${state.voice} · ${activeLanguage()})…`;
+  const convSpeakers = activeConversationSpeakers();
+  const voiceTag = convSpeakers ? `${convSpeakers[0].speaker}+${convSpeakers[1].speaker}` : state.voice;
+  $("#batch-status").textContent = `Synthesizing Block ${blockId} continuous voiceover (${voiceTag} · ${activeLanguage()})…`;
   try {
     const r = await fetch("/api/explainer/block-tts", {
       method: "POST",
@@ -1127,7 +1194,8 @@ async function generateBlockVoiceover(blockId, silent = false) {
         beats: blk.beats,
         voice: state.voice,
         emotionMode: state.emotionMode || "auto",
-        language: activeLanguage()
+        language: activeLanguage(),
+        ...(convSpeakers ? { speakers: convSpeakers } : {})
       })
     });
     const j = await r.json();
@@ -1249,7 +1317,9 @@ async function generateMultiBlockVoiceover(groupBlocks, callIdx, totalCalls) {
   if (groupBlocks.length === 1) return generateBlockVoiceover(groupBlocks[0].blockId, true);
   const ep = inkExplainerActiveEpisode();
   const label = `Blocks ${groupBlocks[0].blockId}–${groupBlocks[groupBlocks.length - 1].blockId}`;
-  $("#batch-status").textContent = `Synthesizing ${label} in TTS Call ${callIdx}/${totalCalls} (${state.voice} · ${activeLanguage()})…`;
+  const convSpeakers = activeConversationSpeakers();
+  const voiceTag = convSpeakers ? `${convSpeakers[0].speaker}+${convSpeakers[1].speaker}` : state.voice;
+  $("#batch-status").textContent = `Synthesizing ${label} in TTS Call ${callIdx}/${totalCalls} (${voiceTag} · ${activeLanguage()})…`;
   try {
     const r = await fetch("/api/explainer/multi-block-tts", {
       method: "POST",
@@ -1260,7 +1330,8 @@ async function generateMultiBlockVoiceover(groupBlocks, callIdx, totalCalls) {
         blocks: groupBlocks.map(b => ({ blockId: b.blockId, beats: b.beats })),
         voice: state.voice,
         emotionMode: state.emotionMode || "auto",
-        language: activeLanguage()
+        language: activeLanguage(),
+        ...(convSpeakers ? { speakers: convSpeakers } : {})
       })
     });
     const j = await r.json();
@@ -1641,6 +1712,7 @@ async function createAudioFirstEpisode() {
     for (let i = 0; i < blocksText.length; i++) {
       const blkId = i + 1;
       stEl.textContent = `Step 1/2: Generating voiceover & word timestamps for Block ${blkId}/${blocksText.length}…`;
+      const afSpeakers = activeConversationSpeakers();
       const tr = await fetch("/api/explainer/block-tts", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1652,7 +1724,8 @@ async function createAudioFirstEpisode() {
           prompt: blocksText[i],
           voice: state.voice,
           emotionMode: state.emotionMode || "auto",
-          language: lang
+          language: lang,
+          ...(afSpeakers ? { speakers: afSpeakers } : {})
         })
       });
       const tj = await tr.json();
@@ -2076,6 +2149,62 @@ function activeSpokenWordCue(blk, beat, elapsedBlockSec) {
   };
 }
 
+function computeKenBurnsTransform(beat, progress, mode) {
+  if (!mode || mode === "off") return { scale: 1, panXFrac: 0, panYFrac: 0 };
+  const p = Math.max(0, Math.min(1, Number(progress) || 0));
+  // Blend linear + smoothstep so 1.5-2.5s beats stay visibly in motion from start to cut
+  const eased = 0.7 * p + 0.3 * (p * p * (3 - 2 * p));
+  const isMedium = mode === "medium";
+  const zoomAmp = isMedium ? 0.14 : 0.08;
+  const panScale = isMedium ? 1.12 : 1.07;
+  const panAmp = isMedium ? 0.05 : 0.028;
+
+  const beatNum = Math.max(1, Number(beat?.beat) || 1);
+  const ctype = String(beat?.cardType || "");
+  const isDiagram = ctype === "split-compare" || ctype === "map-diagram" || ctype === "red-x";
+
+  // Keep text/diagram cards centered (zoom-only) so labels never drift off-frame
+  if (isDiagram) {
+    const zoomIn = beatNum % 2 === 1;
+    const scale = zoomIn ? 1 + zoomAmp * eased : 1 + zoomAmp * (1 - eased);
+    return { scale, panXFrac: 0, panYFrac: 0 };
+  }
+
+  const pattern = beatNum % 6;
+  if (pattern === 0) {
+    // Slow zoom in
+    return { scale: 1 + zoomAmp * eased, panXFrac: 0, panYFrac: 0 };
+  }
+  if (pattern === 1) {
+    // Gentle pan left -> right
+    return { scale: panScale, panXFrac: (-0.5 + eased) * 2 * panAmp, panYFrac: 0 };
+  }
+  if (pattern === 2) {
+    // Slow zoom out
+    return { scale: 1 + zoomAmp * (1 - eased), panXFrac: 0, panYFrac: 0 };
+  }
+  if (pattern === 3) {
+    // Gentle pan right -> left
+    return { scale: panScale, panXFrac: (0.5 - eased) * 2 * panAmp, panYFrac: 0 };
+  }
+  if (pattern === 4) {
+    // Zoom in + gentle drift right & slight upward tilt
+    const base = 1.03;
+    return {
+      scale: base + zoomAmp * 0.85 * eased,
+      panXFrac: (-0.5 + eased) * panAmp * 1.1,
+      panYFrac: (0.5 - eased) * panAmp * 0.5
+    };
+  }
+  // Zoom out + gentle drift left
+  const base = 1.03;
+  return {
+    scale: base + zoomAmp * 0.85 * (1 - eased),
+    panXFrac: (0.5 - eased) * panAmp * 1.1,
+    panYFrac: (-0.5 + eased) * panAmp * 0.5
+  };
+}
+
 function drawCurrentFrame(elapsedBlockSec = 0) {
   ensureCanvasSize();
   const ep = inkExplainerActiveEpisode();
@@ -2131,13 +2260,31 @@ function drawCurrentFrame(elapsedBlockSec = 0) {
     const cached = imageCache.get(`${state.episodeId}:${beat.beat}`);
     const img = cached?.img;
     if (img && img.complete && img.naturalWidth > 0) {
-      // Crisp cover fill matching Ink Explainer style (minimal subtle zoom only, instant beat cuts)
+      // Cover fill + optional Ken Burns pan/zoom over the beat's active duration
       const ir = img.naturalWidth / img.naturalHeight;
       const cr = W / H;
       let dw = W, dh = H;
       if (ir > cr) { dh = H; dw = H * ir; }
       else { dw = W; dh = W / ir; }
-      ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
+
+      const kbMode = state.kenBurns || $("#p-ken-burns")?.value || "subtle";
+      let progress = 0;
+      if (kbMode !== "off") {
+        const timings = getBlockTimings(blk);
+        const bt = timings[player.localBeatIdx];
+        if (bt) {
+          const span = Math.max(0.25, bt.endSec - bt.startSec);
+          progress = Math.max(0, Math.min(1, (elapsedBlockSec - bt.startSec) / span));
+        }
+      }
+      const kb = computeKenBurnsTransform(beat, progress, kbMode);
+      const sw = dw * kb.scale;
+      const sh = dh * kb.scale;
+      const maxTx = Math.max(0, (sw - W) / 2);
+      const maxTy = Math.max(0, (sh - H) / 2);
+      const tx = Math.max(-maxTx, Math.min(maxTx, kb.panXFrac * W));
+      const ty = Math.max(-maxTy, Math.min(maxTy, kb.panYFrac * H));
+      ctx.drawImage(img, (W - sw) / 2 + tx, (H - sh) / 2 + ty, sw, sh);
     } else {
       drawProceduralInkFrame(beat);
     }
@@ -2729,6 +2876,49 @@ async function uploadEpisodeToYouTube() {
   }
 }
 
+async function uploadEpisodeToFacebook() {
+  if (isFile) { toast("Open via http://127.0.0.1:8787 to post to Facebook"); return; }
+  const ep = inkExplainerActiveEpisode();
+  const btn = $("#btn-upload-fb");
+  const fileName = player.lastSavedFileName || assets.exportedVideoFile || "episode.mp4";
+  btn.disabled = true;
+  $("#yt-status").textContent = `Opening Facebook in Flow Chrome & posting ${fileName}…`;
+  try {
+    const jobId = crypto.randomUUID();
+    const caption = $("#pub-social-cap").value.trim() || `${$("#pub-yt-title").value.trim() || ep.title}\n\n${ep.hook || ""}`;
+    const r = await fetch("/api/explainer/upload-facebook", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: jobId,
+        project: PROJECT_ID,
+        episode: ep.id,
+        fileName,
+        caption
+      })
+    });
+    const j = await r.json();
+    if (!r.ok || !j.ok) throw new Error(j.error || "Could not start Facebook upload");
+    while (true) {
+      await new Promise(res => setTimeout(res, 2500));
+      const sr = await fetch(`/api/generation-jobs/${encodeURIComponent(jobId)}`);
+      const sj = await sr.json();
+      if (!sr.ok || !sj.ok) throw new Error(sj.error || "Lost connection to Facebook upload");
+      if (sj.status === "completed") {
+        $("#yt-status").textContent = `✓ Posted ${j.fileName || fileName} to Facebook!`;
+        toast("Facebook post complete ✓");
+        break;
+      }
+      if (sj.status === "failed") throw new Error(sj.error || "Facebook upload failed");
+    }
+  } catch (err) {
+    $("#yt-status").textContent = `Facebook error: ${err.message}`;
+    toast(`Facebook error: ${err.message}`);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
 async function sendEpisodeToTelegram() {
   if (isFile) { toast("Open via http://127.0.0.1:8787 to send to Telegram"); return; }
   const ep = inkExplainerActiveEpisode();
@@ -2803,6 +2993,23 @@ $("#ar-sel").addEventListener("change", () => { state.ar = $("#ar-sel").value; s
 $("#voice-sel").value = state.voice;
 $("#voice-sel").addEventListener("change", () => { state.voice = $("#voice-sel").value; saveState(); });
 
+function syncTtsModeUi() {
+  const isConv = (state.ttsMode || "single") === "conversation";
+  $("#voice-single-wrap").style.display = isConv ? "none" : "";
+  $("#conv-speakers-wrap").style.display = isConv ? "flex" : "none";
+}
+$("#tts-mode-sel").value = state.ttsMode || "single";
+$("#spk1-name").value = state.spk1Name || "Host";
+$("#spk1-voice").value = state.spk1Voice || "Puck";
+$("#spk2-name").value = state.spk2Name || "Guest";
+$("#spk2-voice").value = state.spk2Voice || "Kore";
+syncTtsModeUi();
+$("#tts-mode-sel").addEventListener("change", () => { state.ttsMode = $("#tts-mode-sel").value; syncTtsModeUi(); saveState(); });
+$("#spk1-name").addEventListener("input", () => { state.spk1Name = $("#spk1-name").value; saveState(); });
+$("#spk1-voice").addEventListener("change", () => { state.spk1Voice = $("#spk1-voice").value; saveState(); });
+$("#spk2-name").addEventListener("input", () => { state.spk2Name = $("#spk2-name").value; saveState(); });
+$("#spk2-voice").addEventListener("change", () => { state.spk2Voice = $("#spk2-voice").value; saveState(); });
+
 $("#emotion-sel").value = state.emotionMode || "auto";
 $("#emotion-sel").addEventListener("change", () => { state.emotionMode = $("#emotion-sel").value; saveState(); });
 $("#silence-cut-on").checked = Boolean(state.silenceCut);
@@ -2829,6 +3036,12 @@ $("#silence-skip-beats").addEventListener("input", () => {
 $("#p-caption-pos").value = state.captionPos || "bottom-center";
 $("#p-caption-pos").addEventListener("change", () => {
   state.captionPos = $("#p-caption-pos").value || "bottom-center";
+  saveState();
+  if (!player.playing) drawCurrentFrame();
+});
+$("#p-ken-burns").value = state.kenBurns || "subtle";
+$("#p-ken-burns").addEventListener("change", () => {
+  state.kenBurns = $("#p-ken-burns").value || "subtle";
   saveState();
   if (!player.playing) drawCurrentFrame();
 });
@@ -3485,6 +3698,7 @@ $("#p-speed").addEventListener("change", () => {
 $("#btn-gen-publish").addEventListener("click", generatePublishPack);
 $("#btn-dl-srt").addEventListener("click", downloadSrtSubtitles);
 $("#btn-upload-yt").addEventListener("click", uploadEpisodeToYouTube);
+$("#btn-upload-fb").addEventListener("click", uploadEpisodeToFacebook);
 $("#btn-send-tg").addEventListener("click", sendEpisodeToTelegram);
 $("#export-from-beat").addEventListener("input", () => { updateExportRangeSummary(); populatePublishDefaults(true); });
 $("#export-to-beat").addEventListener("input", () => { updateExportRangeSummary(); populatePublishDefaults(true); });
